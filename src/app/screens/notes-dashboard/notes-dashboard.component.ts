@@ -17,18 +17,14 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription = new Subscription();
 
-  // Filter & Sort State
   searchTerm: string = '';
   selectedCategory: string = 'all';
   selectedPriority: string = 'all';
   selectedStatus: string = 'all';
   selectedSort: string = 'priority-desc';
 
-  // Modal Control State
   isModalVisible: boolean = false;
   noteToEdit: Note | null = null;
-
-  // View Mode: grid or list
   viewMode: 'grid' | 'list' = 'grid';
 
   constructor(
@@ -84,7 +80,6 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  // Modal Handlers
   openCreateModal(): void {
     this.noteToEdit = null;
     this.isModalVisible = true;
@@ -110,7 +105,6 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.closeModal();
   }
 
-  // Actions
   deleteNote(note: Note): void {
     if (confirm(`¿Estás seguro de eliminar la nota "${note.title}"?`)) {
       this.notesService.deleteNote(note.id);
@@ -125,14 +119,13 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.notesService.togglePin(note.id);
   }
 
-  // Helper Methods for UI
   getCategory(categoryId: string): Category | undefined {
     return this.categories.find(c => c.id === categoryId);
   }
 
   getCategoryColor(categoryId: string): string {
     const cat = this.getCategory(categoryId);
-    return cat ? cat.color : '#6c757d';
+    return cat ? cat.color : '#64748B';
   }
 
   getCategoryIcon(categoryId: string): string {
@@ -147,27 +140,27 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   getPriorityBadgeClass(priority: PriorityLevel): string {
     switch (priority) {
-      case 'alta': return 'badge-danger';
-      case 'media': return 'badge-warning';
-      case 'baja': return 'badge-success';
+      case 'alta': return 'badge-priority-high';
+      case 'media': return 'badge-priority-medium';
+      case 'baja': return 'badge-priority-low';
       default: return 'badge-secondary';
     }
   }
 
   getPriorityLabel(priority: PriorityLevel): string {
     switch (priority) {
-      case 'alta': return 'Alta';
-      case 'media': return 'Media';
-      case 'baja': return 'Baja';
+      case 'alta': return 'Alta Prioridad';
+      case 'media': return 'Prioridad Media';
+      case 'baja': return 'Prioridad Baja';
       default: return priority;
     }
   }
 
   getStatusBadgeClass(status: NoteStatus): string {
     switch (status) {
-      case 'pendiente': return 'badge-light text-dark border';
-      case 'en_progreso': return 'badge-info';
-      case 'completada': return 'badge-success';
+      case 'pendiente': return 'badge-status-pending';
+      case 'en_progreso': return 'badge-status-progress';
+      case 'completada': return 'badge-status-completed';
       default: return 'badge-secondary';
     }
   }
@@ -181,7 +174,6 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Statistics counters
   get totalCount(): number {
     return this.allNotes.length;
   }

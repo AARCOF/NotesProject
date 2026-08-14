@@ -1,70 +1,78 @@
-<div class="content-wrapper d-flex align-items-center auth px-0 min-vh-100 bg-light">
+<div class="content-wrapper d-flex align-items-center auth px-0 min-vh-100 bg-gradient-light">
   <div class="row w-100 mx-0 justify-content-center">
     <div class="col-lg-6 col-md-8 mx-auto">
       
-      <!-- Simulación de Bandeja de Entrada de Correo Eletrónico -->
-      <div class="card shadow border-info mb-4" *ngIf="simulatedEmail">
-        <div class="card-header bg-info text-white d-flex align-items-center justify-content-between">
+      <!-- Panel de Confirmación de Despacho de Correo -->
+      <div class="card shadow-lg border-0 mb-4 rounded-xl overflow-hidden" *ngIf="simulatedEmail">
+        <div class="card-header bg-gradient-indigo text-white d-flex align-items-center justify-content-between p-3 border-0">
           <div class="d-flex align-items-center">
-            <i class="typcn typcn-mail mr-2 font-size-20"></i>
-            <strong class="mb-0">Simulador de Correo Electrónico Recibido</strong>
+            <i class="typcn typcn-mail mr-2 font-size-22"></i>
+            <strong class="mb-0 font-weight-bold">Código de Acceso Despachado al Correo</strong>
           </div>
-          <span class="badge badge-light text-dark">{{ simulatedEmail.sentAt }}</span>
+          <span class="badge badge-pill badge-light text-primary font-weight-bold px-3 py-1">{{ simulatedEmail.sentAt }}</span>
         </div>
-        <div class="card-body bg-light p-3">
-          <p class="mb-1 text-dark"><strong>Para:</strong> {{ simulatedEmail.toEmail }}</p>
-          <p class="mb-2 text-muted"><strong>Asunto:</strong> {{ simulatedEmail.subject }}</p>
-          <div class="alert alert-warning border mb-0 d-flex align-items-center justify-content-between">
+        <div class="card-body bg-white p-4">
+          <div class="d-flex align-items-center mb-2 text-dark font-size-14">
+            <span class="text-muted font-weight-semibold mr-2">Destinatario:</span>
+            <strong class="text-primary">{{ simulatedEmail.toEmail }}</strong>
+          </div>
+          <div class="d-flex align-items-center mb-3 text-dark font-size-14">
+            <span class="text-muted font-weight-semibold mr-2">Asunto:</span>
+            <span>{{ simulatedEmail.subject }}</span>
+          </div>
+          
+          <div class="p-3 rounded-lg bg-light-indigo border border-indigo d-flex align-items-center justify-content-between">
             <div>
-              <small class="text-uppercase font-weight-bold d-block text-muted">Tu Llave de Seguridad (Expira en 1 Hora):</small>
-              <h3 class="font-weight-bold text-danger mb-0 letter-spacing-2">{{ simulatedEmail.securityKey }}</h3>
+              <span class="text-uppercase font-weight-bold d-block text-indigo-dark font-size-12 mb-1">Tu Llave de Seguridad Vence en 1 Hora:</span>
+              <h2 class="font-weight-bold text-indigo mb-0 letter-spacing-3">{{ simulatedEmail.securityKey }}</h2>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-dark" (click)="inputKey = simulatedEmail.securityKey">
-              Copiar Llave
+            <button type="button" class="btn btn-indigo shadow-sm font-weight-bold px-3 py-2" (click)="inputKey = simulatedEmail.securityKey">
+              Usar Código
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Tarjeta Principal de Verificación -->
-      <div class="auth-form-light text-left py-5 px-4 px-sm-5 rounded shadow">
+      <!-- Formulario de Verificación -->
+      <div class="auth-form-light text-left py-5 px-4 px-sm-5 rounded-xl shadow-lg border-0 bg-white">
         
         <div class="brand-logo text-center mb-4">
-          <div class="icon-circle bg-primary text-white mx-auto mb-2" style="width: 60px; height: 60px;">
-            <i class="typcn typcn-lock-closed font-size-30"></i>
+          <div class="icon-avatar-lg bg-gradient-primary text-white mx-auto mb-3 shadow-md">
+            <i class="typcn typcn-lock-closed font-size-32"></i>
           </div>
-          <h3 class="font-weight-bold text-dark mb-1">Verificación de Cuenta</h3>
-          <p class="text-muted font-size-14">
-            Ingresa la llave de seguridad enviada a <strong>{{ email }}</strong>
+          <h3 class="font-weight-bold text-slate-800 mb-1">Verificación de Cuenta</h3>
+          <p class="text-slate-500 font-size-14 mb-0">
+            Ingresa el código de 6 dígitos enviado a <strong class="text-slate-800">{{ email }}</strong>
           </p>
         </div>
 
-        <!-- Alerta de Temporizador de Expiración (1 hora) -->
-        <div class="alert text-center font-weight-bold p-3 mb-4" [ngClass]="isExpired ? 'alert-danger' : 'alert-info'">
-          <i class="typcn typcn-stopwatch mr-1"></i>
-          <span>Validez de la llave: {{ timerString }}</span>
-          <div class="small font-weight-normal mt-1" *ngIf="isExpired">
-            ⚠️ La llave ha vencido tras 1 hora. Por favor solicita una nueva llave.
+        <!-- Alerta de Temporizador -->
+        <div class="alert text-center font-weight-bold p-3 mb-4 rounded-lg shadow-sm border-0" [ngClass]="isExpired ? 'alert-danger-custom' : 'alert-info-custom'">
+          <div class="d-flex align-items-center justify-content-center">
+            <i class="typcn typcn-stopwatch mr-2 font-size-20"></i>
+            <span class="font-size-16">Tiempo de validez: {{ timerString }}</span>
+          </div>
+          <div class="small font-weight-normal mt-1 text-danger" *ngIf="isExpired">
+            El código ha superado el tiempo de validez de 1 hora. Solicita un nuevo código.
           </div>
         </div>
 
-        <!-- Mensajes de Estado -->
-        <div class="alert alert-danger" *ngIf="errorMessage">
+        <!-- Estado -->
+        <div class="alert alert-danger-custom mb-3" *ngIf="errorMessage">
           <i class="typcn typcn-warning mr-1"></i> {{ errorMessage }}
         </div>
 
-        <div class="alert alert-success" *ngIf="successMessage">
+        <div class="alert alert-success-custom mb-3" *ngIf="successMessage">
           <i class="typcn typcn-tick mr-1"></i> {{ successMessage }}
         </div>
 
-        <!-- Formulario -->
         <form (ngSubmit)="onVerify()">
           
           <div class="form-group mb-4">
-            <label class="font-weight-bold text-dark">Llave de Seguridad (6 Dígitos)</label>
+            <label class="font-weight-bold text-slate-700 font-size-14 mb-2">Código de Seguridad</label>
             <input 
               type="text" 
-              class="form-control form-control-lg text-center font-weight-bold letter-spacing-3 border-primary" 
+              class="form-control form-control-lg text-center font-weight-bold letter-spacing-4 border-indigo-light input-key-code shadow-sm" 
               placeholder="000000" 
               maxlength="6"
               [(ngModel)]="inputKey" 
@@ -72,29 +80,29 @@
               required>
           </div>
 
-          <div class="mt-3">
+          <div class="mt-4">
             <button 
               type="submit" 
-              class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn shadow-sm" 
+              class="btn btn-block btn-gradient-primary btn-lg font-weight-bold shadow-md py-3 text-white" 
               [disabled]="isLoading || !inputKey.trim() || isExpired">
-              <span class="spinner-border spinner-border-sm mr-1" *ngIf="isLoading"></span>
+              <span class="spinner-border spinner-border-sm mr-2" *ngIf="isLoading"></span>
               Validar y Activar Cuenta
             </button>
           </div>
 
           <div class="text-center mt-4">
-            <p class="text-muted mb-2">¿No recibiste la llave o ya venció?</p>
+            <p class="text-slate-500 mb-2 font-size-14">¿No recibiste el código o ya venció?</p>
             <button 
               type="button" 
-              class="btn btn-outline-secondary btn-sm" 
+              class="btn btn-outline-indigo btn-sm font-weight-bold px-3 py-2 rounded-lg" 
               (click)="onResendKey()" 
               [disabled]="isLoading">
-              <i class="typcn typcn-refresh mr-1"></i> Generar y Reenviar Nueva Llave (1 Hora)
+              <i class="typcn typcn-refresh mr-1"></i> Generar y Reenviar Código
             </button>
           </div>
 
           <div class="text-center mt-4 pt-3 border-top">
-            <a routerLink="/login" class="text-primary font-weight-bold">
+            <a routerLink="/login" class="text-indigo font-weight-bold text-decoration-none">
               <i class="typcn typcn-arrow-left mr-1"></i> Volver al Inicio de Sesión
             </a>
           </div>

@@ -1,53 +1,51 @@
-<!-- Cabecera de Gestor de Categorías -->
 <div class="row mb-4">
-  <div class="col-12 d-flex justify-content-between align-items-center">
+  <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-3">
     <div>
-      <h3 class="font-weight-bold text-dark mb-1">Categorías de Notas</h3>
-      <p class="text-muted mb-0">Organiza y registra nuevas categorías para clasificar tus notas y actividades.</p>
+      <h3 class="font-weight-bold text-slate-800 mb-1 font-size-24">Categorías de Notas</h3>
+      <p class="text-slate-500 mb-0 font-size-14">Organiza y registra nuevas categorías para clasificar tus notas y actividades.</p>
     </div>
-    <button class="btn btn-primary font-weight-bold shadow-sm d-flex align-items-center" (click)="openCreateModal()">
-      <i class="typcn typcn-plus mr-1"></i> Registrar Nueva Categoría
+    <button class="btn btn-indigo-gradient font-weight-bold shadow-sm d-flex align-items-center px-4 py-2 text-white" (click)="openCreateModal()">
+      <i class="typcn typcn-plus mr-1 font-size-18"></i> Registrar Nueva Categoría
     </button>
   </div>
 </div>
 
-<!-- Rejilla de Categorías Registradas -->
 <div class="row">
   <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let cat of categories">
-    <div class="card card-category shadow-sm border-0">
+    <div class="card card-category-modern shadow-sm border-0 rounded-xl overflow-hidden">
       <div class="category-banner" [style.backgroundColor]="cat.color"></div>
-      <div class="card-body p-4">
+      <div class="card-body p-4 d-flex flex-column justify-content-between">
         
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-avatar text-white mr-3 d-flex align-items-center justify-content-center" [style.backgroundColor]="cat.color">
-              <i class="typcn {{ cat.icon }} font-size-22"></i>
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-avatar-md text-white mr-3 d-flex align-items-center justify-content-center shadow-xs" [style.backgroundColor]="cat.color">
+                <i class="typcn {{ cat.icon }} font-size-22"></i>
+              </div>
+              <div>
+                <h5 class="font-weight-bold text-slate-800 mb-0 font-size-18">{{ cat.name }}</h5>
+                <small class="text-slate-400 font-weight-semibold" *ngIf="cat.isSystem">Categoría Principal</small>
+                <small class="text-indigo font-weight-semibold" *ngIf="!cat.isSystem">Categoría Personalizada</small>
+              </div>
             </div>
-            <div>
-              <h5 class="font-weight-bold text-dark mb-0">{{ cat.name }}</h5>
-              <small class="text-muted" *ngIf="cat.isSystem">Categoría del sistema</small>
-              <small class="text-info" *ngIf="!cat.isSystem">Categoría personalizada</small>
-            </div>
+
+            <span class="badge badge-pill badge-slate-light border font-weight-bold px-3 py-2">
+              {{ getNoteCountForCategory(cat.id) }} notas
+            </span>
           </div>
 
-          <!-- Badge de Conteo de Notas -->
-          <span class="badge badge-pill badge-light border text-dark font-weight-bold p-2">
-            {{ getNoteCountForCategory(cat.id) }} notas
-          </span>
+          <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed">
+            {{ cat.description || 'Sin descripción especificada.' }}
+          </p>
         </div>
 
-        <p class="text-muted font-size-14 mb-4">
-          {{ cat.description || 'Sin descripción especificada.' }}
-        </p>
-
-        <!-- Botones de Acción -->
-        <div class="d-flex align-items-center justify-content-end pt-2 border-top">
-          <button type="button" class="btn btn-sm btn-outline-info mr-2" (click)="openEditModal(cat)">
+        <div class="d-flex align-items-center justify-content-end pt-3 border-top">
+          <button type="button" class="btn btn-sm btn-action-indigo mr-2 px-3 py-1 font-weight-semibold" (click)="openEditModal(cat)">
             <i class="typcn typcn-edit mr-1"></i> Editar
           </button>
           <button 
             type="button" 
-            class="btn btn-sm btn-outline-danger" 
+            class="btn btn-sm btn-action-rose px-3 py-1 font-weight-semibold" 
             [disabled]="cat.isSystem" 
             (click)="deleteCategory(cat)" 
             [title]="cat.isSystem ? 'Categorías del sistema no eliminables' : 'Eliminar categoría'">
@@ -65,10 +63,10 @@
 
 <div class="modal fade show d-block" *ngIf="isModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered" role="document" (click)="$event.stopPropagation()">
-    <div class="modal-content shadow-lg border-0">
+    <div class="modal-content shadow-lg border-0 rounded-xl overflow-hidden">
       
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title font-weight-bold d-flex align-items-center">
+      <div class="modal-header bg-gradient-indigo text-white p-4 border-0">
+        <h5 class="modal-title font-weight-bold d-flex align-items-center font-size-18">
           <i class="typcn typcn-folder-add mr-2"></i>
           {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
         </h5>
@@ -78,34 +76,31 @@
       </div>
 
       <form (ngSubmit)="saveCategory()">
-        <div class="modal-body p-4">
+        <div class="modal-body p-4 bg-white">
           
-          <!-- Nombre -->
           <div class="form-group mb-3">
-            <label class="font-weight-semibold text-dark">Nombre de la Categoría <span class="text-danger">*</span></label>
+            <label class="font-weight-bold text-slate-700 font-size-14">Nombre de la Categoría <span class="text-danger">*</span></label>
             <input 
               type="text" 
-              class="form-control" 
+              class="form-control input-indigo" 
               placeholder="Ej: Estudio, Hogar, Gimnasio, Proyectos" 
               [(ngModel)]="name" 
               name="catName" 
               required>
           </div>
 
-          <!-- Descripción -->
           <div class="form-group mb-3">
-            <label class="font-weight-semibold text-dark">Descripción</label>
+            <label class="font-weight-bold text-slate-700 font-size-14">Descripción</label>
             <textarea 
-              class="form-control" 
+              class="form-control input-indigo" 
               rows="2" 
               placeholder="Breve descripción del propósito de la categoría..." 
               [(ngModel)]="description" 
               name="catDescription"></textarea>
           </div>
 
-          <!-- Selector de Color -->
           <div class="form-group mb-3">
-            <label class="font-weight-semibold text-dark">Color de Etiqueta</label>
+            <label class="font-weight-bold text-slate-700 font-size-14">Color de Etiqueta</label>
             <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
               <button 
                 type="button" 
@@ -118,15 +113,14 @@
             </div>
             <div class="input-group input-group-sm mt-2">
               <div class="input-group-prepend">
-                <span class="input-group-text">Personalizado:</span>
+                <span class="input-group-text bg-slate-100 border-0 text-slate-600 font-weight-semibold">Personalizado:</span>
               </div>
-              <input type="color" class="form-control form-control-color" [(ngModel)]="color" name="customColor">
+              <input type="color" class="form-control form-control-color border-0" [(ngModel)]="color" name="customColor">
             </div>
           </div>
 
-          <!-- Selector de Icono -->
           <div class="form-group mb-0">
-            <label class="font-weight-semibold text-dark">Icono Representativo</label>
+            <label class="font-weight-bold text-slate-700 font-size-14">Icono Representativo</label>
             <div class="icon-grid d-flex flex-wrap gap-2">
               <button 
                 type="button" 
@@ -142,9 +136,9 @@
 
         </div>
 
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary px-4" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary px-4 font-weight-bold" [disabled]="!name.trim()">
+        <div class="modal-footer bg-slate-50 p-3 border-top">
+          <button type="button" class="btn btn-secondary px-4 font-weight-bold" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-indigo-gradient px-4 font-weight-bold text-white" [disabled]="!name.trim()">
             {{ categoryToEdit ? 'Guardar Cambios' : 'Registrar Categoría' }}
           </button>
         </div>

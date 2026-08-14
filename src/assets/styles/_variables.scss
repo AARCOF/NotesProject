@@ -147,7 +147,7 @@ $breadcrumb-custom-item-padding-x: 10px;
 $breadcrumb-item-bg: #dbe3e6 !default;
 ////////// BREAD CRUMBS VARIABLES //////////
 ////////// MODALS VARIABLES //////////
-$modal-inner-padding: 15px;
+$modal-inner-padding: 1rem;
 $modal-dialog-margin: 10px;
 $modal-dialog-margin-y-sm-up: 30px;
 $modal-title-line-height: $line-height-base;
@@ -172,6 +172,7 @@ $modal-lg: 90%;
 $modal-md: 500px;
 $modal-sm: 300px;
 $modal-transition: transform .4s ease;
+$modal-footer-margin-between: 0px !default;
 ////////// MODALS VARIABLES //////////
 ////////// TOOLTIP VARIABLES //////////
 //default styles

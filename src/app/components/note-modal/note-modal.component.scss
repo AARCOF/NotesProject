@@ -1,6 +1,7 @@
 .modal-backdrop {
   z-index: 1040;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
 }
 
 .modal {
@@ -8,14 +9,57 @@
 }
 
 .modal-content {
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
 }
 
-.modal-header {
-  border-bottom: none;
+.bg-gradient-indigo {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
 }
 
-.modal-footer {
-  border-top: 1px solid #e9ecef;
+.input-indigo {
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+  background-color: #ffffff;
+  color: #1E293B;
+
+  &:focus {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+  }
+}
+
+.btn-indigo-gradient {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  border: none;
+  border-radius: 10px;
+
+  &:hover {
+    background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+    color: #ffffff;
+  }
+}
+
+.text-rose-600 {
+  color: #DC2626 !important;
+}
+
+.text-amber-600 {
+  color: #D97706 !important;
+}
+
+.text-emerald-600 {
+  color: #059669 !important;
+}
+
+.bg-slate-50 {
+  background-color: #F8FAFC !important;
+}
+
+.text-slate-700 {
+  color: #334155 !important;
+}
+
+.text-slate-800 {
+  color: #1E293B !important;
 }
