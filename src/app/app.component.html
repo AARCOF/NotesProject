@@ -1,0 +1,12 @@
+<div class="container-scroller">
+  <app-navbar *ngIf="showNav"></app-navbar>
+  <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav">
+    <app-sidebar *ngIf="showNav"></app-sidebar>
+    <div class="main-panel" [class.w-100]="!showNav">
+      <div class="content-wrapper" [class.p-0]="!showNav">
+        <router-outlet></router-outlet>
+      </div>
+      <app-footer *ngIf="showNav"></app-footer>
+    </div>
+  </div>
+</div>

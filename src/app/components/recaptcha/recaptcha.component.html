@@ -1,0 +1,25 @@
+<div class="recaptcha-box d-flex align-items-center justify-content-between p-3 border rounded shadow-sm bg-light mb-3">
+  <div class="d-flex align-items-center">
+    <div class="checkbox-container mr-3 cursor-pointer" (click)="onCheckboxClick()">
+      <div class="custom-checkbox" *ngIf="!isChecked"></div>
+      
+      <div class="spinner-border spinner-border-sm text-primary" role="status" *ngIf="isVerifying">
+        <span class="sr-only">Verificando...</span>
+      </div>
+
+      <div class="checked-mark bg-success text-white rounded-circle d-flex align-items-center justify-content-center" *ngIf="isVerified && !isVerifying">
+        <i class="typcn typcn-tick font-size-16"></i>
+      </div>
+    </div>
+    
+    <span class="font-weight-semibold text-dark font-size-14 select-none" (click)="onCheckboxClick()">
+      No soy un robot
+    </span>
+  </div>
+
+  <div class="recaptcha-brand text-right pl-3 border-left">
+    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA logo" style="width: 28px; height: 28px;">
+    <div class="text-muted" style="font-size: 9px; line-height: 1;">reCAPTCHA</div>
+    <div class="text-muted" style="font-size: 8px; line-height: 1;">Privacidad - Términos</div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+.recaptcha-box {
+  border-color: #d3d3d3 !important;
+  background-color: #f9f9f9 !important;
+  max-width: 310px;
+  user-select: none;
+}
+
+.custom-checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #c1c1c1;
+  border-radius: 3px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: #b2b2b2;
+  }
+}
+
+.checked-mark {
+  width: 24px;
+  height: 24px;
+}
+
+.select-none {
+  user-select: none;
+}
