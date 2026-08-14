@@ -1,3 +1,7 @@
+.landing-wrapper {
+  overflow-x: hidden;
+}
+
 .bg-gradient-light {
   background: linear-gradient(180deg, #F0FDF4 0%, #ffffff 100%);
 }
@@ -9,7 +13,7 @@
 .btn-celeste-gradient {
   background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%);
   border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -22,6 +26,7 @@
   border: 2px solid #0284C7;
   color: #0284C7;
   background-color: transparent;
+  transition: all 0.2s ease;
 
   &:hover {
     background-color: #0284C7;
@@ -46,7 +51,7 @@
 .btn-gradient-teal {
   background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
   border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -97,11 +102,11 @@
 }
 
 .feature-box {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 28px -10px rgba(5, 150, 105, 0.15) !important;
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px -10px rgba(5, 150, 105, 0.18) !important;
   }
 }
 
@@ -162,12 +167,108 @@
   border-radius: 24px;
 }
 
-/* Mobile Mockup Styles */
 .mobile-mockup-frame {
   border: 4px solid #1E293B;
   transition: transform 0.25s ease;
 
   &:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
+  }
+}
+
+/* ==========================================================================
+   CSS ANIMATIONS & KEYFRAMES FOR LANDING PAGE
+   ========================================================================== */
+
+.animate-left {
+  animation: animateLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-right {
+  animation: animateRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-up {
+  animation: animateUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-up-1 {
+  animation: animateUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.animate-up-2 {
+  animation: animateUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.animate-up-3 {
+  animation: animateUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.float-card {
+  animation: floatAnimation 5s ease-in-out infinite;
+}
+
+.float-card-slow {
+  animation: floatAnimation 7s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2.5s infinite;
+}
+
+@keyframes animateLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animateRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animateUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(2, 132, 199, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
   }
 }
