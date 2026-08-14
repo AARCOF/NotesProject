@@ -1,0 +1,218 @@
+<div class="landing-wrapper min-vh-100 bg-white">
+  
+  <!-- Navbar de la Landing -->
+  <header class="landing-header border-bottom sticky-top bg-white">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+      <div class="d-flex align-items-center">
+        <div class="brand-badge bg-gradient-teal text-white font-weight-bold mr-2 shadow-xs">
+          <i class="typcn typcn-document-text font-size-22"></i>
+        </div>
+        <span class="h4 font-weight-bold text-slate-800 mb-0">NoteYou</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-celeste font-weight-bold px-3 py-2 mr-2 d-none d-sm-inline-flex align-items-center">
+          <i class="typcn typcn-download mr-1 font-size-18"></i> Descargar APK
+        </a>
+        <a routerLink="/login" class="btn btn-outline-teal font-weight-bold px-3 py-2 mr-2">
+          Iniciar Sesión
+        </a>
+        <a routerLink="/register" class="btn btn-gradient-teal font-weight-bold px-4 py-2 text-white shadow-sm">
+          Registrarse Gratis
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section py-5 position-relative overflow-hidden bg-gradient-light">
+    <div class="container py-5">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0 text-left">
+          <span class="badge badge-pill badge-teal-light text-teal font-weight-bold px-3 py-2 mb-3">
+            Plataforma 100% Gratuita y sin Costos
+          </span>
+          <h1 class="display-4 font-weight-bold text-slate-900 mb-3 line-height-tight">
+            Organiza tus notas con prioridad, fechas y categorías
+          </h1>
+          <p class="lead text-slate-600 mb-4">
+            NoteYou es la solución de gestión personal diseñada para clasificar tus pendientes por nivel de urgencia, vincular fechas límite, agrupar actividades en categorías y llevar tus notas en la versión móvil Android.
+          </p>
+
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <a routerLink="/register" class="btn btn-gradient-teal btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mr-2 mb-2">
+              Comenzar Ahora Gratis
+            </a>
+            
+            <!-- Botón Descargar APK Móvil -->
+            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mb-2 d-inline-flex align-items-center">
+              <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Descargar APK Android
+            </a>
+          </div>
+
+          <div class="mt-4 pt-2 d-flex flex-wrap align-items-center text-slate-500 font-size-14 gap-3">
+            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Sin tarjetas de crédito</span>
+            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Validación por correo</span>
+            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Compatible con Android</span>
+          </div>
+        </div>
+
+        <div class="col-lg-6 text-center">
+          <div class="hero-card-preview bg-white shadow-xl rounded-24 p-4 border border-slate-100 position-relative">
+            <div class="preview-header border-bottom pb-3 mb-4 d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <span class="dot red mr-1"></span>
+                <span class="dot yellow mr-1"></span>
+                <span class="dot green mr-3"></span>
+                <strong class="text-slate-800">Panel Principal NoteYou</strong>
+              </div>
+              <span class="badge badge-success px-3 py-1 font-weight-semibold">Acceso Libre</span>
+            </div>
+
+            <div class="preview-grid text-left">
+              <div class="card preview-card border-0 shadow-sm p-3 mb-3 bg-emerald-50 rounded-xl">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="badge badge-primary px-3 py-1">Estudio</span>
+                  <span class="badge badge-danger px-2 py-1">Alta Prioridad</span>
+                </div>
+                <h6 class="font-weight-bold text-slate-800 mb-1">Entregables de Examen Parcial</h6>
+                <small class="text-slate-500">Organiza temas de cálculo y repasa ejercicios clave.</small>
+              </div>
+
+              <div class="card preview-card border-0 shadow-sm p-3 bg-celeste-50 rounded-xl">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="badge badge-info px-3 py-1">Hogar</span>
+                  <span class="badge badge-warning px-2 py-1">Prioridad Media</span>
+                </div>
+                <h6 class="font-weight-bold text-slate-800 mb-1">Lista de Mantenimiento</h6>
+                <small class="text-slate-500">Revisión de instalaciones y compras de insumos.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Versión Móvil y APK -->
+  <section class="mobile-app-section py-5 bg-slate-50 border-top border-bottom">
+    <div class="container py-4 text-center">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-lg-left">
+          <span class="badge badge-pill badge-celeste-light text-celeste font-weight-bold px-3 py-2 mb-3">
+            Aplicación Móvil Optimizada
+          </span>
+          <h2 class="font-weight-bold text-slate-900 mb-3">Lleva NoteYou en tu dispositivo móvil Android</h2>
+          <p class="text-slate-600 font-size-16 mb-4">
+            Accede a tus tareas, recibe recordatorios instantáneos y registra notas rápidas en formato de chat desde tu teléfono móvil. Descarga el paquete de instalación ejecutable (APK).
+          </p>
+
+          <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-5 py-3 text-white shadow-md rounded-lg d-inline-flex align-items-center">
+            <i class="typcn typcn-download mr-2 font-size-22"></i> Descargar APK v1.0.0
+          </a>
+        </div>
+
+        <div class="col-lg-6 text-center">
+          <div class="mobile-mockup-frame mx-auto p-3 bg-slate-900 rounded-24 shadow-xl" style="max-width: 320px;">
+            <div class="mobile-screen bg-white rounded-xl p-3 text-left">
+              <div class="mobile-top-bar d-flex justify-content-between align-items-center mb-3">
+                <strong class="text-slate-800 font-size-13">NoteYou Mobile</strong>
+                <span class="badge badge-success font-size-10">Conectado</span>
+              </div>
+
+              <div class="mobile-chat-bubble p-2 bg-teal-soft rounded-lg mb-2">
+                <small class="font-weight-bold text-teal d-block">Nota Rápida Móvil</small>
+                <small class="text-slate-700">Recordatorio de compras del hogar enviado al correo.</small>
+              </div>
+
+              <div class="mobile-chat-bubble p-2 bg-celeste-soft rounded-lg mb-3">
+                <small class="font-weight-bold text-celeste d-block">Tarea Prioritaria</small>
+                <small class="text-slate-700">Reunión de avance de proyectos a las 3:00 PM.</small>
+              </div>
+
+              <button class="btn btn-gradient-teal btn-block btn-sm font-weight-bold text-white">
+                Ver Todas las Notas
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Características Principales -->
+  <section class="features-section py-5">
+    <div class="container py-4 text-center">
+      <div class="max-width-600 mx-auto mb-5">
+        <h2 class="font-weight-bold text-slate-900 mb-2">Todo lo que necesitas para tu productividad</h2>
+        <p class="text-slate-500 font-size-16">Una herramienta completa, ágil y totalmente gratuita.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+            <div class="icon-circle bg-teal-soft text-teal mx-auto mb-3">
+              <i class="typcn typcn-warning font-size-28"></i>
+            </div>
+            <h5 class="font-weight-bold text-slate-800 mb-2">Niveles de Prioridad</h5>
+            <p class="text-slate-600 font-size-14 mb-0">
+              Clasifica tus tareas en Alta, Media y Baja prioridad para identificar instantáneamente qué requiere tu atención inmediata.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+            <div class="icon-circle bg-celeste-soft text-celeste mx-auto mb-3">
+              <i class="typcn typcn-folder-open font-size-28"></i>
+            </div>
+            <h5 class="font-weight-bold text-slate-800 mb-2">Categorías por Registro</h5>
+            <p class="text-slate-600 font-size-14 mb-0">
+              Crea categorías como Estudio, Hogar, Trabajo o Finanzas con paletas de color e iconos personalizados.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+            <div class="icon-circle bg-purple-soft text-purple mx-auto mb-3">
+              <i class="typcn typcn-shield-check font-size-28"></i>
+            </div>
+            <h5 class="font-weight-bold text-slate-800 mb-2">Seguridad por Correo</h5>
+            <p class="text-slate-600 font-size-14 mb-0">
+              Verificación de registro con código de seguridad enviado a tu correo válido por 1 hora y prueba reCAPTCHA.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner Gratuito y Descarga -->
+  <section class="banner-free py-5 bg-gradient-teal text-white text-center">
+    <div class="container py-3">
+      <h2 class="font-weight-bold mb-3">Empieza a organizar tus notas hoy mismo</h2>
+      <p class="lead text-white-90 max-width-600 mx-auto mb-4 font-size-16">
+        NoteYou es 100% gratuito. Registra tu cuenta en menos de un minuto o descarga la versión ejecutable APK para Android.
+      </p>
+      
+      <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
+        <a routerLink="/register" class="btn btn-light text-teal font-weight-bold btn-lg px-5 py-3 shadow-lg rounded-lg mr-3 mb-2">
+          Crear Cuenta Gratuita
+        </a>
+
+        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-light font-weight-bold btn-lg px-4 py-3 rounded-lg mb-2">
+          <i class="typcn typcn-download mr-1"></i> Descargar APK
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer py-4 bg-slate-900 text-white-80 border-top">
+    <div class="container text-center font-size-14">
+      <p class="mb-0">NoteYou &copy; 2026. Sistema de Organización Personal de Libre Acceso.</p>
+    </div>
+  </footer>
+
+</div>

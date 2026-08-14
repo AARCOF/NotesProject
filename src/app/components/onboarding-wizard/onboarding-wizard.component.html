@@ -1,0 +1,154 @@
+<div class="modal-backdrop-custom"></div>
+
+<div class="modal-custom" tabindex="-1" role="dialog">
+  <div class="modal-dialog-custom modal-dialog-wizard" role="document">
+    <div class="modal-content-custom">
+      
+      <!-- Encabezado de Bienvenida -->
+      <div class="wizard-header text-center p-4 bg-gradient-teal-celeste text-white">
+        <div class="wizard-step-indicator mb-3">
+          <span class="step-dot" [class.active]="currentStep >= 1">1</span>
+          <span class="step-line" [class.active]="currentStep >= 2"></span>
+          <span class="step-dot" [class.active]="currentStep >= 2">2</span>
+          <span class="step-line" [class.active]="currentStep >= 3"></span>
+          <span class="step-dot" [class.active]="currentStep >= 3">✓</span>
+        </div>
+        <h4 class="font-weight-bold mb-1">Bienvenido a NoteYou</h4>
+        <p class="mb-0 font-size-14 text-white-90">Te guiaremos en 2 pasos sencillos para configurar tu primer espacio de notas.</p>
+      </div>
+
+      <!-- PASO 1: Registrar Categoría -->
+      <div class="modal-body p-4 bg-white" *ngIf="currentStep === 1">
+        <div class="text-center mb-4">
+          <div class="icon-avatar-lg bg-teal-soft text-teal mx-auto mb-2">
+            <i class="typcn typcn-folder-add font-size-28"></i>
+          </div>
+          <h5 class="font-weight-bold text-slate-800 mb-1">Paso 1: Registra tu Primera Categoría</h5>
+          <p class="text-slate-500 font-size-13">Las categorías te ayudan a organizar tus tareas por temas (estudio, hogar, proyectos).</p>
+        </div>
+
+        <form (ngSubmit)="createCategoryStep()">
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Nombre de la Categoría <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              class="form-control input-custom" 
+              placeholder="Ej: Mis Proyectos o Universidad" 
+              [(ngModel)]="categoryName" 
+              name="categoryName" 
+              required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Descripción Breve</label>
+            <input 
+              type="text" 
+              class="form-control input-custom" 
+              placeholder="Ej: Tareas prioritarias y entregables" 
+              [(ngModel)]="categoryDescription" 
+              name="categoryDescription">
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="font-weight-bold text-slate-700 font-size-14">Color Distintivo</label>
+            <div class="d-flex align-items-center gap-2">
+              <input type="color" class="form-control form-control-color border-0 mr-2" [(ngModel)]="categoryColor" name="categoryColor">
+              <span class="text-slate-600 font-size-14 font-weight-medium">Color seleccionado para etiquetas</span>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            class="btn btn-block btn-gradient-teal btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
+            [disabled]="!categoryName.trim()">
+            Continuar al Paso 2
+          </button>
+        </form>
+      </div>
+
+      <!-- PASO 2: Crear Primera Nota -->
+      <div class="modal-body p-4 bg-white" *ngIf="currentStep === 2">
+        <div class="text-center mb-4">
+          <div class="icon-avatar-lg bg-celeste-soft text-celeste mx-auto mb-2">
+            <i class="typcn typcn-document-add font-size-28"></i>
+          </div>
+          <h5 class="font-weight-bold text-slate-800 mb-1">Paso 2: Crea tu Primera Nota</h5>
+          <p class="text-slate-500 font-size-13">Agrega un título y detalle a tu primera tarea usando tu nueva categoría.</p>
+        </div>
+
+        <form (ngSubmit)="createNoteStep()">
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Título de la Nota <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              class="form-control input-custom" 
+              placeholder="Ej: Organizar informe o comprar útiles" 
+              [(ngModel)]="noteTitle" 
+              name="noteTitle" 
+              required>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Categoría Asignada</label>
+            <input 
+              type="text" 
+              class="form-control input-custom bg-slate-100" 
+              [value]="createdCategory?.name" 
+              readonly>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-bold text-slate-700 font-size-14">Prioridad</label>
+              <select class="form-control input-custom" [(ngModel)]="notePriority" name="notePriority">
+                <option value="alta">Alta Prioridad</option>
+                <option value="media">Prioridad Media</option>
+                <option value="baja">Prioridad Baja</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-bold text-slate-700 font-size-14">Fecha Límite</label>
+              <input type="date" class="form-control input-custom" [(ngModel)]="noteDueDate" name="noteDueDate">
+            </div>
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="font-weight-bold text-slate-700 font-size-14">Contenido / Notas</label>
+            <textarea 
+              class="form-control input-custom" 
+              rows="3" 
+              placeholder="Detalles sobre lo que necesitas realizar..." 
+              [(ngModel)]="noteContent" 
+              name="noteContent"></textarea>
+          </div>
+
+          <button 
+            type="submit" 
+            class="btn btn-block btn-gradient-teal btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
+            [disabled]="!noteTitle.trim()">
+            Finalizar Configuración
+          </button>
+        </form>
+      </div>
+
+      <!-- PASO 3: Éxito y Finalización -->
+      <div class="modal-body p-5 bg-white text-center" *ngIf="currentStep === 3">
+        <div class="icon-avatar-xl bg-emerald-soft text-emerald mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 50%;">
+          <i class="typcn typcn-tick font-size-40"></i>
+        </div>
+        <h4 class="font-weight-bold text-slate-800 mb-2">¡Todo Listo para Empezar!</h4>
+        <p class="text-slate-600 max-width-400 mx-auto mb-4 font-size-14">
+          Has creado tu primera categoría y tu primera nota con éxito en NoteYou.
+        </p>
+        <button 
+          type="button" 
+          class="btn btn-gradient-teal btn-lg font-weight-bold px-5 py-3 text-white rounded-lg shadow-md"
+          (click)="finishTutorial()">
+          Ir al Panel de Notas
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

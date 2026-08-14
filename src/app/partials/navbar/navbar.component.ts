@@ -1,27 +1,20 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { NgbDropdownConfig } from "@ng-bootstrap/ng-bootstrap";
-import { AuthService } from "../../core/services/auth.service";
-import { User } from "../../core/models/user.model";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { User, UserRole } from '../../core/models/user.model';
 
 @Component({
-  selector: "app-navbar",
-  templateUrl: "./navbar.component.html",
-  styleUrls: ["./navbar.component.scss"],
-  providers: [NgbDropdownConfig]
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  public iconOnlyToggled = false;
-  public sidebarToggled = false;
-  public currentUser: User | null = null;
+  currentUser: User | null = null;
 
   constructor(
-    config: NgbDropdownConfig,
-    public authService: AuthService,
+    private authService: AuthService,
     private router: Router
-  ) {
-    config.placement = "bottom-right";
-  }
+  ) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
@@ -29,22 +22,29 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  toggleRightSidebar(): void {
-    const el = document.querySelector('.sidebar-offcanvas');
-    if (el) el.classList.toggle('active');
+  get isAdminOrSuperAdmin(): boolean {
+    return this.authService.isAdminOrSuperAdmin();
   }
 
-  toggleIconOnlySidebar(): void {
-    this.iconOnlyToggled = !this.iconOnlyToggled;
-    if (this.iconOnlyToggled) {
-      document.querySelector("body")?.classList.add("sidebar-icon-only");
-    } else {
-      document.querySelector("body")?.classList.remove("sidebar-icon-only");
+  getRoleLabel(role?: UserRole): string {
+    switch (role) {
+      case 'superadmin': return 'Superadministrador';
+      case 'admin': return 'Administrador';
+      case 'user': return 'Usuario Común';
+      default: return 'Usuario';
     }
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/landing']);
+  }
+
+  toggleIconOnlySidebar(): void {
+    document.body.classList.toggle('sidebar-icon-only');
+  }
+
+  toggleRightSidebar(): void {
+    document.querySelector('.sidebar-offcanvas')?.classList.toggle('active');
   }
 }

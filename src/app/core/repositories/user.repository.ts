@@ -1,28 +1,55 @@
 import { Injectable } from '@angular/core';
-import { User } from '../models/user.model';
+import { User, UserRole } from '../models/user.model';
 
-const USERS_STORAGE_KEY = 'star_notes_users_v1';
+const USERS_STORAGE_KEY = 'noteyou_users_v2';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserRepository {
   constructor() {
-    this.initDefaultUser();
+    this.initDefaultUsers();
   }
 
-  private initDefaultUser(): void {
+  private initDefaultUsers(): void {
     const users = this.getAllUsers();
     if (users.length === 0) {
-      const demoUser: User = {
-        id: 'usr_demo_1',
-        name: 'Usuario StarNotes',
-        email: 'usuario@ejemplo.com',
-        passwordHash: btoa('password123'),
-        isVerified: true,
-        createdAt: new Date().toISOString()
-      };
-      this.saveUser(demoUser);
+      const defaultUsers: User[] = [
+        {
+          id: 'usr_superadmin',
+          name: 'Super Administrador',
+          email: 'superadmin@noteyou.com',
+          passwordHash: btoa('admin123'),
+          role: 'superadmin',
+          isVerified: true,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          hasCompletedTutorial: true
+        },
+        {
+          id: 'usr_admin',
+          name: 'Administrador Sistema',
+          email: 'admin@noteyou.com',
+          passwordHash: btoa('admin123'),
+          role: 'admin',
+          isVerified: true,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          hasCompletedTutorial: true
+        },
+        {
+          id: 'usr_user',
+          name: 'Usuario Común',
+          email: 'usuario@noteyou.com',
+          passwordHash: btoa('user123'),
+          role: 'user',
+          isVerified: true,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          hasCompletedTutorial: false
+        }
+      ];
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(defaultUsers));
     }
   }
 
@@ -58,5 +85,29 @@ export class UserRepository {
 
   public updateUser(user: User): void {
     this.saveUser(user);
+  }
+
+  public updateRole(userId: string, newRole: UserRole): boolean {
+    const user = this.findById(userId);
+    if (!user) return false;
+    user.role = newRole;
+    this.saveUser(user);
+    return true;
+  }
+
+  public toggleActiveStatus(userId: string): boolean {
+    const user = this.findById(userId);
+    if (!user) return false;
+    user.isActive = !user.isActive;
+    this.saveUser(user);
+    return true;
+  }
+
+  public toggleVerification(userId: string): boolean {
+    const user = this.findById(userId);
+    if (!user) return false;
+    user.isVerified = !user.isVerified;
+    this.saveUser(user);
+    return true;
   }
 }

@@ -1,286 +1,307 @@
-<!-- Skeleton Loaders de Estadísticas -->
-<app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
-
-<!-- Tarjetas de Estadísticas Principales -->
-<div class="row fade-in-up" *ngIf="!isLoading">
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-gradient bg-stat-indigo text-white shadow-md">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="mb-1 text-white-80 font-weight-semibold font-size-13 text-uppercase letter-spacing-1">Total de Notas</p>
-            <h2 class="font-weight-bold mb-0 font-size-32">{{ totalCount }}</h2>
-          </div>
-          <div class="stat-icon-circle bg-white-20 text-white">
-            <i class="typcn typcn-document-text font-size-24"></i>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- Alerta de Notificación de Recordatorio Enviado -->
+<div class="alert alert-teal-custom alert-dismissible fade show mb-4 shadow-sm" *ngIf="reminderMessage">
+  <div class="d-flex align-items-center">
+    <i class="typcn typcn-mail mr-2 font-size-20"></i>
+    <strong class="font-weight-bold">{{ reminderMessage }}</strong>
   </div>
-
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-gradient bg-stat-rose text-white shadow-md">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="mb-1 text-white-80 font-weight-semibold font-size-13 text-uppercase letter-spacing-1">Alta Prioridad</p>
-            <h2 class="font-weight-bold mb-0 font-size-32">{{ highPriorityCount }}</h2>
-          </div>
-          <div class="stat-icon-circle bg-white-20 text-white">
-            <i class="typcn typcn-warning font-size-24"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-gradient bg-stat-amber text-white shadow-md">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="mb-1 text-white-80 font-weight-semibold font-size-13 text-uppercase letter-spacing-1">Pendientes</p>
-            <h2 class="font-weight-bold mb-0 font-size-32">{{ pendingCount }}</h2>
-          </div>
-          <div class="stat-icon-circle bg-white-20 text-white">
-            <i class="typcn typcn-time font-size-24"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-gradient bg-stat-emerald text-white shadow-md">
-      <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <p class="mb-1 text-white-80 font-weight-semibold font-size-13 text-uppercase letter-spacing-1">Completadas</p>
-            <h2 class="font-weight-bold mb-0 font-size-32">{{ completedCount }}</h2>
-          </div>
-          <div class="stat-icon-circle bg-white-20 text-white">
-            <i class="typcn typcn-tick font-size-24"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <button type="button" class="close" (click)="reminderMessage = ''">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 
-<!-- Barra de Búsqueda, Filtros y Ordenamiento -->
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="card shadow-sm border-0 rounded-xl bg-white">
-      <div class="card-body p-4">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-          
-          <!-- Búsqueda -->
-          <div class="d-flex align-items-center flex-grow-1 mr-md-3 mb-3 mb-md-0" style="max-width: 460px;">
-            <div class="input-group input-group-custom">
-              <div class="input-group-prepend">
-                <span class="input-group-text bg-slate-100 border-0 text-slate-500">
-                  <i class="typcn typcn-zoom font-size-18"></i>
-                </span>
+<!-- Layout Principal: Panel de Apuntes a la Izquierda + Panel de Tareas a la Derecha -->
+<div class="row">
+  
+  <!-- PANEL IZQUIERDO: NOTAS RÁPIDAS Y APUNTES (Estilo Chat) -->
+  <div class="col-lg-4 grid-margin stretch-card mb-4 mb-lg-0">
+    <app-quick-notes-panel [availableTasks]="allNotes"></app-quick-notes-panel>
+  </div>
+
+  <!-- PANEL DERECHO: GESTIÓN DE TAREAS -->
+  <div class="col-lg-8">
+    
+    <!-- Skeleton Loaders de Estadísticas -->
+    <app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
+
+    <!-- Tarjetas de Estadísticas Principales -->
+    <div class="row fade-in-up" *ngIf="!isLoading">
+      <div class="col-sm-6 col-md-3 grid-margin stretch-card mb-3">
+        <div class="card card-stat-gradient bg-stat-teal text-white shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Total Notas</p>
+                <h3 class="font-weight-bold mb-0 font-size-26">{{ totalCount }}</h3>
               </div>
-              <input 
-                type="text" 
-                class="form-control bg-slate-100 border-0 text-slate-800" 
-                placeholder="Buscar notas por título o descripción..." 
-                [(ngModel)]="searchTerm" 
-                (ngModelChange)="onSearchChange()">
-              <div class="input-group-append" *ngIf="searchTerm">
-                <button class="btn btn-slate-200 text-slate-600 border-0" type="button" (click)="searchTerm = ''; onSearchChange()">
-                  <i class="typcn typcn-times"></i>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-document-text font-size-22"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-md-3 grid-margin stretch-card mb-3">
+        <div class="card card-stat-gradient bg-stat-rose text-white shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Alta Prioridad</p>
+                <h3 class="font-weight-bold mb-0 font-size-26">{{ highPriorityCount }}</h3>
+              </div>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-warning font-size-22"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-md-3 grid-margin stretch-card mb-3">
+        <div class="card card-stat-gradient bg-stat-amber text-white shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Pendientes</p>
+                <h3 class="font-weight-bold mb-0 font-size-26">{{ pendingCount }}</h3>
+              </div>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-time font-size-22"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-md-3 grid-margin stretch-card mb-3">
+        <div class="card card-stat-gradient bg-stat-emerald text-white shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Completadas</p>
+                <h3 class="font-weight-bold mb-0 font-size-26">{{ completedCount }}</h3>
+              </div>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-tick font-size-22"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Búsqueda, Filtros y Ordenamiento -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-xl bg-white">
+          <div class="card-body p-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+              
+              <div class="d-flex align-items-center flex-grow-1 mr-md-2 mb-2 mb-md-0" style="max-width: 380px;">
+                <div class="input-group input-group-custom">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-slate-100 border-0 text-slate-500">
+                      <i class="typcn typcn-zoom font-size-18"></i>
+                    </span>
+                  </div>
+                  <input 
+                    type="text" 
+                    class="form-control bg-slate-100 border-0 text-slate-800" 
+                    placeholder="Buscar notas por título o detalle..." 
+                    [(ngModel)]="searchTerm" 
+                    (ngModelChange)="onSearchChange()">
+                  <div class="input-group-append" *ngIf="searchTerm">
+                    <button class="btn btn-slate-200 text-slate-600 border-0" type="button" (click)="searchTerm = ''; onSearchChange()">
+                      <i class="typcn typcn-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <div class="form-group mb-0 mr-1">
+                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedSort" (change)="onFilterChange()">
+                    <option value="priority-desc">Prioridad Alta primero</option>
+                    <option value="priority-asc">Prioridad Baja primero</option>
+                    <option value="date-desc">Fecha más reciente</option>
+                    <option value="date-asc">Fecha más antigua</option>
+                    <option value="dueDate-asc">Próxima entrega</option>
+                  </select>
+                </div>
+
+                <div class="form-group mb-0 mr-1">
+                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedPriority" (change)="onFilterChange()">
+                    <option value="all">Prioridades: Todas</option>
+                    <option value="alta">Prioridad Alta</option>
+                    <option value="media">Prioridad Media</option>
+                    <option value="baja">Prioridad Baja</option>
+                  </select>
+                </div>
+
+                <div class="form-group mb-0 mr-1">
+                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+                    <option value="all">Categorías: Todas</option>
+                    <option *ngFor="let cat of categories" [value]="cat.id">
+                      {{ cat.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <button class="btn btn-gradient-teal font-weight-bold shadow-sm d-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
+                  <i class="typcn typcn-plus mr-1 font-size-18"></i> Nueva Tarea
                 </button>
               </div>
-            </div>
-          </div>
 
-          <!-- Selectores de Orden y Filtros -->
-          <div class="d-flex flex-wrap align-items-center gap-2">
-            
-            <div class="form-group mb-0 mr-2">
-              <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedSort" (change)="onFilterChange()">
-                <option value="priority-desc">Ordenar: Prioridad Alta primero</option>
-                <option value="priority-asc">Ordenar: Prioridad Baja primero</option>
-                <option value="date-desc">Ordenar: Fecha más reciente</option>
-                <option value="date-asc">Ordenar: Fecha más antigua</option>
-                <option value="dueDate-asc">Ordenar: Próxima fecha límite</option>
-              </select>
             </div>
 
-            <div class="form-group mb-0 mr-2">
-              <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedPriority" (change)="onFilterChange()">
-                <option value="all">Prioridades: Todas</option>
-                <option value="alta">Prioridad Alta</option>
-                <option value="media">Prioridad Media</option>
-                <option value="baja">Prioridad Baja</option>
-              </select>
+            <!-- Badges de Filtros Activos -->
+            <div class="mt-2 pt-2 border-top d-flex align-items-center flex-wrap" *ngIf="searchTerm || selectedCategory !== 'all' || selectedPriority !== 'all' || selectedStatus !== 'all'">
+              <small class="text-slate-500 mr-2 font-weight-bold">Filtros aplicados:</small>
+              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="searchTerm">Término: {{searchTerm}}</span>
+              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedCategory !== 'all'">Categoría: {{getCategoryName(selectedCategory)}}</span>
+              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedPriority !== 'all'">Prioridad: {{getPriorityLabel(selectedPriority)}}</span>
+              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedStatus !== 'all'">Estado: {{getStatusLabel(selectedStatus)}}</span>
+              <button class="btn btn-link btn-sm text-rose p-0 ml-2 mb-1 font-weight-bold" (click)="clearFilters()">Restablecer todo</button>
             </div>
-
-            <div class="form-group mb-0 mr-2">
-              <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
-                <option value="all">Categorías: Todas</option>
-                <option *ngFor="let cat of categories" [value]="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group mb-0 mr-2">
-              <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
-                <option value="all">Estado: Todos</option>
-                <option value="pendiente">Estado Pendiente</option>
-                <option value="en_progreso">Estado En Progreso</option>
-                <option value="completada">Estado Completada</option>
-              </select>
-            </div>
-
-            <button class="btn btn-indigo-gradient font-weight-bold shadow-sm d-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
-              <i class="typcn typcn-plus mr-1 font-size-18"></i> Nueva Nota
-            </button>
 
           </div>
-
         </div>
-
-        <!-- Badges de Filtros Activos -->
-        <div class="mt-3 pt-3 border-top d-flex align-items-center flex-wrap" *ngIf="searchTerm || selectedCategory !== 'all' || selectedPriority !== 'all' || selectedStatus !== 'all'">
-          <small class="text-slate-500 mr-2 font-weight-bold">Filtros aplicados:</small>
-          <span class="badge badge-pill badge-indigo-light mr-2 mb-1" *ngIf="searchTerm">Término: {{searchTerm}}</span>
-          <span class="badge badge-pill badge-indigo-light mr-2 mb-1" *ngIf="selectedCategory !== 'all'">Categoría: {{getCategoryName(selectedCategory)}}</span>
-          <span class="badge badge-pill badge-indigo-light mr-2 mb-1" *ngIf="selectedPriority !== 'all'">Prioridad: {{getPriorityLabel(selectedPriority)}}</span>
-          <span class="badge badge-pill badge-indigo-light mr-2 mb-1" *ngIf="selectedStatus !== 'all'">Estado: {{getStatusLabel(selectedStatus)}}</span>
-          <button class="btn btn-link btn-sm text-rose p-0 ml-2 mb-1 font-weight-bold" (click)="clearFilters()">Restablecer todo</button>
-        </div>
-
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Skeleton Loaders de Notas -->
-<app-skeleton-loader type="card" [count]="6" *ngIf="isLoading"></app-skeleton-loader>
+    <!-- Skeleton Loaders de Notas -->
+    <app-skeleton-loader type="card" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
 
-<!-- Listado de Notas (Cards) -->
-<div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length > 0">
-  <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let note of filteredNotes">
-    <div class="card card-note-modern shadow-sm border-0 rounded-xl position-relative d-flex flex-column justify-content-between" [class.pinned-note-card]="note.isPinned">
-      
-      <div class="priority-accent-bar" [ngClass]="{
-        'bg-rose-500': note.priority === 'alta',
-        'bg-amber-500': note.priority === 'media',
-        'bg-emerald-500': note.priority === 'baja'
-      }"></div>
+    <!-- Listado de Notas (Cards) -->
+    <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length > 0">
+      <div class="col-md-6 grid-margin stretch-card mb-4" *ngFor="let note of filteredNotes">
+        <div class="card card-note-modern shadow-sm border-0 rounded-xl position-relative d-flex flex-column justify-content-between h-100" [class.pinned-note-card]="note.isPinned">
+          
+          <div class="priority-accent-bar" [ngClass]="{
+            'bg-rose-500': note.priority === 'alta',
+            'bg-amber-500': note.priority === 'media',
+            'bg-emerald-500': note.priority === 'baja'
+          }"></div>
 
-      <div class="card-body p-4 d-flex flex-column justify-content-between">
-        
-        <div>
-          <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
             
-            <span class="badge badge-category-modern text-white d-flex align-items-center px-3 py-1 shadow-xs" [style.backgroundColor]="getCategoryColor(note.categoryId)">
-              <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1"></i>
-              {{ getCategoryName(note.categoryId) }}
-            </span>
+            <div>
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="badge badge-category-modern text-white d-flex align-items-center px-3 py-1 shadow-xs" [style.backgroundColor]="getCategoryColor(note.categoryId)">
+                  <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1"></i>
+                  {{ getCategoryName(note.categoryId) }}
+                </span>
 
-            <div class="d-flex align-items-center">
-              <span class="badge {{ getPriorityBadgeClass(note.priority) }} mr-2">
-                {{ getPriorityLabel(note.priority) }}
-              </span>
+                <div class="d-flex align-items-center">
+                  <span class="badge {{ getPriorityBadgeClass(note.priority) }} mr-2">
+                    {{ getPriorityLabel(note.priority) }}
+                  </span>
 
-              <button 
-                type="button" 
-                class="btn btn-link btn-pin-custom p-0 text-decoration-none" 
-                [class.text-amber-500]="note.isPinned" 
-                [class.text-slate-300]="!note.isPinned" 
-                (click)="togglePin(note)" 
-                title="Fijar nota">
-                <i class="typcn typcn-pin font-size-20"></i>
-              </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-link btn-pin-custom p-0 text-decoration-none" 
+                    [class.text-amber-500]="note.isPinned" 
+                    [class.text-slate-300]="!note.isPinned" 
+                    (click)="togglePin(note)" 
+                    title="Fijar nota">
+                    <i class="typcn typcn-pin font-size-20"></i>
+                  </button>
+                </div>
+              </div>
+
+              <h5 class="card-title font-weight-bold text-slate-800 mb-2 font-size-17" [class.text-completed]="note.status === 'completada'">
+                {{ note.title }}
+              </h5>
+
+              <p class="card-text text-slate-600 mb-4 font-size-14 line-height-relaxed" style="white-space: pre-line;">
+                {{ note.content }}
+              </p>
             </div>
-
-          </div>
-
-          <h5 class="card-title font-weight-bold text-slate-800 mb-2 font-size-18" [class.text-completed]="note.status === 'completada'">
-            {{ note.title }}
-          </h5>
-
-          <p class="card-text text-slate-600 mb-4 font-size-14 line-height-relaxed" style="white-space: pre-line;">
-            {{ note.content }}
-          </p>
-        </div>
-
-        <div>
-          <div class="d-flex align-items-center justify-content-between pt-3 border-top mb-3">
-            <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="note.dueDate">
-              <i class="typcn typcn-calendar mr-1 text-indigo"></i>
-              Entrega: {{ note.dueDate }}
-            </small>
-            <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="!note.dueDate">
-              <i class="typcn typcn-time mr-1 text-slate-400"></i>
-              {{ note.createdAt | date:'shortDate' }}
-            </small>
-
-            <span class="badge {{ getStatusBadgeClass(note.status) }} cursor-pointer" (click)="toggleStatus(note)">
-              {{ getStatusLabel(note.status) }}
-            </span>
-          </div>
-
-          <div class="d-flex align-items-center justify-content-between">
-            
-            <button 
-              type="button" 
-              class="btn btn-sm btn-outline-emerald d-flex align-items-center font-weight-bold px-3" 
-              (click)="toggleStatus(note)">
-              <i class="typcn typcn-tick mr-1"></i>
-              {{ note.status === 'completada' ? 'Reabrir Nota' : 'Completar' }}
-            </button>
 
             <div>
-              <button 
-                type="button" 
-                class="btn btn-sm btn-action-indigo mr-1" 
-                (click)="openEditModal(note)" 
-                title="Editar Nota">
-                <i class="typcn typcn-edit font-size-16"></i>
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-sm btn-action-rose" 
-                (click)="deleteNote(note)" 
-                title="Eliminar Nota">
-                <i class="typcn typcn-trash font-size-16"></i>
-              </button>
+              <div class="d-flex align-items-center justify-content-between pt-3 border-top mb-3">
+                <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="note.dueDate">
+                  <i class="typcn typcn-calendar mr-1 text-teal"></i>
+                  Entrega: {{ note.dueDate }}
+                </small>
+                <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="!note.dueDate">
+                  <i class="typcn typcn-time mr-1 text-slate-400"></i>
+                  {{ note.createdAt | date:'shortDate' }}
+                </small>
+
+                <span class="badge {{ getStatusBadgeClass(note.status) }} cursor-pointer" (click)="toggleStatus(note)">
+                  {{ getStatusLabel(note.status) }}
+                </span>
+              </div>
+
+              <!-- Acciones Rápidas con Notificación por Correo -->
+              <div class="d-flex align-items-center justify-content-between gap-1">
+                
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-outline-emerald d-flex align-items-center font-weight-bold px-2 py-1" 
+                  (click)="toggleStatus(note)">
+                  <i class="typcn typcn-tick mr-1"></i>
+                  {{ note.status === 'completada' ? 'Reabrir' : 'Completar' }}
+                </button>
+
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-outline-teal d-flex align-items-center font-weight-bold px-2 py-1" 
+                  (click)="sendEmailReminder(note)"
+                  title="Enviar recordatorio por correo electrónico">
+                  <i class="typcn typcn-mail mr-1"></i>
+                  Recordar
+                </button>
+
+                <div>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-action-teal mr-1 px-2 py-1" 
+                    (click)="openEditModal(note)" 
+                    title="Editar Tarea">
+                    <i class="typcn typcn-edit font-size-16"></i>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-action-rose px-2 py-1" 
+                    (click)="deleteNote(note)" 
+                    title="Eliminar Tarea">
+                    <i class="typcn typcn-trash font-size-16"></i>
+                  </button>
+                </div>
+
+              </div>
+
             </div>
 
           </div>
-
         </div>
-
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Estado Vacío -->
-<div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0">
-  <div class="col-12">
-    <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
-      <div class="card-body">
-        <div class="empty-icon-circle bg-indigo-50 text-indigo rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 84px; height: 84px;">
-          <i class="typcn typcn-document-delete font-size-40"></i>
+    <!-- Estado Vacío -->
+    <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0">
+      <div class="col-12">
+        <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
+          <div class="card-body">
+            <div class="empty-icon-circle bg-teal-50 text-teal rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 84px; height: 84px;">
+              <i class="typcn typcn-document-delete font-size-40"></i>
+            </div>
+            <h4 class="font-weight-bold text-slate-800 mb-2">No tienes tareas registradas aún</h4>
+            <p class="text-slate-500 max-width-500 mx-auto mb-4 font-size-15">
+              Crea tu primera tarea para organizarla por prioridad y recibir recordatorios por correo electrónico.
+            </p>
+            <button class="btn btn-gradient-teal font-weight-bold px-4 py-3 text-white rounded-lg shadow-md" (click)="openCreateModal()">
+              <i class="typcn typcn-plus mr-1"></i> Crear mi primera tarea
+            </button>
+          </div>
         </div>
-        <h4 class="font-weight-bold text-slate-800 mb-2">No se encontraron notas</h4>
-        <p class="text-slate-500 max-width-500 mx-auto mb-4 font-size-15">
-          No hay notas asociadas a los criterios seleccionados. Puedes crear una nueva nota en este momento.
-        </p>
-        <button class="btn btn-indigo-gradient font-weight-bold px-4 py-3 text-white rounded-lg shadow-md" (click)="openCreateModal()">
-          <i class="typcn typcn-plus mr-1"></i> Crear mi primera nota
-        </button>
       </div>
     </div>
+
   </div>
+
 </div>
 
 <!-- Modal para Crear/Editar Nota -->

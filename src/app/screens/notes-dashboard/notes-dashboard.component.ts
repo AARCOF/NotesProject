@@ -4,6 +4,8 @@ import { Note, PriorityLevel, NoteStatus } from '../../models/note.model';
 import { Category } from '../../models/category.model';
 import { NotesService } from '../../services/notes.service';
 import { CategoriesService } from '../../services/categories.service';
+import { VerificationKeyService } from '../../core/services/verification-key.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-notes-dashboard',
@@ -16,6 +18,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
 
   isLoading: boolean = true;
+  reminderMessage: string = '';
   private subscriptions: Subscription = new Subscription();
 
   searchTerm: string = '';
@@ -30,7 +33,9 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private notesService: NotesService,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    private verificationKeyService: VerificationKeyService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +52,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
         this.applyFilters();
         setTimeout(() => {
           this.isLoading = false;
-        }, 350);
+        }, 300);
       })
     );
   }
@@ -123,13 +128,38 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.notesService.togglePin(note.id);
   }
 
+  sendEmailReminder(note: Note): void {
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      alert('Debes estar autenticado para enviar recordatorios.');
+      return;
+    }
+
+    const catName = this.getCategoryName(note.categoryId);
+    const priorityLabel = this.getPriorityLabel(note.priority);
+
+    this.verificationKeyService.sendTaskReminderEmail(
+      user.email,
+      note.title,
+      note.content,
+      catName,
+      priorityLabel,
+      note.dueDate
+    ).subscribe();
+
+    this.reminderMessage = `Recordatorio de la tarea "${note.title}" enviado a ${user.email}`;
+    setTimeout(() => {
+      this.reminderMessage = '';
+    }, 4000);
+  }
+
   getCategory(categoryId: string): Category | undefined {
     return this.categories.find(c => c.id === categoryId);
   }
 
   getCategoryColor(categoryId: string): string {
     const cat = this.getCategory(categoryId);
-    return cat ? cat.color : '#64748B';
+    return cat ? cat.color : '#059669';
   }
 
   getCategoryIcon(categoryId: string): string {

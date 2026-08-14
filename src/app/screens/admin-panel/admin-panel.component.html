@@ -1,0 +1,201 @@
+<div class="row mb-4">
+  <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <div>
+      <h3 class="font-weight-bold text-slate-800 mb-1 font-size-24">Panel de Administración de Usuarios</h3>
+      <p class="text-slate-500 mb-0 font-size-14">Gestión de credenciales, roles y permisos del sistema NoteYou.</p>
+    </div>
+    <span class="badge badge-pill badge-teal-light px-3 py-2 font-size-14 font-weight-bold">
+      Rol Actual: {{ getRoleLabel(currentUser?.role || 'user') }}
+    </span>
+  </div>
+</div>
+
+<!-- Tarjetas de Estadísticas de Usuarios -->
+<div class="row mb-4">
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card card-stat-custom bg-stat-teal text-white shadow-sm">
+      <div class="card-body p-4 d-flex align-items-center justify-content-between">
+        <div>
+          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Usuarios Totales</p>
+          <h2 class="font-weight-bold mb-0 font-size-28">{{ totalUsers }}</h2>
+        </div>
+        <div class="stat-icon-badge bg-white-20 text-white">
+          <i class="typcn typcn-group font-size-24"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card card-stat-custom bg-stat-purple text-white shadow-sm">
+      <div class="card-body p-4 d-flex align-items-center justify-content-between">
+        <div>
+          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Superadministradores</p>
+          <h2 class="font-weight-bold mb-0 font-size-28">{{ superAdminCount }}</h2>
+        </div>
+        <div class="stat-icon-badge bg-white-20 text-white">
+          <i class="typcn typcn-key font-size-24"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card card-stat-custom bg-stat-celeste text-white shadow-sm">
+      <div class="card-body p-4 d-flex align-items-center justify-content-between">
+        <div>
+          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Administradores</p>
+          <h2 class="font-weight-bold mb-0 font-size-28">{{ adminCount }}</h2>
+        </div>
+        <div class="stat-icon-badge bg-white-20 text-white">
+          <i class="typcn typcn-user-outline font-size-24"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card card-stat-custom bg-stat-emerald text-white shadow-sm">
+      <div class="card-body p-4 d-flex align-items-center justify-content-between">
+        <div>
+          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Cuentas Verificadas</p>
+          <h2 class="font-weight-bold mb-0 font-size-28">{{ verifiedCount }}</h2>
+        </div>
+        <div class="stat-icon-badge bg-white-20 text-white">
+          <i class="typcn typcn-tick font-size-24"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filtros de Usuarios -->
+<div class="card shadow-sm border-0 rounded-xl bg-white mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      
+      <div class="d-flex align-items-center flex-grow-1 mr-md-3 mb-3 mb-md-0" style="max-width: 460px;">
+        <div class="input-group input-group-custom">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-slate-100 border-0 text-slate-500">
+              <i class="typcn typcn-zoom font-size-18"></i>
+            </span>
+          </div>
+          <input 
+            type="text" 
+            class="form-control bg-slate-100 border-0 text-slate-800" 
+            placeholder="Buscar por nombre o correo electrónico..." 
+            [(ngModel)]="searchTerm">
+        </div>
+      </div>
+
+      <div class="form-group mb-0">
+        <select class="form-control select-custom" [(ngModel)]="roleFilter">
+          <option value="all">Filtrar por Rol: Todos</option>
+          <option value="superadmin">Superadministrador</option>
+          <option value="admin">Administrador</option>
+          <option value="user">Usuario Común</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Tabla de Usuarios -->
+<div class="card shadow-sm border-0 rounded-xl bg-white overflow-hidden">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-slate-50 border-bottom">
+          <tr>
+            <th class="px-4 py-3 text-slate-600 font-weight-bold font-size-13">Usuario</th>
+            <th class="py-3 text-slate-600 font-weight-bold font-size-13">Correo Electrónico</th>
+            <th class="py-3 text-slate-600 font-weight-bold font-size-13">Rol Actual</th>
+            <th class="py-3 text-slate-600 font-weight-bold font-size-13">Verificación</th>
+            <th class="py-3 text-slate-600 font-weight-bold font-size-13">Estado Cuenta</th>
+            <th class="px-4 py-3 text-right text-slate-600 font-weight-bold font-size-13">Acciones de Control</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of filteredUsers">
+            
+            <td class="px-4 py-3">
+              <div class="d-flex align-items-center">
+                <div class="avatar-circle-sm bg-gradient-teal text-white font-weight-bold mr-3">
+                  {{ u.name.charAt(0).toUpperCase() }}
+                </div>
+                <div>
+                  <h6 class="mb-0 font-weight-bold text-slate-800 font-size-14">{{ u.name }}</h6>
+                  <small class="text-slate-400 font-size-11">Registrado {{ u.createdAt | date:'mediumDate' }}</small>
+                </div>
+              </div>
+            </td>
+
+            <td class="py-3 font-size-14 text-slate-700 font-weight-medium">
+              {{ u.email }}
+            </td>
+
+            <td class="py-3">
+              <span class="badge {{ getRoleBadgeClass(u.role) }} px-3 py-2">
+                {{ getRoleLabel(u.role) }}
+              </span>
+            </td>
+
+            <td class="py-3">
+              <span class="badge badge-pill font-weight-bold px-3 py-1" [class.badge-success-soft]="u.isVerified" [class.badge-warning-soft]="!u.isVerified">
+                {{ u.isVerified ? 'Verificado' : 'Pendiente' }}
+              </span>
+            </td>
+
+            <td class="py-3">
+              <span class="badge badge-pill font-weight-bold px-3 py-1" [class.badge-teal-soft]="u.isActive !== false" [class.badge-danger-soft]="u.isActive === false">
+                {{ u.isActive !== false ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+
+            <td class="px-4 py-3 text-right">
+              <div class="btn-group">
+                
+                <!-- Selector de Rol (Superadmin Únicamente) -->
+                <div class="dropdown mr-2" ngbDropdown *ngIf="isSuperAdmin">
+                  <button class="btn btn-sm btn-outline-teal font-weight-semibold dropdown-toggle" ngbDropdownToggle>
+                    Cambiar Rol
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right shadow-md border-0" ngbDropdownMenu>
+                    <button class="dropdown-item" (click)="changeRole(u, 'superadmin')">Superadministrador</button>
+                    <button class="dropdown-item" (click)="changeRole(u, 'admin')">Administrador</button>
+                    <button class="dropdown-item" (click)="changeRole(u, 'user')">Usuario Común</button>
+                  </div>
+                </div>
+
+                <!-- Botón de Estado Inactivo/Activo (Superadmin Únicamente) -->
+                <button 
+                  type="button" 
+                  class="btn btn-sm mr-2 font-weight-semibold" 
+                  [class.btn-outline-danger]="u.isActive !== false" 
+                  [class.btn-outline-success]="u.isActive === false"
+                  *ngIf="isSuperAdmin" 
+                  (click)="toggleActive(u)" 
+                  [title]="u.isActive !== false ? 'Desactivar Cuenta' : 'Activar Cuenta'">
+                  {{ u.isActive !== false ? 'Desactivar' : 'Activar' }}
+                </button>
+
+                <!-- Botón de Verificación (Admin y Superadmin) -->
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-outline-primary font-weight-semibold" 
+                  (click)="toggleVerification(u)"
+                  [title]="u.isVerified ? 'Marcar como pendiente' : 'Verificar manualmente'">
+                  {{ u.isVerified ? 'Desverificar' : 'Verificar' }}
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

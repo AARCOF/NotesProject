@@ -34,7 +34,7 @@ export class VerificationKeyService {
   }
 
   public sendVerificationEmail(toEmail: string, securityKey: string, expiresAt: number): Observable<boolean> {
-    const subject = 'Llave de Seguridad para Activar tu Cuenta StarNotes';
+    const subject = 'Llave de Seguridad para Activar tu Cuenta NoteYou';
     const emailData: EmailLog = {
       toEmail,
       subject,
@@ -45,14 +45,10 @@ export class VerificationKeyService {
     };
     this.lastSentEmailSubject.next(emailData);
 
-    const emailjsServiceId = 'service_starnotes';
-    const emailjsTemplateId = 'template_starnotes';
-    const emailjsUserId = 'user_starnotes_public';
-
     const payload = {
-      service_id: emailjsServiceId,
-      template_id: emailjsTemplateId,
-      user_id: emailjsUserId,
+      service_id: 'service_noteyou',
+      template_id: 'template_verification',
+      user_id: 'user_noteyou_public',
       template_params: {
         to_email: toEmail,
         security_key: securityKey,
@@ -63,9 +59,37 @@ export class VerificationKeyService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     return this.http.post('https://api.emailjs.com/api/v1.0/email/send', payload, { headers, responseType: 'text' }).pipe(
-      catchError(() => {
-        return of(true);
-      })
+      catchError(() => of(true))
+    ) as Observable<any>;
+  }
+
+  public sendTaskReminderEmail(
+    toEmail: string, 
+    taskTitle: string, 
+    taskContent: string, 
+    categoryName: string, 
+    priority: string, 
+    dueDate?: string
+  ): Observable<boolean> {
+    const subject = `Recordatorio NoteYou: ${taskTitle}`;
+    const payload = {
+      service_id: 'service_noteyou',
+      template_id: 'template_task_reminder',
+      user_id: 'user_noteyou_public',
+      template_params: {
+        to_email: toEmail,
+        task_title: taskTitle,
+        task_content: taskContent,
+        category: categoryName,
+        priority: priority,
+        due_date: dueDate || 'Sin fecha de vencimiento'
+      }
+    };
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.post('https://api.emailjs.com/api/v1.0/email/send', payload, { headers, responseType: 'text' }).pipe(
+      catchError(() => of(true))
     ) as Observable<any>;
   }
 

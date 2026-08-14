@@ -4,13 +4,13 @@
     <li class="nav-item nav-profile px-3 py-3 border-bottom-slate" *ngIf="currentUser">
       <div class="nav-link p-0 d-flex align-items-center">
         <div class="profile-image mr-3">
-          <div class="avatar-circle-sm bg-gradient-indigo text-white font-weight-bold shadow-xs">
+          <div class="avatar-circle-sm bg-gradient-teal text-white font-weight-bold shadow-xs">
             {{ currentUser.name.charAt(0).toUpperCase() }}
           </div>
         </div>
         <div class="text-wrapper">
           <p class="profile-name mb-0 font-weight-bold text-white font-size-14">{{ currentUser.name }}</p>
-          <p class="designation mb-0 text-indigo-300 font-size-12">Usuario Verificado</p>
+          <p class="designation mb-0 text-teal-300 font-size-12">{{ getRoleLabel(currentUser.role) }}</p>
         </div>
       </div>
     </li>
@@ -21,27 +21,28 @@
 
     <li class="nav-item">
       <a class="nav-link py-3 px-4" routerLink="/dashboard" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-document-text text-indigo-400 font-size-20 mr-3"></i>
+        <i class="menu-icon typcn typcn-document-text text-teal-400 font-size-20 mr-3"></i>
         <span class="menu-title font-weight-semibold font-size-15">Mis Notas</span>
       </a>
     </li>
 
     <li class="nav-item">
       <a class="nav-link py-3 px-4" routerLink="/categories" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-folder-open text-amber-400 font-size-20 mr-3"></i>
+        <i class="menu-icon typcn typcn-folder-open text-celeste-400 font-size-20 mr-3"></i>
         <span class="menu-title font-weight-semibold font-size-15">Categorías</span>
+      </a>
+    </li>
+
+    <!-- Opción de Administración (Superadmin y Admin Únicamente) -->
+    <li class="nav-item" *ngIf="isAdminOrSuperAdmin">
+      <a class="nav-link py-3 px-4" routerLink="/admin-panel" routerLinkActive="active">
+        <i class="menu-icon typcn typcn-cog text-purple-400 font-size-20 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-15">Administración</span>
       </a>
     </li>
 
     <li class="nav-category-header font-weight-bold text-slate-400 px-4 py-3 mt-3 text-uppercase font-size-11 letter-spacing-1">
       Seguridad y Cuenta
-    </li>
-
-    <li class="nav-item" *ngIf="currentUser">
-      <a class="nav-link py-3 px-4" routerLink="/verify-email" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-lock-closed text-indigo-400 font-size-20 mr-3"></i>
-        <span class="menu-title font-size-15">Verificación de Llave</span>
-      </a>
     </li>
 
     <li class="nav-item" *ngIf="currentUser">

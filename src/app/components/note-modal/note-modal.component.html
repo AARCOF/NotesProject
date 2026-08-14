@@ -12,9 +12,9 @@
           </div>
           <div>
             <h5 class="modal-title font-weight-bold mb-0 font-size-18">
-              {{ noteToEdit ? 'Editar Nota' : 'Crear Nueva Nota' }}
+              {{ noteToEdit ? 'Editar Tarea' : 'Crear Nueva Tarea' }}
             </h5>
-            <small class="text-white-80 font-weight-medium">Formulario de registro de tareas</small>
+            <small class="text-white-80 font-weight-medium">Formulario de registro en NoteYou</small>
           </div>
         </div>
         <button type="button" class="btn-close-custom" (click)="onClose()" aria-label="Close">
@@ -26,7 +26,7 @@
         <div class="modal-body p-4 bg-white">
           
           <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Título de la Nota <span class="text-danger">*</span></label>
+            <label class="font-weight-bold text-slate-700 font-size-14">Título de la Tarea <span class="text-danger">*</span></label>
             <input 
               type="text" 
               class="form-control input-custom" 
@@ -56,19 +56,19 @@
                 <div class="form-check form-check-inline mb-0">
                   <input class="form-check-input" type="radio" name="priority" id="prioAlta" value="alta" [(ngModel)]="priority">
                   <label class="form-check-label text-rose-600 font-weight-bold cursor-pointer" for="prioAlta">
-                    🔴 Alta
+                    Alta
                   </label>
                 </div>
                 <div class="form-check form-check-inline mb-0">
                   <input class="form-check-input" type="radio" name="priority" id="prioMedia" value="media" [(ngModel)]="priority">
                   <label class="form-check-label text-amber-600 font-weight-bold cursor-pointer" for="prioMedia">
-                    🟡 Media
+                    Media
                   </label>
                 </div>
                 <div class="form-check form-check-inline mb-0">
                   <input class="form-check-input" type="radio" name="priority" id="prioBaja" value="baja" [(ngModel)]="priority">
                   <label class="form-check-label text-emerald-600 font-weight-bold cursor-pointer" for="prioBaja">
-                    🟢 Baja
+                    Baja
                   </label>
                 </div>
               </div>
@@ -77,11 +77,11 @@
 
           <div class="row">
             <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">Estado de la Nota</label>
+              <label class="font-weight-bold text-slate-700 font-size-14">Estado de la Tarea</label>
               <select class="form-control input-custom" [(ngModel)]="status" name="status">
-                <option value="pendiente">⏳ Pendiente</option>
-                <option value="en_progreso">⚡ En Progreso</option>
-                <option value="completada">✅ Completada</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_progreso">En Progreso</option>
+                <option value="completada">Completada</option>
               </select>
             </div>
 
@@ -96,7 +96,7 @@
             <textarea 
               class="form-control input-custom" 
               rows="4" 
-              placeholder="Escribe los detalles de tu nota aquí..." 
+              placeholder="Escribe los detalles de tu tarea aquí..." 
               [(ngModel)]="content" 
               name="content"></textarea>
           </div>
@@ -104,7 +104,7 @@
           <div class="form-group form-check mb-0">
             <input type="checkbox" class="form-check-input" id="isPinnedCheck" [(ngModel)]="isPinned" name="isPinned">
             <label class="form-check-label text-slate-800 font-weight-semibold cursor-pointer" for="isPinnedCheck">
-              📌 Fijar esta nota al inicio de la lista
+              Fijar esta tarea al inicio de la lista
             </label>
           </div>
 
@@ -112,8 +112,8 @@
 
         <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
           <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg mr-2" (click)="onClose()">Cancelar</button>
-          <button type="submit" class="btn btn-gradient-indigo px-4 font-weight-bold text-white" [disabled]="!title.trim()">
-            {{ noteToEdit ? 'Guardar Cambios' : 'Crear Nota' }}
+          <button type="submit" class="btn btn-gradient-teal px-4 font-weight-bold text-white" [disabled]="!title.trim()">
+            {{ noteToEdit ? 'Guardar Cambios' : 'Crear Tarea' }}
           </button>
         </div>
       </form>

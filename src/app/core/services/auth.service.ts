@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../models/user.model';
+import { User, UserRole } from '../models/user.model';
 import { UserRepository } from '../repositories/user.repository';
 import { JwtService } from './jwt.service';
 import { VerificationKeyService } from './verification-key.service';
@@ -28,7 +28,7 @@ export class AuthService {
       const payload = this.jwtService.decodeToken(token);
       if (payload) {
         const user = this.userRepository.findById(payload.sub);
-        if (user && user.isVerified) {
+        if (user && user.isVerified && user.isActive !== false) {
           this.currentUserSubject.next(user);
           return;
         }
@@ -56,10 +56,13 @@ export class AuthService {
       name,
       email: email.trim().toLowerCase(),
       passwordHash: btoa(password),
+      role: 'user',
       isVerified: false,
+      isActive: true,
       verificationKey: securityKey,
       keyExpiresAt: expiresAt,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      hasCompletedTutorial: false
     };
 
     this.userRepository.saveUser(newUser);
@@ -89,7 +92,7 @@ export class AuthService {
     user.keyExpiresAt = undefined;
     this.userRepository.updateUser(user);
 
-    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email });
+    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email, role: user.role });
     this.jwtService.saveToken(token);
     this.currentUserSubject.next(user);
 
@@ -124,6 +127,10 @@ export class AuthService {
       return { success: false, message: 'Credenciales inválidas. Por favor verifica tu correo y contraseña.' };
     }
 
+    if (user.isActive === false) {
+      return { success: false, message: 'Tu cuenta ha sido desactivada por un administrador del sistema.' };
+    }
+
     if (!user.isVerified) {
       return { 
         success: false, 
@@ -132,7 +139,7 @@ export class AuthService {
       };
     }
 
-    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email });
+    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email, role: user.role });
     this.jwtService.saveToken(token);
     this.currentUserSubject.next(user);
 
@@ -153,5 +160,24 @@ export class AuthService {
 
   public getCurrentUser(): User | null {
     return this.currentUserSubject.getValue();
+  }
+
+  public isSuperAdmin(): boolean {
+    const u = this.getCurrentUser();
+    return u?.role === 'superadmin';
+  }
+
+  public isAdminOrSuperAdmin(): boolean {
+    const u = this.getCurrentUser();
+    return u?.role === 'superadmin' || u?.role === 'admin';
+  }
+
+  public markTutorialAsCompleted(): void {
+    const user = this.getCurrentUser();
+    if (user) {
+      user.hasCompletedTutorial = true;
+      this.userRepository.updateUser(user);
+      this.currentUserSubject.next(user);
+    }
   }
 }
