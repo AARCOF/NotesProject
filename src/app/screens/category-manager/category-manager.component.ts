@@ -13,32 +13,31 @@ import { NotesService } from '../../services/notes.service';
 export class CategoryManagerComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
   notes: Note[] = [];
+  isLoading: boolean = true;
+
   private subscriptions: Subscription = new Subscription();
 
-  // Form State for creating/editing category
   isModalOpen: boolean = false;
   categoryToEdit: Category | null = null;
 
   name: string = '';
   description: string = '';
-  color: string = '#4B49AC';
+  color: string = '#4F46E5';
   icon: string = 'typcn-book';
 
-  // Preset Colors
   presetColors: string[] = [
-    '#4B49AC', '#FF4747', '#FFC107', '#28A745', '#17A2B8',
-    '#6f42c1', '#e83e8c', '#fd7e14', '#20c997', '#343a40'
+    '#4F46E5', '#EF4444', '#F59E0B', '#10B981', '#06B6D4',
+    '#8B5CF6', '#EC4899', '#F97316', '#14B8A6', '#334155'
   ];
 
-  // Preset Icons
   presetIcons: { icon: string; label: string }[] = [
-    { icon: 'typcn-book', label: 'Libro / Estudio' },
+    { icon: 'typcn-book', label: 'Libro y Estudio' },
     { icon: 'typcn-home', label: 'Hogar' },
     { icon: 'typcn-briefcase', label: 'Trabajo' },
     { icon: 'typcn-user', label: 'Personal' },
     { icon: 'typcn-calculator', label: 'Finanzas' },
     { icon: 'typcn-star', label: 'Favoritos' },
-    { icon: 'typcn-heart', label: 'Salud / Bienestar' },
+    { icon: 'typcn-heart', label: 'Salud' },
     { icon: 'typcn-shopping-cart', label: 'Compras' },
     { icon: 'typcn-code', label: 'Programación' },
     { icon: 'typcn-plane', label: 'Viajes' },
@@ -55,6 +54,9 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.categoriesService.categories$.subscribe(cats => {
         this.categories = cats;
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 300);
       })
     );
 
@@ -77,7 +79,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     this.categoryToEdit = null;
     this.name = '';
     this.description = '';
-    this.color = '#4B49AC';
+    this.color = '#4F46E5';
     this.icon = 'typcn-book';
     this.isModalOpen = true;
   }
@@ -120,13 +122,13 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
 
   deleteCategory(category: Category): void {
     if (category.isSystem) {
-      alert('Las categorías principales del sistema no se pueden eliminar.');
+      alert('Las categorías principales no se pueden eliminar.');
       return;
     }
 
     const count = this.getNoteCountForCategory(category.id);
     const msg = count > 0 
-      ? `La categoría "${category.name}" tiene ${count} nota(s) asignada(s). ¿Estás seguro de eliminarla?`
+      ? `La categoría "${category.name}" tiene ${count} nota asignada. ¿Estás seguro de eliminarla?`
       : `¿Estás seguro de eliminar la categoría "${category.name}"?`;
 
     if (confirm(msg)) {

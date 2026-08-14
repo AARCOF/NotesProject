@@ -1,0 +1,118 @@
+.bg-gradient-light {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+}
+
+.auth-card-modern {
+  border-radius: 20px !important;
+  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.12) !important;
+  animation: cardPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+}
+
+.icon-avatar-lg {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-indigo {
+  background-color: #EEF2FF;
+  border-left: 4px solid #6366F1 !important;
+}
+
+.input-group-custom-auth {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid #E2E8F0;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3.5px rgba(99, 102, 241, 0.12);
+  }
+
+  .input-group-text {
+    background-color: #F8FAFC;
+    border: none;
+    color: #64748B;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .form-control {
+    border: none;
+    height: 48px;
+    font-size: 0.9375rem;
+    background-color: #ffffff;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+.btn-gradient-primary {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4) !important;
+  }
+}
+
+.alert-danger-custom {
+  background-color: #FEF2F2;
+  color: #991B1B;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.alert-success-custom {
+  background-color: #ECFDF5;
+  color: #065F46;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.text-indigo {
+  color: #4F46E5 !important;
+}
+
+.text-indigo-dark {
+  color: #3730A3 !important;
+}
+
+.text-slate-800 {
+  color: #1E293B !important;
+}
+
+.text-slate-700 {
+  color: #334155 !important;
+}
+
+.text-slate-500 {
+  color: #64748B !important;
+}
+
+.text-slate-900 {
+  color: #0F172A !important;
+}

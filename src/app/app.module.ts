@@ -1,4 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -17,6 +18,7 @@ import { NotesDashboardComponent } from "./screens/notes-dashboard/notes-dashboa
 import { CategoryManagerComponent } from "./screens/category-manager/category-manager.component";
 import { NoteModalComponent } from "./components/note-modal/note-modal.component";
 import { RecaptchaComponent } from "./components/recaptcha/recaptcha.component";
+import { SkeletonLoaderComponent } from "./components/skeleton-loader/skeleton-loader.component";
 
 import { LoginComponent } from "./sample-pages/login/login.component";
 import { RegisterComponent } from "./sample-pages/register/register.component";
@@ -36,12 +38,14 @@ import { AuthGuard } from "./core/guards/auth.guard";
     CategoryManagerComponent,
     NoteModalComponent,
     RecaptchaComponent,
+    SkeletonLoaderComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     RouterModule,
     AppRoutingModule,
     FormsModule,

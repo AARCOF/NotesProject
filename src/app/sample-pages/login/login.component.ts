@@ -24,7 +24,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     
-    // If already logged in, go to dashboard
     if (this.authService.isAuthenticated()) {
       this.router.navigate([this.returnUrl]);
     }
@@ -45,7 +44,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = false;
 
       if (result.success) {
-        this.successMessage = '¡Autenticado con JWT! Redirigiendo...';
+        this.successMessage = '¡Inicio de sesión exitoso! Redirigiendo...';
         setTimeout(() => {
           this.router.navigateByUrl(this.returnUrl);
         }, 800);
