@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { UserRepository } from '../repositories/user.repository';
-import { JwtService, JwtPayload } from './jwt.service';
+import { JwtService } from './jwt.service';
 import { VerificationKeyService } from './verification-key.service';
 import { RecaptchaService } from './recaptcha.service';
 
@@ -40,7 +40,7 @@ export class AuthService {
 
   public register(name: string, email: string, password: string): { success: boolean; message: string; email?: string } {
     if (!this.recaptchaService.isVerified()) {
-      return { success: false, message: 'Por favor completa la verificación reCAPTCHA ("No soy un robot").' };
+      return { success: false, message: 'Por favor completa la verificación reCAPTCHA No soy un robot.' };
     }
 
     const existing = this.userRepository.findByEmail(email);
@@ -63,12 +63,12 @@ export class AuthService {
     };
 
     this.userRepository.saveUser(newUser);
-    this.verificationKeyService.sendVerificationEmail(newUser.email, securityKey, expiresAt);
+    this.verificationKeyService.sendVerificationEmail(newUser.email, securityKey, expiresAt).subscribe();
     this.recaptchaService.reset();
 
     return { 
       success: true, 
-      message: `Cuenta creada exitosamente. Se ha enviado una llave de seguridad de 6 dígitos a ${newUser.email} (válida durante 1 hora).`,
+      message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${newUser.email} válido por 1 hora.`,
       email: newUser.email
     };
   }
@@ -93,7 +93,7 @@ export class AuthService {
     this.jwtService.saveToken(token);
     this.currentUserSubject.next(user);
 
-    return { success: true, message: '¡Cuenta verificada exitosamente! Se ha iniciado sesión.' };
+    return { success: true, message: 'Cuenta verificada exitosamente. Se ha iniciado sesión.' };
   }
 
   public resendVerificationKey(email: string): { success: boolean; message: string } {
@@ -109,14 +109,14 @@ export class AuthService {
     user.keyExpiresAt = expiresAt;
     this.userRepository.updateUser(user);
 
-    this.verificationKeyService.sendVerificationEmail(user.email, newKey, expiresAt);
+    this.verificationKeyService.sendVerificationEmail(user.email, newKey, expiresAt).subscribe();
 
-    return { success: true, message: `Se ha generado una nueva llave de seguridad enviada a ${user.email} (válida por 1 hora).` };
+    return { success: true, message: `Se ha enviado un nuevo código de acceso a ${user.email} con validez de 1 hora.` };
   }
 
   public login(email: string, password: string): { success: boolean; message: string; requiresVerification?: boolean } {
     if (!this.recaptchaService.isVerified()) {
-      return { success: false, message: 'Por favor completa la verificación reCAPTCHA ("No soy un robot").' };
+      return { success: false, message: 'Por favor completa la verificación reCAPTCHA No soy un robot.' };
     }
 
     const user = this.userRepository.findByEmail(email);
@@ -127,7 +127,7 @@ export class AuthService {
     if (!user.isVerified) {
       return { 
         success: false, 
-        message: 'Tu cuenta requiere verificación por correo. Ingresa la llave de 6 dígitos que expira en 1 hora.',
+        message: 'Tu cuenta requiere verificación por correo. Ingresa el código de 6 dígitos enviado.',
         requiresVerification: true 
       };
     }

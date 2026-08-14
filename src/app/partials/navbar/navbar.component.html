@@ -1,60 +1,59 @@
-<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-  <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row bg-white shadow-sm border-bottom">
+  <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center bg-gradient-indigo">
     <a class="navbar-brand brand-logo text-white font-weight-bold d-flex align-items-center justify-content-center text-decoration-none" routerLink="/dashboard">
-      <i class="typcn typcn-document-text text-warning mr-2 font-size-26"></i>
-      <span>StarNotes</span>
+      <i class="typcn typcn-document-text text-amber-400 mr-2 font-size-26"></i>
+      <span class="letter-spacing-1">StarNotes</span>
     </a>
     <a class="navbar-brand brand-logo-mini text-white font-weight-bold" routerLink="/dashboard">
-      <i class="typcn typcn-document-text text-warning font-size-26"></i>
+      <i class="typcn typcn-document-text text-amber-400 font-size-26"></i>
     </a>
   </div>
-  <div class="navbar-menu-wrapper d-flex align-items-center">
-    <button class="navbar-toggler navbar-toggler align-self-center" type="button" (click)="toggleIconOnlySidebar()">
+  <div class="navbar-menu-wrapper d-flex align-items-center px-4">
+    <button class="navbar-toggler navbar-toggler align-self-center border-0 bg-transparent text-slate-600" type="button" (click)="toggleIconOnlySidebar()">
       <span class="typcn typcn-th-menu font-size-22"></span>
     </button>
     
     <div class="navbar-nav ml-3 d-none d-md-flex align-items-center">
-      <span class="badge badge-success px-2 py-1 mr-2">
-        <i class="typcn typcn-key-outline mr-1"></i> Sesión JWT Activa
+      <span class="badge badge-emerald-soft px-3 py-2 border-0">
+        <i class="typcn typcn-key-outline mr-1"></i> Sesión Autenticada
       </span>
     </div>
 
     <ul class="navbar-nav navbar-nav-right ml-auto">
       
-      <!-- Usuario / Perfil / Cerrar Sesión -->
       <li class="nav-item dropdown" ngbDropdown *ngIf="currentUser">
-        <a class="nav-link dropdown-toggle d-flex align-items-center" id="UserDropdown" ngbDropdownToggle style="cursor: pointer;">
-          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mr-2" style="width: 36px; height: 36px; font-weight: bold;">
+        <a class="nav-link dropdown-toggle d-flex align-items-center text-decoration-none" id="UserDropdown" ngbDropdownToggle style="cursor: pointer;">
+          <div class="avatar-circle-sm bg-gradient-indigo text-white font-weight-bold mr-2 shadow-xs">
             {{ currentUser.name.charAt(0).toUpperCase() }}
           </div>
-          <span class="font-weight-semibold text-dark d-none d-md-inline">{{ currentUser.name }}</span>
+          <span class="font-weight-semibold text-slate-800 d-none d-md-inline">{{ currentUser.name }}</span>
         </a>
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" ngbDropdownMenu aria-labelledby="UserDropdown">
-          <div class="dropdown-header text-center p-3 border-bottom">
-            <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" style="width: 48px; height: 48px; font-size: 1.2rem; font-weight: bold;">
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown rounded-xl shadow-lg border-0 p-0 overflow-hidden" ngbDropdownMenu aria-labelledby="UserDropdown">
+          <div class="dropdown-header text-center p-4 bg-slate-50 border-bottom">
+            <div class="avatar-circle-lg bg-gradient-indigo text-white mx-auto mb-2 font-weight-bold shadow-xs">
               {{ currentUser.name.charAt(0).toUpperCase() }}
             </div>
-            <p class="mb-0 font-weight-bold text-dark">{{ currentUser.name }}</p>
-            <p class="font-weight-light text-muted mb-0 small">{{ currentUser.email }}</p>
-            <span class="badge badge-pill badge-success mt-2">
+            <p class="mb-0 font-weight-bold text-slate-800 font-size-16">{{ currentUser.name }}</p>
+            <p class="font-weight-medium text-slate-500 mb-0 font-size-13">{{ currentUser.email }}</p>
+            <span class="badge badge-emerald-soft mt-2 px-3 py-1 font-weight-bold">
               <i class="typcn typcn-tick mr-1"></i> Cuenta Verificada
             </span>
           </div>
-          <a class="dropdown-item py-2 text-danger cursor-pointer" (click)="logout()">
-            <i class="typcn typcn-power-outline mr-2 text-danger"></i> Cerrar Sesión (JWT)
+          <a class="dropdown-item py-3 text-rose-600 font-weight-bold cursor-pointer hover-bg-rose" (click)="logout()">
+            <i class="typcn typcn-power-outline mr-2 font-size-18"></i> Cerrar Sesión
           </a>
         </div>
       </li>
 
       <li class="nav-item" *ngIf="!currentUser">
-        <a routerLink="/login" class="btn btn-sm btn-primary font-weight-bold">
+        <a routerLink="/login" class="btn btn-indigo-gradient font-weight-bold text-white px-4">
           Iniciar Sesión
         </a>
       </li>
 
     </ul>
     
-    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center ml-auto pr-0" type="button" (click)="toggleRightSidebar()">
+    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center ml-auto pr-0 border-0 bg-transparent text-slate-600" type="button" (click)="toggleRightSidebar()">
       <span class="typcn typcn-th-menu font-size-22"></span>
     </button>
   </div>

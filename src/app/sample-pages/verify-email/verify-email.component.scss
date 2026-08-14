@@ -1,27 +1,120 @@
-.letter-spacing-2 {
-  letter-spacing: 4px;
+.bg-gradient-light {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
 }
 
-.letter-spacing-3 {
-  letter-spacing: 8px;
-  font-size: 1.5rem;
+.bg-gradient-indigo {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
 }
 
-.font-size-20 {
-  font-size: 1.25rem;
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
 }
 
-.font-size-30 {
-  font-size: 1.875rem;
+.bg-light-indigo {
+  background-color: #EEF2FF;
 }
 
-.icon-circle {
+.border-indigo {
+  border-color: #C7D2FE !important;
+}
+
+.border-indigo-light {
+  border-color: #A5B4FC !important;
+}
+
+.text-indigo {
+  color: #4F46E5 !important;
+}
+
+.text-indigo-dark {
+  color: #3730A3 !important;
+}
+
+.btn-indigo {
+  background-color: #4F46E5;
+  color: #ffffff;
+  border: none;
+  &:hover {
+    background-color: #4338CA;
+    color: #ffffff;
+  }
+}
+
+.btn-outline-indigo {
+  border: 2px solid #6366F1;
+  color: #4F46E5;
+  background-color: transparent;
+  &:hover {
+    background-color: #6366F1;
+    color: #ffffff;
+  }
+}
+
+.btn-gradient-primary {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4) !important;
+  }
+}
+
+.rounded-xl {
+  border-radius: 16px !important;
+}
+
+.icon-avatar-lg {
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.auth-form-light {
-  background: #ffffff;
+.letter-spacing-3 {
+  letter-spacing: 6px;
+}
+
+.letter-spacing-4 {
+  letter-spacing: 10px;
+  font-size: 1.75rem;
+}
+
+.input-key-code {
+  height: 56px;
+  font-size: 1.5rem;
+  border-radius: 12px;
+  &:focus {
+    border-color: #4F46E5 !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+  }
+}
+
+.alert-info-custom {
+  background-color: #EEF2FF;
+  color: #3730A3;
+}
+
+.alert-danger-custom {
+  background-color: #FEF2F2;
+  color: #991B1B;
+}
+
+.alert-success-custom {
+  background-color: #ECFDF5;
+  color: #065F46;
+}
+
+.text-slate-800 {
+  color: #1E293B !important;
+}
+
+.text-slate-700 {
+  color: #334155 !important;
+}
+
+.text-slate-500 {
+  color: #64748B !important;
 }
