@@ -1,0 +1,117 @@
+<div class="modal-backdrop fade show" *ngIf="isVisible" (click)="onClose()"></div>
+
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content shadow-lg border-0">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title font-weight-bold d-flex align-items-center">
+          <i class="typcn typcn-document-add mr-2" *ngIf="!noteToEdit"></i>
+          <i class="typcn typcn-edit mr-2" *ngIf="noteToEdit"></i>
+          {{ noteToEdit ? 'Editar Nota' : 'Crear Nueva Nota' }}
+        </h5>
+        <button type="button" class="close text-white" (click)="onClose()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="modal-body p-4">
+          <!-- Título -->
+          <div class="form-group mb-3">
+            <label class="font-weight-semibold text-dark">Título de la Nota <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              class="form-control form-control-lg border-muted shadow-sm" 
+              placeholder="Ej: Repasar Cálculo o Comprar víveres" 
+              [(ngModel)]="title" 
+              name="title" 
+              required
+              #titleInput="ngModel">
+            <small class="text-danger" *ngIf="titleInput.invalid && titleInput.touched">
+              El título es obligatorio.
+            </small>
+          </div>
+
+          <!-- Fila de Categoría y Prioridad -->
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-semibold text-dark">Categoría <span class="text-danger">*</span></label>
+              <select class="form-control border-muted shadow-sm" [(ngModel)]="categoryId" name="categoryId" required>
+                <option *ngFor="let cat of categories" [value]="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-semibold text-dark">Nivel de Prioridad <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center justify-content-between p-2 rounded border bg-light">
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="priority" id="prioAlta" value="alta" [(ngModel)]="priority">
+                  <label class="form-check-label text-danger font-weight-bold" for="prioAlta">
+                    🔴 Alta
+                  </label>
+                </div>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="priority" id="prioMedia" value="media" [(ngModel)]="priority">
+                  <label class="form-check-label text-warning font-weight-bold" for="prioMedia">
+                    🟡 Media
+                  </label>
+                </div>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="priority" id="prioBaja" value="baja" [(ngModel)]="priority">
+                  <label class="form-check-label text-success font-weight-bold" for="prioBaja">
+                    🟢 Baja
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila de Estado y Fecha Límite -->
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-semibold text-dark">Estado de la Nota</label>
+              <select class="form-control border-muted shadow-sm" [(ngModel)]="status" name="status">
+                <option value="pendiente">⏳ Pendiente</option>
+                <option value="en_progreso">⚡ En Progreso</option>
+                <option value="completada">✅ Completada</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-semibold text-dark">Fecha Límite / Vencimiento</label>
+              <input type="date" class="form-control border-muted shadow-sm" [(ngModel)]="dueDate" name="dueDate">
+            </div>
+          </div>
+
+          <!-- Contenido / Descripción -->
+          <div class="form-group mb-3">
+            <label class="font-weight-semibold text-dark">Descripción / Detalle</label>
+            <textarea 
+              class="form-control border-muted shadow-sm" 
+              rows="4" 
+              placeholder="Escribe los detalles de tu nota aquí..." 
+              [(ngModel)]="content" 
+              name="content"></textarea>
+          </div>
+
+          <!-- Fijar Nota -->
+          <div class="form-group form-check mb-0">
+            <input type="checkbox" class="form-check-input" id="isPinnedCheck" [(ngModel)]="isPinned" name="isPinned">
+            <label class="form-check-label text-dark" for="isPinnedCheck">
+              📌 Fijar esta nota al inicio de la lista
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary px-4" (click)="onClose()">Cancelar</button>
+          <button type="submit" class="btn btn-primary px-4 font-weight-bold" [disabled]="!title.trim()">
+            {{ noteToEdit ? 'Guardar Cambios' : 'Crear Nota' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

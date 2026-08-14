@@ -1,0 +1,61 @@
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  <ul class="nav">
+    
+    <!-- Perfil del Usuario Autenticado -->
+    <li class="nav-item nav-profile" *ngIf="currentUser">
+      <div class="nav-link">
+        <div class="profile-image">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold; font-size: 1.1rem;">
+            {{ currentUser.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="dot-indicator bg-success"></div>
+        </div>
+        <div class="text-wrapper ml-2">
+          <p class="profile-name mb-0 font-weight-bold text-dark">{{ currentUser.name }}</p>
+          <p class="designation mb-0 text-muted small">JWT Autenticado</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="nav-category-header font-weight-bold text-muted px-3 py-2 text-uppercase small">
+      Navegación Principal
+    </li>
+
+    <!-- Item: Mis Notas / Dashboard -->
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+        <i class="menu-icon typcn typcn-document-text text-primary"></i>
+        <span class="menu-title font-weight-semibold">Mis Notas</span>
+      </a>
+    </li>
+
+    <!-- Item: Categorías -->
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/categories" routerLinkActive="active">
+        <i class="menu-icon typcn typcn-folder-open text-info"></i>
+        <span class="menu-title font-weight-semibold">Categorías</span>
+      </a>
+    </li>
+
+    <li class="nav-category-header font-weight-bold text-muted px-3 py-2 mt-3 text-uppercase small">
+      Seguridad & Cuenta
+    </li>
+
+    <!-- Item: Verificación de Cuenta -->
+    <li class="nav-item" *ngIf="currentUser">
+      <a class="nav-link" routerLink="/verify-email" routerLinkActive="active">
+        <i class="menu-icon typcn typcn-lock-closed text-warning"></i>
+        <span class="menu-title">Verificación de Llave</span>
+      </a>
+    </li>
+
+    <!-- Item: Cerrar Sesión -->
+    <li class="nav-item" *ngIf="currentUser">
+      <a class="nav-link cursor-pointer text-danger" (click)="logout()">
+        <i class="menu-icon typcn typcn-power-outline text-danger"></i>
+        <span class="menu-title font-weight-bold">Cerrar Sesión</span>
+      </a>
+    </li>
+
+  </ul>
+</nav>
