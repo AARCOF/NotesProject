@@ -1,8 +1,24 @@
+.fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .card-stat-gradient {
   border-radius: 16px;
   overflow: hidden;
   border: none;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
     transform: translateY(-4px);
@@ -41,7 +57,8 @@
 
 .card-note-modern {
   background: #ffffff;
-  transition: all 0.25s ease-in-out;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 
   &:hover {
@@ -79,7 +96,6 @@
   letter-spacing: 0.3px;
 }
 
-/* Custom Priority Badges */
 .badge-priority-high {
   background-color: #FEE2E2;
   color: #991B1B;
@@ -98,7 +114,6 @@
   border: 1px solid #6EE7B7;
 }
 
-/* Custom Status Badges */
 .badge-status-pending {
   background-color: #F1F5F9;
   color: #475569;

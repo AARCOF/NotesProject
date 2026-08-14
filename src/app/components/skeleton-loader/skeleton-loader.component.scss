@@ -1,0 +1,80 @@
+.card-skeleton {
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-line, .skeleton-pill, .skeleton-circle, .skeleton-avatar {
+  background: #E2E8F0;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+.skeleton-title {
+  height: 20px;
+  border-radius: 4px;
+}
+
+.skeleton-body {
+  height: 14px;
+  border-radius: 4px;
+}
+
+.skeleton-pill {
+  height: 24px;
+  border-radius: 12px;
+}
+
+.skeleton-category {
+  width: 90px;
+}
+
+.skeleton-priority {
+  width: 70px;
+}
+
+.skeleton-date {
+  width: 100px;
+}
+
+.skeleton-status {
+  width: 80px;
+}
+
+.skeleton-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeleton-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

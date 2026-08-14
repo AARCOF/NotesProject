@@ -10,7 +10,11 @@
   </div>
 </div>
 
-<div class="row">
+<!-- Skeleton Loader -->
+<app-skeleton-loader type="category" [count]="6" *ngIf="isLoading"></app-skeleton-loader>
+
+<!-- Listado de Categorías -->
+<div class="row fade-in-up" *ngIf="!isLoading">
   <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let cat of categories">
     <div class="card card-category-modern shadow-sm border-0 rounded-xl overflow-hidden">
       <div class="category-banner" [style.backgroundColor]="cat.color"></div>
@@ -59,19 +63,26 @@
 </div>
 
 <!-- Modal para Crear/Editar Categoría -->
-<div class="modal-backdrop fade show" *ngIf="isModalOpen" (click)="closeModal()"></div>
+<div class="modal-backdrop-custom" *ngIf="isModalOpen" (click)="closeModal()"></div>
 
-<div class="modal fade show d-block" *ngIf="isModalOpen" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered" role="document" (click)="$event.stopPropagation()">
-    <div class="modal-content shadow-lg border-0 rounded-xl overflow-hidden">
+<div class="modal-custom" *ngIf="isModalOpen" tabindex="-1" role="dialog">
+  <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom">
       
-      <div class="modal-header bg-gradient-indigo text-white p-4 border-0">
-        <h5 class="modal-title font-weight-bold d-flex align-items-center font-size-18">
-          <i class="typcn typcn-folder-add mr-2"></i>
-          {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
-        </h5>
-        <button type="button" class="close text-white" (click)="closeModal()">
-          <span aria-hidden="true">&times;</span>
+      <div class="modal-header-custom">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3">
+            <i class="typcn typcn-folder-add font-size-22"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-18">
+              {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
+            </h5>
+            <small class="text-white-80 font-weight-medium">Gestión de categorías de notas</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-custom" (click)="closeModal()">
+          <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
 
@@ -82,7 +93,7 @@
             <label class="font-weight-bold text-slate-700 font-size-14">Nombre de la Categoría <span class="text-danger">*</span></label>
             <input 
               type="text" 
-              class="form-control input-indigo" 
+              class="form-control input-custom" 
               placeholder="Ej: Estudio, Hogar, Gimnasio, Proyectos" 
               [(ngModel)]="name" 
               name="catName" 
@@ -92,7 +103,7 @@
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Descripción</label>
             <textarea 
-              class="form-control input-indigo" 
+              class="form-control input-custom" 
               rows="2" 
               placeholder="Breve descripción del propósito de la categoría..." 
               [(ngModel)]="description" 
@@ -136,9 +147,9 @@
 
         </div>
 
-        <div class="modal-footer bg-slate-50 p-3 border-top">
-          <button type="button" class="btn btn-secondary px-4 font-weight-bold" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-indigo-gradient px-4 font-weight-bold text-white" [disabled]="!name.trim()">
+        <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg mr-2" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-gradient-indigo px-4 font-weight-bold text-white" [disabled]="!name.trim()">
             {{ categoryToEdit ? 'Guardar Cambios' : 'Registrar Categoría' }}
           </button>
         </div>

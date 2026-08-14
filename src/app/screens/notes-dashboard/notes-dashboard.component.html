@@ -1,5 +1,8 @@
+<!-- Skeleton Loaders de Estadísticas -->
+<app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
+
 <!-- Tarjetas de Estadísticas Principales -->
-<div class="row">
+<div class="row fade-in-up" *ngIf="!isLoading">
   <div class="col-md-3 grid-margin stretch-card">
     <div class="card card-stat-gradient bg-stat-indigo text-white shadow-md">
       <div class="card-body p-4">
@@ -97,7 +100,6 @@
           <!-- Selectores de Orden y Filtros -->
           <div class="d-flex flex-wrap align-items-center gap-2">
             
-            <!-- Orden -->
             <div class="form-group mb-0 mr-2">
               <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedSort" (change)="onFilterChange()">
                 <option value="priority-desc">Ordenar: Prioridad Alta primero</option>
@@ -108,7 +110,6 @@
               </select>
             </div>
 
-            <!-- Filtro Prioridad -->
             <div class="form-group mb-0 mr-2">
               <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedPriority" (change)="onFilterChange()">
                 <option value="all">Prioridades: Todas</option>
@@ -118,7 +119,6 @@
               </select>
             </div>
 
-            <!-- Filtro Categoría -->
             <div class="form-group mb-0 mr-2">
               <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
                 <option value="all">Categorías: Todas</option>
@@ -128,7 +128,6 @@
               </select>
             </div>
 
-            <!-- Filtro Estado -->
             <div class="form-group mb-0 mr-2">
               <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
                 <option value="all">Estado: Todos</option>
@@ -138,7 +137,6 @@
               </select>
             </div>
 
-            <!-- Botón Crear Nota -->
             <button class="btn btn-indigo-gradient font-weight-bold shadow-sm d-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
               <i class="typcn typcn-plus mr-1 font-size-18"></i> Nueva Nota
             </button>
@@ -162,12 +160,14 @@
   </div>
 </div>
 
+<!-- Skeleton Loaders de Notas -->
+<app-skeleton-loader type="card" [count]="6" *ngIf="isLoading"></app-skeleton-loader>
+
 <!-- Listado de Notas (Cards) -->
-<div class="row" *ngIf="filteredNotes.length > 0">
+<div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length > 0">
   <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let note of filteredNotes">
     <div class="card card-note-modern shadow-sm border-0 rounded-xl position-relative d-flex flex-column justify-content-between" [class.pinned-note-card]="note.isPinned">
       
-      <!-- Franja Superior de Prioridad -->
       <div class="priority-accent-bar" [ngClass]="{
         'bg-rose-500': note.priority === 'alta',
         'bg-amber-500': note.priority === 'media',
@@ -177,7 +177,6 @@
       <div class="card-body p-4 d-flex flex-column justify-content-between">
         
         <div>
-          <!-- Cabecera: Categoría + Prioridad + Pin -->
           <div class="d-flex align-items-center justify-content-between mb-3">
             
             <span class="badge badge-category-modern text-white d-flex align-items-center px-3 py-1 shadow-xs" [style.backgroundColor]="getCategoryColor(note.categoryId)">
@@ -203,19 +202,16 @@
 
           </div>
 
-          <!-- Título de la Nota -->
           <h5 class="card-title font-weight-bold text-slate-800 mb-2 font-size-18" [class.text-completed]="note.status === 'completada'">
             {{ note.title }}
           </h5>
 
-          <!-- Contenido -->
           <p class="card-text text-slate-600 mb-4 font-size-14 line-height-relaxed" style="white-space: pre-line;">
             {{ note.content }}
           </p>
         </div>
 
         <div>
-          <!-- Meta Info: Vencimiento + Estado -->
           <div class="d-flex align-items-center justify-content-between pt-3 border-top mb-3">
             <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="note.dueDate">
               <i class="typcn typcn-calendar mr-1 text-indigo"></i>
@@ -231,7 +227,6 @@
             </span>
           </div>
 
-          <!-- Acciones Rápidas -->
           <div class="d-flex align-items-center justify-content-between">
             
             <button 
@@ -269,7 +264,7 @@
 </div>
 
 <!-- Estado Vacío -->
-<div class="row" *ngIf="filteredNotes.length === 0">
+<div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0">
   <div class="col-12">
     <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
       <div class="card-body">

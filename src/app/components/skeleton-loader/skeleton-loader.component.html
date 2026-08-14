@@ -1,0 +1,50 @@
+<!-- Skeletons para Tarjetas de Notas -->
+<div class="row" *ngIf="type === 'card'">
+  <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let item of arrayFromCount">
+    <div class="card card-skeleton shadow-sm border-0 rounded-xl p-4 w-100">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="skeleton-pill skeleton-category"></div>
+        <div class="skeleton-pill skeleton-priority"></div>
+      </div>
+      <div class="skeleton-line skeleton-title mb-2"></div>
+      <div class="skeleton-line skeleton-body mb-2"></div>
+      <div class="skeleton-line skeleton-body w-75 mb-4"></div>
+      <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+        <div class="skeleton-pill skeleton-date"></div>
+        <div class="skeleton-pill skeleton-status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skeletons para Estadísticas -->
+<div class="row" *ngIf="type === 'stat'">
+  <div class="col-md-3 grid-margin stretch-card" *ngFor="let item of arrayFromCount">
+    <div class="card card-skeleton shadow-sm border-0 rounded-xl p-4 w-100">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="skeleton-line skeleton-body w-50 mb-2"></div>
+          <div class="skeleton-line skeleton-title w-75"></div>
+        </div>
+        <div class="skeleton-circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skeletons para Categorías -->
+<div class="row" *ngIf="type === 'category'">
+  <div class="col-md-6 col-lg-4 grid-margin stretch-card" *ngFor="let item of arrayFromCount">
+    <div class="card card-skeleton shadow-sm border-0 rounded-xl p-4 w-100">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center">
+          <div class="skeleton-avatar mr-3"></div>
+          <div class="skeleton-line skeleton-title w-100" style="min-width: 120px;"></div>
+        </div>
+        <div class="skeleton-pill skeleton-priority"></div>
+      </div>
+      <div class="skeleton-line skeleton-body mb-2"></div>
+      <div class="skeleton-line skeleton-body w-75"></div>
+    </div>
+  </div>
+</div>

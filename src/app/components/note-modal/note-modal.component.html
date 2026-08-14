@@ -1,17 +1,24 @@
-<div class="modal-backdrop fade show" *ngIf="isVisible" (click)="onClose()"></div>
+<div class="modal-backdrop-custom" *ngIf="isVisible" (click)="onClose()"></div>
 
-<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document" (click)="$event.stopPropagation()">
-    <div class="modal-content shadow-lg border-0 rounded-xl overflow-hidden">
+<div class="modal-custom" *ngIf="isVisible" tabindex="-1" role="dialog">
+  <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom">
       
-      <div class="modal-header bg-gradient-indigo text-white p-4 border-0">
-        <h5 class="modal-title font-weight-bold d-flex align-items-center font-size-18">
-          <i class="typcn typcn-document-add mr-2" *ngIf="!noteToEdit"></i>
-          <i class="typcn typcn-edit mr-2" *ngIf="noteToEdit"></i>
-          {{ noteToEdit ? 'Editar Nota' : 'Crear Nueva Nota' }}
-        </h5>
-        <button type="button" class="close text-white" (click)="onClose()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+      <div class="modal-header-custom">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3">
+            <i class="typcn typcn-document-add font-size-22" *ngIf="!noteToEdit"></i>
+            <i class="typcn typcn-edit font-size-22" *ngIf="noteToEdit"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-18">
+              {{ noteToEdit ? 'Editar Nota' : 'Crear Nueva Nota' }}
+            </h5>
+            <small class="text-white-80 font-weight-medium">Formulario de registro de tareas</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-custom" (click)="onClose()" aria-label="Close">
+          <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
 
@@ -22,7 +29,7 @@
             <label class="font-weight-bold text-slate-700 font-size-14">Título de la Nota <span class="text-danger">*</span></label>
             <input 
               type="text" 
-              class="form-control input-indigo font-size-15" 
+              class="form-control input-custom" 
               placeholder="Ejemplo: Repasar Cálculo o Comprar víveres" 
               [(ngModel)]="title" 
               name="title" 
@@ -36,7 +43,7 @@
           <div class="row">
             <div class="col-md-6 form-group mb-3">
               <label class="font-weight-bold text-slate-700 font-size-14">Categoría <span class="text-danger">*</span></label>
-              <select class="form-control input-indigo font-size-15" [(ngModel)]="categoryId" name="categoryId" required>
+              <select class="form-control input-custom" [(ngModel)]="categoryId" name="categoryId" required>
                 <option *ngFor="let cat of categories" [value]="cat.id">
                   {{ cat.name }}
                 </option>
@@ -45,7 +52,7 @@
 
             <div class="col-md-6 form-group mb-3">
               <label class="font-weight-bold text-slate-700 font-size-14">Nivel de Prioridad <span class="text-danger">*</span></label>
-              <div class="d-flex align-items-center justify-content-between p-2 rounded-lg border bg-slate-50">
+              <div class="d-flex align-items-center justify-content-between radio-priority-box">
                 <div class="form-check form-check-inline mb-0">
                   <input class="form-check-input" type="radio" name="priority" id="prioAlta" value="alta" [(ngModel)]="priority">
                   <label class="form-check-label text-rose-600 font-weight-bold cursor-pointer" for="prioAlta">
@@ -71,7 +78,7 @@
           <div class="row">
             <div class="col-md-6 form-group mb-3">
               <label class="font-weight-bold text-slate-700 font-size-14">Estado de la Nota</label>
-              <select class="form-control input-indigo font-size-15" [(ngModel)]="status" name="status">
+              <select class="form-control input-custom" [(ngModel)]="status" name="status">
                 <option value="pendiente">⏳ Pendiente</option>
                 <option value="en_progreso">⚡ En Progreso</option>
                 <option value="completada">✅ Completada</option>
@@ -80,14 +87,14 @@
 
             <div class="col-md-6 form-group mb-3">
               <label class="font-weight-bold text-slate-700 font-size-14">Fecha Límite</label>
-              <input type="date" class="form-control input-indigo font-size-15" [(ngModel)]="dueDate" name="dueDate">
+              <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
             </div>
           </div>
 
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Descripción / Detalle</label>
             <textarea 
-              class="form-control input-indigo font-size-14" 
+              class="form-control input-custom" 
               rows="4" 
               placeholder="Escribe los detalles de tu nota aquí..." 
               [(ngModel)]="content" 
@@ -103,9 +110,9 @@
 
         </div>
 
-        <div class="modal-footer bg-slate-50 p-3 border-top">
-          <button type="button" class="btn btn-secondary px-4 font-weight-bold" (click)="onClose()">Cancelar</button>
-          <button type="submit" class="btn btn-indigo-gradient px-4 font-weight-bold text-white" [disabled]="!title.trim()">
+        <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg mr-2" (click)="onClose()">Cancelar</button>
+          <button type="submit" class="btn btn-gradient-indigo px-4 font-weight-bold text-white" [disabled]="!title.trim()">
             {{ noteToEdit ? 'Guardar Cambios' : 'Crear Nota' }}
           </button>
         </div>

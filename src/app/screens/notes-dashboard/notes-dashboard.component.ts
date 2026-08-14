@@ -15,6 +15,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   filteredNotes: Note[] = [];
   categories: Category[] = [];
 
+  isLoading: boolean = true;
   private subscriptions: Subscription = new Subscription();
 
   searchTerm: string = '';
@@ -44,6 +45,9 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
       this.notesService.notes$.subscribe(notes => {
         this.allNotes = notes;
         this.applyFilters();
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 350);
       })
     );
   }
