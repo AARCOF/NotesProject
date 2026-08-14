@@ -1,0 +1,95 @@
+.card-quick-notes {
+  min-height: 520px;
+  max-height: 680px;
+}
+
+.chat-header-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-messages-feed {
+  background-color: #F8FAFC;
+}
+
+.chat-bubble {
+  background-color: #ffffff;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 14px;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+  }
+}
+
+.border-top-dash {
+  border-top: 1px dashed #E2E8F0;
+}
+
+.badge-celeste-soft {
+  background-color: #F0F9FF;
+  color: #0284C7;
+}
+
+.badge-slate-soft {
+  background-color: #F1F5F9;
+  color: #64748B;
+}
+
+.select-mini {
+  height: 32px;
+  font-size: 0.78125rem;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  background-color: #ffffff;
+  color: #334155;
+}
+
+.input-group-chat {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid #CBD5E1;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+  }
+
+  .form-control {
+    font-size: 0.875rem;
+    height: 42px;
+  }
+}
+
+.btn-gradient-teal {
+  background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
+  border: none;
+}
+
+.text-rose-500 {
+  color: #EF4444 !important;
+}
+
+.text-slate-800 {
+  color: #1E293B !important;
+}
+
+.text-slate-700 {
+  color: #334155 !important;
+}
+
+.text-slate-500 {
+  color: #64748B !important;
+}
+
+.text-slate-400 {
+  color: #94A3B8 !important;
+}

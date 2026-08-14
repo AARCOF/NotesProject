@@ -10,3 +10,6 @@
     </div>
   </div>
 </div>
+
+<!-- Onboarding Wizard para primer inicio de sesión -->
+<app-onboarding-wizard *ngIf="showTutorial" (completed)="onTutorialCompleted()"></app-onboarding-wizard>

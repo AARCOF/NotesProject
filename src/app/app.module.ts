@@ -14,11 +14,15 @@ import { FooterComponent } from "./partials/footer/footer.component";
 import { NavbarComponent } from "./partials/navbar/navbar.component";
 import { SidebarComponent } from "./partials/sidebar/sidebar.component";
 
+import { LandingPageComponent } from "./screens/landing-page/landing-page.component";
 import { NotesDashboardComponent } from "./screens/notes-dashboard/notes-dashboard.component";
 import { CategoryManagerComponent } from "./screens/category-manager/category-manager.component";
+import { AdminPanelComponent } from "./screens/admin-panel/admin-panel.component";
 import { NoteModalComponent } from "./components/note-modal/note-modal.component";
 import { RecaptchaComponent } from "./components/recaptcha/recaptcha.component";
 import { SkeletonLoaderComponent } from "./components/skeleton-loader/skeleton-loader.component";
+import { OnboardingWizardComponent } from "./components/onboarding-wizard/onboarding-wizard.component";
+import { QuickNotesPanelComponent } from "./components/quick-notes-panel/quick-notes-panel.component";
 
 import { LoginComponent } from "./sample-pages/login/login.component";
 import { RegisterComponent } from "./sample-pages/register/register.component";
@@ -34,11 +38,15 @@ import { AuthGuard } from "./core/guards/auth.guard";
     NavbarComponent,
     SidebarComponent,
     FooterComponent,
+    LandingPageComponent,
     NotesDashboardComponent,
     CategoryManagerComponent,
+    AdminPanelComponent,
     NoteModalComponent,
     RecaptchaComponent,
     SkeletonLoaderComponent,
+    OnboardingWizardComponent,
+    QuickNotesPanelComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent

@@ -1,0 +1,105 @@
+<div class="card card-quick-notes shadow-sm border-0 rounded-xl bg-white overflow-hidden d-flex flex-column h-100">
+  
+  <!-- Encabezado del Chat / Apuntes -->
+  <div class="card-header bg-gradient-teal text-white p-3 d-flex align-items-center justify-content-between border-0">
+    <div class="d-flex align-items-center">
+      <div class="chat-header-icon bg-white-20 mr-2 text-white">
+        <i class="typcn typcn-messages font-size-20"></i>
+      </div>
+      <div>
+        <h6 class="font-weight-bold mb-0 text-white font-size-15">Notas Rápidas y Apuntes</h6>
+        <small class="text-white-80 font-size-11">Auto-eliminación en 1 semana por defecto</small>
+      </div>
+    </div>
+    <span class="badge badge-pill badge-light text-teal font-weight-bold px-2 py-1 font-size-11">
+      {{ quickNotes.length }} notas
+    </span>
+  </div>
+
+  <!-- Feed de Chat (Mensajes) -->
+  <div class="card-body p-3 chat-messages-feed d-flex flex-column gap-3 overflow-auto flex-grow-1">
+    
+    <div class="empty-chat text-center my-auto p-4" *ngIf="quickNotes.length === 0">
+      <div class="icon-avatar-md bg-teal-soft text-teal mx-auto mb-2">
+        <i class="typcn typcn-edit font-size-24"></i>
+      </div>
+      <p class="text-slate-700 font-weight-bold mb-1 font-size-14">Sin notas rápidas en el historial</p>
+      <small class="text-slate-400 font-size-12">Escribe tus apuntes rápidos en la barra inferior. Se borrarán automáticamente en 1 semana salvo que indiques lo contrario.</small>
+    </div>
+
+    <!-- Burbujas de Mensaje -->
+    <div class="chat-bubble-wrapper fade-in" *ngFor="let note of quickNotes">
+      <div class="chat-bubble shadow-xs p-3 rounded-lg border position-relative">
+        
+        <!-- Meta superior: Tarea vinculada + Borrado -->
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="badge badge-celeste-soft text-celeste font-weight-semibold font-size-11" *ngIf="note.linkedTaskId">
+            <i class="typcn typcn-link mr-1"></i> {{ getLinkedTaskTitle(note.linkedTaskId) }}
+          </span>
+          <span class="badge badge-slate-soft text-slate-500 font-size-11" *ngIf="!note.linkedTaskId">
+            Nota Independiente
+          </span>
+
+          <button type="button" class="btn btn-link btn-xs text-rose-500 p-0" (click)="deleteNote(note.id)" title="Eliminar nota rápida">
+            <i class="typcn typcn-trash"></i>
+          </button>
+        </div>
+
+        <!-- Texto del apunte -->
+        <p class="chat-content text-slate-800 font-size-14 mb-2 line-height-relaxed" style="white-space: pre-line;">
+          {{ note.content }}
+        </p>
+
+        <!-- Pie de la burbuja: Registro y Retención -->
+        <div class="d-flex align-items-center justify-content-between pt-2 border-top-dash font-size-11 text-slate-400">
+          <span><i class="typcn typcn-time mr-1"></i> {{ getTimeAgo(note.createdAt) }}</span>
+          <span><i class="typcn typcn-stopwatch mr-1"></i> Retención: {{ note.retentionLabel }}</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Compositor de Mensaje en la parte inferior -->
+  <div class="card-footer bg-slate-50 p-3 border-top">
+    <form (ngSubmit)="sendQuickNote()">
+      
+      <!-- Opciones secundarias: Vincular a tarea + Tiempo de retención -->
+      <div class="d-flex gap-2 mb-2">
+        <select class="form-control form-control-sm select-mini flex-grow-1" [(ngModel)]="selectedTaskId" name="selectedTaskId">
+          <option value="">Sin tarea vinculada</option>
+          <option *ngFor="let t of availableTasks" [value]="t.id">
+            Vincular: {{ t.title }}
+          </option>
+        </select>
+
+        <select class="form-control form-control-sm select-mini" style="max-width: 130px;" [(ngModel)]="retentionDays" name="retentionDays">
+          <option [value]="1">1 Día</option>
+          <option [value]="3">3 Días</option>
+          <option [value]="7">1 Semana (Defecto)</option>
+          <option [value]="14">2 Semanas</option>
+          <option [value]="30">1 Mes</option>
+        </select>
+      </div>
+
+      <!-- Input principal + Botón Enviar -->
+      <div class="input-group input-group-chat">
+        <input 
+          type="text" 
+          class="form-control text-slate-800 border-0" 
+          placeholder="Escribe un apunte o nota rápida..." 
+          [(ngModel)]="newNoteText" 
+          name="newNoteText" 
+          required>
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-gradient-teal font-weight-bold px-3 text-white" [disabled]="!newNoteText.trim()">
+            <i class="typcn typcn-location-arrow font-size-18"></i>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</div>
