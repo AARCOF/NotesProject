@@ -1,9 +1,9 @@
 <div class="landing-wrapper min-vh-100 bg-white">
   
   <!-- Navbar de la Landing -->
-  <header class="landing-header border-bottom sticky-top bg-white">
-    <div class="container d-flex align-items-center justify-content-between py-3">
-      <div class="d-flex align-items-center">
+  <header class="landing-header border-bottom sticky-top bg-white shadow-xs">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+      <div class="d-flex align-items-center brand-logo-anim">
         <div class="brand-badge bg-gradient-teal text-white font-weight-bold mr-2 shadow-xs">
           <i class="typcn typcn-document-text font-size-22"></i>
         </div>
@@ -11,7 +11,7 @@
       </div>
 
       <div class="d-flex align-items-center gap-2">
-        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-celeste font-weight-bold px-3 py-2 mr-2 d-none d-sm-inline-flex align-items-center">
+        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-celeste font-weight-bold px-3 py-2 mr-2 d-none d-sm-inline-flex align-items-center pulse-glow">
           <i class="typcn typcn-download mr-1 font-size-18"></i> Descargar APK
         </a>
         <a routerLink="/login" class="btn btn-outline-teal font-weight-bold px-3 py-2 mr-2">
@@ -24,12 +24,14 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero-section py-5 position-relative overflow-hidden bg-gradient-light">
-    <div class="container py-5">
+  <!-- Hero Section (Espaciado Superior Ajustado) -->
+  <section class="hero-section pt-4 pb-5 position-relative overflow-hidden bg-gradient-light">
+    <div class="container py-3">
       <div class="row align-items-center">
-        <div class="col-lg-6 mb-5 mb-lg-0 text-left">
-          <span class="badge badge-pill badge-teal-light text-teal font-weight-bold px-3 py-2 mb-3">
+        
+        <!-- Texto del Hero con Animación de Entrada desde la Izquierda -->
+        <div class="col-lg-6 mb-4 mb-lg-0 text-left animate-left">
+          <span class="badge badge-pill badge-teal-light text-teal font-weight-bold px-3 py-2 mb-3 d-inline-block shadow-xs">
             Plataforma 100% Gratuita y sin Costos
           </span>
           <h1 class="display-4 font-weight-bold text-slate-900 mb-3 line-height-tight">
@@ -40,12 +42,12 @@
           </p>
 
           <div class="d-flex flex-wrap align-items-center gap-3">
-            <a routerLink="/register" class="btn btn-gradient-teal btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mr-2 mb-2">
+            <a routerLink="/register" class="btn btn-gradient-teal btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mr-2 mb-2 btn-hero">
               Comenzar Ahora Gratis
             </a>
             
-            <!-- Botón Descargar APK Móvil -->
-            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mb-2 d-inline-flex align-items-center">
+            <!-- Botón Descargar APK Móvil con Animación Pulse Glow -->
+            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mb-2 d-inline-flex align-items-center pulse-glow">
               <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Descargar APK Android
             </a>
           </div>
@@ -57,8 +59,9 @@
           </div>
         </div>
 
-        <div class="col-lg-6 text-center">
-          <div class="hero-card-preview bg-white shadow-xl rounded-24 p-4 border border-slate-100 position-relative">
+        <!-- Tarjeta de Previsualización con Animación Flotante y Entrada desde la Derecha -->
+        <div class="col-lg-6 text-center animate-right">
+          <div class="hero-card-preview float-card bg-white shadow-xl rounded-24 p-4 border border-slate-100 position-relative">
             <div class="preview-header border-bottom pb-3 mb-4 d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <span class="dot red mr-1"></span>
@@ -70,7 +73,7 @@
             </div>
 
             <div class="preview-grid text-left">
-              <div class="card preview-card border-0 shadow-sm p-3 mb-3 bg-emerald-50 rounded-xl">
+              <div class="card preview-card border-0 shadow-sm p-3 mb-3 bg-emerald-50 rounded-xl preview-item-1">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <span class="badge badge-primary px-3 py-1">Estudio</span>
                   <span class="badge badge-danger px-2 py-1">Alta Prioridad</span>
@@ -79,7 +82,7 @@
                 <small class="text-slate-500">Organiza temas de cálculo y repasa ejercicios clave.</small>
               </div>
 
-              <div class="card preview-card border-0 shadow-sm p-3 bg-celeste-50 rounded-xl">
+              <div class="card preview-card border-0 shadow-sm p-3 bg-celeste-50 rounded-xl preview-item-2">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <span class="badge badge-info px-3 py-1">Hogar</span>
                   <span class="badge badge-warning px-2 py-1">Prioridad Media</span>
@@ -90,15 +93,16 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
   <!-- Sección Versión Móvil y APK -->
-  <section class="mobile-app-section py-5 bg-slate-50 border-top border-bottom">
-    <div class="container py-4 text-center">
+  <section class="mobile-app-section py-5 bg-slate-50 border-top border-bottom position-relative">
+    <div class="container py-3 text-center">
       <div class="row align-items-center">
-        <div class="col-lg-6 mb-4 mb-lg-0 text-lg-left">
+        <div class="col-lg-6 mb-4 mb-lg-0 text-lg-left animate-up">
           <span class="badge badge-pill badge-celeste-light text-celeste font-weight-bold px-3 py-2 mb-3">
             Aplicación Móvil Optimizada
           </span>
@@ -107,13 +111,13 @@
             Accede a tus tareas, recibe recordatorios instantáneos y registra notas rápidas en formato de chat desde tu teléfono móvil. Descarga el paquete de instalación ejecutable (APK).
           </p>
 
-          <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-5 py-3 text-white shadow-md rounded-lg d-inline-flex align-items-center">
+          <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-5 py-3 text-white shadow-md rounded-lg d-inline-flex align-items-center pulse-glow">
             <i class="typcn typcn-download mr-2 font-size-22"></i> Descargar APK v1.0.0
           </a>
         </div>
 
-        <div class="col-lg-6 text-center">
-          <div class="mobile-mockup-frame mx-auto p-3 bg-slate-900 rounded-24 shadow-xl" style="max-width: 320px;">
+        <div class="col-lg-6 text-center animate-up-delay">
+          <div class="mobile-mockup-frame mx-auto p-3 bg-slate-900 rounded-24 shadow-xl float-card-slow" style="max-width: 320px;">
             <div class="mobile-screen bg-white rounded-xl p-3 text-left">
               <div class="mobile-top-bar d-flex justify-content-between align-items-center mb-3">
                 <strong class="text-slate-800 font-size-13">NoteYou Mobile</strong>
@@ -140,17 +144,17 @@
     </div>
   </section>
 
-  <!-- Características Principales -->
+  <!-- Características Principales con Tarjetas Animadas -->
   <section class="features-section py-5">
     <div class="container py-4 text-center">
-      <div class="max-width-600 mx-auto mb-5">
+      <div class="max-width-600 mx-auto mb-5 animate-up">
         <h2 class="font-weight-bold text-slate-900 mb-2">Todo lo que necesitas para tu productividad</h2>
         <p class="text-slate-500 font-size-16">Una herramienta completa, ágil y totalmente gratuita.</p>
       </div>
 
       <div class="row">
-        <div class="col-md-4 mb-4">
-          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+        <div class="col-md-4 mb-4 animate-up-1">
+          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
             <div class="icon-circle bg-teal-soft text-teal mx-auto mb-3">
               <i class="typcn typcn-warning font-size-28"></i>
             </div>
@@ -161,8 +165,8 @@
           </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+        <div class="col-md-4 mb-4 animate-up-2">
+          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
             <div class="icon-circle bg-celeste-soft text-celeste mx-auto mb-3">
               <i class="typcn typcn-folder-open font-size-28"></i>
             </div>
@@ -173,8 +177,8 @@
           </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-          <div class="feature-box p-4 rounded-xl border bg-white shadow-sm h-100">
+        <div class="col-md-4 mb-4 animate-up-3">
+          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
             <div class="icon-circle bg-purple-soft text-purple mx-auto mb-3">
               <i class="typcn typcn-shield-check font-size-28"></i>
             </div>
@@ -190,7 +194,7 @@
 
   <!-- Banner Gratuito y Descarga -->
   <section class="banner-free py-5 bg-gradient-teal text-white text-center">
-    <div class="container py-3">
+    <div class="container py-3 animate-up">
       <h2 class="font-weight-bold mb-3">Empieza a organizar tus notas hoy mismo</h2>
       <p class="lead text-white-90 max-width-600 mx-auto mb-4 font-size-16">
         NoteYou es 100% gratuito. Registra tu cuenta en menos de un minuto o descarga la versión ejecutable APK para Android.
@@ -201,7 +205,7 @@
           Crear Cuenta Gratuita
         </a>
 
-        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-light font-weight-bold btn-lg px-4 py-3 rounded-lg mb-2">
+        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-light font-weight-bold btn-lg px-4 py-3 rounded-lg mb-2 pulse-glow">
           <i class="typcn typcn-download mr-1"></i> Descargar APK
         </a>
       </div>
