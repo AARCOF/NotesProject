@@ -9,6 +9,7 @@ $modal-footer-margin-between: 0.3125rem !default;
 @import "~compass-mixins/lib/animate";
 @import "~bootstrap/scss/bootstrap";
 @import "~mdi/scss/materialdesignicons";
+$flag-icon-square-enable: false !default;
 @import "~flag-icon-css/sass/flag-icon";
 @import "~typicons.font/src/font/typicons.css";
 @import "./assets/styles/components/loaders/loaders";
