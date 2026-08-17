@@ -5,7 +5,7 @@
     <div class="modal-content-custom">
       
       <!-- Encabezado de Bienvenida -->
-      <div class="wizard-header text-center p-4 bg-gradient-teal-celeste text-white">
+      <div class="wizard-header text-center p-4 bg-gradient-blue-celeste text-white">
         <div class="wizard-step-indicator mb-3">
           <span class="step-dot" [class.active]="currentStep >= 1">1</span>
           <span class="step-line" [class.active]="currentStep >= 2"></span>
@@ -20,14 +20,14 @@
       <!-- PASO 1: Registrar Categoría -->
       <div class="modal-body p-4 bg-white" *ngIf="currentStep === 1">
         <div class="text-center mb-4">
-          <div class="icon-avatar-lg bg-teal-soft text-teal mx-auto mb-2">
+          <div class="icon-avatar-lg bg-teal-soft text-blue mx-auto mb-2">
             <i class="typcn typcn-folder-add font-size-28"></i>
           </div>
           <h5 class="font-weight-bold text-slate-800 mb-1">Paso 1: Registra tu Primera Categoría</h5>
           <p class="text-slate-500 font-size-13">Las categorías te ayudan a organizar tus tareas por temas (estudio, hogar, proyectos).</p>
         </div>
 
-        <form (ngSubmit)="createCategoryStep()">
+        <form (ngSubmit)="createCategoryStep()" autocomplete="off">
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Nombre de la Categoría <span class="text-danger">*</span></label>
             <input 
@@ -36,6 +36,10 @@
               placeholder="Ej: Mis Proyectos o Universidad" 
               [(ngModel)]="categoryName" 
               name="categoryName" 
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               required>
           </div>
 
@@ -46,7 +50,11 @@
               class="form-control input-custom" 
               placeholder="Ej: Tareas prioritarias y entregables" 
               [(ngModel)]="categoryDescription" 
-              name="categoryDescription">
+              name="categoryDescription"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false">
           </div>
 
           <div class="form-group mb-4">
@@ -59,7 +67,7 @@
 
           <button 
             type="submit" 
-            class="btn btn-block btn-gradient-teal btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
+            class="btn btn-block btn-gradient-blue btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
             [disabled]="!categoryName.trim()">
             Continuar al Paso 2
           </button>
@@ -76,7 +84,7 @@
           <p class="text-slate-500 font-size-13">Agrega un título y detalle a tu primera tarea usando tu nueva categoría.</p>
         </div>
 
-        <form (ngSubmit)="createNoteStep()">
+        <form (ngSubmit)="createNoteStep()" autocomplete="off">
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Título de la Nota <span class="text-danger">*</span></label>
             <input 
@@ -85,6 +93,10 @@
               placeholder="Ej: Organizar informe o comprar útiles" 
               [(ngModel)]="noteTitle" 
               name="noteTitle" 
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               required>
           </div>
 
@@ -125,7 +137,7 @@
 
           <button 
             type="submit" 
-            class="btn btn-block btn-gradient-teal btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
+            class="btn btn-block btn-gradient-blue btn-lg font-weight-bold py-3 text-white rounded-lg shadow-md"
             [disabled]="!noteTitle.trim()">
             Finalizar Configuración
           </button>
@@ -143,7 +155,7 @@
         </p>
         <button 
           type="button" 
-          class="btn btn-gradient-teal btn-lg font-weight-bold px-5 py-3 text-white rounded-lg shadow-md"
+          class="btn btn-gradient-blue btn-lg font-weight-bold px-5 py-3 text-white rounded-lg shadow-md"
           (click)="finishTutorial()">
           Ir al Panel de Notas
         </button>

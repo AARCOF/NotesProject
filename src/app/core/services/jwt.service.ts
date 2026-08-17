@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UserRole } from '../models/user.model';
 
 const TOKEN_KEY = 'star_notes_jwt_token';
 
@@ -15,7 +16,7 @@ export interface JwtPayload {
 })
 export class JwtService {
 
-  public generateToken(user: { id: string; name: string; email: string }, expiresInSeconds: number = 86400): string {
+  public generateToken(user: { id: string; name: string; email: string; role?: UserRole }, expiresInSeconds: number = 86400): string {
     const header = {
       alg: 'HS256',
       typ: 'JWT'

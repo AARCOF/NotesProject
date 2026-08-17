@@ -1,0 +1,170 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white mb-4">
+      <div class="card-body p-4">
+        <h4 class="font-weight-bold text-slate-800 mb-1">
+          <i class="typcn typcn-chart-pie-outline text-blue mr-2"></i> Mi Productividad
+        </h4>
+        <p class="text-slate-500 mb-0">Analiza tu rendimiento y distribución de tareas en gráficas visuales.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row fade-in-up" *ngIf="!isLoading && notes.length > 0">
+  
+  <!-- Tarjetas de Filtro Rápido -->
+  <div class="col-12 mb-4">
+    <div class="row">
+      
+      <!-- Total -->
+      <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
+             [ngClass]="selectedStatusFilter === 'all' ? 'bg-gradient-blue text-white' : 'bg-white'"
+             (click)="filterByStatus('all')">
+          <div class="card-body p-3 d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'all' ? 'text-white-80' : 'text-slate-500'">Todas las Tareas</p>
+              <h3 class="font-weight-bold mb-0 font-size-24">{{ notes.length }}</h3>
+            </div>
+            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'all' ? 'bg-white-20 text-white' : 'bg-blue-50 text-blue'">
+              <i class="typcn typcn-document-text font-size-22"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pendientes -->
+      <div class="col-md-4 mb-3 mb-md-0">
+        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
+             [ngClass]="selectedStatusFilter === 'pendiente' ? 'bg-gradient-amber text-white' : 'bg-white'"
+             (click)="filterByStatus('pendiente')">
+          <div class="card-body p-3 d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'pendiente' ? 'text-white-80' : 'text-slate-500'">Pendientes</p>
+              <h3 class="font-weight-bold mb-0 font-size-24">{{ statusChartData[1] }}</h3>
+            </div>
+            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'pendiente' ? 'bg-white-20 text-white' : 'bg-amber-50 text-amber'">
+              <i class="typcn typcn-time font-size-22"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completadas -->
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
+             [ngClass]="selectedStatusFilter === 'completada' ? 'bg-gradient-emerald text-white' : 'bg-white'"
+             (click)="filterByStatus('completada')">
+          <div class="card-body p-3 d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'completada' ? 'text-white-80' : 'text-slate-500'">Completadas</p>
+              <h3 class="font-weight-bold mb-0 font-size-24">{{ statusChartData[0] }}</h3>
+            </div>
+            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'completada' ? 'bg-white-20 text-white' : 'bg-emerald-50 text-emerald'">
+              <i class="typcn typcn-tick font-size-22"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <!-- Gráfico de Estado -->
+  <div class="col-lg-4 col-md-6 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white h-100">
+      <div class="card-body">
+        <h5 class="font-weight-bold text-slate-800 mb-4 text-center">Progreso de Tareas</h5>
+        <div style="display: block; height: 250px; position: relative;">
+          <canvas baseChart 
+            [data]="statusChartData"
+            [labels]="statusChartLabels"
+            [chartType]="statusChartType"
+            [colors]="statusChartColors"
+            [options]="commonChartOptions">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Histograma de Categorías -->
+  <div class="col-lg-4 col-md-6 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="font-weight-bold text-slate-800 mb-0">Distribución por Categorías</h5>
+          <span class="badge badge-blue-light font-weight-bold px-2 py-1">Histograma</span>
+        </div>
+        <div style="display: block; height: 250px; position: relative;">
+          <canvas baseChart 
+            [datasets]="categoryChartData"
+            [labels]="categoryChartLabels"
+            [chartType]="categoryChartType"
+            [colors]="categoryChartColors"
+            [options]="categoryChartOptions"
+            [legend]="categoryChartLegend">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Histograma de Carga Semanal (Curva de Frecuencia) -->
+  <div class="col-lg-4 col-md-6 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h5 class="font-weight-bold text-slate-800 mb-0">Curva de Carga Semanal</h5>
+          <span class="badge badge-indigo-light font-weight-bold px-2 py-1" style="background-color: #ede9fe; color: #6366f1;">Líneas</span>
+        </div>
+        <div style="display: block; height: 250px; position: relative;">
+          <canvas baseChart 
+            [datasets]="weeklyChartData"
+            [labels]="weeklyChartLabels"
+            [options]="weeklyChartOptions"
+            [colors]="weeklyChartColors"
+            [legend]="weeklyChartLegend"
+            [chartType]="weeklyChartType">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Estado Vacío -->
+<div class="row fade-in-up" *ngIf="!isLoading && notes.length === 0">
+  <div class="col-12">
+    <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
+      <div class="card-body">
+        <div class="empty-icon-circle bg-blue-50 text-blue rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 84px; height: 84px;">
+          <i class="typcn typcn-document-delete font-size-40"></i>
+        </div>
+        <h4 class="font-weight-bold text-slate-800 mb-2">No hay datos para analizar</h4>
+        <p class="text-slate-500 max-width-500 mx-auto mb-4 font-size-15">
+          Crea algunas tareas para que podamos generar gráficos sobre tu productividad.
+        </p>
+        <button class="btn btn-gradient-blue font-weight-bold px-4 py-3 text-white rounded-lg shadow-md" routerLink="/dashboard">
+          <i class="typcn typcn-plus mr-1"></i> Ir a crear tareas
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skeleton Loader -->
+<div class="row fade-in-up" *ngIf="isLoading">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white" style="height: 500px;">
+      <div class="card-body d-flex justify-content-center align-items-center">
+        <div class="spinner-border text-blue" role="status">
+          <span class="sr-only">Cargando...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

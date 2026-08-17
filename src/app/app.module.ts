@@ -7,6 +7,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AppRoutingModule } from "./app-routing.module";
 
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { ChartsModule } from "ng2-charts";
 
 // Components
 import { AppComponent } from "./app.component";
@@ -23,10 +24,17 @@ import { RecaptchaComponent } from "./components/recaptcha/recaptcha.component";
 import { SkeletonLoaderComponent } from "./components/skeleton-loader/skeleton-loader.component";
 import { OnboardingWizardComponent } from "./components/onboarding-wizard/onboarding-wizard.component";
 import { QuickNotesPanelComponent } from "./components/quick-notes-panel/quick-notes-panel.component";
+import { TaskCalendarComponent } from "./components/task-calendar/task-calendar.component";
+import { DayDetailsModalComponent } from "./components/day-details-modal/day-details-modal.component";
 
 import { LoginComponent } from "./sample-pages/login/login.component";
 import { RegisterComponent } from "./sample-pages/register/register.component";
 import { VerifyEmailComponent } from "./sample-pages/verify-email/verify-email.component";
+
+import { CalendarScreenComponent } from "./screens/calendar-screen/calendar-screen.component";
+import { ProductivityDashboardComponent } from "./screens/productivity-dashboard/productivity-dashboard.component";
+import { ProfileSettingsComponent } from "./screens/profile-settings/profile-settings.component";
+import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
 
 // Interceptors & Guards
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
@@ -47,6 +55,12 @@ import { AuthGuard } from "./core/guards/auth.guard";
     SkeletonLoaderComponent,
     OnboardingWizardComponent,
     QuickNotesPanelComponent,
+    TaskCalendarComponent,
+    DayDetailsModalComponent,
+    CalendarScreenComponent,
+    ProductivityDashboardComponent,
+    ProfileSettingsComponent,
+    CanvasBoardComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent
@@ -59,6 +73,7 @@ import { AuthGuard } from "./core/guards/auth.guard";
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    ChartsModule,
     NgbModule
   ],
   providers: [

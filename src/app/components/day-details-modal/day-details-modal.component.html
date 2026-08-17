@@ -1,0 +1,95 @@
+<div class="modal-backdrop-custom" *ngIf="isVisible" (click)="closeModal()"></div>
+
+<div class="modal-custom" *ngIf="isVisible" tabindex="-1" role="dialog">
+  <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom bg-slate-50">
+      
+      <!-- Encabezado con Diseño Premium -->
+      <div class="modal-header-custom" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 1.5rem 2rem;">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white-20 text-white shadow-sm">
+            <i class="typcn typcn-calendar-outline font-size-24"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-18 text-white">Actividades del Día</h5>
+            <small class="text-white-80 font-weight-medium font-size-14">{{ getFormattedDate() }}</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-custom text-white hover-opacity" (click)="closeModal()">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-slate-50" style="max-height: 60vh; overflow-y: auto;">
+        
+        <!-- Botón Registrar Nueva Tarea Superior -->
+        <button class="btn btn-gradient-indigo btn-block font-weight-bold shadow-sm d-flex justify-content-center align-items-center py-3 mb-4 rounded-lg" (click)="onAddNewTask()">
+          <i class="typcn typcn-plus font-size-20 mr-2"></i> Registrar Nueva Tarea
+        </button>
+
+        <div *ngIf="dayTasks.length === 0" class="text-center py-4 text-slate-500">
+          <i class="typcn typcn-coffee font-size-48 mb-2 d-block text-slate-300"></i>
+          <p class="font-weight-medium font-size-15">No hay tareas registradas para este día.</p>
+        </div>
+
+        <!-- Lista Agrupada por Categorías -->
+        <div class="category-groups-wrapper d-flex flex-column gap-3">
+          
+          <div class="category-group card shadow-sm border-0 rounded-xl overflow-hidden fade-in-up" *ngFor="let group of categoryGroups">
+            
+            <!-- Cabecera de Categoría (Clickable) -->
+            <div class="group-header p-3 d-flex align-items-center justify-content-between cursor-pointer" 
+                 [style.backgroundColor]="group.category ? group.category.color + '1A' : '#f1f5f9'"
+                 (click)="toggleGroup(group)">
+              <div class="d-flex align-items-center">
+                <div class="icon-avatar-sm mr-3 text-white shadow-sm" [style.backgroundColor]="group.category ? group.category.color : '#94a3b8'">
+                  <i class="typcn {{ group.category ? group.category.icon : 'typcn-folder' }} font-size-18"></i>
+                </div>
+                <div>
+                  <h6 class="font-weight-bold mb-0 text-slate-800">{{ group.category ? group.category.name : 'Sin Categoría' }}</h6>
+                  <small class="text-slate-500 font-weight-semibold">{{ group.tasks.length }} tarea(s)</small>
+                </div>
+              </div>
+              <div class="text-slate-400 transition-all" [style.transform]="group.expanded ? 'rotate(180deg)' : 'rotate(0)'">
+                <i class="typcn typcn-arrow-sorted-down font-size-22"></i>
+              </div>
+            </div>
+
+            <!-- Lista de Tareas Acordeón -->
+            <div class="group-tasks bg-white" *ngIf="group.expanded">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3 d-flex align-items-center justify-content-between border-bottom-0 border-top" *ngFor="let task of group.tasks">
+                  <div class="d-flex align-items-center flex-grow-1 overflow-hidden pr-2">
+                    <div class="status-indicator mr-3 rounded-circle shadow-sm" 
+                         [ngClass]="{'bg-emerald': task.status === 'completada', 'bg-amber': task.status !== 'completada'}"
+                         style="width: 12px; height: 12px; flex-shrink: 0;"></div>
+                    <div class="text-truncate">
+                      <p class="font-weight-semibold text-slate-700 mb-0 font-size-14 text-truncate" [class.text-decoration-line-through]="task.status === 'completada'">{{ task.title }}</p>
+                      <small class="text-slate-500">{{ task.status === 'completada' ? 'Completada' : 'Pendiente' }}</small>
+                    </div>
+                  </div>
+                  <span class="badge badge-pill font-weight-bold px-2 py-1" 
+                        [ngClass]="{
+                          'badge-rose-light text-rose': task.priority === 'alta',
+                          'badge-amber-light text-amber': task.priority === 'media',
+                          'badge-emerald-light text-emerald': task.priority === 'baja'
+                        }">
+                    {{ task.priority | titlecase }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer bg-white p-3 border-top d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg" (click)="closeModal()">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>

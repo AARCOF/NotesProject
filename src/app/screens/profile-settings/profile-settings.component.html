@@ -1,0 +1,144 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white mb-4">
+      <div class="card-body p-4">
+        <h4 class="font-weight-bold text-slate-800 mb-1">
+          <i class="typcn typcn-user-outline text-blue mr-2"></i> Mi Perfil
+        </h4>
+        <p class="text-slate-500 mb-0">Configura tus datos personales y cambia tu contraseña de acceso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row fade-in-up">
+  
+  <!-- Datos Personales -->
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white h-100">
+      <div class="card-body p-4">
+        <h5 class="font-weight-bold text-slate-800 mb-4 border-bottom pb-3">Datos Personales</h5>
+        
+        <div class="alert alert-success-custom mb-3" *ngIf="profileSuccess">
+          <i class="typcn typcn-tick mr-1"></i> {{ profileSuccess }}
+        </div>
+        <div class="alert alert-danger-custom mb-3" *ngIf="profileError">
+          <i class="typcn typcn-warning mr-1"></i> {{ profileError }}
+        </div>
+
+        <form (ngSubmit)="updateProfile()" autocomplete="off">
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Nombre Completo</label>
+            <input type="text" class="form-control" [(ngModel)]="profileName" name="profileName" placeholder="Tu nombre" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="font-weight-bold text-slate-700 font-size-14">Correo Electrónico (No editable)</label>
+            <input type="email" class="form-control bg-light text-slate-500" [value]="user?.email" disabled>
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="font-weight-bold text-slate-700 font-size-14">Rol Actual</label>
+            <input type="text" class="form-control bg-light text-slate-500 text-uppercase" [value]="user?.role" disabled>
+          </div>
+
+          <button type="submit" class="btn btn-gradient-blue btn-block font-weight-bold py-2 text-white rounded-lg shadow-sm" [disabled]="!profileName.trim() || profileName === user?.name">
+            Guardar Datos Personales
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cambio de Contraseña -->
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white h-100">
+      <div class="card-body p-4">
+        <h5 class="font-weight-bold text-slate-800 mb-4 border-bottom pb-3">Seguridad y Contraseña</h5>
+        
+        <div class="alert alert-success-custom mb-3" *ngIf="passSuccess">
+          <i class="typcn typcn-tick mr-1"></i> {{ passSuccess }}
+        </div>
+        <div class="alert alert-danger-custom mb-3" *ngIf="passError">
+          <i class="typcn typcn-warning mr-1"></i> {{ passError }}
+        </div>
+
+        <form (ngSubmit)="updatePassword()" autocomplete="off">
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Contraseña Actual <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" [(ngModel)]="currentPass" name="currentPass" placeholder="Ingresa tu contraseña actual" autocomplete="new-password" required>
+            <small class="text-slate-500 mt-1 d-block">Requerida para autorizar el cambio.</small>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Nueva Contraseña <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" [(ngModel)]="newPass" name="newPass" placeholder="Al menos 6 caracteres" autocomplete="new-password" required>
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="font-weight-bold text-slate-700 font-size-14">Confirmar Nueva Contraseña <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" [(ngModel)]="confirmPass" name="confirmPass" placeholder="Repite la nueva contraseña" autocomplete="new-password" required>
+          </div>
+
+          <button type="submit" class="btn btn-gradient-emerald btn-block font-weight-bold py-2 text-white rounded-lg shadow-sm" [disabled]="!currentPass || !newPass || !confirmPass">
+            Actualizar Contraseña
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copia de Seguridad y Restauración (Local-First) -->
+  <div class="col-12 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+          <div>
+            <h5 class="font-weight-bold text-slate-800 mb-1">
+              <i class="typcn typcn-cloud-storage text-primary mr-2"></i> Copia de Seguridad y Restauración
+            </h5>
+            <p class="text-slate-500 font-size-14 mb-0">
+              Tus tareas y notas se almacenan en este dispositivo. Puedes exportar una copia en formato JSON para transferirla a otra computadora o navegador.
+            </p>
+          </div>
+        </div>
+
+        <div class="alert alert-success-custom mb-3" *ngIf="backupSuccess">
+          <i class="typcn typcn-tick mr-1"></i> {{ backupSuccess }}
+        </div>
+        <div class="alert alert-danger-custom mb-3" *ngIf="backupError">
+          <i class="typcn typcn-warning mr-1"></i> {{ backupError }}
+        </div>
+
+        <div class="row align-items-center">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <div class="p-3 rounded-lg border bg-light">
+              <h6 class="font-weight-bold text-slate-800 mb-1">Exportar Copia de Seguridad</h6>
+              <p class="text-slate-500 font-size-13 mb-3">
+                Descarga un archivo <code>.json</code> seguro con todas tus tareas, notas rápidas y categorías.
+              </p>
+              <button type="button" class="btn btn-outline-primary font-weight-bold btn-sm py-2 px-3 rounded-lg" (click)="exportBackup()">
+                <i class="typcn typcn-download mr-1"></i> Descargar Copia (.JSON)
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded-lg border bg-light">
+              <h6 class="font-weight-bold text-slate-800 mb-1">Restaurar Copia de Seguridad</h6>
+              <p class="text-slate-500 font-size-13 mb-3">
+                Carga un archivo de respaldo previo para restaurar tus datos en esta cuenta.
+              </p>
+              <label class="btn btn-outline-success font-weight-bold btn-sm py-2 px-3 rounded-lg mb-0 cursor-pointer">
+                <i class="typcn typcn-upload mr-1"></i> Seleccionar Archivo JSON
+                <input type="file" accept=".json" (change)="onFileSelected($event)" style="display: none;">
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

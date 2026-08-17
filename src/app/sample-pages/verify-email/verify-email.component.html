@@ -2,37 +2,6 @@
   <div class="row w-100 mx-0 justify-content-center">
     <div class="col-lg-6 col-md-8 mx-auto">
       
-      <!-- Panel de Confirmación de Despacho de Correo -->
-      <div class="card shadow-lg border-0 mb-4 rounded-xl overflow-hidden" *ngIf="simulatedEmail">
-        <div class="card-header bg-gradient-indigo text-white d-flex align-items-center justify-content-between p-3 border-0">
-          <div class="d-flex align-items-center">
-            <i class="typcn typcn-mail mr-2 font-size-22"></i>
-            <strong class="mb-0 font-weight-bold">Código de Acceso Despachado al Correo</strong>
-          </div>
-          <span class="badge badge-pill badge-light text-primary font-weight-bold px-3 py-1">{{ simulatedEmail.sentAt }}</span>
-        </div>
-        <div class="card-body bg-white p-4">
-          <div class="d-flex align-items-center mb-2 text-dark font-size-14">
-            <span class="text-muted font-weight-semibold mr-2">Destinatario:</span>
-            <strong class="text-primary">{{ simulatedEmail.toEmail }}</strong>
-          </div>
-          <div class="d-flex align-items-center mb-3 text-dark font-size-14">
-            <span class="text-muted font-weight-semibold mr-2">Asunto:</span>
-            <span>{{ simulatedEmail.subject }}</span>
-          </div>
-          
-          <div class="p-3 rounded-lg bg-light-indigo border border-indigo d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-uppercase font-weight-bold d-block text-indigo-dark font-size-12 mb-1">Tu Llave de Seguridad Vence en 1 Hora:</span>
-              <h2 class="font-weight-bold text-indigo mb-0 letter-spacing-3">{{ simulatedEmail.securityKey }}</h2>
-            </div>
-            <button type="button" class="btn btn-indigo shadow-sm font-weight-bold px-3 py-2" (click)="inputKey = simulatedEmail.securityKey">
-              Usar Código
-            </button>
-          </div>
-        </div>
-      </div>
-
       <!-- Formulario de Verificación -->
       <div class="auth-form-light text-left py-5 px-4 px-sm-5 rounded-xl shadow-lg border-0 bg-white">
         
@@ -66,7 +35,7 @@
           <i class="typcn typcn-tick mr-1"></i> {{ successMessage }}
         </div>
 
-        <form (ngSubmit)="onVerify()">
+        <form (ngSubmit)="onVerify()" autocomplete="off">
           
           <div class="form-group mb-4">
             <label class="font-weight-bold text-slate-700 font-size-14 mb-2">Código de Seguridad</label>
@@ -77,6 +46,10 @@
               maxlength="6"
               [(ngModel)]="inputKey" 
               name="inputKey" 
+              autocomplete="one-time-code"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               required>
           </div>
 

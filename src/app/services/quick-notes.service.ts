@@ -11,50 +11,53 @@ const QUICK_NOTES_STORAGE_KEY = 'noteyou_quick_notes_v1';
 export class QuickNotesService {
   private quickNotesSubject = new BehaviorSubject<QuickNote[]>([]);
   public quickNotes$: Observable<QuickNote[]> = this.quickNotesSubject.asObservable();
+  private currentUserId: string | null = null;
 
   constructor(private authService: AuthService) {
-    this.loadQuickNotes();
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUserId = user ? user.id : null;
+      this.loadQuickNotes();
+    });
+  }
+
+  private getAllStorageNotes(): QuickNote[] {
+    const data = localStorage.getItem(QUICK_NOTES_STORAGE_KEY);
+    if (!data) return [];
+    try {
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+
+  private saveAllStorageNotes(notes: QuickNote[]): void {
+    localStorage.setItem(QUICK_NOTES_STORAGE_KEY, JSON.stringify(notes));
   }
 
   private loadQuickNotes(): void {
-    const data = localStorage.getItem(QUICK_NOTES_STORAGE_KEY);
-    let allNotes: QuickNote[] = [];
-    if (data) {
-      try {
-        allNotes = JSON.parse(data);
-      } catch {
-        allNotes = [];
-      }
+    if (!this.currentUserId) {
+      this.quickNotesSubject.next([]);
+      return;
     }
 
+    const allNotes = this.getAllStorageNotes();
     const now = Date.now();
     const validNotes = allNotes.filter(n => n.expiresAt > now);
 
     if (validNotes.length !== allNotes.length) {
-      localStorage.setItem(QUICK_NOTES_STORAGE_KEY, JSON.stringify(validNotes));
+      this.saveAllStorageNotes(validNotes);
     }
 
-    this.quickNotesSubject.next(validNotes);
-  }
-
-  private saveToStorage(notes: QuickNote[]): void {
-    localStorage.setItem(QUICK_NOTES_STORAGE_KEY, JSON.stringify(notes));
-    this.quickNotesSubject.next(notes);
+    const userNotes = validNotes.filter(n => n.userId === this.currentUserId);
+    this.quickNotesSubject.next(userNotes);
   }
 
   public getQuickNotes(): QuickNote[] {
-    const currentUser = this.authService.getCurrentUser();
-    const all = this.quickNotesSubject.getValue();
-    const now = Date.now();
-    const valid = all.filter(n => n.expiresAt > now);
-
-    if (!currentUser) return valid;
-    return valid.filter(n => n.userId === currentUser.id);
+    return this.quickNotesSubject.getValue();
   }
 
   public addQuickNote(content: string, linkedTaskId?: string, retentionDays: number = 7): QuickNote {
-    const currentUser = this.authService.getCurrentUser();
-    const userId = currentUser ? currentUser.id : 'anonymous';
+    const userId = this.currentUserId || 'anonymous';
     
     const now = Date.now();
     const retentionMs = retentionDays * 24 * 60 * 60 * 1000;
@@ -77,15 +80,17 @@ export class QuickNotesService {
       retentionLabel
     };
 
-    const all = this.quickNotesSubject.getValue();
+    const all = this.getAllStorageNotes();
     const updated = [newQuickNote, ...all];
-    this.saveToStorage(updated);
+    this.saveAllStorageNotes(updated);
+    this.loadQuickNotes();
     return newQuickNote;
   }
 
   public deleteQuickNote(id: string): void {
-    const all = this.quickNotesSubject.getValue();
-    const filtered = all.filter(n => n.id !== id);
-    this.saveToStorage(filtered);
+    const all = this.getAllStorageNotes();
+    const filtered = all.filter(n => !(n.id === id && (n.userId === this.currentUserId || !n.userId)));
+    this.saveAllStorageNotes(filtered);
+    this.loadQuickNotes();
   }
 }

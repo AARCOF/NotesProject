@@ -19,7 +19,17 @@ $dodger-blue: #3498db;
 $blue-teal-gradient: linear-gradient(120deg, #556cdc, #128bfc, #18bef1);
 $blue-teal-gradient-light: linear-gradient(120deg, rgba(0, 228, 208, 0.7), rgba(89, 131, 232, 0.7));
 $theme-colors: (primary: #2196f3, secondary: #dde4eb, success:#19d895, info: #8862e0, warning: #ffaf00, danger: #ff6258, light: #fbfbfb, dark: #252C46);
-$colors: (blue: $blue, indigo: $indigo, purple: $purple, pink: $pink, red: $red, orange: $orange, yellow: $yellow, green: $green, teal: $teal, cyan: $cyan, white: $white, white-smoke: #f3f5f6, gray: $gray-600, gray-light: #8ba2b5, gray-lightest: #f7f7f9, gray-dark: #292b2c);
+$colors: ("blue": $blue, "indigo": $indigo, "purple": $purple, "pink": $pink, "red": $red, "orange": $orange, "yellow": $yellow, "green": $green, "teal": $teal, "cyan": $cyan, "white": $white, "white-smoke": #f3f5f6, "gray": $gray-600, "gray-light": #8ba2b5, "gray-lightest": #f7f7f9, "gray-dark": #292b2c);
+
+@function color($key: "blue") {
+  $key-str: "#{$key}";
+  @if map-has-key($colors, $key-str) {
+    @return map-get($colors, $key-str);
+  } @else if map-has-key($colors, $key) {
+    @return map-get($colors, $key);
+  }
+  @return null;
+}
 ////////// COLOR SYSTEM //////////
 ////////// SOCIAL COLORS //////////
 $social-colors: (twitter: #4DBFF5, facebook: #648ACA, google: #E55F4B, linkedin: #0177b4, pinterest: #cc2127, youtube: #e52d27, github: #333333, behance: #1769ff, dribbble: #ea4c89, reddit: #ff4500);

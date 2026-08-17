@@ -1,56 +1,94 @@
-<nav class="sidebar sidebar-offcanvas bg-slate-900 shadow-lg" id="sidebar">
-  <ul class="nav">
+<nav class="sidebar sidebar-custom shadow-lg d-flex flex-column" id="sidebar">
+  
+
+
+  <!-- New Note Button -->
+  <div class="px-4 mb-4 mt-2">
+    <!-- Redirige al Dashboard donde está el Modal o puede abrir un modal global, por ahora enviamos al dashboard -->
+    <a routerLink="/dashboard" class="btn btn-white btn-block rounded-lg font-weight-bold text-blue-800 shadow-sm d-flex justify-content-center align-items-center py-2 hover-lift">
+      <i class="typcn typcn-plus font-size-18 mr-1"></i> New Note
+    </a>
+  </div>
+
+  <!-- Navigation Links -->
+  <ul class="nav flex-column flex-grow-1 px-4">
     
-    <li class="nav-item nav-profile px-3 py-3 border-bottom-slate" *ngIf="currentUser">
-      <div class="nav-link p-0 d-flex align-items-center">
-        <div class="profile-image mr-3">
-          <div class="avatar-circle-sm bg-gradient-teal text-white font-weight-bold shadow-xs">
-            {{ currentUser.name.charAt(0).toUpperCase() }}
-          </div>
-        </div>
-        <div class="text-wrapper">
-          <p class="profile-name mb-0 font-weight-bold text-white font-size-14">{{ currentUser.name }}</p>
-          <p class="designation mb-0 text-teal-300 font-size-12">{{ getRoleLabel(currentUser.role) }}</p>
-        </div>
-      </div>
+    <li class="nav-category-header font-weight-bold px-3 py-2 text-uppercase font-size-11 letter-spacing-1 mt-2 mb-2">
+      Principal
     </li>
 
-    <li class="nav-category-header font-weight-bold text-slate-400 px-4 py-3 text-uppercase font-size-11 letter-spacing-1">
-      Navegación Principal
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link py-3 px-4" routerLink="/dashboard" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-document-text text-teal-400 font-size-20 mr-3"></i>
-        <span class="menu-title font-weight-semibold font-size-15">Mis Notas</span>
+    <li class="nav-item mb-1">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/dashboard" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-document-text text-cyan-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Mis Notas</span>
       </a>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link py-3 px-4" routerLink="/categories" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-folder-open text-celeste-400 font-size-20 mr-3"></i>
-        <span class="menu-title font-weight-semibold font-size-15">Categorías</span>
+    <li class="nav-item mb-1">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/categories" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-folder-open text-purple-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Categorías</span>
       </a>
     </li>
 
-    <!-- Opción de Administración (Superadmin y Admin Únicamente) -->
-    <li class="nav-item" *ngIf="isAdminOrSuperAdmin">
-      <a class="nav-link py-3 px-4" routerLink="/admin-panel" routerLinkActive="active">
-        <i class="menu-icon typcn typcn-cog text-purple-400 font-size-20 mr-3"></i>
-        <span class="menu-title font-weight-semibold font-size-15">Administración</span>
+    <li class="nav-item mb-1">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/calendar" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-calendar-outline text-amber-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Calendario</span>
       </a>
     </li>
 
-    <li class="nav-category-header font-weight-bold text-slate-400 px-4 py-3 mt-3 text-uppercase font-size-11 letter-spacing-1">
-      Seguridad y Cuenta
+    <li class="nav-item mb-1">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/productivity" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-chart-pie-outline text-emerald-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Productividad</span>
+      </a>
     </li>
 
-    <li class="nav-item" *ngIf="currentUser">
-      <a class="nav-link py-3 px-4 cursor-pointer text-rose-400" (click)="logout()">
-        <i class="menu-icon typcn typcn-power-outline text-rose-400 font-size-20 mr-3"></i>
-        <span class="menu-title font-weight-bold font-size-15">Cerrar Sesión</span>
+    <li class="nav-item mb-1">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/canvas" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-brush text-pink-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Lienzo / Canva</span>
+      </a>
+    </li>
+
+    <li class="nav-item mb-1" *ngIf="isAdminOrSuperAdmin">
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/admin-panel" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-cog text-sky-400 font-size-22 mr-3"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Administración</span>
       </a>
     </li>
 
   </ul>
+
+  <!-- Bottom Section -->
+  <div class="sidebar-bottom-section px-4 pb-4">
+    <ul class="nav flex-column mb-3">
+      <!-- Mantenemos el log out en lugar de settings/help estáticos para que sea funcional -->
+      <li class="nav-item mb-1">
+        <a class="nav-link py-2 px-3 rounded-lg custom-nav-link text-slate-300 hover-rose cursor-pointer" routerLink="/profile" routerLinkActive="active-nav-link">
+          <i class="menu-icon typcn typcn-user-outline text-indigo-400 font-size-22 mr-3"></i>
+          <span class="menu-title font-weight-semibold font-size-14">Mi Perfil</span>
+        </a>
+      </li>
+      <li class="nav-item mb-1" *ngIf="currentUser">
+        <a class="nav-link py-2 px-3 rounded-lg custom-nav-link text-slate-300 hover-rose cursor-pointer" (click)="logout()">
+          <i class="menu-icon typcn typcn-power-outline text-rose-400 font-size-22 mr-3"></i>
+          <span class="menu-title font-weight-semibold font-size-14">Cerrar Sesión</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- User Profile Box -->
+    <div class="user-profile-box rounded-xl p-3 d-flex align-items-center" *ngIf="currentUser">
+      <div class="avatar-circle-sm bg-teal text-white font-weight-bold shadow-xs flex-shrink-0 mr-3">
+        {{ currentUser.name.charAt(0).toUpperCase() }}
+      </div>
+      <div class="overflow-hidden">
+        <p class="profile-name mb-0 font-weight-bold text-white font-size-14 text-truncate">{{ currentUser.name }}</p>
+        <p class="designation mb-0 text-blue-300 font-size-11 text-truncate">{{ getRoleLabel(currentUser.role) }}</p>
+      </div>
+    </div>
+  </div>
+
 </nav>

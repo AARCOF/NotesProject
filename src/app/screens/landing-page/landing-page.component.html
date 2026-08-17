@@ -1,222 +1,494 @@
-<div class="landing-wrapper min-vh-100 bg-white">
+<div class="landing-wrapper min-vh-100" style="scroll-behavior: smooth;">
   
   <!-- Navbar de la Landing -->
-  <header class="landing-header border-bottom sticky-top bg-white shadow-xs">
-    <div class="container d-flex align-items-center justify-content-between py-2">
-      <div class="d-flex align-items-center brand-logo-anim">
-        <div class="brand-badge bg-gradient-teal text-white font-weight-bold mr-2 shadow-xs">
-          <i class="typcn typcn-document-text font-size-22"></i>
-        </div>
-        <span class="h4 font-weight-bold text-slate-800 mb-0">NoteYou</span>
+  <header class="landing-header sticky-top shadow-sm">
+    <div class="container-fluid px-4 px-lg-5 d-flex align-items-center justify-content-between py-3">
+      <div class="d-flex align-items-center cursor-pointer" style="gap: 12px;" (click)="scrollTo('inicio')">
+        <i class="typcn typcn-document-text text-blue" style="font-size: 38px; line-height: 1; transform: none !important; display: flex; align-items: center;"></i>
+        <h2 class="font-weight-bold text-white mb-0" style="font-size: 30px; letter-spacing: -1px; line-height: 1; padding-top: 4px;">NoteYou</h2>
       </div>
 
-      <div class="d-flex align-items-center gap-2">
-        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-celeste font-weight-bold px-3 py-2 mr-2 d-none d-sm-inline-flex align-items-center pulse-glow">
-          <i class="typcn typcn-download mr-1 font-size-18"></i> Descargar APK
-        </a>
-        <a routerLink="/login" class="btn btn-outline-teal font-weight-bold px-3 py-2 mr-2">
-          Iniciar Sesión
-        </a>
-        <a routerLink="/register" class="btn btn-gradient-teal font-weight-bold px-4 py-2 text-white shadow-sm">
-          Registrarse Gratis
-        </a>
+      <!-- Links centralizados ocultos en movil -->
+      <div class="d-none d-md-flex align-items-center">
+        <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'inicio'" (click)="scrollTo('inicio')">Inicio</a>
+        <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'herramientas'" (click)="scrollTo('herramientas')">Herramientas</a>
+        <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'como-funciona'" (click)="scrollTo('como-funciona')">Cómo Funciona</a>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <!-- Botones para usuarios no autenticados -->
+        <ng-container *ngIf="!isAuthenticated">
+          <a routerLink="/login" class="nav-link-custom font-weight-bold d-none d-sm-block cursor-pointer">
+            Iniciar Sesión
+          </a>
+          <a routerLink="/register" class="btn btn-orange-gradient font-weight-bold px-4 py-2 d-flex align-items-center shadow-sm">
+            Crear Cuenta <i class="typcn typcn-arrow-right ml-2 font-size-18"></i>
+          </a>
+        </ng-container>
+
+        <!-- Botón para usuarios autenticados -->
+        <ng-container *ngIf="isAuthenticated">
+          <a routerLink="/dashboard" class="btn btn-orange-gradient font-weight-bold px-4 py-2 d-flex align-items-center shadow-sm">
+            Ir al Dashboard <i class="typcn typcn-arrow-right ml-2 font-size-18"></i>
+          </a>
+        </ng-container>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section (Espaciado Superior Ajustado) -->
-  <section class="hero-section pt-4 pb-5 position-relative overflow-hidden bg-gradient-light">
-    <div class="container py-3">
+  <!-- Hero Section (Fondo Oscuro Elegante con Gran Contraste) -->
+  <section id="inicio" class="hero-section py-5 position-relative overflow-hidden reveal active hero-dark-bg">
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
       <div class="row align-items-center">
         
-        <!-- Texto del Hero con Animación de Entrada desde la Izquierda -->
-        <div class="col-lg-6 mb-4 mb-lg-0 text-left animate-left">
-          <span class="badge badge-pill badge-teal-light text-teal font-weight-bold px-3 py-2 mb-3 d-inline-block shadow-xs">
-            Plataforma 100% Gratuita y sin Costos
-          </span>
-          <h1 class="display-4 font-weight-bold text-slate-900 mb-3 line-height-tight">
-            Organiza tus notas con prioridad, fechas y categorías
+        <!-- Texto del Hero -->
+        <div class="col-lg-6 mb-5 mb-lg-0 text-left animate-up">
+
+          <h1 class="display-custom text-white mb-4">
+            Pensamientos que <span class="text-gradient-blue-teal">Brillan.</span><br>
+            Organización sin Límites.
           </h1>
-          <p class="lead text-slate-600 mb-4">
-            NoteYou es la solución de gestión personal diseñada para clasificar tus pendientes por nivel de urgencia, vincular fechas límite, agrupar actividades en categorías y llevar tus notas en la versión móvil Android.
+          <p class="lead text-slate-300 mb-5 pr-lg-5" style="font-size: 1.15rem; line-height: 1.8;">
+            Experimenta la fluidez de un diseño moderno y dinámico. NoteYou es tu espacio premium para capturar ideas, organizar tareas y dominar tu tiempo con total claridad.
           </p>
 
-          <div class="d-flex flex-wrap align-items-center gap-3">
-            <a routerLink="/register" class="btn btn-gradient-teal btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mr-2 mb-2 btn-hero">
-              Comenzar Ahora Gratis
+          <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-orange-gradient btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-3 mb-2 shadow-lg">
+              <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Descargar APK
             </a>
             
-            <!-- Botón Descargar APK Móvil con Animación Pulse Glow -->
-            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-4 py-3 text-white shadow-md rounded-lg mb-2 d-inline-flex align-items-center pulse-glow">
-              <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Descargar APK Android
-            </a>
+            <ng-container *ngIf="!isAuthenticated">
+              <a routerLink="/register" class="btn btn-glass-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-2 mb-2">
+                <i class="typcn typcn-user-add-outline mr-2 font-size-22 text-blue"></i> Crear Cuenta
+              </a>
+              <a routerLink="/login" class="btn btn-outline-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
+                Iniciar Sesión
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="isAuthenticated">
+              <a routerLink="/dashboard" class="btn btn-glass-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-2 mb-2">
+                <i class="typcn typcn-home-outline mr-2 font-size-22 text-blue"></i> Ir al Dashboard
+              </a>
+              <a routerLink="/calendar" class="btn btn-outline-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
+                <i class="typcn typcn-calendar-outline mr-2 font-size-20"></i> Ver Calendario
+              </a>
+            </ng-container>
           </div>
 
-          <div class="mt-4 pt-2 d-flex flex-wrap align-items-center text-slate-500 font-size-14 gap-3">
-            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Sin tarjetas de crédito</span>
-            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Validación por correo</span>
-            <span><i class="typcn typcn-tick text-teal mr-1 font-size-18"></i> Compatible con Android</span>
-          </div>
         </div>
 
-        <!-- Tarjeta de Previsualización con Animación Flotante y Entrada desde la Derecha -->
-        <div class="col-lg-6 text-center animate-right">
-          <div class="hero-card-preview float-card bg-white shadow-xl rounded-24 p-4 border border-slate-100 position-relative">
-            <div class="preview-header border-bottom pb-3 mb-4 d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center">
-                <span class="dot red mr-1"></span>
-                <span class="dot yellow mr-1"></span>
-                <span class="dot green mr-3"></span>
-                <strong class="text-slate-800">Panel Principal NoteYou</strong>
-              </div>
-              <span class="badge badge-success px-3 py-1 font-weight-semibold">Acceso Libre</span>
+        <!-- Glassmorphism Cards sobre Fondo Oscuro: Cuaderno de Apuntes + Categorías Rápidas -->
+        <div class="col-lg-6 hero-visual-container d-none d-lg-block animate-up delay-200">
+          
+          <!-- Cuaderno de Apuntes Interactivo y Animado -->
+          <div class="digital-notebook-card floating-1 cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'" title="Explorar Cuaderno de Notas">
+            
+            <!-- Anillas metálicas de la libreta -->
+            <div class="notebook-spiral-spine">
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
             </div>
 
-            <div class="preview-grid text-left">
-              <div class="card preview-card border-0 shadow-sm p-3 mb-3 bg-emerald-50 rounded-xl preview-item-1">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="badge badge-primary px-3 py-1">Estudio</span>
-                  <span class="badge badge-danger px-2 py-1">Alta Prioridad</span>
+            <!-- Pluma estilográfica animada escribiendo -->
+            <div class="animated-stylus-pen">
+              ✏️
+            </div>
+
+            <!-- Hoja de cuaderno con líneas regladas -->
+            <div class="notebook-paper-body">
+              <div class="notebook-margin-line"></div>
+              
+              <!-- Cabecera del Cuaderno -->
+              <div class="notebook-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <span class="mr-2 font-size-18">📝</span>
+                  <h5 class="font-weight-bold text-slate-900 mb-0 font-size-16">Notas & Lista de Compras</h5>
                 </div>
-                <h6 class="font-weight-bold text-slate-800 mb-1">Entregables de Examen Parcial</h6>
-                <small class="text-slate-500">Organiza temas de cálculo y repasa ejercicios clave.</small>
+                <span class="badge badge-pill badge-blue-light font-size-11 font-weight-bold">
+                  Hoy
+                </span>
               </div>
 
-              <div class="card preview-card border-0 shadow-sm p-3 bg-celeste-50 rounded-xl preview-item-2">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="badge badge-info px-3 py-1">Hogar</span>
-                  <span class="badge badge-warning px-2 py-1">Prioridad Media</span>
+              <!-- Lista de ítems interactivos de la libreta -->
+              <div class="notebook-lines-list">
+                
+                <!-- Ítem 1: Completado -->
+                <div class="d-flex align-items-center justify-content-between py-1">
+                  <div class="d-flex align-items-center text-truncate">
+                    <span class="notebook-check mr-2 text-emerald font-weight-bold">✓</span>
+                    <span class="text-slate-500 font-size-13 text-decoration-line-through text-truncate">
+                      Comprar café colombiano & fruta
+                    </span>
+                  </div>
+                  <span class="badge badge-category-sm bg-emerald text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Compras</span>
                 </div>
-                <h6 class="font-weight-bold text-slate-800 mb-1">Lista de Mantenimiento</h6>
-                <small class="text-slate-500">Revisión de instalaciones y compras de insumos.</small>
+
+                <!-- Ítem 2: Completado -->
+                <div class="d-flex align-items-center justify-content-between py-1">
+                  <div class="d-flex align-items-center text-truncate">
+                    <span class="notebook-check mr-2 text-emerald font-weight-bold">✓</span>
+                    <span class="text-slate-500 font-size-13 text-decoration-line-through text-truncate">
+                      Revisar tablero Kanban NoteYou
+                    </span>
+                  </div>
+                  <span class="badge badge-category-sm bg-blue text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Trabajo</span>
+                </div>
+
+                <!-- Ítem 3: Escribiéndose en tiempo real (animación activa) -->
+                <div class="d-flex align-items-center justify-content-between py-1">
+                  <div class="d-flex align-items-center text-truncate">
+                    <span class="notebook-bullet mr-2 text-blue font-weight-bold">●</span>
+                    <span class="text-slate-900 font-weight-semibold font-size-13 text-truncate">
+                      Escribir apunte de la reunión
+                    </span>
+                    <span class="typing-cursor"></span>
+                  </div>
+                  <span class="badge badge-category-sm bg-amber text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Ideas</span>
+                </div>
+
+                <!-- Ítem 4: Pendiente -->
+                <div class="d-flex align-items-center justify-content-between py-1">
+                  <div class="d-flex align-items-center text-truncate">
+                    <span class="notebook-bullet mr-2 text-slate-400">○</span>
+                    <span class="text-slate-600 font-size-13 text-truncate">
+                      Configurar recordatorio para las 4:00 PM
+                    </span>
+                  </div>
+                  <span class="badge badge-category-sm bg-purple text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Personal</span>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Post-it adhesivo realista superpuesto -->
+            <div class="sticky-note-postit">
+              <div class="pin-dot"></div>
+              <div class="font-size-12 line-height-tight mt-1">
+                💡 <strong>¡Recordatorio!</strong><br>
+                Subtareas & listas sincronizadas.
               </div>
             </div>
+
           </div>
-        </div>
 
+          <!-- Card Categorías Rápidas (Conservada y Estilizada) -->
+          <div class="glass-card-white categories-card floating-2 cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'" title="Gestionar Categorías">
+            <h6 class="font-weight-bold text-slate-800 mb-3 d-flex align-items-center justify-content-between">
+              <span>Categorías Rápidas</span>
+              <i class="typcn typcn-folder text-blue font-size-18"></i>
+            </h6>
+            <div class="tag-light blue mb-2"><i class="typcn typcn-briefcase"></i> Trabajo</div>
+            <div class="tag-light orange mb-2"><i class="typcn typcn-user"></i> Personal</div>
+            <div class="tag-light green mb-2"><i class="typcn typcn-lightbulb"></i> Ideas</div>
+            <div class="tag-light purple"><i class="typcn typcn-shopping-cart"></i> Compras</div>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Sección Versión Móvil y APK -->
-  <section class="mobile-app-section py-5 bg-slate-50 border-top border-bottom position-relative">
-    <div class="container py-3 text-center">
+  <!-- Features Section (Luminosa, Limpia y con Alto Contraste) -->
+  <section id="herramientas" class="features-section py-5 bg-slate-50 reveal" style="background-color: #f8fafc;">
+    <div class="container-fluid px-4 px-lg-5 py-5">
+      
+      <div class="text-center mb-5 pb-3">
+        <h6 class="text-gradient-orange font-weight-bold text-uppercase letter-spacing-1 mb-2">Herramientas</h6>
+        <h2 class="display-custom font-size-36 text-slate-900">Todo lo que necesitas, y más.</h2>
+        <p class="text-slate-600 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
+          Herramientas diseñadas para maximizar tu enfoque con una experiencia ágil y elegante.
+        </p>
+      </div>
+
       <div class="row align-items-center">
-        <div class="col-lg-6 mb-4 mb-lg-0 text-lg-left animate-up">
-          <span class="badge badge-pill badge-celeste-light text-celeste font-weight-bold px-3 py-2 mb-3">
-            Aplicación Móvil Optimizada
-          </span>
-          <h2 class="font-weight-bold text-slate-900 mb-3">Lleva NoteYou en tu dispositivo móvil Android</h2>
-          <p class="text-slate-600 font-size-16 mb-4">
-            Accede a tus tareas, recibe recordatorios instantáneos y registra notas rápidas en formato de chat desde tu teléfono móvil. Descarga el paquete de instalación ejecutable (APK).
-          </p>
+        <!-- Mockup Móvil -->
+        <div class="col-lg-4 mb-5 mb-lg-0 text-center reveal-left">
+          <div class="mobile-mockup-frame bg-white pt-4 px-3 pb-2 shadow-lg">
+            <!-- Interfaz Simulada NoteYou Móvil -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15">Buenos Días</h5>
+              <div class="avatar-circle-sm bg-teal text-white cursor-pointer" [routerLink]="isAuthenticated ? '/profile' : '/login'">NY</div>
+            </div>
+            
+            <div class="bg-slate-100 rounded-pill p-2 mb-3 text-left text-slate-500 font-size-12 d-flex align-items-center cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+              <i class="typcn typcn-zoom mx-2 font-size-18 text-blue"></i> Buscar notas...
+            </div>
+            
+            <div class="d-flex overflow-hidden mb-3 gap-2 pb-1">
+              <span class="badge badge-pill badge-blue-light px-3 py-2 cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">Todas</span>
+              <span class="badge badge-pill bg-white border px-3 py-2 text-slate-600 cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'">Trabajo</span>
+            </div>
 
-          <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-celeste-gradient btn-lg font-weight-bold px-5 py-3 text-white shadow-md rounded-lg d-inline-flex align-items-center pulse-glow">
-            <i class="typcn typcn-download mr-2 font-size-22"></i> Descargar APK v1.0.0
-          </a>
-        </div>
-
-        <div class="col-lg-6 text-center animate-up-delay">
-          <div class="mobile-mockup-frame mx-auto p-3 bg-slate-900 rounded-24 shadow-xl float-card-slow" style="max-width: 320px;">
-            <div class="mobile-screen bg-white rounded-xl p-3 text-left">
-              <div class="mobile-top-bar d-flex justify-content-between align-items-center mb-3">
-                <strong class="text-slate-800 font-size-13">NoteYou Mobile</strong>
-                <span class="badge badge-success font-size-10">Conectado</span>
+            <div class="card border-0 shadow-sm rounded-xl mb-3 border-left-4 border-blue text-left cursor-pointer hover-lift bg-white" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+              <div class="card-body p-3">
+                <h6 class="font-weight-bold text-slate-800 font-size-14 mb-1">Notas de Sincronización</h6>
+                <p class="text-slate-500 font-size-12 mb-2 line-height-tight">Se discutió la implementación del nuevo sistema...</p>
               </div>
+            </div>
 
-              <div class="mobile-chat-bubble p-2 bg-teal-soft rounded-lg mb-2">
-                <small class="font-weight-bold text-teal d-block">Nota Rápida Móvil</small>
-                <small class="text-slate-700">Recordatorio de compras del hogar enviado al correo.</small>
+            <div class="card border-0 shadow-sm rounded-xl mb-3 border-left-4 border-warning text-left cursor-pointer hover-lift bg-white" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+              <div class="card-body p-3">
+                <h6 class="font-weight-bold text-slate-800 font-size-14 mb-1">Lista de compras</h6>
+                <p class="text-slate-500 font-size-12 mb-2 line-height-tight">Leche de almendras, aguacates, pan integral...</p>
               </div>
+            </div>
 
-              <div class="mobile-chat-bubble p-2 bg-celeste-soft rounded-lg mb-3">
-                <small class="font-weight-bold text-celeste d-block">Tarea Prioritaria</small>
-                <small class="text-slate-700">Reunión de avance de proyectos a las 3:00 PM.</small>
+            <div class="d-flex justify-content-around align-items-center mt-4 pt-2 border-top">
+              <a [routerLink]="isAuthenticated ? '/dashboard' : '/login'" class="text-decoration-none" title="Dashboard">
+                <i class="typcn typcn-home text-blue font-size-24 cursor-pointer"></i>
+              </a>
+              <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm cursor-pointer hover-scale" style="width: 40px; height: 40px; margin-top: -20px;" [routerLink]="isAuthenticated ? '/dashboard' : '/login'" title="Nueva Tarea">
+                <i class="typcn typcn-plus font-size-24"></i>
               </div>
-
-              <button class="btn btn-gradient-teal btn-block btn-sm font-weight-bold text-white">
-                Ver Todas las Notas
-              </button>
+              <a [routerLink]="isAuthenticated ? '/calendar' : '/login'" class="text-decoration-none" title="Calendario">
+                <i class="typcn typcn-calendar-outline text-slate-400 font-size-24 cursor-pointer"></i>
+              </a>
             </div>
           </div>
         </div>
+
+        <!-- Grid de Funcionalidades Limpias en Blanco -->
+        <div class="col-lg-7 offset-lg-1 reveal-right">
+          <div class="row">
+            
+            <div class="col-md-6 mb-4">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+                <div>
+                  <div class="feature-list-icon blue mb-3">
+                    <i class="typcn typcn-cloud-storage"></i>
+                  </div>
+                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Sincronización Total</h5>
+                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Tus notas están disponibles en la nube instantáneamente, accesibles desde cualquier dispositivo sin perder un segundo.</p>
+                </div>
+                <div class="text-blue font-weight-bold font-size-14 d-flex align-items-center">
+                  Abrir Tablero <i class="typcn typcn-arrow-right ml-1"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/calendar' : '/login'">
+                <div>
+                  <div class="feature-list-icon orange mb-3">
+                    <i class="typcn typcn-calendar-outline"></i>
+                  </div>
+                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Calendario Interactivo</h5>
+                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Un calendario visual donde puedes revisar tus pendientes agrupados por categoría. Haz clic y descubre lo que te toca hoy.</p>
+                </div>
+                <div class="text-orange font-weight-bold font-size-14 d-flex align-items-center" style="color: #ea580c !important;">
+                  Ver Calendario <i class="typcn typcn-arrow-right ml-1"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/productivity' : '/login'">
+                <div>
+                  <div class="feature-list-icon green mb-3">
+                    <i class="typcn typcn-chart-pie-outline"></i>
+                  </div>
+                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Estadísticas en Tiempo Real</h5>
+                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Mide tu productividad con hermosos histogramas y métricas diseñadas para mantenerte enfocado y motivado.</p>
+                </div>
+                <div class="text-emerald font-weight-bold font-size-14 d-flex align-items-center" style="color: #059669 !important;">
+                  Medir Rendimiento <i class="typcn typcn-arrow-right ml-1"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'">
+                <div>
+                  <div class="feature-list-icon purple mb-3">
+                    <i class="typcn typcn-folder"></i>
+                  </div>
+                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Gestión de Categorías</h5>
+                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Organiza tu vida. Define tus propias categorías, asigna colores vivos e iconos para reconocer tu flujo de un vistazo.</p>
+                </div>
+                <div class="font-weight-bold font-size-14 d-flex align-items-center" style="color: #9333ea !important;">
+                  Explorar Categorías <i class="typcn typcn-arrow-right ml-1"></i>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- Características Principales con Tarjetas Animadas -->
-  <section class="features-section py-5">
-    <div class="container py-4 text-center">
-      <div class="max-width-600 mx-auto mb-5 animate-up">
-        <h2 class="font-weight-bold text-slate-900 mb-2">Todo lo que necesitas para tu productividad</h2>
-        <p class="text-slate-500 font-size-16">Una herramienta completa, ágil y totalmente gratuita.</p>
+  <!-- How It Works Section (Fondo Oscuro con Tarjetas Dark-Glass Elegantes y Vívidas) -->
+  <section id="como-funciona" class="how-it-works-section py-5 reveal">
+    <div class="container-fluid px-4 px-lg-5 py-5">
+      <div class="text-center mb-5 pb-3">
+        <h6 class="text-gradient-blue-teal font-weight-bold text-uppercase letter-spacing-1 mb-2">Flujo de Trabajo</h6>
+        <h2 class="display-custom font-size-36 text-white">Organízate en 3 simples pasos.</h2>
+        <p class="text-slate-300 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
+          Un proceso ágil diseñado para que nunca pierdas una idea importante.
+        </p>
       </div>
 
-      <div class="row">
-        <div class="col-md-4 mb-4 animate-up-1">
-          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
-            <div class="icon-circle bg-teal-soft text-teal mx-auto mb-3">
-              <i class="typcn typcn-warning font-size-28"></i>
-            </div>
-            <h5 class="font-weight-bold text-slate-800 mb-2">Niveles de Prioridad</h5>
-            <p class="text-slate-600 font-size-14 mb-0">
-              Clasifica tus tareas en Alta, Media y Baja prioridad para identificar instantáneamente qué requiere tu atención inmediata.
-            </p>
+      <div class="row text-center">
+
+        <div class="col-lg-4 mb-5 mb-lg-0 reveal-up delay-100">
+          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/dashboard' : '/register'">
+            <div class="step-number-badge bg-gradient-blue mx-auto mb-3">1</div>
+            <i class="typcn typcn-user-add-outline text-blue font-size-44 mb-3 d-inline-block"></i>
+            <h5 class="font-weight-bold text-white font-size-18 mb-2">Crea tu Cuenta</h5>
+            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Regístrate de forma segura y obtén acceso instantáneo a tu espacio de trabajo en la nube.</p>
           </div>
         </div>
 
-        <div class="col-md-4 mb-4 animate-up-2">
-          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
-            <div class="icon-circle bg-celeste-soft text-celeste mx-auto mb-3">
-              <i class="typcn typcn-folder-open font-size-28"></i>
-            </div>
-            <h5 class="font-weight-bold text-slate-800 mb-2">Categorías por Registro</h5>
-            <p class="text-slate-600 font-size-14 mb-0">
-              Crea categorías como Estudio, Hogar, Trabajo o Finanzas con paletas de color e iconos personalizados.
-            </p>
+        <div class="col-lg-4 mb-5 mb-lg-0 reveal-up delay-200">
+          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+            <div class="step-number-badge bg-gradient-orange mx-auto mb-3">2</div>
+            <i class="typcn typcn-edit font-size-44 mb-3 d-inline-block" style="color: #fb923c;"></i>
+            <h5 class="font-weight-bold text-white font-size-18 mb-2">Escribe tus Ideas</h5>
+            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Anota todo. Tareas pendientes, recordatorios, proyectos o simplemente una lista de compras rápida.</p>
           </div>
         </div>
 
-        <div class="col-md-4 mb-4 animate-up-3">
-          <div class="feature-box feature-card-animated p-4 rounded-xl border bg-white shadow-sm h-100">
-            <div class="icon-circle bg-purple-soft text-purple mx-auto mb-3">
-              <i class="typcn typcn-shield-check font-size-28"></i>
-            </div>
-            <h5 class="font-weight-bold text-slate-800 mb-2">Seguridad por Correo</h5>
-            <p class="text-slate-600 font-size-14 mb-0">
-              Verificación de registro con código de seguridad enviado a tu correo válido por 1 hora y prueba reCAPTCHA.
-            </p>
+        <div class="col-lg-4 reveal-up delay-300">
+          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/productivity' : '/login'">
+            <div class="step-number-badge bg-gradient-teal mx-auto mb-3">3</div>
+            <i class="typcn typcn-chart-pie-outline font-size-44 mb-3 d-inline-block" style="color: #34d399;"></i>
+            <h5 class="font-weight-bold text-white font-size-18 mb-2">Domina tu Tiempo</h5>
+            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Agrupa en categorías, mira el calendario y revisa tus gráficos de productividad. ¡Todo bajo control!</p>
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- Banner Gratuito y Descarga -->
-  <section class="banner-free py-5 bg-gradient-teal text-white text-center">
-    <div class="container py-3 animate-up">
-      <h2 class="font-weight-bold mb-3">Empieza a organizar tus notas hoy mismo</h2>
-      <p class="lead text-white-90 max-width-600 mx-auto mb-4 font-size-16">
-        NoteYou es 100% gratuito. Registra tu cuenta en menos de un minuto o descarga la versión ejecutable APK para Android.
+  <!-- CTA Section (Transición Armoniosa Sin Cortes de Color) -->
+  <section class="cta-section py-5 position-relative overflow-hidden reveal">
+    <div class="container-fluid px-4 px-lg-5 py-5 text-center text-white position-relative" style="z-index: 1;">
+      <h2 class="display-custom font-size-42 text-white mb-4">¿Listo para transformar tu día?</h2>
+      <p class="lead text-white-80 mb-5 max-w-2xl mx-auto" style="max-width: 620px; font-size: 1.15rem; line-height: 1.8;">
+        Únete a NoteYou hoy y descubre la diferencia de una aplicación de notas verdaderamente moderna, rápida y bella. Gratis para siempre.
       </p>
       
-      <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
-        <a routerLink="/register" class="btn btn-light text-teal font-weight-bold btn-lg px-5 py-3 shadow-lg rounded-lg mr-3 mb-2">
-          Crear Cuenta Gratuita
-        </a>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <ng-container *ngIf="!isAuthenticated">
+          <a routerLink="/register" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mr-2 mb-2">
+            Comenzar Ahora Gratis
+          </a>
+          <a routerLink="/login" class="btn btn-glass-light btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mb-2">
+            Iniciar Sesión
+          </a>
+        </ng-container>
 
-        <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-outline-light font-weight-bold btn-lg px-4 py-3 rounded-lg mb-2 pulse-glow">
-          <i class="typcn typcn-download mr-1"></i> Descargar APK
-        </a>
+        <ng-container *ngIf="isAuthenticated">
+          <a routerLink="/dashboard" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mr-2 mb-2">
+            Ir a Mi Dashboard
+          </a>
+          <a routerLink="/productivity" class="btn btn-glass-light btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mb-2">
+            Ver Mi Productividad
+          </a>
+        </ng-container>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="landing-footer py-4 bg-slate-900 text-white-80 border-top">
-    <div class="container text-center font-size-14">
-      <p class="mb-0">NoteYou &copy; 2026. Sistema de Organización Personal de Libre Acceso.</p>
+  <footer class="footer-section py-5">
+    <div class="container-fluid px-4 px-lg-5">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <div class="d-flex align-items-center mb-3 cursor-pointer" style="gap: 12px;" (click)="scrollTo('inicio')">
+            <i class="typcn typcn-document-text text-blue" style="font-size: 28px; line-height: 1;"></i>
+            <h3 class="font-weight-bold text-white mb-0" style="font-size: 24px; letter-spacing: -1px;">NoteYou</h3>
+          </div>
+          <p class="text-slate-400 font-size-14 pr-lg-5 line-height-relaxed">
+            Pensamientos que brillan. La plataforma moderna para capturar, organizar y dominar tus ideas, desarrollada con pasión.
+          </p>
+        </div>
+        
+        <div class="col-6 col-lg-2 offset-lg-2 mb-4 mb-lg-0">
+          <h6 class="text-white font-weight-bold mb-3">Producto</h6>
+          <ul class="list-unstyled text-slate-400 font-size-14">
+            <li class="mb-2"><a [routerLink]="isAuthenticated ? '/dashboard' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Tablero Kanban</a></li>
+            <li class="mb-2"><a [routerLink]="isAuthenticated ? '/calendar' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Calendario</a></li>
+            <li class="mb-2"><a [routerLink]="isAuthenticated ? '/productivity' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Productividad</a></li>
+            <li class="mb-2"><a [routerLink]="isAuthenticated ? '/categories' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Categorías</a></li>
+            <li class="mb-2"><a [routerLink]="isAuthenticated ? '/canvas' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Pizarra de Dibujo</a></li>
+            <li class="mb-2"><a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="text-slate-400 text-decoration-none hover-text-white transition-all">Descargar APK</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+          <h6 class="text-white font-weight-bold mb-3">Navegación</h6>
+          <ul class="list-unstyled text-slate-400 font-size-14">
+            <li class="mb-2"><a (click)="scrollTo('inicio')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Inicio</a></li>
+            <li class="mb-2"><a (click)="scrollTo('herramientas')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Herramientas</a></li>
+            <li class="mb-2"><a (click)="scrollTo('como-funciona')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Cómo Funciona</a></li>
+            <li class="mb-2"><a routerLink="/login" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer" *ngIf="!isAuthenticated">Iniciar Sesión</a></li>
+            <li class="mb-2"><a routerLink="/register" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer" *ngIf="!isAuthenticated">Crear Cuenta</a></li>
+            <li class="mb-2"><a routerLink="/profile" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer" *ngIf="isAuthenticated">Mi Perfil</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2">
+          <h6 class="text-white font-weight-bold mb-3">Información</h6>
+          <ul class="list-unstyled text-slate-400 font-size-14">
+            <li class="mb-2"><a (click)="openLegalModal('about')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Acerca de</a></li>
+            <li class="mb-2"><a (click)="openLegalModal('security')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Seguridad</a></li>
+            <li class="mb-2"><a (click)="openLegalModal('privacy')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Privacidad</a></li>
+            <li class="mb-2"><a (click)="openLegalModal('terms')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Términos de uso</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-top mt-5 pt-4 d-flex flex-column flex-md-row justify-content-between align-items-center text-slate-500 font-size-14" style="border-color: rgba(255,255,255,0.08) !important;">
+        <p class="mb-2 mb-md-0">© 2026 NoteYou Inc. Todos los derechos reservados.</p>
+        <div class="d-flex gap-3">
+          <a routerLink="/landing" class="text-slate-400 hover-text-white transition-all"><i class="typcn typcn-social-twitter font-size-22"></i></a>
+          <a routerLink="/landing" class="text-slate-400 hover-text-white transition-all"><i class="typcn typcn-social-github font-size-22"></i></a>
+          <a routerLink="/landing" class="text-slate-400 hover-text-white transition-all"><i class="typcn typcn-social-dribbble font-size-22"></i></a>
+        </div>
+      </div>
     </div>
   </footer>
+
+  <!-- Modal Informativo / Legal -->
+  <div class="modal-backdrop-custom" *ngIf="isLegalModalOpen" (click)="closeLegalModal()"></div>
+  <div class="modal-custom" *ngIf="isLegalModalOpen" tabindex="-1" role="dialog">
+    <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()" style="max-width: 540px;">
+      <div class="modal-content-custom">
+        <div class="modal-header-custom" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">
+          <div class="d-flex align-items-center">
+            <div class="modal-icon-badge mr-3 bg-white-20 text-white">
+              <i class="typcn typcn-info-large font-size-22"></i>
+            </div>
+            <div>
+              <h5 class="modal-title font-weight-bold mb-0 font-size-18 text-white">{{ legalModalTitle }}</h5>
+              <small class="text-white-80">Información oficial de NoteYou</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeLegalModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
+        </div>
+
+        <div class="modal-body p-4 bg-white">
+          <p class="text-slate-600 font-size-15 line-height-relaxed mb-0">
+            {{ legalModalContent }}
+          </p>
+        </div>
+
+        <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg" (click)="closeLegalModal()">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>

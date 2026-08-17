@@ -1,0 +1,151 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white mb-4">
+      <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+          <h4 class="font-weight-bold text-slate-800 mb-1">
+            <i class="typcn typcn-brush text-blue mr-2"></i> Mi Lienzo / Canva
+          </h4>
+          <p class="text-slate-500 mb-0">Dibuja, bosqueja ideas, crea diagramas o notas visuales a mano alzada.</p>
+        </div>
+        
+        <div class="d-flex align-items-center gap-2 mt-3 mt-md-0" *ngIf="statusMessage">
+          <div class="badge badge-emerald-light text-emerald px-3 py-2 font-weight-bold fade-in-up">
+            <i class="typcn typcn-tick mr-1"></i> {{ statusMessage }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toolbar + Canvas Area -->
+<div class="row fade-in-up">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white overflow-hidden">
+      
+      <!-- Toolbar Superior -->
+      <div class="canvas-toolbar p-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3 bg-slate-50">
+        
+        <!-- Herramientas Principales -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="btn-group bg-white p-1 rounded-lg border shadow-xs" role="group">
+            <button 
+              type="button" 
+              class="btn btn-sm btn-tool" 
+              [class.active]="selectedTool === 'brush'"
+              (click)="selectTool('brush')"
+              title="Pincel / Pluma">
+              <i class="typcn typcn-pencil font-size-18 mr-1"></i> Pincel
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-tool" 
+              [class.active]="selectedTool === 'highlighter'"
+              (click)="selectTool('highlighter')"
+              title="Resaltador / Marcador">
+              <i class="typcn typcn-brush font-size-18 mr-1"></i> Resaltador
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-tool" 
+              [class.active]="selectedTool === 'eraser'"
+              (click)="selectTool('eraser')"
+              title="Borrador">
+              <i class="typcn typcn-backspace-outline font-size-18 mr-1"></i> Borrador
+            </button>
+          </div>
+        </div>
+
+        <!-- Paleta de Colores -->
+        <div class="d-flex align-items-center gap-2" *ngIf="selectedTool !== 'eraser'">
+          <span class="text-slate-500 font-size-12 font-weight-bold text-uppercase d-none d-lg-inline">Color:</span>
+          <div class="color-palette-wrapper d-flex align-items-center gap-2 bg-white p-1 px-2 rounded-lg border shadow-xs">
+            <div 
+              *ngFor="let color of presetColors" 
+              class="color-dot rounded-circle cursor-pointer"
+              [style.backgroundColor]="color"
+              [class.active]="selectedColor === color"
+              (click)="selectColor(color)">
+            </div>
+            
+            <div class="color-picker-wrapper position-relative ml-1">
+              <input 
+                type="color" 
+                class="custom-color-input cursor-pointer"
+                [(ngModel)]="selectedColor"
+                (change)="selectColor(selectedColor)"
+                title="Color personalizado">
+              <i class="typcn typcn-pipette text-slate-500 color-picker-icon"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector de Grosor -->
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-slate-500 font-size-12 font-weight-bold text-uppercase d-none d-lg-inline">Grosor:</span>
+          <div class="btn-group bg-white p-1 rounded-lg border shadow-xs" role="group">
+            <button 
+              *ngFor="let opt of widthOptions" 
+              type="button" 
+              class="btn btn-sm btn-tool" 
+              [class.active]="strokeWidth === opt.value"
+              (click)="selectWidth(opt.value)">
+              {{ opt.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Acciones: Deshacer, Rehacer, Limpiar, Descargar -->
+        <div class="d-flex align-items-center gap-2">
+          <button 
+            class="btn btn-white btn-sm border shadow-xs rounded-lg text-slate-700 font-weight-bold hover-lift"
+            (click)="undo()"
+            [disabled]="!canUndo()"
+            title="Deshacer (Ctrl+Z)">
+            <i class="typcn typcn-arrow-back font-size-18"></i>
+          </button>
+          <button 
+            class="btn btn-white btn-sm border shadow-xs rounded-lg text-slate-700 font-weight-bold hover-lift"
+            (click)="redo()"
+            [disabled]="!canRedo()"
+            title="Rehacer">
+            <i class="typcn typcn-arrow-forward font-size-18"></i>
+          </button>
+          <button 
+            class="btn btn-white btn-sm border shadow-xs rounded-lg text-rose font-weight-bold hover-lift"
+            (click)="clearCanvas()"
+            title="Limpiar todo el lienzo">
+            <i class="typcn typcn-trash font-size-18 mr-1"></i> Limpiar
+          </button>
+          <button 
+            class="btn btn-gradient-blue btn-sm font-weight-bold text-white rounded-lg shadow-sm hover-lift px-3"
+            (click)="downloadImage()"
+            title="Descargar dibujo como imagen PNG">
+            <i class="typcn typcn-download font-size-18 mr-1"></i> Descargar PNG
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="canvas-container bg-white position-relative">
+        <canvas 
+          #drawingCanvas
+          class="drawing-canvas-element"
+          [class.cursor-brush]="selectedTool === 'brush'"
+          [class.cursor-highlighter]="selectedTool === 'highlighter'"
+          [class.cursor-eraser]="selectedTool === 'eraser'"
+          (mousedown)="startDrawing($event)"
+          (mousemove)="draw($event)"
+          (mouseup)="stopDrawing()"
+          (mouseleave)="stopDrawing()"
+          (touchstart)="startDrawing($event)"
+          (touchmove)="draw($event)"
+          (touchend)="stopDrawing()">
+        </canvas>
+      </div>
+
+    </div>
+  </div>
+</div>

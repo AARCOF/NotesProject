@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-grow: 1;
+}
+
 .fade-in-up {
   animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -13,7 +20,7 @@
   }
 }
 
-.alert-teal-custom {
+.alert-blue-custom {
   background-color: #ECFDF5;
   color: #065F46;
   border: 1px solid #A7F3D0;
@@ -33,7 +40,7 @@
   }
 }
 
-.bg-stat-teal {
+.bg-stat-blue {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
@@ -60,6 +67,27 @@
 
 .bg-white-20 {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   STICKY DASHBOARD TOOLBAR (NAVIGATION & FILTERS)
+   ========================================================================== */
+.sticky-dashboard-toolbar {
+  position: sticky;
+  top: 68px;
+  z-index: 1020;
+  margin-left: -4px;
+  margin-right: -4px;
+  margin-bottom: 6px !important;
+  padding: 2px 4px 6px 4px;
+
+  .card {
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.09), 0 4px 8px -2px rgba(15, 23, 42, 0.04) !important;
+  }
 }
 
 .card-note-modern {
@@ -96,149 +124,420 @@
   background-color: #10B981;
 }
 
-.badge-category-modern {
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 8px;
-  letter-spacing: 0.3px;
-}
-
-.badge-priority-high {
-  background-color: #FEE2E2;
-  color: #991B1B;
-  border: 1px solid #FCA5A5;
-}
-
-.badge-priority-medium {
-  background-color: #FEF3C7;
-  color: #92400E;
-  border: 1px solid #FCD34D;
-}
-
-.badge-priority-low {
-  background-color: #D1FAE5;
-  color: #065F46;
-  border: 1px solid #6EE7B7;
-}
-
-.badge-status-pending {
-  background-color: #F1F5F9;
-  color: #475569;
-  border: 1px solid #E2E8F0;
-}
-
-.badge-status-progress {
-  background-color: #E0F2FE;
-  color: #0369A1;
-  border: 1px solid #BAE6FD;
-}
-
-.badge-status-completed {
-  background-color: #D1FAE5;
-  color: #065F46;
-  border: 1px solid #A7F3D0;
-}
-
-.btn-gradient-teal {
-  background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
-  border: none;
-  border-radius: 10px;
-
-  &:hover {
-    background: linear-gradient(135deg, #047857 0%, #0369A1 100%);
-    color: #ffffff;
-  }
-}
-
-.btn-outline-emerald {
-  border: 1px solid #10B981;
-  color: #059669;
-  background-color: transparent;
-
-  &:hover {
-    background-color: #10B981;
-    color: #ffffff;
-  }
-}
-
-.btn-outline-teal {
-  border: 1px solid #059669;
-  color: #059669;
-  background-color: transparent;
-
-  &:hover {
-    background-color: #059669;
-    color: #ffffff;
-  }
-}
-
-.btn-action-teal {
-  background-color: #ECFDF5;
-  color: #059669;
-  border: none;
-
-  &:hover {
-    background-color: #059669;
-    color: #ffffff;
-  }
-}
-
-.btn-action-rose {
-  background-color: #FEF2F2;
-  color: #EF4444;
-  border: none;
-
-  &:hover {
-    background-color: #EF4444;
-    color: #ffffff;
-  }
-}
-
-.input-group-custom {
-  border-radius: 10px;
-  overflow: hidden;
-
-  .form-control {
-    height: 40px;
-    font-size: 0.875rem;
-  }
-}
-
-.select-custom {
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid #E2E8F0;
-  background-color: #F8FAFC;
-  color: #334155;
-  font-weight: 500;
-
-  &:focus {
-    border-color: #059669;
-    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
-  }
-}
-
-.badge-teal-light {
-  background-color: #ECFDF5;
-  color: #059669;
-  border: 1px solid #A7F3D0;
-  font-size: 0.8rem;
-  padding: 6px 12px;
-}
+/* Shared buttons and badges moved to global styles.scss */
 
 .text-completed {
   text-decoration: line-through;
   opacity: 0.55;
 }
 
-.text-teal {
+.text-blue {
   color: #059669 !important;
 }
 
-.bg-teal-50 {
+.bg-blue-50 {
   background-color: #ECFDF5 !important;
 }
 
 .font-size-26 {
   font-size: 1.625rem;
 }
+
+/* ==========================================================================
+   KANBAN BOARD STYLES
+   ========================================================================== */
+.kanban-board-wrapper {
+  margin-top: 0.5rem;
+}
+
+.kanban-column {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-cards-list {
+  max-height: calc(100vh - 275px);
+  min-height: 440px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 3px;
+
+  /* Custom Slim Modern Scrollbar */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+    &:hover {
+      background: #94a3b8;
+    }
+  }
+}
+
+.column-status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.bg-amber { background-color: #f59e0b; }
+  &.bg-blue { background-color: #0ea5e9; }
+  &.bg-emerald { background-color: #10b981; }
+}
+
+.kanban-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  overflow: hidden;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.12) !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  &.pinned-kanban {
+    border-color: #f59e0b !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.16) !important;
+  }
+
+  .card-body {
+    padding: 1.15rem 1.25rem !important;
+  }
+}
+
+.kanban-priority-stripe {
+  height: 4px;
+  width: 100%;
+}
+
+.kanban-col-pagination {
+  height: 28px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  .btn-page-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    color: #475569;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    transition: all 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f1f5f9;
+      color: #0ea5e9;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-dot-sm {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.badge-amber-light {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.badge-emerald-light {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+/* ==========================================================================
+   VIEW SWITCHER PROMINENT BUTTONS
+   ========================================================================== */
+.view-mode-selector-pill {
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px;
+  gap: 3px;
+
+  .view-switch-btn {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 9px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 0.8125rem;
+
+    &:hover:not(.active) {
+      color: #0ea5e9;
+      background-color: #f0f9ff;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 3px 10px rgba(14, 165, 233, 0.35);
+      transform: scale(1.02);
+    }
+  }
+}
+
+/* ==========================================================================
+   DRAG AND DROP STATES
+   ========================================================================== */
+.cursor-grab {
+  cursor: grab !important;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing !important;
+  }
+}
+
+.dragging-card {
+  opacity: 0.4 !important;
+  transform: scale(0.96) rotate(1deg) !important;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2) !important;
+  border: 1.5px dashed #0ea5e9 !important;
+}
+
+.kanban-col-hover {
+  background-color: #e0f2fe !important;
+  border: 2px dashed #0ea5e9 !important;
+  transform: scale(1.01);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15) !important;
+}
+
+/* ==========================================================================
+   MODERN FILTER DROPDOWNS (SORT, PRIORITY, CATEGORY)
+   ========================================================================== */
+.btn-filter-dropdown {
+  height: 38px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #334155;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  max-width: 220px;
+
+  &::after {
+    display: none !important; /* Hide bootstrap default arrow */
+  }
+
+  &:hover, &:focus, &[aria-expanded="true"] {
+    background-color: #f8fafc;
+    border-color: #0ea5e9;
+    color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+  }
+
+  .filter-label {
+    max-width: 140px;
+  }
+}
+
+.filter-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.category-indicator-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.category-indicator-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dropdown-menu-modern {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+  min-width: 210px;
+  margin-top: 6px;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  .dropdown-item {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #334155;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    margin: 1px 4px;
+    width: calc(100% - 8px);
+    transition: all 0.15s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f9ff;
+      color: #0284c7;
+    }
+
+    &.active-item {
+      background-color: #e0f2fe;
+      color: #0284c7;
+      font-weight: 700;
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   TASK DETAILS MODAL STYLES
+   ========================================================================== */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1050;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1060;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 620px;
+  margin: 1.75rem auto;
+
+  &.modal-dialog-lg {
+    max-width: 720px;
+  }
+}
+
+.modal-content-custom {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-header-custom {
+  color: #ffffff;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .modal-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+  }
+
+  .btn-close-custom {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    &:hover {
+      transform: scale(1.15) rotate(90deg);
+      opacity: 0.8;
+    }
+  }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hover-bg-light:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+
+

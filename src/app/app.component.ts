@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
+import { AutomatedReminderService } from './core/services/automated-reminder.service';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
 import { User } from './core/models/user.model';
+import { NotesService } from './services/notes.service';
+import { Note } from './models/note.model';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +18,14 @@ export class AppComponent implements OnInit {
   showNav: boolean = true;
   currentUser: User | null = null;
   showTutorial: boolean = false;
+  globalTasks: Note[] = [];
 
   constructor(
+    private titleService: Title,
     private router: Router,
-    public authService: AuthService
+    private authService: AuthService,
+    private automatedReminderService: AutomatedReminderService,
+    private notesService: NotesService
   ) {}
 
   ngOnInit(): void {
@@ -32,6 +40,10 @@ export class AppComponent implements OnInit {
       this.currentUser = user;
       this.updateLayoutState(this.router.url);
       this.checkTutorialState();
+    });
+
+    this.notesService.notes$.subscribe(notes => {
+      this.globalTasks = notes;
     });
   }
 
@@ -52,3 +64,4 @@ export class AppComponent implements OnInit {
     this.showTutorial = false;
   }
 }
+

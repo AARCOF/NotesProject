@@ -86,7 +86,7 @@
         </button>
       </div>
 
-      <form (ngSubmit)="saveCategory()">
+      <form (ngSubmit)="saveCategory()" autocomplete="off">
         <div class="modal-body p-4 bg-white">
           
           <div class="form-group mb-3">
@@ -97,6 +97,10 @@
               placeholder="Ej: Estudio, Hogar, Gimnasio, Proyectos" 
               [(ngModel)]="name" 
               name="catName" 
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               required>
           </div>
 
@@ -107,7 +111,9 @@
               rows="2" 
               placeholder="Breve descripción del propósito de la categoría..." 
               [(ngModel)]="description" 
-              name="catDescription"></textarea>
+              name="catDescription"
+              autocomplete="off"
+              spellcheck="false"></textarea>
           </div>
 
           <div class="form-group mb-3">

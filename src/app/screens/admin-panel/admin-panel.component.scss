@@ -4,7 +4,7 @@
   overflow: hidden;
 }
 
-.bg-stat-teal {
+.bg-stat-blue {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
@@ -54,13 +54,13 @@
   font-weight: 600;
 }
 
-.badge-teal-light {
+.badge-blue-light {
   background-color: #ECFDF5;
   color: #059669;
   border: 1px solid #A7F3D0;
 }
 
-.badge-teal-soft {
+.badge-blue-soft {
   background-color: #D1FAE5;
   color: #065F46;
 }
@@ -80,7 +80,7 @@
   color: #991B1B;
 }
 
-.btn-outline-teal {
+.btn-outline-blue {
   border: 1px solid #059669;
   color: #059669;
   background-color: transparent;
@@ -108,6 +108,15 @@
   background-color: #F8FAFC;
   color: #334155;
   font-weight: 500;
+  padding: 0.35rem 2.4rem 0.35rem 0.875rem !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748B'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1.15rem 1.15rem !important;
+  cursor: pointer;
 
   &:focus {
     border-color: #059669;

@@ -8,15 +8,10 @@
           <div class="icon-avatar-lg bg-gradient-primary text-white mx-auto mb-3 shadow-md">
             <i class="typcn typcn-document-text font-size-32"></i>
           </div>
-          <h3 class="font-weight-bold text-slate-800 mb-1">StarNotes</h3>
+          <h3 class="font-weight-bold text-slate-800 mb-1">NoteYou</h3>
           <p class="text-slate-500 font-size-14 mb-0">Sistema Inteligente de Notas y Tareas</p>
         </div>
 
-        <div class="alert alert-indigo border-0 small mb-4 p-3 rounded-lg">
-          <div class="font-weight-bold text-indigo-dark mb-1">Acceso Demostrativo:</div>
-          <div class="text-slate-700">Correo: <strong class="text-slate-900">usuario@ejemplo.com</strong></div>
-          <div class="text-slate-700">Contraseña: <strong class="text-slate-900">password123</strong></div>
-        </div>
 
         <div class="alert alert-danger-custom mb-3" *ngIf="errorMessage">
           <i class="typcn typcn-warning mr-1"></i> {{ errorMessage }}
@@ -26,7 +21,7 @@
           <i class="typcn typcn-tick mr-1"></i> {{ successMessage }}
         </div>
 
-        <form (ngSubmit)="onLogin()">
+        <form (ngSubmit)="onLogin()" autocomplete="off">
           
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Correo Electrónico</label>
@@ -40,6 +35,10 @@
                 placeholder="correo@ejemplo.com" 
                 [(ngModel)]="email" 
                 name="email" 
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
                 required>
             </div>
           </div>
@@ -56,6 +55,7 @@
                 placeholder="********" 
                 [(ngModel)]="password" 
                 name="password" 
+                autocomplete="current-password"
                 required>
             </div>
           </div>

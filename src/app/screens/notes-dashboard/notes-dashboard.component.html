@@ -1,5 +1,5 @@
 <!-- Alerta de Notificación de Recordatorio Enviado -->
-<div class="alert alert-teal-custom alert-dismissible fade show mb-4 shadow-sm" *ngIf="reminderMessage">
+<div class="alert alert-blue-custom alert-dismissible fade show mb-4 shadow-sm" *ngIf="reminderMessage">
   <div class="d-flex align-items-center">
     <i class="typcn typcn-mail mr-2 font-size-20"></i>
     <strong class="font-weight-bold">{{ reminderMessage }}</strong>
@@ -9,16 +9,7 @@
   </button>
 </div>
 
-<!-- Layout Principal: Panel de Apuntes a la Izquierda + Panel de Tareas a la Derecha -->
-<div class="row">
-  
-  <!-- PANEL IZQUIERDO: NOTAS RÁPIDAS Y APUNTES (Estilo Chat) -->
-  <div class="col-lg-4 grid-margin stretch-card mb-4 mb-lg-0">
-    <app-quick-notes-panel [availableTasks]="allNotes"></app-quick-notes-panel>
-  </div>
 
-  <!-- PANEL DERECHO: GESTIÓN DE TAREAS -->
-  <div class="col-lg-8">
     
     <!-- Skeleton Loaders de Estadísticas -->
     <app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
@@ -26,7 +17,7 @@
     <!-- Tarjetas de Estadísticas Principales -->
     <div class="row fade-in-up" *ngIf="!isLoading">
       <div class="col-sm-6 col-md-3 grid-margin stretch-card mb-3">
-        <div class="card card-stat-gradient bg-stat-teal text-white shadow-sm">
+        <div class="card card-stat-gradient bg-stat-blue text-white shadow-sm">
           <div class="card-body p-3">
             <div class="d-flex justify-content-between align-items-center">
               <div>
@@ -90,8 +81,8 @@
       </div>
     </div>
 
-    <!-- Barra de Búsqueda, Filtros y Ordenamiento -->
-    <div class="row mb-4">
+    <!-- Barra de Búsqueda, Filtros y Ordenamiento (Siempre fija en vista) -->
+    <div class="row sticky-dashboard-toolbar">
       <div class="col-12">
         <div class="card shadow-sm border-0 rounded-xl bg-white">
           <div class="card-body p-3">
@@ -109,6 +100,10 @@
                     class="form-control bg-slate-100 border-0 text-slate-800" 
                     placeholder="Buscar notas por título o detalle..." 
                     [(ngModel)]="searchTerm" 
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
                     (ngModelChange)="onSearchChange()">
                   <div class="input-group-append" *ngIf="searchTerm">
                     <button class="btn btn-slate-200 text-slate-600 border-0" type="button" (click)="searchTerm = ''; onSearchChange()">
@@ -119,35 +114,117 @@
               </div>
 
               <div class="d-flex flex-wrap align-items-center gap-2">
-                <div class="form-group mb-0 mr-1">
-                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedSort" (change)="onFilterChange()">
-                    <option value="priority-desc">Prioridad Alta primero</option>
-                    <option value="priority-asc">Prioridad Baja primero</option>
-                    <option value="date-desc">Fecha más reciente</option>
-                    <option value="date-asc">Fecha más antigua</option>
-                    <option value="dueDate-asc">Próxima entrega</option>
-                  </select>
+                <!-- Dropdown Ordenamiento -->
+                <div class="dropdown" ngbDropdown>
+                  <button class="btn btn-filter-dropdown shadow-xs d-flex align-items-center" ngbDropdownToggle type="button">
+                    <i class="typcn typcn-arrow-unsorted text-blue mr-1 font-size-16"></i>
+                    <span class="filter-label text-truncate">{{ getSortLabel(selectedSort) }}</span>
+                    <i class="typcn typcn-arrow-sorted-down font-size-12 ml-2 text-slate-400"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-modern shadow-lg py-2" ngbDropdownMenu>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedSort === 'priority-desc'" (click)="setSort('priority-desc')">
+                      <span><i class="typcn typcn-warning mr-2 text-rose font-size-16"></i> Prioridad Alta primero</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedSort === 'priority-desc'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedSort === 'priority-asc'" (click)="setSort('priority-asc')">
+                      <span><i class="typcn typcn-flash mr-2 text-emerald font-size-16"></i> Prioridad Baja primero</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedSort === 'priority-asc'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedSort === 'date-desc'" (click)="setSort('date-desc')">
+                      <span><i class="typcn typcn-time mr-2 text-blue font-size-16"></i> Fecha más reciente</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedSort === 'date-desc'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedSort === 'date-asc'" (click)="setSort('date-asc')">
+                      <span><i class="typcn typcn-arrow-sync mr-2 text-slate-500 font-size-16"></i> Fecha más antigua</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedSort === 'date-asc'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedSort === 'dueDate-asc'" (click)="setSort('dueDate-asc')">
+                      <span><i class="typcn typcn-calendar mr-2 text-amber font-size-16"></i> Próxima entrega</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedSort === 'dueDate-asc'"></i>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="form-group mb-0 mr-1">
-                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedPriority" (change)="onFilterChange()">
-                    <option value="all">Prioridades: Todas</option>
-                    <option value="alta">Prioridad Alta</option>
-                    <option value="media">Prioridad Media</option>
-                    <option value="baja">Prioridad Baja</option>
-                  </select>
+                <!-- Dropdown Prioridad -->
+                <div class="dropdown" ngbDropdown>
+                  <button class="btn btn-filter-dropdown shadow-xs d-flex align-items-center" ngbDropdownToggle type="button">
+                    <span class="filter-dot mr-2" [ngClass]="{
+                      'bg-slate-400': selectedPriority === 'all',
+                      'bg-rose-500': selectedPriority === 'alta',
+                      'bg-amber-500': selectedPriority === 'media',
+                      'bg-emerald-500': selectedPriority === 'baja'
+                    }"></span>
+                    <span class="filter-label text-truncate">{{ selectedPriority === 'all' ? 'Prioridades: Todas' : getPriorityLabel(selectedPriority) }}</span>
+                    <i class="typcn typcn-arrow-sorted-down font-size-12 ml-2 text-slate-400"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-modern shadow-lg py-2" ngbDropdownMenu>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedPriority === 'all'" (click)="setPriority('all')">
+                      <span class="d-flex align-items-center"><span class="filter-dot bg-slate-400 mr-2"></span> Todas las prioridades</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedPriority === 'all'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedPriority === 'alta'" (click)="setPriority('alta')">
+                      <span class="d-flex align-items-center"><span class="filter-dot bg-rose-500 mr-2"></span> Alta Prioridad</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedPriority === 'alta'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedPriority === 'media'" (click)="setPriority('media')">
+                      <span class="d-flex align-items-center"><span class="filter-dot bg-amber-500 mr-2"></span> Prioridad Media</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedPriority === 'media'"></i>
+                    </button>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedPriority === 'baja'" (click)="setPriority('baja')">
+                      <span class="d-flex align-items-center"><span class="filter-dot bg-emerald-500 mr-2"></span> Prioridad Baja</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedPriority === 'baja'"></i>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="form-group mb-0 mr-1">
-                  <select class="form-control form-control-sm select-custom shadow-xs" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
-                    <option value="all">Categorías: Todas</option>
-                    <option *ngFor="let cat of categories" [value]="cat.id">
-                      {{ cat.name }}
-                    </option>
-                  </select>
+                <!-- Dropdown Categoría -->
+                <div class="dropdown" ngbDropdown>
+                  <button class="btn btn-filter-dropdown shadow-xs d-flex align-items-center" ngbDropdownToggle type="button">
+                    <span class="category-indicator-dot mr-2" *ngIf="selectedCategory !== 'all'" [style.backgroundColor]="getCategoryColor(selectedCategory)"></span>
+                    <i class="typcn typcn-folder text-blue mr-2 font-size-16" *ngIf="selectedCategory === 'all'"></i>
+                    <span class="filter-label text-truncate">{{ selectedCategory === 'all' ? 'Categorías: Todas' : getCategoryName(selectedCategory) }}</span>
+                    <i class="typcn typcn-arrow-sorted-down font-size-12 ml-2 text-slate-400"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-modern shadow-lg py-2" ngbDropdownMenu>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" [class.active-item]="selectedCategory === 'all'" (click)="setCategory('all')">
+                      <span class="d-flex align-items-center"><i class="typcn typcn-folder mr-2 text-slate-500 font-size-16"></i> Todas las categorías</span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedCategory === 'all'"></i>
+                    </button>
+                    <div class="dropdown-divider my-1"></div>
+                    <button class="dropdown-item d-flex align-items-center justify-content-between" *ngFor="let cat of categories" [class.active-item]="selectedCategory === cat.id" (click)="setCategory(cat.id)">
+                      <span class="d-flex align-items-center">
+                        <span class="category-indicator-badge mr-2 shadow-xs" [style.backgroundColor]="cat.color">
+                          <i class="typcn {{ cat.icon }} font-size-13 text-white"></i>
+                        </span>
+                        {{ cat.name }}
+                      </span>
+                      <i class="typcn typcn-tick text-blue ml-2" *ngIf="selectedCategory === cat.id"></i>
+                    </button>
+                  </div>
                 </div>
 
-                <button class="btn btn-gradient-teal font-weight-bold shadow-sm d-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
+                <div class="view-mode-selector-pill d-flex align-items-center bg-white p-1 rounded-xl border border-slate-200 shadow-xs mr-2">
+                  <button class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center" 
+                          [class.active]="viewMode === 'kanban'" 
+                          (click)="viewMode = 'kanban'" 
+                          title="Vista de Tablero Kanban">
+                    <i class="typcn typcn-th-small font-size-18 mr-1"></i> Kanban
+                  </button>
+                  <button class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center" 
+                          [class.active]="viewMode === 'grid'" 
+                          (click)="viewMode = 'grid'" 
+                          title="Vista de Cuadrícula">
+                    <i class="typcn typcn-th-large font-size-18 mr-1"></i> Cuadrícula
+                  </button>
+                  <button class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center" 
+                          [class.active]="viewMode === 'calendar'" 
+                          (click)="viewMode = 'calendar'" 
+                          title="Vista de Calendario">
+                    <i class="typcn typcn-calendar-outline font-size-18 mr-1"></i> Calendario
+                  </button>
+                </div>
+
+                <button class="btn btn-slate-gradient font-weight-bold shadow-sm d-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
                   <i class="typcn typcn-plus mr-1 font-size-18"></i> Nueva Tarea
                 </button>
               </div>
@@ -157,10 +234,10 @@
             <!-- Badges de Filtros Activos -->
             <div class="mt-2 pt-2 border-top d-flex align-items-center flex-wrap" *ngIf="searchTerm || selectedCategory !== 'all' || selectedPriority !== 'all' || selectedStatus !== 'all'">
               <small class="text-slate-500 mr-2 font-weight-bold">Filtros aplicados:</small>
-              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="searchTerm">Término: {{searchTerm}}</span>
-              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedCategory !== 'all'">Categoría: {{getCategoryName(selectedCategory)}}</span>
-              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedPriority !== 'all'">Prioridad: {{getPriorityLabel(selectedPriority)}}</span>
-              <span class="badge badge-pill badge-teal-light mr-2 mb-1" *ngIf="selectedStatus !== 'all'">Estado: {{getStatusLabel(selectedStatus)}}</span>
+              <span class="badge badge-pill badge-blue-light mr-2 mb-1" *ngIf="searchTerm">Término: {{searchTerm}}</span>
+              <span class="badge badge-pill badge-blue-light mr-2 mb-1" *ngIf="selectedCategory !== 'all'">Categoría: {{getCategoryName(selectedCategory)}}</span>
+              <span class="badge badge-pill badge-blue-light mr-2 mb-1" *ngIf="selectedPriority !== 'all'">Prioridad: {{getPriorityLabel(selectedPriority)}}</span>
+              <span class="badge badge-pill badge-blue-light mr-2 mb-1" *ngIf="selectedStatus !== 'all'">Estado: {{getStatusLabel(selectedStatus)}}</span>
               <button class="btn btn-link btn-sm text-rose p-0 ml-2 mb-1 font-weight-bold" (click)="clearFilters()">Restablecer todo</button>
             </div>
 
@@ -169,13 +246,22 @@
       </div>
     </div>
 
-    <!-- Skeleton Loaders de Notas -->
-    <app-skeleton-loader type="card" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
+    <!-- Contenedor de las Notas -->
+    <div class="dashboard-cards-container flex-grow-1 pr-2 pb-4">
+
+      <!-- Skeleton Loaders de Notas -->
+      <app-skeleton-loader type="card" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
 
     <!-- Listado de Notas (Cards) -->
-    <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length > 0">
-      <div class="col-md-6 grid-margin stretch-card mb-4" *ngFor="let note of filteredNotes">
-        <div class="card card-note-modern shadow-sm border-0 rounded-xl position-relative d-flex flex-column justify-content-between h-100" [class.pinned-note-card]="note.isPinned">
+    <ng-container *ngIf="!isLoading && filteredNotes.length > 0">
+      
+      <!-- Vista de Cuadrícula -->
+      <div class="row fade-in-up" *ngIf="viewMode === 'grid'">
+        <div class="col-md-6 grid-margin stretch-card mb-4" *ngFor="let note of paginatedNotes">
+          <div class="card card-note-modern shadow-sm border-0 rounded-xl position-relative d-flex flex-column justify-content-between h-100 cursor-pointer" 
+               [class.pinned-note-card]="note.isPinned"
+               (click)="openViewModal(note)"
+               title="Click para ver todos los detalles">
           
           <div class="priority-accent-bar" [ngClass]="{
             'bg-rose-500': note.priority === 'alta',
@@ -187,13 +273,18 @@
             
             <div>
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <span class="badge badge-category-modern text-white d-flex align-items-center px-3 py-1 shadow-xs" [style.backgroundColor]="getCategoryColor(note.categoryId)">
-                  <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1"></i>
+                <span class="badge badge-category-modern text-white d-inline-flex align-items-center px-3 py-1-5 shadow-xs font-size-13 font-weight-semibold" [style.backgroundColor]="getCategoryColor(note.categoryId)">
+                  <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-2 font-size-16"></i>
                   {{ getCategoryName(note.categoryId) }}
                 </span>
 
-                <div class="d-flex align-items-center">
-                  <span class="badge {{ getPriorityBadgeClass(note.priority) }} mr-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge {{ getPriorityBadgeClass(note.priority) }} d-inline-flex align-items-center px-2-5 py-1 font-size-12">
+                    <i class="typcn mr-1 font-size-15" [ngClass]="{
+                      'typcn-warning text-rose': note.priority === 'alta',
+                      'typcn-flash text-amber': note.priority === 'media',
+                      'typcn-leaf text-emerald': note.priority === 'baja'
+                    }"></i>
                     {{ getPriorityLabel(note.priority) }}
                   </span>
 
@@ -202,97 +293,635 @@
                     class="btn btn-link btn-pin-custom p-0 text-decoration-none" 
                     [class.text-amber-500]="note.isPinned" 
                     [class.text-slate-300]="!note.isPinned" 
-                    (click)="togglePin(note)" 
+                    (click)="$event.stopPropagation(); togglePin(note)" 
                     title="Fijar nota">
                     <i class="typcn typcn-pin font-size-20"></i>
                   </button>
                 </div>
               </div>
 
-              <h5 class="card-title font-weight-bold text-slate-800 mb-2 font-size-17" [class.text-completed]="note.status === 'completada'">
+              <h5 class="card-title font-weight-bold text-slate-800 mb-2 font-size-18" [class.text-completed]="note.status === 'completada'">
                 {{ note.title }}
               </h5>
 
-              <p class="card-text text-slate-600 mb-4 font-size-14 line-height-relaxed" style="white-space: pre-line;">
+              <p class="card-text text-slate-600 mb-3 font-size-14 line-height-relaxed text-truncate-multiline" style="white-space: pre-line;">
                 {{ note.content }}
               </p>
+
+              <!-- Checklist / Viñetas Dinámicas en Card -->
+              <div class="card-checklist-container mb-3" *ngIf="note.checklist && note.checklist.length > 0" (click)="$event.stopPropagation()">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <small class="font-weight-bold text-slate-700 font-size-12 d-flex align-items-center">
+                    <i class="typcn typcn-th-list text-blue mr-1 font-size-14"></i>
+                    Lista ({{ getCompletedChecklistCount(note) }}/{{ note.checklist.length }})
+                  </small>
+                  <small class="font-weight-bold text-blue font-size-11">
+                    {{ getChecklistProgressPercent(note) }}%
+                  </small>
+                </div>
+                <div class="progress mb-2" style="height: 4px; background-color: #e2e8f0; border-radius: 2px;">
+                  <div class="progress-bar bg-gradient-blue" role="progressbar" [style.width.%]="getChecklistProgressPercent(note)"></div>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                  <div 
+                    class="card-checklist-item d-flex align-items-center py-1 px-2 rounded cursor-pointer" 
+                    *ngFor="let item of note.checklist"
+                    (click)="toggleChecklistItem(note, item, $event)">
+                    <div class="custom-card-checkbox mr-2" [class.checked]="item.completed">
+                      <i class="typcn typcn-tick text-white font-size-12" *ngIf="item.completed"></i>
+                    </div>
+                    <span class="font-size-12 text-slate-700 text-truncate" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                      {{ item.text }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
               <div class="d-flex align-items-center justify-content-between pt-3 border-top mb-3">
-                <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="note.dueDate">
-                  <i class="typcn typcn-calendar mr-1 text-teal"></i>
+                <small class="text-slate-600 font-weight-semibold d-flex align-items-center font-size-13" *ngIf="note.dueDate">
+                  <i class="typcn typcn-calendar mr-2 text-blue font-size-16"></i>
                   Entrega: {{ note.dueDate }}
                 </small>
-                <small class="text-slate-500 font-weight-semibold d-flex align-items-center" *ngIf="!note.dueDate">
-                  <i class="typcn typcn-time mr-1 text-slate-400"></i>
+                <small class="text-slate-500 font-weight-semibold d-flex align-items-center font-size-13" *ngIf="!note.dueDate">
+                  <i class="typcn typcn-time mr-2 text-blue font-size-16"></i>
                   {{ note.createdAt | date:'shortDate' }}
                 </small>
 
-                <span class="badge {{ getStatusBadgeClass(note.status) }} cursor-pointer" (click)="toggleStatus(note)">
+                <span class="badge {{ getStatusBadgeClass(note.status) }} cursor-pointer d-inline-flex align-items-center px-2 py-1 font-size-12" (click)="$event.stopPropagation(); toggleStatus(note)">
+                  <i class="typcn mr-1 font-size-14" [ngClass]="{
+                    'typcn-time text-amber': note.status === 'pendiente',
+                    'typcn-flash text-blue': note.status === 'en_progreso',
+                    'typcn-tick text-emerald': note.status === 'completada'
+                  }"></i>
                   {{ getStatusLabel(note.status) }}
                 </span>
               </div>
 
               <!-- Acciones Rápidas con Notificación por Correo -->
-              <div class="d-flex align-items-center justify-content-between gap-1">
+              <div class="d-flex align-items-center justify-content-between gap-1" (click)="$event.stopPropagation()">
                 
                 <button 
                   type="button" 
-                  class="btn btn-sm btn-outline-emerald d-flex align-items-center font-weight-bold px-2 py-1" 
-                  (click)="toggleStatus(note)">
-                  <i class="typcn typcn-tick mr-1"></i>
-                  {{ note.status === 'completada' ? 'Reabrir' : 'Completar' }}
-                </button>
-
-                <button 
-                  type="button" 
-                  class="btn btn-sm btn-outline-teal d-flex align-items-center font-weight-bold px-2 py-1" 
+                  class="btn btn-sm btn-outline-primary font-weight-bold d-flex align-items-center py-1-5 px-3 rounded-lg shadow-xs mr-2" 
                   (click)="sendEmailReminder(note)"
-                  title="Enviar recordatorio por correo electrónico">
-                  <i class="typcn typcn-mail mr-1"></i>
-                  Recordar
+                  title="Enviar recordatorio de esta tarea a tu correo">
+                  <i class="typcn typcn-mail mr-1 font-size-16"></i> Recordatorio
                 </button>
 
-                <div>
+                <div class="d-flex align-items-center gap-1">
                   <button 
                     type="button" 
-                    class="btn btn-sm btn-action-teal mr-1 px-2 py-1" 
-                    (click)="openEditModal(note)" 
+                    class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" 
+                    (click)="openEditModal(note)"
                     title="Editar Tarea">
-                    <i class="typcn typcn-edit font-size-16"></i>
+                    <i class="typcn typcn-edit font-size-20 text-blue"></i>
                   </button>
+
                   <button 
                     type="button" 
-                    class="btn btn-sm btn-action-rose px-2 py-1" 
-                    (click)="deleteNote(note)" 
+                    class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" 
+                    (click)="deleteNote(note)"
                     title="Eliminar Tarea">
-                    <i class="typcn typcn-trash font-size-16"></i>
+                    <i class="typcn typcn-trash font-size-20 text-rose"></i>
                   </button>
                 </div>
 
               </div>
 
             </div>
-
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Vista de Tablero Kanban -->
+    <div class="row kanban-board-wrapper fade-in-up" *ngIf="viewMode === 'kanban'">
+      
+      <!-- Columna 1: Pendientes -->
+      <div class="col-lg-4 col-md-12 mb-4">
+        <div class="kanban-column bg-slate-100 rounded-xl p-3 h-100 d-flex flex-column transition-all"
+             [class.kanban-col-hover]="activeDropZone === 'pendiente'"
+             (dragover)="onDragOver($event, 'pendiente')"
+             (dragleave)="onDragLeave($event, 'pendiente')"
+             (drop)="onDrop($event, 'pendiente')">
+          
+          <div class="kanban-column-header d-flex align-items-center justify-content-between mb-2 px-1">
+            <div class="d-flex align-items-center">
+              <span class="column-status-indicator bg-amber mr-2"></span>
+              <i class="typcn typcn-time text-amber font-size-18 mr-1"></i>
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15">Pendientes</h5>
+              <span class="badge badge-pill badge-amber-light font-weight-bold ml-2">
+                {{ getNotesByStatus('pendiente').length }}
+              </span>
+            </div>
+
+            <!-- Paginación de Columna + Botón Crear -->
+            <div class="d-flex align-items-center gap-1">
+              <button class="btn btn-sm btn-white text-slate-600 shadow-xs rounded-lg px-2 py-1 font-weight-bold" (click)="openCreateModal('pendiente')" title="Nueva tarea pendiente">
+                <i class="typcn typcn-plus text-amber font-size-18"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de Cards Kanban (Scrollable y Espaciado Armónico) -->
+          <div class="kanban-cards-list d-flex flex-column gap-3 flex-grow-1">
+            
+            <div class="kanban-empty-col text-center p-4 my-auto" *ngIf="getNotesByStatus('pendiente').length === 0">
+              <i class="typcn typcn-coffee text-amber font-size-36 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-500 font-weight-semibold">Sin tareas pendientes</small>
+              <div class="mt-2 text-slate-400 font-size-11">Arrastra una tarea aquí</div>
+            </div>
+
+            <div class="card kanban-card shadow-sm border-0 rounded-xl bg-white position-relative hover-lift cursor-pointer" 
+                 *ngFor="let note of getKanbanNotes('pendiente')"
+                 [class.pinned-kanban]="note.isPinned"
+                 [class.dragging-card]="draggedNote?.id === note.id"
+                 [draggable]="true"
+                 (click)="openViewModal(note)"
+                 (dragstart)="onDragStart($event, note)"
+                 (dragend)="onDragEnd()"
+                 title="Click para ver detalles completos">
+              
+              <div class="kanban-priority-stripe" [ngClass]="{
+                'bg-rose-500': note.priority === 'alta',
+                'bg-amber-500': note.priority === 'media',
+                'bg-emerald-500': note.priority === 'baja'
+              }"></div>
+
+              <div class="card-body p-3">
+                <!-- Cabecera de Card -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="badge badge-pill font-weight-bold font-size-11 d-inline-flex align-items-center px-2 py-0-5" [ngClass]="getPriorityBadgeClass(note.priority)">
+                      <i class="typcn mr-1 font-size-13" [ngClass]="{
+                        'typcn-warning text-rose': note.priority === 'alta',
+                        'typcn-flash text-amber': note.priority === 'media',
+                        'typcn-leaf text-emerald': note.priority === 'baja'
+                      }"></i>
+                      {{ getPriorityLabel(note.priority) }}
+                    </span>
+                    <span class="badge badge-category-sm text-white d-inline-flex align-items-center px-2 py-0-5 font-size-11 shadow-xs font-weight-semibold" [style.backgroundColor]="getCategoryColor(note.categoryId)">
+                      <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
+                      {{ getCategoryName(note.categoryId) }}
+                    </span>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <i class="typcn typcn-pin text-amber font-size-18" *ngIf="note.isPinned" title="Fijada"></i>
+                    <i class="typcn typcn-arrow-move text-slate-400 font-size-16 cursor-grab" title="Arrastra esta tarjeta"></i>
+                  </div>
+                </div>
+
+                <!-- Título & Detalle con Espaciado -->
+                <h6 class="font-weight-bold text-slate-800 mb-1-5 font-size-15 text-truncate" title="{{ note.title }}">{{ note.title }}</h6>
+                <p class="text-slate-500 font-size-13 mb-2-5 line-clamp-2 line-height-relaxed" *ngIf="note.content">
+                  {{ note.content }}
+                </p>
+
+                <!-- Checklist / Viñetas Dinámicas en Kanban -->
+                <div class="card-checklist-container mb-2-5 p-2" *ngIf="note.checklist && note.checklist.length > 0" (click)="$event.stopPropagation()">
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <small class="font-weight-bold text-slate-700 font-size-11 d-flex align-items-center">
+                      <i class="typcn typcn-th-list text-blue mr-1 font-size-13"></i>
+                      Lista ({{ getCompletedChecklistCount(note) }}/{{ note.checklist.length }})
+                    </small>
+                    <small class="font-weight-bold text-blue font-size-10">
+                      {{ getChecklistProgressPercent(note) }}%
+                    </small>
+                  </div>
+                  <div class="progress mb-1-5" style="height: 3px; background-color: #e2e8f0; border-radius: 2px;">
+                    <div class="progress-bar bg-gradient-blue" role="progressbar" [style.width.%]="getChecklistProgressPercent(note)"></div>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <div 
+                      class="card-checklist-item d-flex align-items-center py-1 px-2 rounded cursor-pointer" 
+                      *ngFor="let item of note.checklist.slice(0, 2)"
+                      (click)="toggleChecklistItem(note, item, $event)">
+                      <div class="custom-card-checkbox mr-2" [class.checked]="item.completed">
+                        <i class="typcn typcn-tick text-white font-size-10" *ngIf="item.completed"></i>
+                      </div>
+                      <span class="font-size-11 text-slate-700 text-truncate" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                        {{ item.text }}
+                      </span>
+                    </div>
+                    <small class="text-slate-400 font-size-10 font-weight-semibold text-center mt-0-5" *ngIf="note.checklist.length > 2">
+                      +{{ note.checklist.length - 2 }} elementos más (Click para ver todos)
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Fecha Límite & Botones con Buen Aire -->
+                <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
+                  <span class="text-slate-500 font-size-11 font-weight-medium d-inline-flex align-items-center" *ngIf="note.dueDate">
+                    <i class="typcn typcn-calendar text-blue mr-1 font-size-14"></i> {{ note.dueDate }}
+                  </span>
+                  <span class="text-slate-400 font-size-11" *ngIf="!note.dueDate">
+                    <i class="typcn typcn-time mr-1 font-size-13"></i> {{ note.createdAt | date:'shortDate' }}
+                  </span>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" (click)="openEditModal(note)" title="Editar">
+                      <i class="typcn typcn-edit font-size-20 text-blue"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
+                      <i class="typcn typcn-trash font-size-20 text-rose"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-gradient-blue font-weight-bold px-2-5 py-1 d-flex align-items-center rounded-lg font-size-11" (click)="changeTaskStatus(note, 'en_progreso')" title="Mover a En Progreso">
+                      Iniciar <i class="typcn typcn-arrow-right font-size-14 ml-1"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Paginador Inferior de Columna Kanban -->
+          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
+               *ngIf="getKanbanTotalPages('pendiente') > 1">
+            <span class="text-slate-500 font-weight-medium font-size-11">
+              {{ getKanbanRangeText('pendiente') }}
+            </span>
+            <div class="d-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.pendiente === 1" 
+                      (click)="prevKanbanPage('pendiente', $event)" title="Página anterior">
+                <i class="typcn typcn-chevron-left font-size-14"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
+                *ngFor="let p of getKanbanPageNumbers('pendiente')"
+                [ngClass]="kanbanPage.pendiente === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
+                (click)="setKanbanPage('pendiente', p, $event)">
+                {{ p }}
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.pendiente === getKanbanTotalPages('pendiente')" 
+                      (click)="nextKanbanPage('pendiente', $event)" title="Página siguiente">
+                <i class="typcn typcn-chevron-right font-size-14"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Columna 2: En Progreso -->
+      <div class="col-lg-4 col-md-12 mb-4">
+        <div class="kanban-column bg-slate-100 rounded-xl p-3 h-100 d-flex flex-column transition-all"
+             [class.kanban-col-hover]="activeDropZone === 'en_progreso'"
+             (dragover)="onDragOver($event, 'en_progreso')"
+             (dragleave)="onDragLeave($event, 'en_progreso')"
+             (drop)="onDrop($event, 'en_progreso')">
+          
+          <div class="kanban-column-header d-flex align-items-center justify-content-between mb-2 px-1">
+            <div class="d-flex align-items-center">
+              <span class="column-status-indicator bg-blue mr-2"></span>
+              <i class="typcn typcn-flash text-blue font-size-18 mr-1"></i>
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15">En Progreso</h5>
+              <span class="badge badge-pill badge-blue-light font-weight-bold ml-2">
+                {{ getNotesByStatus('en_progreso').length }}
+              </span>
+            </div>
+
+            <!-- Paginación de Columna + Botón Crear -->
+            <div class="d-flex align-items-center gap-1">
+              <button class="btn btn-sm btn-white text-slate-600 shadow-xs rounded-lg px-2 py-1 font-weight-bold" (click)="openCreateModal('en_progreso')" title="Nueva tarea en progreso">
+                <i class="typcn typcn-plus text-blue font-size-18"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de Cards Kanban (Scrollable y Espaciado Armónico) -->
+          <div class="kanban-cards-list d-flex flex-column gap-3 flex-grow-1">
+            
+            <div class="kanban-empty-col text-center p-4 my-auto" *ngIf="getNotesByStatus('en_progreso').length === 0">
+              <i class="typcn typcn-flash text-blue font-size-36 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-500 font-weight-semibold">Sin tareas en progreso</small>
+              <div class="mt-2 text-slate-400 font-size-11">Arrastra una tarea aquí</div>
+            </div>
+
+            <div class="card kanban-card shadow-sm border-0 rounded-xl bg-white position-relative hover-lift cursor-pointer" 
+                 *ngFor="let note of getKanbanNotes('en_progreso')"
+                 [class.pinned-kanban]="note.isPinned"
+                 [class.dragging-card]="draggedNote?.id === note.id"
+                 [draggable]="true"
+                 (click)="openViewModal(note)"
+                 (dragstart)="onDragStart($event, note)"
+                 (dragend)="onDragEnd()"
+                 title="Click para ver detalles completos">
+              
+              <div class="kanban-priority-stripe" [ngClass]="{
+                'bg-rose-500': note.priority === 'alta',
+                'bg-amber-500': note.priority === 'media',
+                'bg-emerald-500': note.priority === 'baja'
+              }"></div>
+
+              <div class="card-body p-3">
+                <!-- Cabecera de Card -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="badge badge-pill font-weight-bold font-size-11 d-inline-flex align-items-center px-2 py-0-5" [ngClass]="getPriorityBadgeClass(note.priority)">
+                      <i class="typcn mr-1 font-size-13" [ngClass]="{
+                        'typcn-warning text-rose': note.priority === 'alta',
+                        'typcn-flash text-amber': note.priority === 'media',
+                        'typcn-leaf text-emerald': note.priority === 'baja'
+                      }"></i>
+                      {{ getPriorityLabel(note.priority) }}
+                    </span>
+                    <span class="badge badge-category-sm text-white d-inline-flex align-items-center px-2 py-0-5 font-size-11 shadow-xs font-weight-semibold" [style.backgroundColor]="getCategoryColor(note.categoryId)">
+                      <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
+                      {{ getCategoryName(note.categoryId) }}
+                    </span>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <i class="typcn typcn-pin text-amber font-size-18" *ngIf="note.isPinned" title="Fijada"></i>
+                    <i class="typcn typcn-arrow-move text-slate-400 font-size-16 cursor-grab" title="Arrastra esta tarjeta"></i>
+                  </div>
+                </div>
+
+                <!-- Título & Detalle con Espaciado -->
+                <h6 class="font-weight-bold text-slate-800 mb-1-5 font-size-15 text-truncate" title="{{ note.title }}">{{ note.title }}</h6>
+                <p class="text-slate-500 font-size-13 mb-2-5 line-clamp-2 line-height-relaxed" *ngIf="note.content">
+                  {{ note.content }}
+                </p>
+
+                <!-- Checklist / Viñetas Dinámicas en Kanban -->
+                <div class="card-checklist-container mb-2-5 p-2" *ngIf="note.checklist && note.checklist.length > 0" (click)="$event.stopPropagation()">
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <small class="font-weight-bold text-slate-700 font-size-11 d-flex align-items-center">
+                      <i class="typcn typcn-th-list text-blue mr-1 font-size-13"></i>
+                      Lista ({{ getCompletedChecklistCount(note) }}/{{ note.checklist.length }})
+                    </small>
+                    <small class="font-weight-bold text-blue font-size-10">
+                      {{ getChecklistProgressPercent(note) }}%
+                    </small>
+                  </div>
+                  <div class="progress mb-1-5" style="height: 3px; background-color: #e2e8f0; border-radius: 2px;">
+                    <div class="progress-bar bg-gradient-blue" role="progressbar" [style.width.%]="getChecklistProgressPercent(note)"></div>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <div 
+                      class="card-checklist-item d-flex align-items-center py-1 px-2 rounded cursor-pointer" 
+                      *ngFor="let item of note.checklist.slice(0, 2)"
+                      (click)="toggleChecklistItem(note, item, $event)">
+                      <div class="custom-card-checkbox mr-2" [class.checked]="item.completed">
+                        <i class="typcn typcn-tick text-white font-size-10" *ngIf="item.completed"></i>
+                      </div>
+                      <span class="font-size-11 text-slate-700 text-truncate" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                        {{ item.text }}
+                      </span>
+                    </div>
+                    <small class="text-slate-400 font-size-10 font-weight-semibold text-center mt-0-5" *ngIf="note.checklist.length > 2">
+                      +{{ note.checklist.length - 2 }} elementos más (Click para ver todos)
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Fecha Límite & Botones con Buen Aire -->
+                <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
+                  <button type="button" class="btn btn-sm btn-white border font-weight-semibold px-2-5 py-1 d-flex align-items-center rounded-lg text-slate-600 font-size-11" (click)="changeTaskStatus(note, 'pendiente')" title="Retroceder a Pendiente">
+                    <i class="typcn typcn-arrow-left text-slate-500 font-size-14 mr-1"></i> Pendiente
+                  </button>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" (click)="openEditModal(note)" title="Editar">
+                      <i class="typcn typcn-edit font-size-20 text-blue"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-gradient-emerald font-weight-bold px-2-5 py-1 text-white d-flex align-items-center rounded-lg font-size-11" (click)="changeTaskStatus(note, 'completada')" title="Marcar como Completada">
+                      Hecho <i class="typcn typcn-tick font-size-14 ml-1"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Paginador Inferior de Columna Kanban -->
+          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
+               *ngIf="getKanbanTotalPages('en_progreso') > 1">
+            <span class="text-slate-500 font-weight-medium font-size-11">
+              {{ getKanbanRangeText('en_progreso') }}
+            </span>
+            <div class="d-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.en_progreso === 1" 
+                      (click)="prevKanbanPage('en_progreso', $event)" title="Página anterior">
+                <i class="typcn typcn-chevron-left font-size-14"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
+                *ngFor="let p of getKanbanPageNumbers('en_progreso')"
+                [ngClass]="kanbanPage.en_progreso === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
+                (click)="setKanbanPage('en_progreso', p, $event)">
+                {{ p }}
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.en_progreso === getKanbanTotalPages('en_progreso')" 
+                      (click)="nextKanbanPage('en_progreso', $event)" title="Página siguiente">
+                <i class="typcn typcn-chevron-right font-size-14"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Columna 3: Completadas -->
+      <div class="col-lg-4 col-md-12 mb-4">
+        <div class="kanban-column bg-slate-100 rounded-xl p-3 h-100 d-flex flex-column transition-all"
+             [class.kanban-col-hover]="activeDropZone === 'completada'"
+             (dragover)="onDragOver($event, 'completada')"
+             (dragleave)="onDragLeave($event, 'completada')"
+             (drop)="onDrop($event, 'completada')">
+          
+          <div class="kanban-column-header d-flex align-items-center justify-content-between mb-2 px-1">
+            <div class="d-flex align-items-center">
+              <span class="column-status-indicator bg-emerald mr-2"></span>
+              <i class="typcn typcn-tick text-emerald font-size-18 mr-1"></i>
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15">Completadas</h5>
+              <span class="badge badge-pill badge-emerald-light font-weight-bold ml-2">
+                {{ getNotesByStatus('completada').length }}
+              </span>
+            </div>
+
+            <!-- Paginación de Columna + Botón Crear -->
+            <div class="d-flex align-items-center gap-1">
+              <button class="btn btn-sm btn-white text-slate-600 shadow-xs rounded-lg px-2 py-1 font-weight-bold" (click)="openCreateModal('completada')" title="Nueva tarea completada">
+                <i class="typcn typcn-plus text-emerald font-size-18"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de Cards Kanban (Scrollable y Espaciado Armónico) -->
+          <div class="kanban-cards-list d-flex flex-column gap-3 flex-grow-1">
+            
+            <div class="kanban-empty-col text-center p-4 my-auto" *ngIf="getNotesByStatus('completada').length === 0">
+              <i class="typcn typcn-tick-outline text-emerald font-size-36 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-500 font-weight-semibold">Sin tareas completadas</small>
+              <div class="mt-2 text-slate-400 font-size-11">Arrastra una tarea aquí</div>
+            </div>
+
+            <div class="card kanban-card shadow-sm border-0 rounded-xl bg-white position-relative hover-lift cursor-pointer opacity-90" 
+                 *ngFor="let note of getKanbanNotes('completada')"
+                 [class.pinned-kanban]="note.isPinned"
+                 [class.dragging-card]="draggedNote?.id === note.id"
+                 [draggable]="true"
+                 (click)="openViewModal(note)"
+                 (dragstart)="onDragStart($event, note)"
+                 (dragend)="onDragEnd()"
+                 title="Click para ver detalles completos">
+              
+              <div class="kanban-priority-stripe bg-emerald-500"></div>
+
+              <div class="card-body p-3">
+                <!-- Cabecera de Card -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <div class="d-flex align-items-center gap-1">
+                    <span class="badge badge-pill font-weight-bold font-size-11 d-inline-flex align-items-center px-2 py-0-5" [ngClass]="getPriorityBadgeClass(note.priority)">
+                      <i class="typcn mr-1 font-size-13" [ngClass]="{
+                        'typcn-warning text-rose': note.priority === 'alta',
+                        'typcn-flash text-amber': note.priority === 'media',
+                        'typcn-leaf text-emerald': note.priority === 'baja'
+                      }"></i>
+                      {{ getPriorityLabel(note.priority) }}
+                    </span>
+                    <span class="badge badge-category-sm text-white d-inline-flex align-items-center px-2 py-0-5 font-size-11 shadow-xs font-weight-semibold" [style.backgroundColor]="getCategoryColor(note.categoryId)">
+                      <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
+                      {{ getCategoryName(note.categoryId) }}
+                    </span>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <i class="typcn typcn-pin text-amber font-size-18" *ngIf="note.isPinned" title="Fijada"></i>
+                    <i class="typcn typcn-arrow-move text-slate-400 font-size-16 cursor-grab" title="Arrastra esta tarjeta"></i>
+                  </div>
+                </div>
+
+                <!-- Título & Detalle con Espaciado -->
+                <h6 class="font-weight-bold text-slate-700 mb-1-5 font-size-15 text-decoration-line-through text-truncate" title="{{ note.title }}">{{ note.title }}</h6>
+                <p class="text-slate-400 font-size-13 mb-2-5 line-clamp-2 line-height-relaxed" *ngIf="note.content">
+                  {{ note.content }}
+                </p>
+
+                <!-- Checklist / Viñetas Dinámicas en Kanban -->
+                <div class="card-checklist-container mb-2-5 p-2" *ngIf="note.checklist && note.checklist.length > 0" (click)="$event.stopPropagation()">
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <small class="font-weight-bold text-slate-700 font-size-11 d-flex align-items-center">
+                      <i class="typcn typcn-th-list text-blue mr-1 font-size-13"></i>
+                      Lista ({{ getCompletedChecklistCount(note) }}/{{ note.checklist.length }})
+                    </small>
+                    <small class="font-weight-bold text-blue font-size-10">
+                      {{ getChecklistProgressPercent(note) }}%
+                    </small>
+                  </div>
+                  <div class="progress mb-1-5" style="height: 3px; background-color: #e2e8f0; border-radius: 2px;">
+                    <div class="progress-bar bg-gradient-blue" role="progressbar" [style.width.%]="getChecklistProgressPercent(note)"></div>
+                  </div>
+                  <div class="d-flex flex-column gap-1">
+                    <div 
+                      class="card-checklist-item d-flex align-items-center py-1 px-2 rounded cursor-pointer" 
+                      *ngFor="let item of note.checklist.slice(0, 2)"
+                      (click)="toggleChecklistItem(note, item, $event)">
+                      <div class="custom-card-checkbox mr-2" [class.checked]="item.completed">
+                        <i class="typcn typcn-tick text-white font-size-10" *ngIf="item.completed"></i>
+                      </div>
+                      <span class="font-size-11 text-slate-700 text-truncate" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                        {{ item.text }}
+                      </span>
+                    </div>
+                    <small class="text-slate-400 font-size-10 font-weight-semibold text-center mt-0-5" *ngIf="note.checklist.length > 2">
+                      +{{ note.checklist.length - 2 }} elementos más (Click para ver todos)
+                    </small>
+                  </div>
+                </div>
+
+                               <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
+                  <span class="badge badge-emerald-light text-emerald font-weight-bold px-2-5 py-1 d-inline-flex align-items-center font-size-11" title="Se eliminará automáticamente si permanece completada durante 15 días continuos">
+                    <i class="typcn typcn-tick mr-1 font-size-13"></i> Finalizada ({{ getCompletedDaysRemaining(note) }}d)
+                  </span>
+
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-white border font-weight-semibold px-2-5 py-1 d-flex align-items-center rounded-lg text-slate-600 font-size-11" (click)="changeTaskStatus(note, 'en_progreso')" title="Reabrir a En Progreso">
+                      <i class="typcn typcn-arrow-left text-slate-500 font-size-14 mr-1"></i> Reabrir
+                    </button>
+                    <button type="button" class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" (click)="openEditModal(note)" title="Editar">
+                      <i class="typcn typcn-edit font-size-20 text-blue"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
+                      <i class="typcn typcn-trash font-size-20 text-rose"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Paginador Inferior de Columna Kanban -->
+          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
+               *ngIf="getKanbanTotalPages('completada') > 1">
+            <span class="text-slate-500 font-weight-medium font-size-11">
+              {{ getKanbanRangeText('completada') }}
+            </span>
+            <div class="d-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.completada === 1" 
+                      (click)="prevKanbanPage('completada', $event)" title="Página anterior">
+                <i class="typcn typcn-chevron-left font-size-14"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
+                *ngFor="let p of getKanbanPageNumbers('completada')"
+                [ngClass]="kanbanPage.completada === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
+                (click)="setKanbanPage('completada', p, $event)">
+                {{ p }}
+              </button>
+              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
+                      [disabled]="kanbanPage.completada === getKanbanTotalPages('completada')" 
+                      (click)="nextKanbanPage('completada', $event)" title="Página siguiente">
+                <i class="typcn typcn-chevron-right font-size-14"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+      <!-- Vista de Calendario -->
+      <div class="row fade-in-up" *ngIf="viewMode === 'calendar'">
+        <div class="col-12 mb-4">
+          <app-task-calendar [tasks]="filteredNotes"></app-task-calendar>
+        </div>
+      </div>
+
+    </ng-container>
 
     <!-- Estado Vacío -->
     <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0">
       <div class="col-12">
         <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
           <div class="card-body">
-            <div class="empty-icon-circle bg-teal-50 text-teal rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 84px; height: 84px;">
+            <div class="empty-icon-circle bg-blue-50 text-blue rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 84px; height: 84px;">
               <i class="typcn typcn-document-delete font-size-40"></i>
             </div>
             <h4 class="font-weight-bold text-slate-800 mb-2">No tienes tareas registradas aún</h4>
             <p class="text-slate-500 max-width-500 mx-auto mb-4 font-size-15">
               Crea tu primera tarea para organizarla por prioridad y recibir recordatorios por correo electrónico.
             </p>
-            <button class="btn btn-gradient-teal font-weight-bold px-4 py-3 text-white rounded-lg shadow-md" (click)="openCreateModal()">
+            <button class="btn btn-gradient-blue font-weight-bold px-4 py-3 text-white rounded-lg shadow-md" (click)="openCreateModal()">
               <i class="typcn typcn-plus mr-1"></i> Crear mi primera tarea
             </button>
           </div>
@@ -300,16 +929,258 @@
       </div>
     </div>
 
-  </div>
+    <!-- Paginación Moderna y Completa (Solo en vista Cuadrícula) -->
+    <div class="card shadow-sm border-0 rounded-xl bg-white p-3 mt-3 mb-5 fade-in-up" *ngIf="viewMode === 'grid' && filteredNotes.length > 0">
+      <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        
+        <!-- Contador de Elementos -->
+        <div class="text-slate-600 font-size-13 font-weight-medium">
+          Mostrando <span class="font-weight-bold text-slate-800">{{ getGridStartIndex() }}-{{ getGridEndIndex() }}</span> de <span class="font-weight-bold text-slate-800">{{ filteredNotes.length }}</span> tareas
+        </div>
 
-</div>
+        <!-- Botones de Paginación Centrales -->
+        <div class="d-flex align-items-center gap-1" *ngIf="gridTotalPages > 1">
+          <button 
+            type="button" 
+            class="btn btn-sm btn-white border rounded-lg px-2-5 py-1-5 font-weight-semibold text-slate-700 shadow-xs d-flex align-items-center"
+            [disabled]="page === 1"
+            (click)="prevGridPage($event)">
+            <i class="typcn typcn-chevron-left mr-1 font-size-14"></i> Anterior
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-lg px-3 py-1-5 font-weight-bold transition-all"
+            *ngFor="let p of gridPageNumbers"
+            [ngClass]="page === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-700'"
+            (click)="setGridPage(p, $event)">
+            {{ p }}
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm btn-white border rounded-lg px-2-5 py-1-5 font-weight-semibold text-slate-700 shadow-xs d-flex align-items-center"
+            [disabled]="page === gridTotalPages"
+            (click)="nextGridPage($event)">
+            Siguiente <i class="typcn typcn-chevron-right ml-1 font-size-14"></i>
+          </button>
+        </div>
+
+        <!-- Selector de Tareas por Página -->
+        <div class="d-flex align-items-center gap-2 font-size-13 text-slate-500">
+          <span>Por pág:</span>
+          <div class="btn-group btn-group-sm shadow-xs rounded-lg overflow-hidden border">
+            <button 
+              type="button" 
+              class="btn py-1 px-2 font-weight-semibold" 
+              [ngClass]="pageSize === 4 ? 'btn-gradient-blue text-white' : 'btn-white text-slate-600'" 
+              (click)="setPageSize(4)">
+              4
+            </button>
+            <button 
+              type="button" 
+              class="btn py-1 px-2 font-weight-semibold" 
+              [ngClass]="pageSize === 6 ? 'btn-gradient-blue text-white' : 'btn-white text-slate-600'" 
+              (click)="setPageSize(6)">
+              6
+            </button>
+            <button 
+              type="button" 
+              class="btn py-1 px-2 font-weight-semibold" 
+              [ngClass]="pageSize === 8 ? 'btn-gradient-blue text-white' : 'btn-white text-slate-600'" 
+              (click)="setPageSize(8)">
+              8
+            </button>
+            <button 
+              type="button" 
+              class="btn py-1 px-2 font-weight-semibold" 
+              [ngClass]="pageSize === 12 ? 'btn-gradient-blue text-white' : 'btn-white text-slate-600'" 
+              (click)="setPageSize(12)">
+              12
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </div> <!-- Fin Contenedor Scroll Interno -->
 
 <!-- Modal para Crear/Editar Nota -->
 <app-note-modal 
   [isVisible]="isModalVisible"
   [noteToEdit]="noteToEdit"
+  [initialStatus]="initialModalStatus"
   [categories]="categories"
   (save)="handleSaveNote($event)"
   (update)="handleUpdateNote($event)"
   (close)="closeModal()">
 </app-note-modal>
+
+<!-- Modal de Vista Detallada de Tarea -->
+<div class="modal-backdrop-custom fade-in" *ngIf="selectedViewNote" (click)="closeViewModal()"></div>
+<div class="modal-custom" *ngIf="selectedViewNote" (click)="closeViewModal()">
+  <div class="modal-dialog-custom modal-dialog-lg" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom">
+      
+      <!-- Cabecera con Color de la Categoría -->
+      <div class="modal-header-custom" [style.backgroundColor]="getCategoryColor(selectedViewNote.categoryId)">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3">
+            <i class="typcn {{ getCategoryIcon(selectedViewNote.categoryId) }} font-size-26 text-white"></i>
+          </div>
+          <div>
+            <span class="badge badge-pill bg-white text-dark font-size-11 font-weight-bold px-2-5 py-1 mb-1 d-inline-block">
+              {{ getCategoryName(selectedViewNote.categoryId) }}
+            </span>
+            <h4 class="modal-title font-weight-bold text-white mb-0 line-height-tight">
+              Detalles de la Tarea
+            </h4>
+          </div>
+        </div>
+
+        <button type="button" class="btn-close-custom text-white" (click)="closeViewModal()" title="Cerrar">
+          <i class="typcn typcn-times font-size-24"></i>
+        </button>
+      </div>
+
+      <!-- Cuerpo del Modal -->
+      <div class="p-4">
+        
+        <!-- Alerta Informativa de Auto-Eliminación en 15 Días -->
+        <div class="alert bg-amber-50 border border-amber-200 d-flex align-items-start py-2-5 px-3 rounded-xl mb-3" *ngIf="selectedViewNote.status === 'completada'">
+          <i class="typcn typcn-stopwatch text-amber font-size-22 mr-2 mt-0-5"></i>
+          <div>
+            <strong class="text-amber-800 font-size-13 d-block">Auto-eliminación en {{ getCompletedDaysRemaining(selectedViewNote) }} días</strong>
+            <small class="text-amber-700 font-size-12 line-height-tight">
+              Esta tarea se eliminará automáticamente tras 15 días continuos de estar completada. Si la reabres a pendiente o en progreso, el contador se cancelará.
+            </small>
+          </div>
+        </div>
+
+        <!-- Badges de Estado y Prioridad -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge {{ getPriorityBadgeClass(selectedViewNote.priority) }} px-3 py-1-5 font-size-12 font-weight-bold">
+              <i class="typcn mr-1" [ngClass]="{
+                'typcn-warning text-rose': selectedViewNote.priority === 'alta',
+                'typcn-flash text-amber': selectedViewNote.priority === 'media',
+                'typcn-leaf text-emerald': selectedViewNote.priority === 'baja'
+              }"></i>
+              {{ getPriorityLabel(selectedViewNote.priority) }}
+            </span>
+
+            <span class="badge {{ getStatusBadgeClass(selectedViewNote.status) }} px-3 py-1-5 font-size-12 font-weight-bold">
+              <i class="typcn mr-1" [ngClass]="{
+                'typcn-time text-amber': selectedViewNote.status === 'pendiente',
+                'typcn-flash text-blue': selectedViewNote.status === 'en_progreso',
+                'typcn-tick text-emerald': selectedViewNote.status === 'completada'
+              }"></i>
+              {{ getStatusLabel(selectedViewNote.status) }}
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 text-slate-500 font-size-12 font-weight-medium">
+            <span *ngIf="selectedViewNote.dueDate" class="d-flex align-items-center">
+              <i class="typcn typcn-calendar text-blue mr-1 font-size-15"></i> Entrega: <strong>{{ selectedViewNote.dueDate }}</strong>
+            </span>
+            <span class="d-flex align-items-center">
+              <i class="typcn typcn-time text-slate-400 mr-1 font-size-15"></i> Creada: {{ selectedViewNote.createdAt | date:'mediumDate' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Título Completo -->
+        <h4 class="font-weight-bold text-slate-900 mb-3 line-height-tight" [class.text-completed]="selectedViewNote.status === 'completada'">
+          {{ selectedViewNote.title }}
+        </h4>
+
+        <!-- Descripción Completa sin cortes -->
+        <div class="bg-slate-50 rounded-xl p-3-5 mb-4 border border-slate-100" *ngIf="selectedViewNote.content">
+          <p class="text-slate-700 font-size-14 line-height-relaxed mb-0" style="white-space: pre-wrap; word-break: break-word;">{{ selectedViewNote.content }}</p>
+        </div>
+
+        <!-- Checklist Completa Interactiva -->
+        <div class="mb-4" *ngIf="selectedViewNote.checklist && selectedViewNote.checklist.length > 0">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
+              <i class="typcn typcn-th-list text-blue mr-1-5 font-size-16"></i>
+              Lista / Viñetas ({{ getCompletedChecklistCount(selectedViewNote) }}/{{ selectedViewNote.checklist.length }})
+            </h6>
+            <span class="font-weight-bold text-blue font-size-12">
+              {{ getChecklistProgressPercent(selectedViewNote) }}% completado
+            </span>
+          </div>
+          <div class="progress mb-3" style="height: 6px; background-color: #e2e8f0; border-radius: 3px;">
+            <div class="progress-bar bg-gradient-blue" role="progressbar" [style.width.%]="getChecklistProgressPercent(selectedViewNote)"></div>
+          </div>
+          <div class="d-flex flex-column gap-2">
+            <div 
+              class="d-flex align-items-center p-2-5 rounded-lg border border-slate-100 bg-white hover-bg-light cursor-pointer transition-all" 
+              *ngFor="let item of selectedViewNote.checklist"
+              (click)="toggleChecklistItem(selectedViewNote, item)">
+              <div class="custom-card-checkbox mr-3" [class.checked]="item.completed">
+                <i class="typcn typcn-tick text-white font-size-12" *ngIf="item.completed"></i>
+              </div>
+              <span class="font-size-13 text-slate-800" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                {{ item.text }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción del Modal -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-3 border-top mt-2">
+          
+          <!-- Botón de Envío de Recordatorio -->
+          <button 
+            type="button" 
+            class="btn btn-outline-primary font-weight-bold px-3 py-2 rounded-xl d-flex align-items-center font-size-13 shadow-xs" 
+            (click)="sendEmailReminder(selectedViewNote)"
+            title="Enviar recordatorio a tu correo electrónico">
+            <i class="typcn typcn-mail mr-1-5 font-size-16"></i> Enviar Recordatorio
+          </button>
+
+          <!-- Acciones de Estado, Edición y Cierre -->
+          <div class="d-flex align-items-center gap-2">
+            
+            <button 
+              type="button" 
+              class="btn btn-sm px-3 py-2 rounded-xl font-weight-bold d-flex align-items-center font-size-13 shadow-xs"
+              [ngClass]="selectedViewNote.status === 'completada' ? 'btn-white border text-slate-700' : 'btn-gradient-emerald text-white'"
+              (click)="toggleStatusFromViewModal()">
+              <i class="typcn mr-1 font-size-16" [ngClass]="selectedViewNote.status === 'completada' ? 'typcn-arrow-left text-amber' : 'typcn-tick text-white'"></i>
+              {{ selectedViewNote.status === 'completada' ? 'Reabrir Tarea' : 'Completar Tarea' }}
+            </button>
+
+            <button 
+              type="button" 
+              class="btn btn-action-blue rounded-xl p-2" 
+              (click)="editFromViewModal()" 
+              title="Editar Tarea">
+              <i class="typcn typcn-edit font-size-20 text-blue"></i>
+            </button>
+
+            <button 
+              type="button" 
+              class="btn btn-action-rose rounded-xl p-2" 
+              (click)="deleteFromViewModal()" 
+              title="Eliminar Tarea">
+              <i class="typcn typcn-trash font-size-20 text-rose"></i>
+            </button>
+
+            <button 
+              type="button" 
+              class="btn btn-secondary font-weight-bold px-3 py-2 rounded-xl font-size-13" 
+              (click)="closeViewModal()">
+              Cerrar
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

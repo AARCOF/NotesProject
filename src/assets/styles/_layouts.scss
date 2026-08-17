@@ -1,7 +1,7 @@
 .navbar {
   &.fixed-top {
     +.page-body-wrapper {
-      padding-top: $navbar-height;
+      padding-top: 0;
     }
   }
 }
@@ -61,7 +61,8 @@
           }
 
           &.nav-profile,
-          &.nav-category {
+          &.nav-category,
+          &.nav-category-header {
             display: none;
           }
 

@@ -13,6 +13,10 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
@@ -69,8 +73,8 @@ export class AuthService {
     this.verificationKeyService.sendVerificationEmail(newUser.email, securityKey, expiresAt).subscribe();
     this.recaptchaService.reset();
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${newUser.email} válido por 1 hora.`,
       email: newUser.email
     };
@@ -92,7 +96,12 @@ export class AuthService {
     user.keyExpiresAt = undefined;
     this.userRepository.updateUser(user);
 
-    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email, role: user.role });
+    const token = this.jwtService.generateToken({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    } as any);
     this.jwtService.saveToken(token);
     this.currentUserSubject.next(user);
 
@@ -132,14 +141,19 @@ export class AuthService {
     }
 
     if (!user.isVerified) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: 'Tu cuenta requiere verificación por correo. Ingresa el código de 6 dígitos enviado.',
-        requiresVerification: true 
+        requiresVerification: true
       };
     }
 
-    const token = this.jwtService.generateToken({ id: user.id, name: user.name, email: user.email, role: user.role });
+    const token = this.jwtService.generateToken({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    } as any);
     this.jwtService.saveToken(token);
     this.currentUserSubject.next(user);
 
@@ -151,6 +165,43 @@ export class AuthService {
   public logout(): void {
     this.jwtService.removeToken();
     this.currentUserSubject.next(null);
+  }
+
+  public updateProfileName(newName: string): { success: boolean; message: string } {
+    const user = this.getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'No hay sesión activa.' };
+    }
+    user.name = newName;
+    this.userRepository.updateUser(user);
+    
+    // Update token to reflect new name
+    const token = this.jwtService.generateToken({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    } as any);
+    this.jwtService.saveToken(token);
+    this.currentUserSubject.next(user);
+    
+    return { success: true, message: 'Perfil actualizado exitosamente.' };
+  }
+
+  public changePassword(currentPass: string, newPass: string): { success: boolean; message: string } {
+    const user = this.getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'No hay sesión activa.' };
+    }
+
+    if (user.passwordHash !== btoa(currentPass)) {
+      return { success: false, message: 'La contraseña actual es incorrecta.' };
+    }
+
+    user.passwordHash = btoa(newPass);
+    this.userRepository.updateUser(user);
+    
+    return { success: true, message: 'Contraseña actualizada exitosamente.' };
   }
 
   public isAuthenticated(): boolean {

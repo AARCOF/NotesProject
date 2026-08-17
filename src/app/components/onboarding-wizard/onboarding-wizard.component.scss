@@ -46,20 +46,11 @@
   }
 }
 
-.bg-gradient-teal-celeste {
+.bg-gradient-blue-celeste {
   background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
 }
 
-.btn-gradient-teal {
-  background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.4) !important;
-  }
-}
+/* Removed .btn-gradient-blue as it is now in styles.scss */
 
 .wizard-step-indicator {
   display: flex;
@@ -110,7 +101,7 @@
   background-color: #ECFDF5;
 }
 
-.text-teal {
+.text-blue {
   color: #059669 !important;
 }
 
