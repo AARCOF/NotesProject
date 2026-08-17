@@ -1,0 +1,53 @@
+<div class="card border-0 shadow-sm rounded-xl bg-white fade-in-up">
+  <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+    <h5 class="font-weight-bold text-slate-800 mb-0 d-flex align-items-center">
+      <i class="typcn typcn-calendar-outline text-blue font-size-24 mr-2"></i>
+      {{ currentDate | date:'MMMM yyyy' | titlecase }}
+    </h5>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-calendar-arrow mr-2" (click)="previousMonth()" title="Mes anterior">
+        <i class="typcn typcn-chevron-left font-size-20"></i>
+      </button>
+      <button class="btn btn-calendar-arrow" (click)="nextMonth()" title="Mes siguiente">
+        <i class="typcn typcn-chevron-right font-size-20"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body p-4">
+    <!-- Header Days -->
+    <div class="row text-center font-weight-bold text-slate-500 mb-2">
+      <div class="col py-2" *ngFor="let day of weekDays">{{ day }}</div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+      <div class="row" *ngFor="let week of weeks">
+        <div class="col calendar-cell p-1" *ngFor="let day of week">
+          
+          <div class="calendar-day-box border rounded-lg h-100 d-flex flex-column cursor-pointer transition-all hover-shadow" 
+               [class.bg-slate-50]="!day.isCurrentMonth"
+               [class.text-slate-400]="!day.isCurrentMonth"
+               (click)="onDayClick(day)">
+            
+            <div class="text-right p-1 font-weight-bold font-size-12">
+              {{ day.date.getDate() }}
+            </div>
+            
+            <div class="task-dots-container d-flex flex-wrap gap-1 p-1 mt-auto">
+              <!-- Dots for each task -->
+              <div *ngFor="let task of day.tasks" 
+                   class="task-dot rounded-circle" 
+                   [style.backgroundColor]="getCategoryColor(task.categoryId)"
+                   [title]="task.title">
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

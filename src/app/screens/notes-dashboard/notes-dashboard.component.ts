@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Note, PriorityLevel, NoteStatus } from '../../models/note.model';
+import { Note, PriorityLevel, NoteStatus, ChecklistItem } from '../../models/note.model';
 import { Category } from '../../models/category.model';
+import { User } from '../../core/models/user.model';
 import { NotesService } from '../../services/notes.service';
 import { CategoriesService } from '../../services/categories.service';
 import { VerificationKeyService } from '../../core/services/verification-key.service';
@@ -28,8 +29,19 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   selectedSort: string = 'priority-desc';
 
   isModalVisible: boolean = false;
+  currentUser: User | null = null;
+  page: number = 1;
+  pageSize: number = 6;
   noteToEdit: Note | null = null;
-  viewMode: 'grid' | 'list' = 'grid';
+  initialModalStatus: NoteStatus = 'pendiente';
+  viewMode: 'grid' | 'kanban' | 'calendar' = 'kanban';
+
+  // Drag & Drop State
+  draggedNote: Note | null = null;
+  activeDropZone: NoteStatus | null = null;
+
+  // View Details Modal State
+  selectedViewNote: Note | null = null;
 
   constructor(
     private notesService: NotesService,
@@ -61,7 +73,13 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  get paginatedNotes(): Note[] {
+    const startIndex = (this.page - 1) * this.pageSize;
+    return this.filteredNotes.slice(startIndex, startIndex + this.pageSize);
+  }
+
   applyFilters(): void {
+    this.page = 1;
     this.filteredNotes = this.notesService.filterAndSortNotes(
       this.allNotes,
       this.searchTerm,
@@ -80,6 +98,32 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
+  getSortLabel(sortValue: string): string {
+    switch (sortValue) {
+      case 'priority-desc': return 'Prioridad Alta primero';
+      case 'priority-asc': return 'Prioridad Baja primero';
+      case 'date-desc': return 'Fecha más reciente';
+      case 'date-asc': return 'Fecha más antigua';
+      case 'dueDate-asc': return 'Próxima entrega';
+      default: return 'Ordenar por';
+    }
+  }
+
+  setSort(sort: string): void {
+    this.selectedSort = sort;
+    this.applyFilters();
+  }
+
+  setPriority(prio: string): void {
+    this.selectedPriority = prio;
+    this.applyFilters();
+  }
+
+  setCategory(catId: string): void {
+    this.selectedCategory = catId;
+    this.applyFilters();
+  }
+
   clearFilters(): void {
     this.searchTerm = '';
     this.selectedCategory = 'all';
@@ -89,9 +133,230 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  openCreateModal(): void {
+  openCreateModal(initialStatus: NoteStatus = 'pendiente'): void {
     this.noteToEdit = null;
+    this.initialModalStatus = initialStatus;
     this.isModalVisible = true;
+  }
+
+  getNotesByStatus(status: NoteStatus): Note[] {
+    const priorityWeight: { [key in PriorityLevel]: number } = {
+      'alta': 3,
+      'media': 2,
+      'baja': 1
+    };
+
+    return this.filteredNotes
+      .filter(n => n.status === status)
+      .sort((a, b) => {
+        // Pinned first
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        // High priority first
+        return priorityWeight[b.priority] - priorityWeight[a.priority];
+      });
+  }
+
+  // --- Paginación para Vista Cuadrícula (Grid) ---
+  get gridTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredNotes.length / this.pageSize));
+  }
+
+  get gridPageNumbers(): number[] {
+    const total = this.gridTotalPages;
+    const current = this.page;
+    const pages: number[] = [];
+    
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, start + 4);
+    if (end - start < 4) {
+      start = Math.max(1, end - 4);
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  setGridPage(p: number, event?: Event): void {
+    if (event) event.preventDefault();
+    if (p >= 1 && p <= this.gridTotalPages) {
+      this.page = p;
+    }
+  }
+
+  nextGridPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.page < this.gridTotalPages) {
+      this.page++;
+    }
+  }
+
+  prevGridPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.page > 1) {
+      this.page--;
+    }
+  }
+
+  setPageSize(size: number): void {
+    this.pageSize = size;
+    this.page = 1;
+  }
+
+  getGridStartIndex(): number {
+    if (this.filteredNotes.length === 0) return 0;
+    return (this.page - 1) * this.pageSize + 1;
+  }
+
+  getGridEndIndex(): number {
+    return Math.min(this.page * this.pageSize, this.filteredNotes.length);
+  }
+
+  // --- Paginación y Redimensionamiento para Tablero Kanban ---
+  kanbanPage: { [key in NoteStatus]: number } = {
+    pendiente: 1,
+    en_progreso: 1,
+    completada: 1
+  };
+  kanbanPageSize: number = 4;
+
+  getKanbanNotes(status: NoteStatus): Note[] {
+    const allColNotes = this.getNotesByStatus(status);
+    const totalPages = this.getKanbanTotalPages(status);
+    if (this.kanbanPage[status] > totalPages) {
+      this.kanbanPage[status] = totalPages;
+    }
+    const page = Math.max(1, this.kanbanPage[status] || 1);
+    const start = (page - 1) * this.kanbanPageSize;
+    return allColNotes.slice(start, start + this.kanbanPageSize);
+  }
+
+  getKanbanTotalPages(status: NoteStatus): number {
+    const total = this.getNotesByStatus(status).length;
+    return Math.max(1, Math.ceil(total / this.kanbanPageSize));
+  }
+
+  getKanbanRangeText(status: NoteStatus): string {
+    const total = this.getNotesByStatus(status).length;
+    if (total === 0) return '0 de 0';
+    const page = this.kanbanPage[status] || 1;
+    const start = (page - 1) * this.kanbanPageSize + 1;
+    const end = Math.min(page * this.kanbanPageSize, total);
+    return `${start}-${end} de ${total}`;
+  }
+
+  getKanbanPageNumbers(status: NoteStatus): number[] {
+    const total = this.getKanbanTotalPages(status);
+    const pages: number[] = [];
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  setKanbanPage(status: NoteStatus, p: number, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (p >= 1 && p <= this.getKanbanTotalPages(status)) {
+      this.kanbanPage[status] = p;
+    }
+  }
+
+  nextKanbanPage(status: NoteStatus, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (this.kanbanPage[status] < this.getKanbanTotalPages(status)) {
+      this.kanbanPage[status]++;
+    }
+  }
+
+  prevKanbanPage(status: NoteStatus, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (this.kanbanPage[status] > 1) {
+      this.kanbanPage[status]--;
+    }
+  }
+
+  changeTaskStatus(note: Note, newStatus: NoteStatus): void {
+    this.notesService.updateNote(note.id, { status: newStatus });
+  }
+
+  // --- Drag and Drop Handlers for Kanban ---
+
+  onDragStart(event: DragEvent, note: Note): void {
+    this.draggedNote = note;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', note.id);
+    }
+  }
+
+  onDragOver(event: DragEvent, status: NoteStatus): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+    this.activeDropZone = status;
+  }
+
+  onDragLeave(event: DragEvent, status: NoteStatus): void {
+    if (this.activeDropZone === status) {
+      this.activeDropZone = null;
+    }
+  }
+
+  onDrop(event: DragEvent, targetStatus: NoteStatus): void {
+    event.preventDefault();
+    if (this.draggedNote && this.draggedNote.status !== targetStatus) {
+      this.changeTaskStatus(this.draggedNote, targetStatus);
+    }
+    this.draggedNote = null;
+    this.activeDropZone = null;
+  }
+
+  onDragEnd(): void {
+    this.draggedNote = null;
+    this.activeDropZone = null;
+  }
+
+  openViewModal(note: Note, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.selectedViewNote = note;
+  }
+
+  closeViewModal(): void {
+    this.selectedViewNote = null;
+  }
+
+  toggleStatusFromViewModal(): void {
+    if (!this.selectedViewNote) return;
+    const updated = this.notesService.toggleStatus(this.selectedViewNote.id);
+    if (updated) {
+      this.selectedViewNote = updated;
+    }
+  }
+
+  togglePinFromViewModal(): void {
+    if (!this.selectedViewNote) return;
+    const updated = this.notesService.togglePin(this.selectedViewNote.id);
+    if (updated) {
+      this.selectedViewNote = updated;
+    }
+  }
+
+  editFromViewModal(): void {
+    if (!this.selectedViewNote) return;
+    const note = this.selectedViewNote;
+    this.closeViewModal();
+    this.openEditModal(note);
+  }
+
+  deleteFromViewModal(): void {
+    if (!this.selectedViewNote) return;
+    const note = this.selectedViewNote;
+    this.closeViewModal();
+    this.deleteNote(note);
   }
 
   openEditModal(note: Note): void {
@@ -172,7 +437,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     return cat ? cat.name : 'Sin Categoría';
   }
 
-  getPriorityBadgeClass(priority: PriorityLevel): string {
+  getPriorityBadgeClass(priority: PriorityLevel | string): string {
     switch (priority) {
       case 'alta': return 'badge-priority-high';
       case 'media': return 'badge-priority-medium';
@@ -181,12 +446,12 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  getPriorityLabel(priority: PriorityLevel): string {
+  getPriorityLabel(priority: PriorityLevel | string): string {
     switch (priority) {
       case 'alta': return 'Alta Prioridad';
       case 'media': return 'Prioridad Media';
       case 'baja': return 'Prioridad Baja';
-      default: return priority;
+      default: return priority === 'all' ? 'Prioridades: Todas' : priority;
     }
   }
 
@@ -206,6 +471,27 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
       case 'completada': return 'Completada';
       default: return status;
     }
+  }
+
+  toggleChecklistItem(note: Note, item: ChecklistItem, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.notesService.toggleChecklistItem(note.id, item.id);
+  }
+
+  getCompletedChecklistCount(note: Note): number {
+    return note.checklist ? note.checklist.filter(i => i.completed).length : 0;
+  }
+
+  getChecklistProgressPercent(note: Note): number {
+    if (!note.checklist || note.checklist.length === 0) return 0;
+    const completed = this.getCompletedChecklistCount(note);
+    return Math.round((completed / note.checklist.length) * 100);
+  }
+
+  getCompletedDaysRemaining(note: Note): number {
+    return this.notesService.getCompletedDaysRemaining(note);
   }
 
   get totalCount(): number {

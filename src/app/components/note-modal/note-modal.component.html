@@ -22,7 +22,7 @@
         </button>
       </div>
 
-      <form (ngSubmit)="onSubmit()">
+      <form (ngSubmit)="onSubmit()" autocomplete="off">
         <div class="modal-body p-4 bg-white">
           
           <div class="form-group mb-3">
@@ -33,6 +33,10 @@
               placeholder="Ejemplo: Repasar Cálculo o Comprar víveres" 
               [(ngModel)]="title" 
               name="title" 
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               required
               #titleInput="ngModel">
             <small class="text-danger" *ngIf="titleInput.invalid && titleInput.touched">
@@ -40,55 +44,90 @@
             </small>
           </div>
 
-          <div class="row">
-            <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">Categoría <span class="text-danger">*</span></label>
-              <select class="form-control input-custom" [(ngModel)]="categoryId" name="categoryId" required>
-                <option *ngFor="let cat of categories" [value]="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
-            </div>
-
-            <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">Nivel de Prioridad <span class="text-danger">*</span></label>
-              <div class="d-flex align-items-center justify-content-between radio-priority-box">
-                <div class="form-check form-check-inline mb-0">
-                  <input class="form-check-input" type="radio" name="priority" id="prioAlta" value="alta" [(ngModel)]="priority">
-                  <label class="form-check-label text-rose-600 font-weight-bold cursor-pointer" for="prioAlta">
-                    Alta
-                  </label>
-                </div>
-                <div class="form-check form-check-inline mb-0">
-                  <input class="form-check-input" type="radio" name="priority" id="prioMedia" value="media" [(ngModel)]="priority">
-                  <label class="form-check-label text-amber-600 font-weight-bold cursor-pointer" for="prioMedia">
-                    Media
-                  </label>
-                </div>
-                <div class="form-check form-check-inline mb-0">
-                  <input class="form-check-input" type="radio" name="priority" id="prioBaja" value="baja" [(ngModel)]="priority">
-                  <label class="form-check-label text-emerald-600 font-weight-bold cursor-pointer" for="prioBaja">
-                    Baja
-                  </label>
-                </div>
-              </div>
+          <!-- Selector Visual de Categorías -->
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14 d-flex justify-content-between align-items-center">
+              <span>Categoría <span class="text-danger">*</span></span>
+              <small class="text-slate-400 font-weight-normal">Selecciona una categoría</small>
+            </label>
+            <div class="category-selection-grid d-flex flex-wrap gap-2">
+              <button 
+                type="button" 
+                class="btn-category-chip d-flex align-items-center shadow-xs"
+                *ngFor="let cat of categories"
+                [class.active]="categoryId === cat.id"
+                [style.--chip-color]="cat.color"
+                (click)="categoryId = cat.id">
+                <span class="cat-chip-icon shadow-xs" [style.backgroundColor]="cat.color">
+                  <i class="typcn {{ cat.icon }} text-white font-size-15"></i>
+                </span>
+                <span class="cat-chip-name font-weight-semibold">{{ cat.name }}</span>
+                <i class="typcn typcn-tick cat-chip-check ml-1 font-size-16" *ngIf="categoryId === cat.id"></i>
+              </button>
             </div>
           </div>
 
           <div class="row">
+            <!-- Nivel de Prioridad Segmented -->
             <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">Estado de la Tarea</label>
-              <select class="form-control input-custom" [(ngModel)]="status" name="status">
-                <option value="pendiente">Pendiente</option>
-                <option value="en_progreso">En Progreso</option>
-                <option value="completada">Completada</option>
-              </select>
+              <label class="font-weight-bold text-slate-700 font-size-14">Nivel de Prioridad <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center segmented-box p-1 rounded-xl bg-slate-100 border border-slate-200">
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-high]="priority === 'alta'"
+                  (click)="priority = 'alta'">
+                  <i class="typcn typcn-warning mr-1 font-size-15 text-rose"></i> Alta
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-med]="priority === 'media'"
+                  (click)="priority = 'media'">
+                  <i class="typcn typcn-flash mr-1 font-size-15 text-amber"></i> Media
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-low]="priority === 'baja'"
+                  (click)="priority = 'baja'">
+                  <i class="typcn typcn-leaf mr-1 font-size-15 text-emerald"></i> Baja
+                </button>
+              </div>
             </div>
 
+            <!-- Estado de la Tarea Segmented -->
             <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">Fecha Límite</label>
-              <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
+              <label class="font-weight-bold text-slate-700 font-size-14">Estado de la Tarea</label>
+              <div class="d-flex align-items-center segmented-box p-1 rounded-xl bg-slate-100 border border-slate-200">
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-pending]="status === 'pendiente'"
+                  (click)="status = 'pendiente'">
+                  <i class="typcn typcn-time mr-1 font-size-15 text-amber"></i> Pendiente
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-progress]="status === 'en_progreso'"
+                  (click)="status = 'en_progreso'">
+                  <i class="typcn typcn-flash mr-1 font-size-15 text-blue"></i> Progreso
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
+                  [class.active-completed]="status === 'completada'"
+                  (click)="status = 'completada'">
+                  <i class="typcn typcn-tick mr-1 font-size-15 text-emerald"></i> Hecho
+                </button>
+              </div>
             </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14">Fecha Límite</label>
+            <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
           </div>
 
           <div class="form-group mb-3">
@@ -98,21 +137,86 @@
               rows="4" 
               placeholder="Escribe los detalles de tu tarea aquí..." 
               [(ngModel)]="content" 
-              name="content"></textarea>
+              name="content"
+              autocomplete="off"
+              spellcheck="false"></textarea>
           </div>
 
-          <div class="form-group form-check mb-0">
-            <input type="checkbox" class="form-check-input" id="isPinnedCheck" [(ngModel)]="isPinned" name="isPinned">
-            <label class="form-check-label text-slate-800 font-weight-semibold cursor-pointer" for="isPinnedCheck">
-              Fijar esta tarea al inicio de la lista
-            </label>
+          <!-- Sección Dinámica de Viñetas / Lista de Compras / Subtareas -->
+          <div class="checklist-section-box p-3 rounded-xl border border-slate-200 bg-slate-50 mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <label class="font-weight-bold text-slate-800 font-size-14 mb-0 d-flex align-items-center">
+                <i class="typcn typcn-th-list text-blue mr-2 font-size-18"></i> Lista de Elementos / Viñetas
+              </label>
+              <span class="badge badge-pill badge-blue-light font-weight-bold" *ngIf="checklist.length > 0">
+                {{ completedChecklistCount }}/{{ checklist.length }} completados
+              </span>
+            </div>
+            <small class="text-slate-500 d-block mb-3">Ideal para listas de compras, pasos a seguir o subtareas.</small>
+
+            <!-- Input para agregar nuevo ítem -->
+            <div class="d-flex gap-2 mb-3">
+              <input 
+                type="text" 
+                class="form-control input-custom flex-grow-1" 
+                placeholder="Ej. Comprar leche, Revisar informe..." 
+                [(ngModel)]="newChecklistItemText" 
+                name="newChecklistItemText"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                (keydown.enter)="$event.preventDefault(); addChecklistItem()">
+              <button 
+                type="button" 
+                class="btn btn-gradient-blue font-weight-bold px-3 d-flex align-items-center" 
+                (click)="addChecklistItem()"
+                [disabled]="!newChecklistItemText.trim()">
+                <i class="typcn typcn-plus mr-1 font-size-16"></i> Agregar
+              </button>
+            </div>
+
+            <!-- Lista de ítems interactivos -->
+            <div class="checklist-items-container d-flex flex-column gap-2" *ngIf="checklist.length > 0">
+              <div 
+                class="checklist-item-row d-flex align-items-center justify-content-between p-2 rounded-lg bg-white border shadow-xs" 
+                *ngFor="let item of checklist; let i = index">
+                <div class="d-flex align-items-center flex-grow-1 mr-2 cursor-pointer" (click)="toggleChecklistItem(i)">
+                  <div class="custom-check-box mr-2" [class.checked]="item.completed">
+                    <i class="typcn typcn-tick font-size-14 text-white" *ngIf="item.completed"></i>
+                  </div>
+                  <span class="font-size-13 text-slate-800" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
+                    {{ item.text }}
+                  </span>
+                </div>
+                <button type="button" class="btn btn-link text-rose p-0" (click)="removeChecklistItem(i)" title="Eliminar elemento">
+                  <i class="typcn typcn-trash font-size-18"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toggle Fijar Tarea (Diseño Moderno y Alineado) -->
+          <div class="pin-toggle-card p-3 rounded-xl d-flex align-items-center justify-content-between cursor-pointer mb-2" (click)="isPinned = !isPinned" [class.pinned-active]="isPinned">
+            <div class="d-flex align-items-center">
+              <div class="pin-icon-circle mr-3" [class.active]="isPinned">
+                <i class="typcn typcn-pin font-size-20"></i>
+              </div>
+              <div>
+                <div class="font-weight-bold text-slate-800 font-size-14">Fijar esta tarea al inicio de la lista</div>
+                <small class="text-slate-500">Mantener esta nota siempre visible en la parte superior</small>
+              </div>
+            </div>
+            <div class="custom-switch-capsule" [class.active]="isPinned">
+              <div class="switch-knob"></div>
+            </div>
           </div>
 
         </div>
 
         <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
           <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg mr-2" (click)="onClose()">Cancelar</button>
-          <button type="submit" class="btn btn-gradient-teal px-4 font-weight-bold text-white" [disabled]="!title.trim()">
+          <button type="submit" class="btn btn-gradient-blue px-4 font-weight-bold text-white" [disabled]="!title.trim()">
             {{ noteToEdit ? 'Guardar Cambios' : 'Crear Tarea' }}
           </button>
         </div>

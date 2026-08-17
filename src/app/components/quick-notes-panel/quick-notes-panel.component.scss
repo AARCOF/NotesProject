@@ -1,95 +1,189 @@
-.card-quick-notes {
-  min-height: 520px;
-  max-height: 680px;
-}
+/* ==========================================================================
+   QUICK NOTES COMPONENT - CUSTOM STYLES
+   ========================================================================== */
 
-.chat-header-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chat-messages-feed {
-  background-color: #F8FAFC;
-}
-
-.chat-bubble {
-  background-color: #ffffff;
-  border: 1px solid #E2E8F0 !important;
-  border-radius: 14px;
-  transition: transform 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+   .card-quick-notes {
+    background-color: #f8fafc; /* Very light slate/blue */
+    border-radius: 16px;
   }
-}
+  
+  .custom-header-bg {
+    background-color: #020617 !important; /* Deep teal from the image */
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+  }
+  
+  .note-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+  
+    .btn-quick-delete {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background-color: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #ef4444;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
 
-.border-top-dash {
-  border-top: 1px dashed #E2E8F0;
-}
+      i {
+        font-size: 18px;
+        line-height: 1;
+        transition: color 0.15s ease;
+      }
 
-.badge-celeste-soft {
-  background-color: #F0F9FF;
-  color: #0284C7;
-}
+      &:hover {
+        background-color: #ef4444;
+        border-color: #ef4444;
+        color: #ffffff;
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);
 
-.badge-slate-soft {
-  background-color: #F1F5F9;
-  color: #64748B;
-}
+        i {
+          color: #ffffff !important;
+        }
+      }
+    }
+  }
+  
+  /* Custom Pill Tags */
+  .custom-pill-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    
+    &.linked {
+      background-color: #00b4d8;
+      color: #ffffff;
+    }
+    
+    &.independent {
+      background-color: #e2e8f0; /* Soft slate/purple-ish grey */
+      color: #64748b;
+    }
+  }
+  
+  /* Composer Area Dropdowns */
+  .btn-quick-dropdown {
+    height: 34px;
+    background-color: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+    color: #334155;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-.select-mini {
-  height: 32px;
-  font-size: 0.78125rem;
-  border-radius: 8px;
-  border: 1px solid #CBD5E1;
-  background-color: #ffffff;
-  color: #334155;
-}
+    &::after {
+      display: none !important;
+    }
 
-.input-group-chat {
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1.5px solid #CBD5E1;
-  background-color: #ffffff;
-  transition: border-color 0.2s ease;
-
-  &:focus-within {
-    border-color: #059669;
-    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    &:hover, &:focus, &[aria-expanded="true"] {
+      border-color: #0ea5e9;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+    }
   }
 
-  .form-control {
-    font-size: 0.875rem;
-    height: 42px;
+  .dropdown-menu-quick {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
+    margin-bottom: 8px;
+    z-index: 1060;
+
+    .dropdown-item {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #334155;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      margin: 1px 4px;
+      width: calc(100% - 8px);
+      transition: all 0.15s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f0f9ff;
+        color: #0284c7;
+      }
+
+      &.active-item {
+        background-color: #e0f2fe;
+        color: #0284c7;
+        font-weight: 700;
+      }
+    }
   }
-}
 
-.btn-gradient-teal {
-  background: linear-gradient(135deg, #059669 0%, #0284C7 100%);
-  border: none;
-}
-
-.text-rose-500 {
-  color: #EF4444 !important;
-}
-
-.text-slate-800 {
-  color: #1E293B !important;
-}
-
-.text-slate-700 {
-  color: #334155 !important;
-}
-
-.text-slate-500 {
-  color: #64748B !important;
-}
-
-.text-slate-400 {
-  color: #94A3B8 !important;
-}
+  .task-prio-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  
+  .custom-input-wrapper {
+    background-color: #f1f5f9 !important;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease;
+    
+    &:focus-within {
+      border-color: #00b4d8;
+      background-color: #ffffff !important;
+    }
+  }
+  
+  .custom-send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(14, 165, 233, 0.4);
+    }
+    
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+    
+    &:disabled {
+      background: #cbd5e1;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+  
+  /* Scrollbar for chat feed */
+  .chat-messages-feed::-webkit-scrollbar {
+    width: 6px;
+  }
+  .chat-messages-feed::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chat-messages-feed::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+  }
+  

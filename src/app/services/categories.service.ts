@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Category } from '../models/category.model';
+import { AuthService } from '../core/services/auth.service';
 
 const CATEGORIES_STORAGE_KEY = 'noteyou_categories_v2';
 
@@ -10,6 +11,7 @@ const CATEGORIES_STORAGE_KEY = 'noteyou_categories_v2';
 export class CategoriesService {
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
   public categories$: Observable<Category[]> = this.categoriesSubject.asObservable();
+  private currentUserId: string | null = null;
 
   private defaultCategories: Category[] = [
     {
@@ -54,30 +56,42 @@ export class CategoriesService {
     }
   ];
 
-  constructor() {
-    this.loadInitialCategories();
+  constructor(private authService: AuthService) {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUserId = user ? user.id : null;
+      this.refreshCategoriesForCurrentUser();
+    });
   }
 
-  private loadInitialCategories(): void {
+  private getAllCustomCategories(): Category[] {
     const data = localStorage.getItem(CATEGORIES_STORAGE_KEY);
-    if (data) {
-      try {
-        const parsed = JSON.parse(data);
-        this.categoriesSubject.next(parsed);
-        return;
-      } catch {
-        this.categoriesSubject.next(this.defaultCategories);
-        this.saveToStorage(this.defaultCategories);
+    if (!data) return [];
+    try {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        // Filtrar categorías que no son del sistema
+        return parsed.filter((c: Category) => !c.isSystem);
       }
-    } else {
-      this.categoriesSubject.next(this.defaultCategories);
-      this.saveToStorage(this.defaultCategories);
+      return [];
+    } catch {
+      return [];
     }
   }
 
-  private saveToStorage(categories: Category[]): void {
-    localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
-    this.categoriesSubject.next(categories);
+  private saveAllCustomCategories(customCats: Category[]): void {
+    localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(customCats));
+  }
+
+  public refreshCategoriesForCurrentUser(): void {
+    const customCats = this.getAllCustomCategories();
+    
+    if (!this.currentUserId) {
+      this.categoriesSubject.next(this.defaultCategories);
+      return;
+    }
+
+    const userCustomCats = customCats.filter(c => c.userId === this.currentUserId || (!c.userId && this.currentUserId === 'usr_superadmin'));
+    this.categoriesSubject.next([...this.defaultCategories, ...userCustomCats]);
   }
 
   public getCategories(): Category[] {
@@ -89,35 +103,42 @@ export class CategoriesService {
   }
 
   public addCategory(catData: Omit<Category, 'id' | 'isSystem'>): Category {
+    const userId = this.currentUserId || 'anonymous';
     const newCategory: Category = {
       ...catData,
       id: 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      userId,
       isSystem: false
     };
-    const current = this.getCategories();
-    const updated = [...current, newCategory];
-    this.saveToStorage(updated);
+
+    const customCats = this.getAllCustomCategories();
+    const updated = [...customCats, newCategory];
+    this.saveAllCustomCategories(updated);
+
+    this.refreshCategoriesForCurrentUser();
     return newCategory;
   }
 
   public updateCategory(id: string, changes: Partial<Category>): Category | undefined {
-    const current = this.getCategories();
-    const index = current.findIndex(c => c.id === id);
+    const customCats = this.getAllCustomCategories();
+    const index = customCats.findIndex(c => c.id === id && (c.userId === this.currentUserId || !c.userId));
     if (index === -1) return undefined;
 
-    const updatedCategory = { ...current[index], ...changes };
-    current[index] = updatedCategory;
-    this.saveToStorage([...current]);
+    const updatedCategory = { ...customCats[index], ...changes, isSystem: false };
+    customCats[index] = updatedCategory;
+    this.saveAllCustomCategories(customCats);
+
+    this.refreshCategoriesForCurrentUser();
     return updatedCategory;
   }
 
   public deleteCategory(id: string): boolean {
-    const current = this.getCategories();
-    const cat = current.find(c => c.id === id);
-    if (!cat || cat.isSystem) return false;
+    const customCats = this.getAllCustomCategories();
+    const filtered = customCats.filter(c => !(c.id === id && (c.userId === this.currentUserId || !c.userId)));
+    if (filtered.length === customCats.length) return false;
 
-    const filtered = current.filter(c => c.id !== id);
-    this.saveToStorage(filtered);
+    this.saveAllCustomCategories(filtered);
+    this.refreshCategoriesForCurrentUser();
     return true;
   }
 }

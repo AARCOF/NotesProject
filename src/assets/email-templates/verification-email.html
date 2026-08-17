@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #F8FAFC; margin: 0; padding: 20px; color: #1E293B; }
+  .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .header { background: linear-gradient(135deg, #059669 0%, #0284C7 100%); padding: 30px 20px; text-align: center; color: white; }
+  .header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
+  .content { padding: 40px 30px; text-align: center; }
+  .content p { font-size: 16px; line-height: 1.6; color: #64748B; margin-bottom: 25px; }
+  .code-box { background: #EEF2FF; border: 2px dashed #6366F1; border-radius: 8px; padding: 20px; margin: 30px 0; }
+  .code { font-size: 40px; font-weight: bold; color: #4F46E5; letter-spacing: 8px; margin: 0; }
+  .footer { background: #F1F5F9; padding: 20px; text-align: center; font-size: 13px; color: #94A3B8; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>NoteYou</h1>
+    </div>
+    <div class="content">
+      <h2 style="color: #1E293B; margin-top: 0;">Verificación de Cuenta</h2>
+      <p>Hola,</p>
+      <p>Gracias por unirte a NoteYou. Para completar tu registro y activar tu cuenta, por favor ingresa el siguiente código de seguridad en la aplicación:</p>
+      <div class="code-box">
+        <p class="code">{{security_key}}</p>
+      </div>
+      <p style="font-size: 14px; color: #EF4444;">Este código expirará en {{expire_time}}.</p>
+      <p>Si no has solicitado este código, puedes ignorar este correo de forma segura.</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2026 NoteYou. Sistema de Organización Personal.</p>
+    </div>
+  </div>
+</body>
+</html>

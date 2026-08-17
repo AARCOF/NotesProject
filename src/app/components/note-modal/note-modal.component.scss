@@ -112,6 +112,125 @@
   padding: 8px 14px;
 }
 
+/* ==========================================================================
+   CATEGORY SELECTION CHIPS
+   ========================================================================== */
+.category-selection-grid {
+  gap: 8px;
+}
+
+.btn-category-chip {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 6px 14px;
+  color: #475569;
+  font-size: 0.8125rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+
+  .cat-chip-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .cat-chip-name {
+    font-size: 0.8125rem;
+  }
+
+  .cat-chip-check {
+    color: var(--chip-color, #0ea5e9);
+  }
+
+  &:hover:not(.active) {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background-color: #ffffff;
+    border-color: var(--chip-color, #0ea5e9) !important;
+    border-width: 2px !important;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    transform: scale(1.02);
+  }
+}
+
+/* ==========================================================================
+   SEGMENTED BUTTONS (PRIORITY & STATUS)
+   ========================================================================== */
+.segmented-box {
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  gap: 4px;
+
+  .seg-btn {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover:not([class*="active"]) {
+      color: #0f172a;
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Active Priority States */
+    &.active-high {
+      background-color: #fee2e2 !important;
+      color: #e11d48 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(225, 29, 72, 0.2);
+    }
+
+    &.active-med {
+      background-color: #fef3c7 !important;
+      color: #d97706 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2);
+    }
+
+    &.active-low {
+      background-color: #d1fae5 !important;
+      color: #059669 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+    }
+
+    /* Active Status States */
+    &.active-pending {
+      background-color: #ffffff !important;
+      color: #d97706 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    &.active-progress {
+      background-color: #ffffff !important;
+      color: #0284c7 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    &.active-completed {
+      background-color: #ffffff !important;
+      color: #059669 !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
 .btn-gradient-indigo {
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   border: none;
@@ -137,3 +256,110 @@
 .text-emerald-600 {
   color: #059669 !important;
 }
+
+/* ==========================================================================
+   PINNED TASK TOGGLE CARD
+   ========================================================================== */
+.pin-toggle-card {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+
+  .pin-icon-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &.active {
+      background-color: #fef3c7;
+      color: #d97706;
+    }
+  }
+
+  .custom-switch-capsule {
+    width: 44px;
+    height: 24px;
+    border-radius: 50rem;
+    background-color: #cbd5e1;
+    position: relative;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+
+    .switch-knob {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &.active {
+      background-color: #f59e0b;
+
+      .switch-knob {
+        left: 23px;
+      }
+    }
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  &.pinned-active {
+    background-color: #fffbeb !important;
+    border-color: #fcd34d !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12) !important;
+  }
+}
+
+/* ==========================================================================
+   DYNAMIC CHECKLIST (SHOPPING LIST / SUBTASKS)
+   ========================================================================== */
+.checklist-section-box {
+  background-color: #f8fafc;
+  border-radius: 14px;
+}
+
+.checklist-item-row {
+  transition: all 0.2s ease;
+  border-color: #e2e8f0 !important;
+
+  &:hover {
+    border-color: #cbd5e1 !important;
+    background-color: #f8fafc;
+  }
+}
+
+.custom-check-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &.checked {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+  }
+}
+
+
+

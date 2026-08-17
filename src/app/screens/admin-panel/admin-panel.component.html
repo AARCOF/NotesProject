@@ -4,7 +4,7 @@
       <h3 class="font-weight-bold text-slate-800 mb-1 font-size-24">Panel de Administración de Usuarios</h3>
       <p class="text-slate-500 mb-0 font-size-14">Gestión de credenciales, roles y permisos del sistema NoteYou.</p>
     </div>
-    <span class="badge badge-pill badge-teal-light px-3 py-2 font-size-14 font-weight-bold">
+    <span class="badge badge-pill badge-blue-light px-3 py-2 font-size-14 font-weight-bold">
       Rol Actual: {{ getRoleLabel(currentUser?.role || 'user') }}
     </span>
   </div>
@@ -13,7 +13,7 @@
 <!-- Tarjetas de Estadísticas de Usuarios -->
 <div class="row mb-4">
   <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-custom bg-stat-teal text-white shadow-sm">
+    <div class="card card-stat-custom bg-stat-blue text-white shadow-sm">
       <div class="card-body p-4 d-flex align-items-center justify-content-between">
         <div>
           <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Usuarios Totales</p>
@@ -122,7 +122,7 @@
             
             <td class="px-4 py-3">
               <div class="d-flex align-items-center">
-                <div class="avatar-circle-sm bg-gradient-teal text-white font-weight-bold mr-3">
+                <div class="avatar-circle-sm bg-gradient-blue text-white font-weight-bold mr-3">
                   {{ u.name.charAt(0).toUpperCase() }}
                 </div>
                 <div>
@@ -149,7 +149,7 @@
             </td>
 
             <td class="py-3">
-              <span class="badge badge-pill font-weight-bold px-3 py-1" [class.badge-teal-soft]="u.isActive !== false" [class.badge-danger-soft]="u.isActive === false">
+              <span class="badge badge-pill font-weight-bold px-3 py-1" [class.badge-blue-soft]="u.isActive !== false" [class.badge-danger-soft]="u.isActive === false">
                 {{ u.isActive !== false ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
@@ -159,7 +159,7 @@
                 
                 <!-- Selector de Rol (Superadmin Únicamente) -->
                 <div class="dropdown mr-2" ngbDropdown *ngIf="isSuperAdmin">
-                  <button class="btn btn-sm btn-outline-teal font-weight-semibold dropdown-toggle" ngbDropdownToggle>
+                  <button class="btn btn-sm btn-outline-blue font-weight-semibold dropdown-toggle" ngbDropdownToggle>
                     Cambiar Rol
                   </button>
                   <div class="dropdown-menu dropdown-menu-right shadow-md border-0" ngbDropdownMenu>

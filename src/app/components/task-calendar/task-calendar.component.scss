@@ -1,0 +1,64 @@
+.calendar-grid {
+  .row {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+  .calendar-cell {
+    padding-left: 4px;
+    padding-right: 4px;
+    min-width: 0;
+  }
+}
+
+.calendar-day-box {
+  min-height: 80px;
+  transition: all 0.2s ease;
+  border-color: #E2E8F0 !important;
+  
+  &:hover {
+    background-color: #F8FAFC;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.task-dots-container {
+  min-height: 14px;
+}
+
+.task-dot {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  cursor: pointer;
+  
+  &:hover {
+    transform: scale(1.3);
+  }
+}
+
+.btn-calendar-arrow {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    background-color: #0ea5e9;
+    color: #ffffff;
+    border-color: #0ea5e9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+

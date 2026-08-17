@@ -21,7 +21,7 @@ export class VerificationKeyService {
 
   public readonly KEY_DURATION_MS = 60 * 60 * 1000;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   public generateSecurityKey(): string {
     const min = 100000;
@@ -45,10 +45,13 @@ export class VerificationKeyService {
     };
     this.lastSentEmailSubject.next(emailData);
 
+    // TODO: Eliminar esto en producción. Se imprime en consola para pruebas de desarrollo.
+    console.log(`[DEV MODE] Llave de seguridad generada para ${toEmail}:`, securityKey);
+
     const payload = {
-      service_id: 'service_noteyou',
-      template_id: 'template_verification',
-      user_id: 'user_noteyou_public',
+      service_id: 'NoteYou_er',
+      template_id: 'template_01akdg7',
+      user_id: 'NJyM41WnepByrp24u',
       template_params: {
         to_email: toEmail,
         security_key: securityKey,
@@ -64,18 +67,18 @@ export class VerificationKeyService {
   }
 
   public sendTaskReminderEmail(
-    toEmail: string, 
-    taskTitle: string, 
-    taskContent: string, 
-    categoryName: string, 
-    priority: string, 
+    toEmail: string,
+    taskTitle: string,
+    taskContent: string,
+    categoryName: string,
+    priority: string,
     dueDate?: string
   ): Observable<boolean> {
     const subject = `Recordatorio NoteYou: ${taskTitle}`;
     const payload = {
-      service_id: 'service_noteyou',
-      template_id: 'template_task_reminder',
-      user_id: 'user_noteyou_public',
+      service_id: 'NoteYou_er',
+      template_id: 'template_ftjjwe7',
+      user_id: 'NJyM41WnepByrp24u',
       template_params: {
         to_email: toEmail,
         task_title: taskTitle,
@@ -100,9 +103,9 @@ export class VerificationKeyService {
 
     const now = Date.now();
     if (now > expiresAt) {
-      return { 
-        isValid: false, 
-        message: 'La llave de seguridad ha superado el límite de 1 hora de validez. Por favor solicita un nuevo código.' 
+      return {
+        isValid: false,
+        message: 'La llave de seguridad ha superado el límite de 1 hora de validez. Por favor solicita un nuevo código.'
       };
     }
 

@@ -1,14 +1,36 @@
-<div class="container-scroller">
+<div class="app-root-container" [class.is-standalone]="!showNav">
+  
+  <!-- Barra de navegación fija (Solo en vista autenticada) -->
   <app-navbar *ngIf="showNav"></app-navbar>
+
   <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav">
+    
+    <!-- Barra lateral (Solo en vista autenticada) -->
     <app-sidebar *ngIf="showNav"></app-sidebar>
-    <div class="main-panel" [class.w-100]="!showNav">
-      <div class="content-wrapper" [class.p-0]="!showNav">
-        <router-outlet></router-outlet>
+
+    <!-- Panel principal -->
+    <div class="main-panel border-0" [class.w-100]="!showNav">
+      <div class="content-wrapper border-0 p-0">
+        
+        <div class="workspace-wrapper" [class.public-mode]="!showNav">
+          
+          <!-- Columna de Notas Rápidas con ancho fijo rígido (320px) -->
+          <aside class="quick-notes-column" *ngIf="showNav">
+            <app-quick-notes-panel [availableTasks]="globalTasks"></app-quick-notes-panel>
+          </aside>
+
+          <!-- ÚNICO Router Outlet unificado (sin colisiones ni destrucción de rutas) -->
+          <main class="workspace-view-container" [class.authenticated-view]="showNav" [class.public-view]="!showNav">
+            <router-outlet></router-outlet>
+          </main>
+
+        </div>
+
       </div>
-      <app-footer *ngIf="showNav"></app-footer>
     </div>
+
   </div>
+
 </div>
 
 <!-- Onboarding Wizard para primer inicio de sesión -->

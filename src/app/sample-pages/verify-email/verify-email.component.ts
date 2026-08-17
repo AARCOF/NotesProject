@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
-import { VerificationKeyService, SimulatedEmail } from '../../core/services/verification-key.service';
+import { VerificationKeyService, EmailLog } from '../../core/services/verification-key.service';
 import { UserRepository } from '../../core/repositories/user.repository';
 
 @Component({
@@ -19,7 +19,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
   timerString: string = '';
   isExpired: boolean = false;
-  simulatedEmail: SimulatedEmail | null = null;
+  simulatedEmail: EmailLog | null = null;
 
   private subscriptions: Subscription = new Subscription();
 
@@ -29,7 +29,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private verificationKeyService: VerificationKeyService,
     private userRepository: UserRepository
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {

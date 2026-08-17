@@ -1,68 +1,50 @@
-<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row bg-white shadow-sm border-bottom">
-  <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center bg-gradient-teal">
-    <a class="navbar-brand brand-logo text-white font-weight-bold d-flex align-items-center justify-content-center text-decoration-none" routerLink="/dashboard">
-      <i class="typcn typcn-document-text text-white mr-2 font-size-26"></i>
-      <span class="letter-spacing-1 text-white">NoteYou</span>
+<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row shadow-sm" style="background-color: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.05);">
+  <div class="navbar-brand-wrapper d-flex align-items-center" style="background-color: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.05);">
+    <a class="navbar-brand brand-logo text-white font-weight-bold text-decoration-none pl-4" routerLink="/dashboard">
+      <div class="d-flex align-items-center" style="gap: 12px;">
+        <i class="typcn typcn-document-text text-white" style="font-size: 38px; line-height: 1; transform: none !important; display: flex; align-items: center;"></i>
+        <h2 class="font-weight-bold text-white mb-0" style="font-size: 30px; letter-spacing: -1px; line-height: 1; padding-top: 4px;">NoteYou</h2>
+      </div>
     </a>
-    <a class="navbar-brand brand-logo-mini text-white font-weight-bold" routerLink="/dashboard">
-      <i class="typcn typcn-document-text text-white font-size-26"></i>
+    <a class="navbar-brand brand-logo-mini text-white font-weight-bold text-decoration-none w-100" routerLink="/dashboard" style="position: relative; height: 60px;">
+      <div class="d-flex align-items-center justify-content-center h-100 w-100">
+        <h4 class="font-weight-bold text-white mb-0">NY</h4>
+      </div>
     </a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-center px-4">
-    <button class="navbar-toggler navbar-toggler align-self-center border-0 bg-transparent text-slate-600" type="button" (click)="toggleIconOnlySidebar()">
+    <!-- Desktop sidebar toggle removed to keep sidebar permanently open as requested -->
+    <button class="navbar-toggler align-self-center border-0 bg-transparent text-white d-none" type="button" (click)="toggleIconOnlySidebar()">
       <span class="typcn typcn-th-menu font-size-22"></span>
     </button>
     
     <div class="navbar-nav ml-3 d-none d-md-flex align-items-center gap-2">
-      <span class="badge badge-teal-light px-3 py-2 border-0 font-weight-bold">
+      <span class="badge badge-blue-light px-3 py-2 border-0 font-weight-bold">
         <i class="typcn typcn-user-outline mr-1"></i> {{ getRoleLabel(currentUser?.role || 'user') }}
       </span>
 
-      <a routerLink="/admin-panel" class="btn btn-outline-teal btn-sm font-weight-bold px-3 py-1" *ngIf="isAdminOrSuperAdmin">
+      <a routerLink="/admin-panel" class="btn btn-outline-blue btn-sm font-weight-bold px-3 py-1" *ngIf="isAdminOrSuperAdmin">
         <i class="typcn typcn-cog mr-1"></i> Administración
       </a>
     </div>
 
-    <ul class="navbar-nav navbar-nav-right ml-auto">
+    <ul class="navbar-nav navbar-nav-right ml-auto d-flex align-items-center" style="gap: 10px;">
       
-      <li class="nav-item dropdown" ngbDropdown *ngIf="currentUser">
-        <a class="nav-link dropdown-toggle d-flex align-items-center text-decoration-none" id="UserDropdown" ngbDropdownToggle style="cursor: pointer;">
-          <div class="avatar-circle-sm bg-gradient-teal text-white font-weight-bold mr-2 shadow-xs">
-            {{ currentUser.name.charAt(0).toUpperCase() }}
-          </div>
-          <span class="font-weight-semibold text-slate-800 d-none d-md-inline">{{ currentUser.name }}</span>
+      <li class="nav-item">
+        <a routerLink="/landing" class="btn btn-outline-light btn-sm font-weight-bold px-3 py-1 d-flex align-items-center">
+          <i class="typcn typcn-arrow-left-outline mr-1 font-size-18"></i> Ir al Landing
         </a>
-        <div class="dropdown-menu dropdown-menu-right navbar-dropdown rounded-xl shadow-lg border-0 p-0 overflow-hidden" ngbDropdownMenu aria-labelledby="UserDropdown">
-          <div class="dropdown-header text-center p-4 bg-slate-50 border-bottom">
-            <div class="avatar-circle-lg bg-gradient-teal text-white mx-auto mb-2 font-weight-bold shadow-xs">
-              {{ currentUser.name.charAt(0).toUpperCase() }}
-            </div>
-            <p class="mb-0 font-weight-bold text-slate-800 font-size-16">{{ currentUser.name }}</p>
-            <p class="font-weight-medium text-slate-500 mb-1 font-size-13">{{ currentUser.email }}</p>
-            <span class="badge badge-teal-soft px-3 py-1 font-weight-bold">
-              Rol: {{ getRoleLabel(currentUser.role) }}
-            </span>
-          </div>
-          
-          <a routerLink="/admin-panel" class="dropdown-item py-3 text-teal font-weight-semibold cursor-pointer" *ngIf="isAdminOrSuperAdmin">
-            <i class="typcn typcn-cog mr-2 font-size-18"></i> Panel de Control Admin
-          </a>
-
-          <a class="dropdown-item py-3 text-rose-600 font-weight-bold cursor-pointer hover-bg-rose" (click)="logout()">
-            <i class="typcn typcn-power-outline mr-2 font-size-18"></i> Cerrar Sesión
-          </a>
-        </div>
       </li>
 
       <li class="nav-item" *ngIf="!currentUser">
-        <a routerLink="/login" class="btn btn-gradient-teal font-weight-bold text-white px-4">
+        <a routerLink="/login" class="btn btn-gradient-blue font-weight-bold text-white px-4 py-2">
           Iniciar Sesión
         </a>
       </li>
 
     </ul>
     
-    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center ml-auto pr-0 border-0 bg-transparent text-slate-600" type="button" (click)="toggleRightSidebar()">
+    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center ml-auto pr-0 border-0 bg-transparent text-white" type="button" (click)="toggleRightSidebar()">
       <span class="typcn typcn-th-menu font-size-22"></span>
     </button>
   </div>
