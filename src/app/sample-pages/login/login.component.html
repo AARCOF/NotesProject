@@ -1,88 +1,95 @@
-<div class="content-wrapper d-flex align-items-center auth px-0 min-vh-100 bg-gradient-light">
-  <div class="row w-100 mx-0 justify-content-center">
-    <div class="col-lg-4 col-md-6 col-sm-10 mx-auto">
+<div class="auth-page-container">
+  
+  <!-- Ambient background glow spheres -->
+  <div class="auth-glow-circle glow-cyan"></div>
+  <div class="auth-glow-circle glow-orange"></div>
+
+  <!-- Botón Volver a Inicio -->
+  <a routerLink="/" class="btn btn-back-home shadow-sm" title="Volver a la página principal">
+    <i class="typcn typcn-arrow-left mr-1"></i> Inicio
+  </a>
+
+  <!-- Tarjeta Centralizada -->
+  <div class="auth-card-modern text-left">
+    
+    <div class="brand-logo text-center mb-4">
+      <div class="icon-avatar-lg bg-gradient-blue text-white mx-auto mb-3 shadow-md">
+        <i class="typcn typcn-document-text font-size-30"></i>
+      </div>
+      <h3 class="font-weight-bold text-slate-900 mb-1">
+        Note<span class="text-orange">You</span>
+      </h3>
+      <p class="text-slate-500 font-size-13 mb-0">Accede a tu espacio de notas y tareas</p>
+    </div>
+
+    <div class="alert alert-danger-custom mb-3" *ngIf="errorMessage">
+      <i class="typcn typcn-warning mr-1"></i> {{ errorMessage }}
+    </div>
+
+    <div class="alert alert-success-custom mb-3" *ngIf="successMessage">
+      <i class="typcn typcn-tick mr-1"></i> {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" autocomplete="off">
       
-      <div class="auth-card-modern text-left py-5 px-4 px-sm-5 rounded-xl shadow-lg border-0 bg-white">
-        
-        <div class="brand-logo text-center mb-4">
-          <div class="icon-avatar-lg bg-gradient-primary text-white mx-auto mb-3 shadow-md">
-            <i class="typcn typcn-document-text font-size-32"></i>
+      <div class="form-group mb-3">
+        <label class="font-weight-semibold text-slate-700 font-size-13 mb-1">Correo Electrónico</label>
+        <div class="input-group input-group-custom-auth">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="typcn typcn-mail"></i></span>
           </div>
-          <h3 class="font-weight-bold text-slate-800 mb-1">NoteYou</h3>
-          <p class="text-slate-500 font-size-14 mb-0">Sistema Inteligente de Notas y Tareas</p>
+          <input 
+            type="email" 
+            class="form-control" 
+            placeholder="correo@ejemplo.com" 
+            [(ngModel)]="email" 
+            name="email" 
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            required>
         </div>
-
-
-        <div class="alert alert-danger-custom mb-3" *ngIf="errorMessage">
-          <i class="typcn typcn-warning mr-1"></i> {{ errorMessage }}
-        </div>
-
-        <div class="alert alert-success-custom mb-3" *ngIf="successMessage">
-          <i class="typcn typcn-tick mr-1"></i> {{ successMessage }}
-        </div>
-
-        <form (ngSubmit)="onLogin()" autocomplete="off">
-          
-          <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Correo Electrónico</label>
-            <div class="input-group input-group-custom-auth">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="typcn typcn-mail"></i></span>
-              </div>
-              <input 
-                type="email" 
-                class="form-control" 
-                placeholder="correo@ejemplo.com" 
-                [(ngModel)]="email" 
-                name="email" 
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                required>
-            </div>
-          </div>
-
-          <div class="form-group mb-4">
-            <label class="font-weight-bold text-slate-700 font-size-14">Contraseña</label>
-            <div class="input-group input-group-custom-auth">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="typcn typcn-lock-closed"></i></span>
-              </div>
-              <input 
-                type="password" 
-                class="form-control" 
-                placeholder="********" 
-                [(ngModel)]="password" 
-                name="password" 
-                autocomplete="current-password"
-                required>
-            </div>
-          </div>
-
-          <div class="form-group mb-4">
-            <app-recaptcha></app-recaptcha>
-          </div>
-
-          <div class="mt-4">
-            <button 
-              type="submit" 
-              class="btn btn-block btn-gradient-primary btn-lg font-weight-bold shadow-md py-3 text-white rounded-lg" 
-              [disabled]="isLoading || !email || !password">
-              <span class="spinner-border spinner-border-sm mr-2" *ngIf="isLoading"></span>
-              Ingresar a la Plataforma
-            </button>
-          </div>
-
-          <div class="text-center mt-4 pt-3 border-top">
-            <span class="text-slate-500 font-size-14 mr-1">¿No tienes una cuenta?</span>
-            <a routerLink="/register" class="text-indigo font-weight-bold text-decoration-none">Regístrate aquí</a>
-          </div>
-
-        </form>
-
       </div>
 
-    </div>
+      <div class="form-group mb-4">
+        <label class="font-weight-semibold text-slate-700 font-size-13 mb-1">Contraseña</label>
+        <div class="input-group input-group-custom-auth">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="typcn typcn-lock-closed"></i></span>
+          </div>
+          <input 
+            type="password" 
+            class="form-control" 
+            placeholder="Tu contraseña" 
+            [(ngModel)]="password" 
+            name="password" 
+            autocomplete="current-password"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group mb-4">
+        <app-recaptcha></app-recaptcha>
+      </div>
+
+      <div class="mt-4">
+        <button 
+          type="submit" 
+          class="btn btn-block btn-orange-auth btn-lg font-weight-bold shadow-md py-3 text-white" 
+          [disabled]="isLoading || !email || !password">
+          <span class="spinner-border spinner-border-sm mr-2" *ngIf="isLoading"></span>
+          Ingresar a la Plataforma
+        </button>
+      </div>
+
+      <div class="text-center mt-4 pt-3 border-top border-slate-100">
+        <span class="text-slate-500 font-size-13 mr-1">¿No tienes una cuenta?</span>
+        <a routerLink="/register" class="text-blue font-weight-bold text-decoration-none hover-underline font-size-13">Regístrate aquí</a>
+      </div>
+
+    </form>
+
   </div>
+
 </div>

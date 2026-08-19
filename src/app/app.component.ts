@@ -16,6 +16,7 @@ import { Note } from './models/note.model';
 export class AppComponent implements OnInit {
   title = 'NoteYou - Tu Espacio de Notas';
   showNav: boolean = true;
+  showQuickNotes: boolean = true;
   currentUser: User | null = null;
   showTutorial: boolean = false;
   globalTasks: Note[] = [];
@@ -50,6 +51,10 @@ export class AppComponent implements OnInit {
   private updateLayoutState(url: string): void {
     const isStandalonePage = url.includes('/landing') || url.includes('/login') || url.includes('/register') || url.includes('/verify-email') || url === '/';
     this.showNav = !isStandalonePage && this.authService.isAuthenticated();
+
+    // En la vista de Gastos (/expenses) no se muestran notas rápidas para aprovechar todo el ancho disponible
+    const isExpensesPage = url.includes('/expenses');
+    this.showQuickNotes = this.showNav && !isExpensesPage;
   }
 
   private checkTutorialState(): void {

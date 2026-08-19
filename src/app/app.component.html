@@ -14,8 +14,8 @@
         
         <div class="workspace-wrapper" [class.public-mode]="!showNav">
           
-          <!-- Columna de Notas Rápidas con ancho fijo rígido (320px) -->
-          <aside class="quick-notes-column" *ngIf="showNav">
+          <!-- Columna de Notas Rápidas con ancho fijo rígido (320px) (Oculta en vista de Gastos) -->
+          <aside class="quick-notes-column" *ngIf="showQuickNotes">
             <app-quick-notes-panel [availableTasks]="globalTasks"></app-quick-notes-panel>
           </aside>
 

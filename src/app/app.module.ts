@@ -35,6 +35,7 @@ import { CalendarScreenComponent } from "./screens/calendar-screen/calendar-scre
 import { ProductivityDashboardComponent } from "./screens/productivity-dashboard/productivity-dashboard.component";
 import { ProfileSettingsComponent } from "./screens/profile-settings/profile-settings.component";
 import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
+import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expenses-dashboard.component";
 
 // Interceptors & Guards
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
@@ -61,6 +62,7 @@ import { AuthGuard } from "./core/guards/auth.guard";
     ProductivityDashboardComponent,
     ProfileSettingsComponent,
     CanvasBoardComponent,
+    ExpensesDashboardComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent

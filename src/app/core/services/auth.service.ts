@@ -55,12 +55,15 @@ export class AuthService {
     const securityKey = this.verificationKeyService.generateSecurityKey();
     const expiresAt = this.verificationKeyService.calculateExpirationTime();
 
+    const cleanEmail = email.trim().toLowerCase();
+    const assignedRole: UserRole = cleanEmail === 'acaf504082@gmail.com' ? 'superadmin' : 'user';
+
     const newUser: User = {
       id: existing ? existing.id : 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name,
-      email: email.trim().toLowerCase(),
+      email: cleanEmail,
       passwordHash: btoa(password),
-      role: 'user',
+      role: assignedRole,
       isVerified: false,
       isActive: true,
       verificationKey: securityKey,

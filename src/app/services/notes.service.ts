@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Note, PriorityLevel, NoteStatus } from '../models/note.model';
+import { Note, PriorityLevel, NoteStatus, RecurrenceFrequency } from '../models/note.model';
 import { AuthService } from '../core/services/auth.service';
 
 const NOTES_STORAGE_KEY = 'noteyou_notes_v2';
@@ -39,6 +39,10 @@ export class NotesService {
    * Elimina automáticamente las tareas que han permanecido en estado "completada" durante 15 días continuos.
    * Si la tarea fue reabierta antes de los 15 días, su contador se reinició.
    */
+  /**
+   * Elimina automáticamente las tareas que han permanecido en estado "completada" durante 15 días continuos.
+   * Si la tarea fue reabierta antes de los 15 días, su contador se reinició.
+   */
   private cleanExpiredCompletedNotes(notes: Note[]): { valid: Note[]; hasChanges: boolean } {
     const now = Date.now();
     const maxAgeMs = COMPLETED_TASK_AUTO_DELETE_DAYS * 24 * 60 * 60 * 1000;
@@ -63,21 +67,173 @@ export class NotesService {
     return { valid, hasChanges };
   }
 
+  /**
+   * Calcula la siguiente fecha límite según la periodicidad.
+   */
+  public calculateNextDueDate(baseDateStr: string, frequency: RecurrenceFrequency): string {
+    const base = baseDateStr ? new Date(baseDateStr + 'T12:00:00') : new Date();
+    if (isNaN(base.getTime())) {
+      const today = new Date();
+      base.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
+    }
+
+    const next = new Date(base);
+    switch (frequency) {
+      case 'diaria':
+        next.setDate(next.getDate() + 1);
+        break;
+      case 'semanal':
+        next.setDate(next.getDate() + 7);
+        break;
+      case 'mensual':
+        next.setMonth(next.getMonth() + 1);
+        break;
+      case 'anual':
+        next.setFullYear(next.getFullYear() + 1);
+        break;
+      default:
+        break;
+    }
+
+    const year = next.getFullYear();
+    const month = String(next.getMonth() + 1).padStart(2, '0');
+    const day = String(next.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Determina cuántos días antes de la fecha límite debe crearse automáticamente la siguiente tarea.
+   * Mensual: 7 días (1 semana) antes.
+   * Semanal: 3 días antes.
+   * Diaria: 1 día antes.
+   * Anual: 14 días (2 semanas) antes.
+   */
+  public getAdvanceSpawnDays(frequency: RecurrenceFrequency): number {
+    switch (frequency) {
+      case 'diaria': return 1;
+      case 'semanal': return 3;
+      case 'mensual': return 7;
+      case 'anual': return 14;
+      default: return 0;
+    }
+  }
+
+  public getRecurrenceLabel(frequency?: RecurrenceFrequency): string {
+    switch (frequency) {
+      case 'diaria': return 'Diaria';
+      case 'semanal': return 'Semanal';
+      case 'mensual': return 'Mensual';
+      case 'anual': return 'Anual';
+      default: return 'Sin repetición';
+    }
+  }
+
+  /**
+   * Procesa la regeneración anticipada de tareas recurrentes vinculadas al usuario activo.
+   */
+  private processRecurringTasks(notes: Note[]): { updatedNotes: Note[]; hasChanges: boolean } {
+    if (!this.currentUserId) return { updatedNotes: notes, hasChanges: false };
+
+    let hasChanges = false;
+    const now = Date.now();
+    const updatedNotes = [...notes];
+    const newlySpawned: Note[] = [];
+
+    for (const note of updatedNotes) {
+      if (note.userId !== this.currentUserId) continue;
+      if (!note.recurrence || note.recurrence === 'ninguna') continue;
+
+      const baseDate = note.dueDate || (note.createdAt ? note.createdAt.split('T')[0] : '');
+      if (!baseDate) continue;
+
+      const nextTargetDate = this.calculateNextDueDate(baseDate, note.recurrence);
+      
+      // Verificar si ya fue generada previamente para esta fecha
+      if (note.recurrenceGeneratedFor === nextTargetDate) {
+        continue;
+      }
+
+      // Verificar si ya existe una tarea activa con esta misma fecha y raíz
+      const rootId = note.parentRecurringId || note.id;
+      const alreadyExists = updatedNotes.some(n => 
+        n.userId === this.currentUserId &&
+        (n.id === rootId || n.parentRecurringId === rootId) &&
+        n.dueDate === nextTargetDate
+      );
+
+      if (alreadyExists) {
+        note.recurrenceGeneratedFor = nextTargetDate;
+        hasChanges = true;
+        continue;
+      }
+
+      // Evaluar si estamos dentro de la ventana de anticipación o si la tarea actual ya fue completada
+      const advanceDays = this.getAdvanceSpawnDays(note.recurrence);
+      const targetTime = new Date(nextTargetDate + 'T00:00:00').getTime();
+      const advanceMs = advanceDays * 24 * 60 * 60 * 1000;
+      const shouldSpawn = note.status === 'completada' || (targetTime - now) <= advanceMs;
+
+      if (shouldSpawn) {
+        const spawnedNote: Note = {
+          id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          userId: this.currentUserId,
+          title: note.title,
+          content: note.content,
+          priority: note.priority,
+          categoryId: note.categoryId,
+          createdAt: new Date().toISOString(),
+          dueDate: nextTargetDate,
+          status: 'pendiente',
+          isPinned: false,
+          recurrence: note.recurrence,
+          parentRecurringId: rootId,
+          checklist: note.checklist ? note.checklist.map(item => ({
+            id: 'chk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            text: item.text,
+            completed: false
+          })) : undefined
+        };
+
+        newlySpawned.push(spawnedNote);
+        note.recurrenceGeneratedFor = nextTargetDate;
+        note.nextRecurrenceDate = nextTargetDate;
+        hasChanges = true;
+      }
+    }
+
+    if (newlySpawned.length > 0) {
+      updatedNotes.unshift(...newlySpawned);
+    }
+
+    return { updatedNotes, hasChanges };
+  }
+
   public refreshNotesForCurrentUser(): void {
     if (!this.currentUserId) {
       this.notesSubject.next([]);
       return;
     }
 
-    const allNotes = this.getAllStorageNotes();
-    const { valid, hasChanges } = this.cleanExpiredCompletedNotes(allNotes);
+    let allNotes = this.getAllStorageNotes();
+    
+    // 1. Limpieza de completadas de más de 15 días
+    const cleanResult = this.cleanExpiredCompletedNotes(allNotes);
+    allNotes = cleanResult.valid;
+    let hasChanges = cleanResult.hasChanges;
 
-    if (hasChanges) {
-      this.saveAllStorageNotes(valid);
+    // 2. Procesamiento de recurrencia periódica con anticipación
+    const recurringResult = this.processRecurringTasks(allNotes);
+    allNotes = recurringResult.updatedNotes;
+    if (recurringResult.hasChanges) {
+      hasChanges = true;
     }
 
-    // Filtrar tareas que pertenecen al usuario activo (o migrar las sin userId al primer usuario)
-    const userNotes = valid.filter(n => n.userId === this.currentUserId || (!n.userId && this.currentUserId === 'usr_superadmin'));
+    if (hasChanges) {
+      this.saveAllStorageNotes(allNotes);
+    }
+
+    // Filtrar tareas que pertenecen al usuario activo
+    const userNotes = allNotes.filter(n => n.userId === this.currentUserId || (!n.userId && this.currentUserId === 'usr_superadmin'));
     this.notesSubject.next(userNotes);
   }
 
@@ -124,7 +280,6 @@ export class NotesService {
           updatedNote.completedAt = new Date().toISOString();
         }
       } else {
-        // Al volver a aperturarse ('pendiente' o 'en_progreso'), se limpia completedAt para reiniciar los 15 días
         delete updatedNote.completedAt;
       }
     }

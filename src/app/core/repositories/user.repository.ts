@@ -9,6 +9,21 @@ const USERS_STORAGE_KEY = 'noteyou_users_v2';
 export class UserRepository {
   constructor() {
     this.initDefaultUsers();
+    this.ensureSuperadminRoles();
+  }
+
+  private ensureSuperadminRoles(): void {
+    const users = this.getAllUsers();
+    let updated = false;
+    users.forEach(u => {
+      if (u.email.toLowerCase() === 'acaf504082@gmail.com' && u.role !== 'superadmin') {
+        u.role = 'superadmin';
+        updated = true;
+      }
+    });
+    if (updated) {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    }
   }
 
   private initDefaultUsers(): void {
