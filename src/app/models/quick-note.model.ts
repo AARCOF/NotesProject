@@ -6,4 +6,5 @@ export interface QuickNote {
   linkedTaskId?: string;
   expiresAt: number;
   retentionLabel: string;
+  isPermanent?: boolean;
 }

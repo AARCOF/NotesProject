@@ -81,10 +81,10 @@
         <!-- Glassmorphism Cards sobre Fondo Oscuro: Cuaderno de Apuntes + Categorías Rápidas -->
         <div class="col-lg-6 hero-visual-container d-none d-lg-block animate-up delay-200">
           
-          <!-- Cuaderno de Apuntes Interactivo y Animado -->
-          <div class="digital-notebook-card floating-1 cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'" title="Explorar Cuaderno de Notas">
+          <!-- Cuaderno de Apuntes Visual con Inclinación Dinámica 3D -->
+          <div class="digital-notebook-card floating-notebook-3d">
             
-            <!-- Anillas metálicas de la libreta -->
+            <!-- Anillas metálicas de la libreta (12 anillas) -->
             <div class="notebook-spiral-spine">
               <div class="spiral-ring"></div>
               <div class="spiral-ring"></div>
@@ -92,101 +92,114 @@
               <div class="spiral-ring"></div>
               <div class="spiral-ring"></div>
               <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
+              <div class="spiral-ring"></div>
             </div>
 
-            <!-- Pluma estilográfica animada escribiendo -->
-            <div class="animated-stylus-pen">
-              ✏️
-            </div>
-
-            <!-- Hoja de cuaderno con líneas regladas -->
+            <!-- Hoja de cuaderno con contenido limpio y coherente -->
             <div class="notebook-paper-body">
-              <div class="notebook-margin-line"></div>
               
               <!-- Cabecera del Cuaderno -->
-              <div class="notebook-header d-flex justify-content-between align-items-center">
+              <div class="notebook-header d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                 <div class="d-flex align-items-center">
                   <span class="mr-2 font-size-18">📝</span>
-                  <h5 class="font-weight-bold text-slate-900 mb-0 font-size-16">Notas & Lista de Compras</h5>
+                  <h5 class="font-weight-bold text-slate-900 mb-0 font-size-16">Notas & Tareas de Hoy</h5>
                 </div>
-                <span class="badge badge-pill badge-blue-light font-size-11 font-weight-bold">
-                  Hoy
+                <span class="badge badge-pill badge-blue-light font-size-11 font-weight-bold px-2-5 py-1">
+                  En foco
                 </span>
               </div>
 
-              <!-- Lista de ítems interactivos de la libreta -->
-              <div class="notebook-lines-list">
+              <!-- Líneas con Tareas Reales Renderizadas (Interactivas en Tiempo Real) -->
+              <div class="notebook-tasks-wrapper d-flex flex-column">
                 
-                <!-- Ítem 1: Completado -->
-                <div class="d-flex align-items-center justify-content-between py-1">
+                <div 
+                  *ngFor="let item of notebookTasks" 
+                  class="notebook-task-row d-flex align-items-center justify-content-between cursor-pointer transition-all hover-lift-sm"
+                  [class.active-writing]="item.isWriting"
+                  (click)="toggleNotebookTask(item)">
                   <div class="d-flex align-items-center text-truncate">
-                    <span class="notebook-check mr-2 text-emerald font-weight-bold">✓</span>
-                    <span class="text-slate-500 font-size-13 text-decoration-line-through text-truncate">
-                      Comprar café colombiano & fruta
+                    <span class="task-check-box mr-2 transition-all" 
+                          [class.completed]="item.completed" 
+                          [class.pending]="!item.completed && !item.isWriting" 
+                          [class.active]="item.isWriting && !item.completed">
+                      {{ item.completed ? '✓' : (item.isWriting ? '●' : '○') }}
                     </span>
-                  </div>
-                  <span class="badge badge-category-sm bg-emerald text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Compras</span>
-                </div>
-
-                <!-- Ítem 2: Completado -->
-                <div class="d-flex align-items-center justify-content-between py-1">
-                  <div class="d-flex align-items-center text-truncate">
-                    <span class="notebook-check mr-2 text-emerald font-weight-bold">✓</span>
-                    <span class="text-slate-500 font-size-13 text-decoration-line-through text-truncate">
-                      Revisar tablero Kanban NoteYou
+                    <span class="font-size-13 text-truncate transition-all" 
+                          [ngClass]="item.completed ? 'text-slate-400 text-decoration-line-through' : (item.isWriting ? 'text-slate-900 font-weight-bold' : 'text-slate-700')">
+                      {{ item.text }}
                     </span>
+                    <span class="typing-cursor" *ngIf="item.isWriting && !item.completed"></span>
                   </div>
-                  <span class="badge badge-category-sm bg-blue text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Trabajo</span>
-                </div>
-
-                <!-- Ítem 3: Escribiéndose en tiempo real (animación activa) -->
-                <div class="d-flex align-items-center justify-content-between py-1">
-                  <div class="d-flex align-items-center text-truncate">
-                    <span class="notebook-bullet mr-2 text-blue font-weight-bold">●</span>
-                    <span class="text-slate-900 font-weight-semibold font-size-13 text-truncate">
-                      Escribir apunte de la reunión
-                    </span>
-                    <span class="typing-cursor"></span>
-                  </div>
-                  <span class="badge badge-category-sm bg-amber text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Ideas</span>
-                </div>
-
-                <!-- Ítem 4: Pendiente -->
-                <div class="d-flex align-items-center justify-content-between py-1">
-                  <div class="d-flex align-items-center text-truncate">
-                    <span class="notebook-bullet mr-2 text-slate-400">○</span>
-                    <span class="text-slate-600 font-size-13 text-truncate">
-                      Configurar recordatorio para las 4:00 PM
-                    </span>
-                  </div>
-                  <span class="badge badge-category-sm bg-purple text-white px-2 py-0 font-size-10 ml-1 flex-shrink-0">Personal</span>
+                  <span class="badge badge-category-sm {{ item.categoryBg }} text-white px-2 py-0-5 font-size-10 ml-2 flex-shrink-0">
+                    {{ item.category }}
+                  </span>
                 </div>
 
               </div>
 
             </div>
 
-            <!-- Post-it adhesivo realista superpuesto -->
+            <!-- Post-it adhesivo limpio y bien posicionado -->
             <div class="sticky-note-postit">
               <div class="pin-dot"></div>
-              <div class="font-size-12 line-height-tight mt-1">
-                💡 <strong>¡Recordatorio!</strong><br>
-                Subtareas & listas sincronizadas.
+              <div class="font-size-12 line-height-tight">
+                💡 <strong>Recordatorio</strong><br>
+                Listas & notas sincronizadas.
               </div>
             </div>
 
           </div>
 
-          <!-- Card Categorías Rápidas (Conservada y Estilizada) -->
-          <div class="glass-card-white categories-card floating-2 cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'" title="Gestionar Categorías">
-            <h6 class="font-weight-bold text-slate-800 mb-3 d-flex align-items-center justify-content-between">
-              <span>Categorías Rápidas</span>
-              <i class="typcn typcn-folder text-blue font-size-18"></i>
-            </h6>
-            <div class="tag-light blue mb-2"><i class="typcn typcn-briefcase"></i> Trabajo</div>
-            <div class="tag-light orange mb-2"><i class="typcn typcn-user"></i> Personal</div>
-            <div class="tag-light green mb-2"><i class="typcn typcn-lightbulb"></i> Ideas</div>
-            <div class="tag-light purple"><i class="typcn typcn-shopping-cart"></i> Compras</div>
+          <!-- Nubes / Mini Cards de Categorías Flotantes Alrededor del Cuaderno (Distribución Orgánica) -->
+          
+          <!-- Nube 1: Trabajo (Arriba Derecha) -->
+          <div class="floating-category-cloud cloud-trabajo floating-cloud-1">
+            <div class="cloud-icon bg-gradient-blue text-white"><i class="typcn typcn-briefcase"></i></div>
+            <div class="cloud-content">
+              <span class="cloud-title">Trabajo</span>
+              <span class="cloud-subtitle">12 notas</span>
+            </div>
+          </div>
+
+          <!-- Nube 2: Ideas (Centro Derecha) -->
+          <div class="floating-category-cloud cloud-ideas floating-cloud-2">
+            <div class="cloud-icon bg-gradient-amber text-white"><i class="typcn typcn-lightbulb"></i></div>
+            <div class="cloud-content">
+              <span class="cloud-title">Ideas</span>
+              <span class="cloud-subtitle">8 apuntes</span>
+            </div>
+          </div>
+
+          <!-- Nube 3: Compras (Abajo Derecha) -->
+          <div class="floating-category-cloud cloud-compras floating-cloud-3">
+            <div class="cloud-icon bg-gradient-emerald text-white"><i class="typcn typcn-shopping-cart"></i></div>
+            <div class="cloud-content">
+              <span class="cloud-title">Compras</span>
+              <span class="cloud-subtitle">5 listas</span>
+            </div>
+          </div>
+
+          <!-- Nube 4: Personal (Arriba Izquierda) -->
+          <div class="floating-category-cloud cloud-personal floating-cloud-4">
+            <div class="cloud-icon bg-gradient-purple text-white"><i class="typcn typcn-user"></i></div>
+            <div class="cloud-content">
+              <span class="cloud-title">Personal</span>
+              <span class="cloud-subtitle">15 tareas</span>
+            </div>
+          </div>
+
+          <!-- Nube 5: Proyectos (Abajo Izquierda) -->
+          <div class="floating-category-cloud cloud-proyectos floating-cloud-5">
+            <div class="cloud-icon bg-gradient-indigo text-white"><i class="typcn typcn-folder"></i></div>
+            <div class="cloud-content">
+              <span class="cloud-title">Proyectos</span>
+              <span class="cloud-subtitle">4 activos</span>
+            </div>
           </div>
 
         </div>
@@ -207,58 +220,211 @@
       </div>
 
       <div class="row align-items-center">
-        <!-- Mockup Móvil -->
-        <div class="col-lg-4 mb-5 mb-lg-0 text-center reveal-left">
-          <div class="mobile-mockup-frame bg-white pt-4 px-3 pb-2 shadow-lg">
-            <!-- Interfaz Simulada NoteYou Móvil -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15">Buenos Días</h5>
-              <div class="avatar-circle-sm bg-teal text-white cursor-pointer" [routerLink]="isAuthenticated ? '/profile' : '/login'">NY</div>
-            </div>
+        <!-- Mockup Móvil Realista y Dinámico (Visual Showcase) -->
+        <div class="col-lg-5 mb-5 mb-lg-0 text-center reveal-left">
+          <div class="mobile-mockup-frame floating-phone bg-white pt-4 px-3-5 pb-3">
             
-            <div class="bg-slate-100 rounded-pill p-2 mb-3 text-left text-slate-500 font-size-12 d-flex align-items-center cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
-              <i class="typcn typcn-zoom mx-2 font-size-18 text-blue"></i> Buscar notas...
-            </div>
-            
-            <div class="d-flex overflow-hidden mb-3 gap-2 pb-1">
-              <span class="badge badge-pill badge-blue-light px-3 py-2 cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">Todas</span>
-              <span class="badge badge-pill bg-white border px-3 py-2 text-slate-600 cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'">Trabajo</span>
-            </div>
-
-            <div class="card border-0 shadow-sm rounded-xl mb-3 border-left-4 border-blue text-left cursor-pointer hover-lift bg-white" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
-              <div class="card-body p-3">
-                <h6 class="font-weight-bold text-slate-800 font-size-14 mb-1">Notas de Sincronización</h6>
-                <p class="text-slate-500 font-size-12 mb-2 line-height-tight">Se discutió la implementación del nuevo sistema...</p>
+            <!-- Barra Superior de Estado Móvil (Status Bar) -->
+            <div class="mobile-status-bar d-flex justify-content-between align-items-center px-2 mb-3">
+              <span class="font-size-12 font-weight-bold text-slate-800">09:41</span>
+              <div class="d-flex align-items-center gap-1 text-slate-700 font-size-12">
+                <span class="font-size-10 font-weight-bold text-slate-600 mr-1">5G</span>
+                <i class="typcn typcn-wi-fi font-size-14 text-slate-700"></i>
+                <i class="typcn typcn-battery-full font-size-16 text-emerald"></i>
               </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-xl mb-3 border-left-4 border-warning text-left cursor-pointer hover-lift bg-white" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
-              <div class="card-body p-3">
-                <h6 class="font-weight-bold text-slate-800 font-size-14 mb-1">Lista de compras</h6>
-                <p class="text-slate-500 font-size-12 mb-2 line-height-tight">Leche de almendras, aguacates, pan integral...</p>
+            <!-- Top Header & Filter Fixed Section (Siempre Visible) -->
+            <div class="phone-top-header flex-shrink-0">
+              <!-- Interfaz Simulada NoteYou Móvil -->
+              <div class="d-flex justify-content-between align-items-center mb-2 text-left">
+                <div>
+                  <span class="text-slate-400 font-size-11 font-weight-semibold text-uppercase d-block">Mis Notas</span>
+                  <h5 class="font-weight-bold text-slate-900 mb-0 font-size-15">Hola, Usuario 👋</h5>
+                </div>
+                <div class="position-relative">
+                  <div class="avatar-circle-sm bg-gradient-blue text-white shadow-xs font-weight-bold">NY</div>
+                  <span class="status-online-dot"></span>
+                </div>
+              </div>
+              
+              <!-- Buscador en tiempo real de la demo -->
+              <div class="bg-slate-100 rounded-pill px-3 py-1-5 mb-2 text-left d-flex align-items-center">
+                <i class="typcn typcn-zoom mr-2 font-size-16 text-blue"></i>
+                <input 
+                  type="text" 
+                  class="form-control form-control-sm border-0 bg-transparent p-0 font-size-12 text-slate-700 shadow-none" 
+                  placeholder="Buscar en tus tareas..." 
+                  [(ngModel)]="phoneSearchQuery"
+                  autocomplete="off">
+                <i *ngIf="phoneSearchQuery" class="typcn typcn-times text-slate-400 cursor-pointer font-size-14" (click)="phoneSearchQuery = ''"></i>
+              </div>
+              
+              <!-- Filtros por categoría interactivos (Siempre visibles) -->
+              <div class="d-flex overflow-auto mb-2 gap-1 pb-1 no-scrollbar text-nowrap phone-categories-row flex-shrink-0">
+                <button 
+                  *ngFor="let cat of phoneCategories" 
+                  class="btn btn-sm badge-pill px-2-5 py-1 font-size-11 font-weight-semibold transition-all border-0 flex-shrink-0"
+                  [ngClass]="phoneActiveCategory === cat ? 'btn-primary bg-gradient-blue text-white shadow-xs' : 'btn-light bg-slate-100 text-slate-600'"
+                  (click)="setPhoneCategory(cat)">
+                  {{ cat }}
+                </button>
               </div>
             </div>
 
-            <div class="d-flex justify-content-around align-items-center mt-4 pt-2 border-top">
-              <a [routerLink]="isAuthenticated ? '/dashboard' : '/login'" class="text-decoration-none" title="Dashboard">
-                <i class="typcn typcn-home text-blue font-size-24 cursor-pointer"></i>
-              </a>
-              <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm cursor-pointer hover-scale" style="width: 40px; height: 40px; margin-top: -20px;" [routerLink]="isAuthenticated ? '/dashboard' : '/login'" title="Nueva Tarea">
+            <!-- Vista 1: Lista de Tareas Demo (Tab Home) -->
+            <div #phoneTasksContainer *ngIf="phoneActiveTab === 'home'" class="phone-tasks-scroll-container d-flex flex-column gap-2 mb-1 pr-1">
+              
+              <!-- Cards Dinámicas -->
+              <div 
+                *ngFor="let task of filteredPhoneTasks" 
+                class="card border-0 shadow-xs rounded-xl text-left bg-slate-50 hover-lift phone-demo-card transition-all cursor-pointer"
+                [ngClass]="[
+                  task.completed ? 'opacity-60 border-left-4 border-slate-300' : 'border-left-4 ' + (task.categoryBg === 'bg-blue' ? 'border-blue' : task.categoryBg === 'bg-emerald' ? 'border-emerald' : task.categoryBg === 'bg-amber' ? 'border-amber' : task.categoryBg === 'bg-purple' ? 'border-purple' : 'border-teal'),
+                  justAddedTaskId === task.id ? 'just-added-glow' : ''
+                ]"
+                (click)="togglePhoneTask(task)">
+                <div class="card-body p-2-5">
+                  
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="badge badge-category-sm {{ task.categoryBg }} text-white px-2 py-0-5 font-size-10">
+                      {{ task.category }}
+                    </span>
+                    
+                    <div class="d-flex align-items-center gap-1">
+                      <span *ngIf="task.tag" class="badge bg-slate-200 text-slate-700 font-size-9 px-1-5 py-0 font-weight-semibold">
+                        {{ task.tag }}
+                      </span>
+                      <span class="badge {{ task.priorityClass }} font-size-9 px-1-5 py-0">
+                        {{ task.priority }}
+                      </span>
+                      <i class="typcn typcn-trash text-slate-400 hover-text-rose font-size-13 ml-1 cursor-pointer" (click)="deletePhoneTask(task.id, $event)"></i>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start justify-content-between">
+                    <h6 class="font-weight-bold text-slate-800 font-size-12-5 mb-1 text-truncate" [ngClass]="{'text-decoration-line-through text-slate-400': task.completed}">
+                      {{ task.title }}
+                    </h6>
+                    <span class="font-size-12 ml-1" [ngClass]="task.completed ? 'text-emerald font-weight-bold' : 'text-slate-300'">
+                      {{ task.completed ? '✓' : '○' }}
+                    </span>
+                  </div>
+
+                  <p class="text-slate-500 font-size-11 mb-1 line-height-tight" [ngClass]="{'text-slate-400': task.completed}">
+                    {{ task.description }}
+                  </p>
+
+                  <!-- Subtareas si existen -->
+                  <div *ngIf="task.subtasks && task.subtasks.length > 0" class="d-flex flex-wrap gap-1 mt-1">
+                    <span *ngFor="let sub of task.subtasks" class="badge badge-pill bg-white border text-slate-600 font-size-9 px-1-5 py-0-5">
+                      ✓ {{ sub }}
+                    </span>
+                  </div>
+
+                  <!-- Estado Oficial NoteYou: Pendiente / En Progreso / Terminada -->
+                  <div class="d-flex align-items-center justify-content-between mt-2 pt-1 border-top border-slate-100 font-size-10">
+                    <span class="text-slate-400 font-size-10 font-weight-medium">Estado:</span>
+                    <span class="badge badge-status-pill" [ngClass]="{
+                      'badge-status-pendiente': task.status === 'pendiente',
+                      'badge-status-progreso': task.status === 'en_progreso',
+                      'badge-status-terminada': task.status === 'terminada'
+                    }">
+                      <span class="status-indicator-dot mr-1" [ngClass]="{
+                        'bg-amber-500': task.status === 'pendiente',
+                        'bg-blue-500': task.status === 'en_progreso',
+                        'bg-emerald-500': task.status === 'terminada'
+                      }"></span>
+                      {{ task.status === 'pendiente' ? 'Pendiente' : task.status === 'en_progreso' ? 'En Progreso' : 'Terminada' }}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Estado Vacío cuando no hay resultados de búsqueda/filtro -->
+              <div *ngIf="filteredPhoneTasks.length === 0" class="text-center py-4 px-2">
+                <i class="typcn typcn-document-text text-slate-300 font-size-36 d-block mb-1"></i>
+                <p class="text-slate-500 font-size-12 mb-2 font-weight-semibold">No hay notas en esta categoría</p>
+                <button class="btn btn-sm btn-primary bg-gradient-blue text-white rounded-pill px-3 py-1 font-size-11" (click)="addPhoneDemoTask()">
+                  + Agregar Tarea
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Vista 2: Vista de Calendario y Fechas (Tab Calendar) -->
+            <div *ngIf="phoneActiveTab === 'calendar'" class="phone-tasks-scroll-container d-flex flex-column gap-2 mb-2 pr-1 text-left">
+              <div class="bg-slate-50 rounded-xl p-3 border">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="font-weight-bold text-slate-800 font-size-13 mb-0">📅 Calendario NoteYou</h6>
+                  <span class="badge badge-blue-light font-size-10 font-weight-bold">Agosto 2026</span>
+                </div>
+                <p class="text-slate-500 font-size-11 mb-2">Sincroniza automáticamente tus tareas con fechas de entrega y alertas por correo.</p>
+                
+                <div class="d-flex flex-column gap-1-5">
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-blue font-size-11">
+                    <span>📝 Entrega de Proyecto UI</span>
+                    <span class="text-blue font-weight-bold">Hoy, 4:00 PM</span>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-emerald font-size-11">
+                    <span>🛒 Compras Semanales</span>
+                    <span class="text-emerald font-weight-bold">Viernes</span>
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-amber font-size-11">
+                    <span>💡 Limpieza 15 Días</span>
+                    <span class="text-amber-700 font-weight-bold">Automática</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Barra de Navegación Inferior Móvil Interactiva -->
+            <div class="d-flex justify-content-around align-items-center mt-2 pt-2 border-top">
+              
+              <!-- Botón Home -->
+              <button 
+                type="button" 
+                class="btn btn-link p-0 text-decoration-none transition-all border-0 bg-transparent"
+                [ngClass]="phoneActiveTab === 'home' ? 'text-blue scale-110 font-weight-bold' : 'text-slate-400'"
+                (click)="setPhoneTab('home')"
+                title="Ver lista de tareas">
+                <i class="typcn typcn-home font-size-22"></i>
+              </button>
+              
+              <!-- Botón + Agregar Tarea Automática (DEMO ACTIVA) -->
+              <button 
+                type="button" 
+                class="bg-gradient-blue text-white rounded-circle d-flex align-items-center justify-content-center shadow-md border-0 nav-plus-btn cursor-pointer"
+                (click)="addPhoneDemoTask()"
+                title="¡Click para agregar una nueva tarea interactiva!">
                 <i class="typcn typcn-plus font-size-24"></i>
-              </div>
-              <a [routerLink]="isAuthenticated ? '/calendar' : '/login'" class="text-decoration-none" title="Calendario">
-                <i class="typcn typcn-calendar-outline text-slate-400 font-size-24 cursor-pointer"></i>
-              </a>
+              </button>
+              
+              <!-- Botón Calendario -->
+              <button 
+                type="button" 
+                class="btn btn-link p-0 text-decoration-none transition-all border-0 bg-transparent"
+                [ngClass]="phoneActiveTab === 'calendar' ? 'text-blue scale-110 font-weight-bold' : 'text-slate-400'"
+                (click)="setPhoneTab('calendar')"
+                title="Ver calendario simulado">
+                <i class="typcn typcn-calendar-outline font-size-22"></i>
+              </button>
+
             </div>
+
+            <!-- Barra inferior / Home indicator -->
+            <div class="mobile-home-indicator"></div>
+
           </div>
         </div>
 
-        <!-- Grid de Funcionalidades Limpias en Blanco -->
-        <div class="col-lg-7 offset-lg-1 reveal-right">
+        <!-- Grid de Funcionalidades Limpias en Blanco (Visual Showcase) -->
+        <div class="col-lg-7 reveal-right">
           <div class="row">
             
             <div class="col-md-6 mb-4">
-              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between">
                 <div>
                   <div class="feature-list-icon blue mb-3">
                     <i class="typcn typcn-cloud-storage"></i>
@@ -266,14 +432,14 @@
                   <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Sincronización Total</h5>
                   <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Tus notas están disponibles en la nube instantáneamente, accesibles desde cualquier dispositivo sin perder un segundo.</p>
                 </div>
-                <div class="text-blue font-weight-bold font-size-14 d-flex align-items-center">
-                  Abrir Tablero <i class="typcn typcn-arrow-right ml-1"></i>
+                <div class="text-blue font-weight-semibold font-size-13 d-flex align-items-center">
+                  <i class="typcn typcn-tick mr-1"></i> Rápido y Seguro
                 </div>
               </div>
             </div>
 
             <div class="col-md-6 mb-4">
-              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/calendar' : '/login'">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between">
                 <div>
                   <div class="feature-list-icon orange mb-3">
                     <i class="typcn typcn-calendar-outline"></i>
@@ -281,14 +447,14 @@
                   <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Calendario Interactivo</h5>
                   <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Un calendario visual donde puedes revisar tus pendientes agrupados por categoría. Haz clic y descubre lo que te toca hoy.</p>
                 </div>
-                <div class="text-orange font-weight-bold font-size-14 d-flex align-items-center" style="color: #ea580c !important;">
-                  Ver Calendario <i class="typcn typcn-arrow-right ml-1"></i>
+                <div class="text-orange font-weight-semibold font-size-13 d-flex align-items-center" style="color: #ea580c !important;">
+                  <i class="typcn typcn-tick mr-1"></i> Planificación Mensual
                 </div>
               </div>
             </div>
 
             <div class="col-md-6 mb-4">
-              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/productivity' : '/login'">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between">
                 <div>
                   <div class="feature-list-icon green mb-3">
                     <i class="typcn typcn-chart-pie-outline"></i>
@@ -296,14 +462,14 @@
                   <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Estadísticas en Tiempo Real</h5>
                   <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Mide tu productividad con hermosos histogramas y métricas diseñadas para mantenerte enfocado y motivado.</p>
                 </div>
-                <div class="text-emerald font-weight-bold font-size-14 d-flex align-items-center" style="color: #059669 !important;">
-                  Medir Rendimiento <i class="typcn typcn-arrow-right ml-1"></i>
+                <div class="text-emerald font-weight-semibold font-size-13 d-flex align-items-center" style="color: #059669 !important;">
+                  <i class="typcn typcn-tick mr-1"></i> Métricas Claras
                 </div>
               </div>
             </div>
 
             <div class="col-md-6 mb-4">
-              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between cursor-pointer" [routerLink]="isAuthenticated ? '/categories' : '/login'">
+              <div class="p-4 feature-card-clean h-100 d-flex flex-column justify-content-between">
                 <div>
                   <div class="feature-list-icon purple mb-3">
                     <i class="typcn typcn-folder"></i>
@@ -311,8 +477,8 @@
                   <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Gestión de Categorías</h5>
                   <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Organiza tu vida. Define tus propias categorías, asigna colores vivos e iconos para reconocer tu flujo de un vistazo.</p>
                 </div>
-                <div class="font-weight-bold font-size-14 d-flex align-items-center" style="color: #9333ea !important;">
-                  Explorar Categorías <i class="typcn typcn-arrow-right ml-1"></i>
+                <div class="font-weight-semibold font-size-13 d-flex align-items-center" style="color: #9333ea !important;">
+                  <i class="typcn typcn-tick mr-1"></i> Personalización Total
                 </div>
               </div>
             </div>
@@ -338,28 +504,34 @@
       <div class="row text-center">
 
         <div class="col-lg-4 mb-5 mb-lg-0 reveal-up delay-100">
-          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/dashboard' : '/register'">
+          <div class="step-card-glass mx-auto" style="max-width: 350px;">
             <div class="step-number-badge bg-gradient-blue mx-auto mb-3">1</div>
-            <i class="typcn typcn-user-add-outline text-blue font-size-44 mb-3 d-inline-block"></i>
-            <h5 class="font-weight-bold text-white font-size-18 mb-2">Crea tu Cuenta</h5>
+            <div class="step-icon-wrapper step-icon-blue mx-auto mb-3">
+              <i class="typcn typcn-user-add-outline"></i>
+            </div>
+            <h5 class="font-weight-bold text-white font-size-19 mb-2">Crea tu Cuenta</h5>
             <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Regístrate de forma segura y obtén acceso instantáneo a tu espacio de trabajo en la nube.</p>
           </div>
         </div>
 
         <div class="col-lg-4 mb-5 mb-lg-0 reveal-up delay-200">
-          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/dashboard' : '/login'">
-            <div class="step-number-badge bg-gradient-orange mx-auto mb-3">2</div>
-            <i class="typcn typcn-edit font-size-44 mb-3 d-inline-block" style="color: #fb923c;"></i>
-            <h5 class="font-weight-bold text-white font-size-18 mb-2">Escribe tus Ideas</h5>
+          <div class="step-card-glass mx-auto" style="max-width: 350px;">
+            <div class="step-number-badge bg-gradient-amber mx-auto mb-3">2</div>
+            <div class="step-icon-wrapper step-icon-amber mx-auto mb-3">
+              <i class="typcn typcn-edit"></i>
+            </div>
+            <h5 class="font-weight-bold text-white font-size-19 mb-2">Escribe tus Ideas</h5>
             <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Anota todo. Tareas pendientes, recordatorios, proyectos o simplemente una lista de compras rápida.</p>
           </div>
         </div>
 
         <div class="col-lg-4 reveal-up delay-300">
-          <div class="step-card-glass mx-auto cursor-pointer" style="max-width: 340px;" [routerLink]="isAuthenticated ? '/productivity' : '/login'">
-            <div class="step-number-badge bg-gradient-teal mx-auto mb-3">3</div>
-            <i class="typcn typcn-chart-pie-outline font-size-44 mb-3 d-inline-block" style="color: #34d399;"></i>
-            <h5 class="font-weight-bold text-white font-size-18 mb-2">Domina tu Tiempo</h5>
+          <div class="step-card-glass mx-auto" style="max-width: 350px;">
+            <div class="step-number-badge bg-gradient-emerald mx-auto mb-3">3</div>
+            <div class="step-icon-wrapper step-icon-emerald mx-auto mb-3">
+              <i class="typcn typcn-chart-pie-outline"></i>
+            </div>
+            <h5 class="font-weight-bold text-white font-size-19 mb-2">Domina tu Tiempo</h5>
             <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Agrupa en categorías, mira el calendario y revisa tus gráficos de productividad. ¡Todo bajo control!</p>
           </div>
         </div>

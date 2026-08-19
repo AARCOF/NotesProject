@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { Note, PriorityLevel, NoteStatus, ChecklistItem } from '../../models/note.model';
+import { Note, PriorityLevel, NoteStatus, ChecklistItem, RecurrenceFrequency } from '../../models/note.model';
 import { Category } from '../../models/category.model';
 
 @Component({
@@ -26,6 +26,7 @@ export class NoteModalComponent implements OnChanges {
   status: NoteStatus = 'pendiente';
   dueDate: string = '';
   isPinned: boolean = false;
+  recurrence: RecurrenceFrequency = 'ninguna';
 
   // Dynamic Checklist (Viñetas / Lista de Compras / Subtareas)
   checklist: ChecklistItem[] = [];
@@ -41,6 +42,7 @@ export class NoteModalComponent implements OnChanges {
         this.status = this.noteToEdit.status;
         this.dueDate = this.noteToEdit.dueDate || '';
         this.isPinned = this.noteToEdit.isPinned || false;
+        this.recurrence = this.noteToEdit.recurrence || 'ninguna';
         this.checklist = this.noteToEdit.checklist ? JSON.parse(JSON.stringify(this.noteToEdit.checklist)) : [];
       } else {
         this.resetForm();
@@ -56,6 +58,7 @@ export class NoteModalComponent implements OnChanges {
     this.status = this.initialStatus || 'pendiente';
     this.dueDate = this.initialDueDate || '';
     this.isPinned = false;
+    this.recurrence = 'ninguna';
     this.checklist = [];
     this.newChecklistItemText = '';
   }
@@ -92,6 +95,15 @@ export class NoteModalComponent implements OnChanges {
 
     const checklistToSave = this.checklist.length > 0 ? this.checklist : undefined;
 
+    // Si tiene recurrencia y no tiene fecha límite, asignar hoy como fecha base
+    if (this.recurrence !== 'ninguna' && !this.dueDate) {
+      const today = new Date();
+      const y = today.getFullYear();
+      const m = String(today.getMonth() + 1).padStart(2, '0');
+      const d = String(today.getDate()).padStart(2, '0');
+      this.dueDate = `${y}-${m}-${d}`;
+    }
+
     if (this.noteToEdit) {
       this.update.emit({
         id: this.noteToEdit.id,
@@ -103,6 +115,7 @@ export class NoteModalComponent implements OnChanges {
           status: this.status,
           dueDate: this.dueDate || undefined,
           isPinned: this.isPinned,
+          recurrence: this.recurrence !== 'ninguna' ? this.recurrence : undefined,
           checklist: checklistToSave
         }
       });
@@ -115,6 +128,7 @@ export class NoteModalComponent implements OnChanges {
         status: this.status,
         dueDate: this.dueDate || undefined,
         isPinned: this.isPinned,
+        recurrence: this.recurrence !== 'ninguna' ? this.recurrence : undefined,
         checklist: checklistToSave
       });
     }

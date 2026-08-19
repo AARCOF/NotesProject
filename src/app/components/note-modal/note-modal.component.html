@@ -119,15 +119,46 @@
                   class="btn btn-sm seg-btn flex-grow-1 font-weight-bold d-flex align-items-center justify-content-center py-2"
                   [class.active-completed]="status === 'completada'"
                   (click)="status = 'completada'">
-                  <i class="typcn typcn-tick mr-1 font-size-15 text-emerald"></i> Hecho
+                  <i class="typcn typcn-tick mr-1 font-size-15 text-emerald"></i> Finalizada
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Fecha Límite</label>
-            <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
+          <div class="row">
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-bold text-slate-700 font-size-14">
+                <i class="typcn typcn-calendar text-blue mr-1"></i> Fecha Límite
+              </label>
+              <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
+              <small class="text-slate-400 font-size-11" *ngIf="recurrence !== 'ninguna'">Base para programar los ciclos.</small>
+            </div>
+
+            <div class="col-md-6 form-group mb-3">
+              <label class="font-weight-bold text-slate-700 font-size-14 d-flex align-items-center justify-content-between">
+                <span><i class="typcn typcn-arrow-sync text-amber mr-1"></i> Repetición Periódica</span>
+                <span class="badge badge-warning font-size-10 px-2" *ngIf="recurrence !== 'ninguna'">Activa</span>
+              </label>
+              <select class="form-control input-custom" [(ngModel)]="recurrence" name="recurrence">
+                <option value="ninguna">No repetir (Única vez)</option>
+                <option value="diaria">Cada Día (Diaria)</option>
+                <option value="semanal">Cada Semana (Semanal)</option>
+                <option value="mensual">Cada Mes (Mensual)</option>
+                <option value="anual">Cada Año (Anual)</option>
+              </select>
+              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'mensual'">
+                Se genera automáticamente 1 semana antes de cada vencimiento.
+              </small>
+              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'semanal'">
+                Se genera automáticamente 3 días antes de cada semana.
+              </small>
+              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'diaria'">
+                Se genera automáticamente 1 día antes cada jornada.
+              </small>
+              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'anual'">
+                Se genera automáticamente 2 semanas antes cada año.
+              </small>
+            </div>
           </div>
 
           <div class="form-group mb-3">

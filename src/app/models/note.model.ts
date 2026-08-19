@@ -1,5 +1,6 @@
 export type PriorityLevel = 'alta' | 'media' | 'baja';
 export type NoteStatus = 'pendiente' | 'en_progreso' | 'completada';
+export type RecurrenceFrequency = 'ninguna' | 'diaria' | 'semanal' | 'mensual' | 'anual';
 
 export interface ChecklistItem {
   id: string;
@@ -21,5 +22,10 @@ export interface Note {
   isPinned?: boolean;
   reminderSent?: boolean;
   checklist?: ChecklistItem[];
+  recurrence?: RecurrenceFrequency;
+  parentRecurringId?: string;
+  nextRecurrenceDate?: string;
+  recurrenceGeneratedFor?: string;
 }
+
 

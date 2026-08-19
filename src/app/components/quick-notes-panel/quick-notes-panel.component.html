@@ -1,4 +1,4 @@
-<div class="card card-quick-notes shadow-lg border-0 rounded-xl overflow-hidden d-flex flex-column h-100" style="background-color: #f8fafc;">
+<div class="card card-quick-notes shadow-lg border-0 rounded-xl d-flex flex-column h-100 position-relative" style="background-color: #f8fafc;">
   
   <!-- Encabezado -->
   <div class="card-header p-4 d-flex align-items-start justify-content-between border-0 custom-header-bg">
@@ -30,20 +30,35 @@
 
     <!-- Notas Card -->
     <div class="note-card-wrapper fade-in" *ngFor="let note of paginatedQuickNotes">
-      <div class="note-card bg-white shadow-sm px-3 py-2 rounded-lg border border-slate-100 position-relative hover-lift">
+      <div class="note-card bg-white shadow-sm px-3 py-2 rounded-lg border border-slate-100 position-relative hover-lift" [class.permanent-note-card]="note.isPermanent">
         
-        <!-- Meta superior: Tarea vinculada -->
+        <!-- Meta superior: Tarea vinculada y Acciones -->
         <div class="d-flex align-items-center justify-content-between mb-2">
-          <span class="custom-pill-tag linked" *ngIf="note.linkedTaskId">
-            <i class="typcn typcn-link text-blue mr-1 font-size-18"></i> {{ getLinkedTaskTitle(note.linkedTaskId) }}
-          </span>
-          <span class="custom-pill-tag independent" *ngIf="!note.linkedTaskId">
-            Independiente
-          </span>
+          <div class="d-flex align-items-center gap-1 text-truncate mr-2">
+            <span class="custom-pill-tag linked text-truncate" *ngIf="note.linkedTaskId" [title]="getLinkedTaskTitle(note.linkedTaskId)">
+              <i class="typcn typcn-link text-white mr-1 font-size-14"></i> {{ getLinkedTaskTitle(note.linkedTaskId) }}
+            </span>
+            <span class="custom-pill-tag independent" *ngIf="!note.linkedTaskId">
+              Independiente
+            </span>
+          </div>
 
-          <button type="button" class="btn-quick-delete shadow-xs" (click)="deleteNote(note.id)" title="Eliminar nota rápida">
-            <i class="typcn typcn-trash font-size-18"></i>
-          </button>
+          <div class="d-flex align-items-center">
+            <!-- Botón Fijar como Permanente (No se borra nunca) -->
+            <button 
+              type="button" 
+              class="btn-quick-pin shadow-xs mr-1" 
+              [class.pinned]="note.isPermanent" 
+              (click)="togglePermanent(note.id)" 
+              [title]="note.isPermanent ? 'Fijada como permanente (Click para hacer temporal)' : 'Fijar como Permanente (No se borrará automáticamente)'">
+              <i class="typcn font-size-16" [ngClass]="note.isPermanent ? 'typcn-pin text-amber' : 'typcn-pin-outline text-slate-400'"></i>
+            </button>
+
+            <!-- Botón Eliminar -->
+            <button type="button" class="btn-quick-delete shadow-xs" (click)="deleteNote(note.id)" title="Eliminar nota rápida">
+              <i class="typcn typcn-trash font-size-18"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Texto del apunte -->
@@ -53,8 +68,17 @@
 
         <!-- Pie de la burbuja: Registro y Retención -->
         <div class="d-flex align-items-center justify-content-between" style="font-size: 11px;">
-          <span class="text-slate-600 font-weight-medium"><i class="typcn typcn-time text-blue mr-1 font-size-16"></i> {{ getTimeAgo(note.createdAt) }}</span>
-          <span class="text-amber font-weight-semibold"><i class="typcn typcn-stopwatch text-amber mr-1 font-size-16"></i> {{ note.retentionLabel }}</span>
+          <span class="text-slate-600 font-weight-medium">
+            <i class="typcn typcn-time text-blue mr-1 font-size-16"></i> {{ getTimeAgo(note.createdAt) }}
+          </span>
+
+          <!-- Estado Permanente o Tiempo Restante -->
+          <span *ngIf="note.isPermanent" class="badge-permanent-tag font-weight-bold">
+            <i class="typcn typcn-pin mr-1"></i> Permanente
+          </span>
+          <span *ngIf="!note.isPermanent" class="text-amber font-weight-semibold" [title]="'Expira: ' + (note.expiresAt | date:'short')">
+            <i class="typcn typcn-stopwatch text-amber mr-1 font-size-16"></i> {{ getRemainingTimeLabel(note) }}
+          </span>
         </div>
 
       </div>
@@ -75,21 +99,21 @@
   </div>
 
   <!-- Compositor de Mensaje -->
-  <div class="card-footer bg-white p-3 border-0 mt-2">
+  <div class="card-footer bg-white p-3 border-0 mt-2 position-relative" style="overflow: visible; z-index: 50; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
     <form (ngSubmit)="sendQuickNote()" autocomplete="off">
       
       <!-- Opciones secundarias con Dropdowns Modernos -->
-      <div class="d-flex gap-2 mb-2">
+      <div class="d-flex align-items-center gap-2 mb-2 w-100" style="min-width: 0;">
         <!-- Dropdown Selector de Tarea -->
-        <div class="dropdown flex-grow-1" ngbDropdown>
-          <button class="btn btn-quick-dropdown w-100 d-flex align-items-center justify-content-between text-truncate shadow-xs" ngbDropdownToggle type="button">
-            <span class="d-flex align-items-center text-truncate">
-              <i class="typcn typcn-link text-blue mr-1 font-size-16"></i>
+        <div class="dropdown flex-grow-1 min-w-0" ngbDropdown placement="top-left top-start bottom-left bottom-start" style="min-width: 0;">
+          <button class="btn btn-quick-dropdown w-100 d-flex align-items-center justify-content-between shadow-xs text-truncate" ngbDropdownToggle type="button">
+            <span class="d-flex align-items-center text-truncate min-w-0 mr-1">
+              <i class="typcn typcn-link text-blue mr-1 font-size-16 flex-shrink-0"></i>
               <span class="text-truncate font-size-12 text-slate-700 font-weight-medium">{{ selectedTaskTitle }}</span>
             </span>
-            <i class="typcn typcn-arrow-sorted-down text-slate-400 font-size-12 ml-1"></i>
+            <i class="typcn typcn-arrow-sorted-down text-slate-400 font-size-12 ml-1 flex-shrink-0"></i>
           </button>
-          <div class="dropdown-menu dropdown-menu-quick shadow-lg py-2" ngbDropdownMenu style="max-height: 240px; overflow-y: auto; width: 280px;">
+          <div class="dropdown-menu dropdown-menu-quick shadow-lg py-2" ngbDropdownMenu style="max-height: 240px; overflow-y: auto; width: 250px;">
             <h6 class="dropdown-header font-size-11 text-uppercase letter-spacing-1 text-slate-400 py-1">Vincular a Tarea</h6>
             <button class="dropdown-item d-flex align-items-center justify-content-between py-2" [class.active-item]="!selectedTaskId" (click)="selectTask('')">
               <span class="d-flex align-items-center text-truncate font-size-12">
@@ -112,17 +136,27 @@
           </div>
         </div>
 
-        <!-- Dropdown Selector de Retención -->
-        <div class="dropdown" ngbDropdown style="width: 115px;">
-          <button class="btn btn-quick-dropdown w-100 d-flex align-items-center justify-content-between shadow-xs" ngbDropdownToggle type="button">
-            <span class="d-flex align-items-center">
-              <i class="typcn typcn-stopwatch text-amber mr-1 font-size-16"></i>
-              <span class="font-size-12 text-slate-700 font-weight-medium">{{ getRetentionLabel(retentionDays) }}</span>
+        <!-- Dropdown Selector de Retención (Con Opción Permanente y Ancho Fijo Rígido) -->
+        <div class="dropdown flex-shrink-0" ngbDropdown placement="top-right top-end bottom-right bottom-end" style="width: 116px; min-width: 116px; max-width: 116px;">
+          <button class="btn btn-quick-dropdown w-100 d-flex align-items-center justify-content-between shadow-xs px-2" ngbDropdownToggle type="button" [class.btn-permanent-active]="retentionDays === -1">
+            <span class="d-flex align-items-center text-truncate min-w-0 mr-1">
+              <i class="typcn mr-1 font-size-15 flex-shrink-0" [ngClass]="retentionDays === -1 ? 'typcn-pin text-amber' : 'typcn-stopwatch text-amber'"></i>
+              <span class="font-size-11 text-slate-700 font-weight-medium text-truncate">{{ getRetentionLabel(retentionDays) }}</span>
             </span>
-            <i class="typcn typcn-arrow-sorted-down text-slate-400 font-size-12 ml-1"></i>
+            <i class="typcn typcn-arrow-sorted-down text-slate-400 font-size-11 flex-shrink-0"></i>
           </button>
-          <div class="dropdown-menu dropdown-menu-quick shadow-lg py-2" ngbDropdownMenu style="min-width: 140px;">
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-quick shadow-lg py-2" ngbDropdownMenu style="min-width: 175px; right: 0; left: auto;">
             <h6 class="dropdown-header font-size-11 text-uppercase letter-spacing-1 text-slate-400 py-1">Duración</h6>
+            
+            <!-- Opción Permanente Destacada -->
+            <button class="dropdown-item d-flex align-items-center justify-content-between py-2" [class.active-item]="retentionDays === -1" (click)="selectRetention(-1)">
+              <span class="font-size-12 font-weight-bold text-amber-800 text-nowrap d-flex align-items-center">
+                <i class="typcn typcn-pin mr-1 text-amber"></i> Permanente
+              </span>
+              <i class="typcn typcn-tick text-amber ml-2" *ngIf="retentionDays === -1"></i>
+            </button>
+            <div class="dropdown-divider my-1"></div>
+
             <button class="dropdown-item d-flex align-items-center justify-content-between py-2" [class.active-item]="retentionDays === 1" (click)="selectRetention(1)">
               <span class="font-size-12">1 Día</span>
               <i class="typcn typcn-tick text-blue ml-2" *ngIf="retentionDays === 1"></i>

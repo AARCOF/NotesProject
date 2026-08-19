@@ -42,7 +42,8 @@ export class QuickNotesService {
 
     const allNotes = this.getAllStorageNotes();
     const now = Date.now();
-    const validNotes = allNotes.filter(n => n.expiresAt > now);
+    // Keep notes that are marked as permanent OR whose expiration has not elapsed
+    const validNotes = allNotes.filter(n => n.isPermanent || n.expiresAt > now);
 
     if (validNotes.length !== allNotes.length) {
       this.saveAllStorageNotes(validNotes);
@@ -56,19 +57,29 @@ export class QuickNotesService {
     return this.quickNotesSubject.getValue();
   }
 
-  public addQuickNote(content: string, linkedTaskId?: string, retentionDays: number = 7): QuickNote {
+  public addQuickNote(content: string, linkedTaskId?: string, retentionDays: number = 7, isPermanent: boolean = false): QuickNote {
     const userId = this.currentUserId || 'anonymous';
-    
     const now = Date.now();
-    const retentionMs = retentionDays * 24 * 60 * 60 * 1000;
-    const expiresAt = now + retentionMs;
 
-    let retentionLabel = '1 Semana';
-    if (retentionDays === 1) retentionLabel = '1 Día';
-    else if (retentionDays === 3) retentionLabel = '3 Días';
-    else if (retentionDays === 7) retentionLabel = '1 Semana';
-    else if (retentionDays === 14) retentionLabel = '2 Semanas';
-    else if (retentionDays === 30) retentionLabel = '1 Mes';
+    let expiresAt = 0;
+    let retentionLabel = 'Permanente';
+    const permanent = isPermanent || Number(retentionDays) === -1;
+
+    if (permanent) {
+      expiresAt = Number.MAX_SAFE_INTEGER;
+      retentionLabel = 'Permanente';
+    } else {
+      const days = Number(retentionDays);
+      const retentionMs = days * 24 * 60 * 60 * 1000;
+      expiresAt = now + retentionMs;
+
+      if (days === 1) retentionLabel = '1 Día';
+      else if (days === 3) retentionLabel = '3 Días';
+      else if (days === 7) retentionLabel = '1 Semana';
+      else if (days === 14) retentionLabel = '2 Semanas';
+      else if (days === 30) retentionLabel = '1 Mes';
+      else retentionLabel = `${days} Días`;
+    }
 
     const newQuickNote: QuickNote = {
       id: 'qn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -77,7 +88,8 @@ export class QuickNotesService {
       createdAt: new Date().toISOString(),
       linkedTaskId: linkedTaskId || undefined,
       expiresAt,
-      retentionLabel
+      retentionLabel,
+      isPermanent: permanent
     };
 
     const all = this.getAllStorageNotes();
@@ -85,6 +97,26 @@ export class QuickNotesService {
     this.saveAllStorageNotes(updated);
     this.loadQuickNotes();
     return newQuickNote;
+  }
+
+  public togglePermanent(id: string): void {
+    const all = this.getAllStorageNotes();
+    const note = all.find(n => n.id === id);
+    if (!note) return;
+
+    if (note.isPermanent) {
+      note.isPermanent = false;
+      const now = Date.now();
+      note.expiresAt = now + (7 * 24 * 60 * 60 * 1000); // 7 days from now
+      note.retentionLabel = '1 Semana';
+    } else {
+      note.isPermanent = true;
+      note.expiresAt = Number.MAX_SAFE_INTEGER;
+      note.retentionLabel = 'Permanente';
+    }
+
+    this.saveAllStorageNotes(all);
+    this.loadQuickNotes();
   }
 
   public deleteQuickNote(id: string): void {

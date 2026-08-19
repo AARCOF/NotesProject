@@ -279,6 +279,10 @@
                 </span>
 
                 <div class="d-flex align-items-center gap-2">
+                  <span class="badge badge-recurrence-pill px-2 py-0-5 font-size-11 d-inline-flex align-items-center" *ngIf="note.recurrence && note.recurrence !== 'ninguna'" [title]="'Repetición: ' + getRecurrenceLabel(note.recurrence)">
+                    <i class="typcn typcn-arrow-sync mr-1 font-size-13"></i> {{ getRecurrenceLabel(note.recurrence) }}
+                  </span>
+
                   <span class="badge {{ getPriorityBadgeClass(note.priority) }} d-inline-flex align-items-center px-2-5 py-1 font-size-12">
                     <i class="typcn mr-1 font-size-15" [ngClass]="{
                       'typcn-warning text-rose': note.priority === 'alta',
@@ -466,6 +470,9 @@
                       <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
                       {{ getCategoryName(note.categoryId) }}
                     </span>
+                    <span class="badge badge-recurrence-pill px-1-5 py-0-5 font-size-10 d-inline-flex align-items-center" *ngIf="note.recurrence && note.recurrence !== 'ninguna'" [title]="'Repetición: ' + getRecurrenceLabel(note.recurrence)">
+                      <i class="typcn typcn-arrow-sync mr-1 font-size-11"></i> {{ getRecurrenceLabel(note.recurrence) }}
+                    </span>
                   </div>
 
                   <div class="d-flex align-items-center gap-1">
@@ -527,9 +534,6 @@
                     </button>
                     <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
                       <i class="typcn typcn-trash font-size-20 text-rose"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-gradient-blue font-weight-bold px-2-5 py-1 d-flex align-items-center rounded-lg font-size-11" (click)="changeTaskStatus(note, 'en_progreso')" title="Mover a En Progreso">
-                      Iniciar <i class="typcn typcn-arrow-right font-size-14 ml-1"></i>
                     </button>
                   </div>
                 </div>
@@ -637,6 +641,9 @@
                       <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
                       {{ getCategoryName(note.categoryId) }}
                     </span>
+                    <span class="badge badge-recurrence-pill px-1-5 py-0-5 font-size-10 d-inline-flex align-items-center" *ngIf="note.recurrence && note.recurrence !== 'ninguna'" [title]="'Repetición: ' + getRecurrenceLabel(note.recurrence)">
+                      <i class="typcn typcn-arrow-sync mr-1 font-size-11"></i> {{ getRecurrenceLabel(note.recurrence) }}
+                    </span>
                   </div>
 
                   <div class="d-flex align-items-center gap-1">
@@ -683,18 +690,21 @@
                   </div>
                 </div>
 
-                <!-- Fecha Límite & Botones con Buen Aire -->
+                <!-- Fecha Límite & Acciones -->
                 <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
-                  <button type="button" class="btn btn-sm btn-white border font-weight-semibold px-2-5 py-1 d-flex align-items-center rounded-lg text-slate-600 font-size-11" (click)="changeTaskStatus(note, 'pendiente')" title="Retroceder a Pendiente">
-                    <i class="typcn typcn-arrow-left text-slate-500 font-size-14 mr-1"></i> Pendiente
-                  </button>
+                  <span class="text-slate-400 font-size-11" *ngIf="note.dueDate">
+                    <i class="typcn typcn-calendar mr-1 font-size-13"></i> {{ note.dueDate | date:'shortDate' }}
+                  </span>
+                  <span class="text-slate-400 font-size-11" *ngIf="!note.dueDate">
+                    <i class="typcn typcn-time mr-1 font-size-13"></i> {{ note.createdAt | date:'shortDate' }}
+                  </span>
 
                   <div class="d-flex align-items-center gap-1">
                     <button type="button" class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" (click)="openEditModal(note)" title="Editar">
                       <i class="typcn typcn-edit font-size-20 text-blue"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-gradient-emerald font-weight-bold px-2-5 py-1 text-white d-flex align-items-center rounded-lg font-size-11" (click)="changeTaskStatus(note, 'completada')" title="Marcar como Completada">
-                      Hecho <i class="typcn typcn-tick font-size-14 ml-1"></i>
+                    <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
+                      <i class="typcn typcn-trash font-size-20 text-rose"></i>
                     </button>
                   </div>
                 </div>
@@ -798,6 +808,9 @@
                       <i class="typcn {{ getCategoryIcon(note.categoryId) }} mr-1 font-size-13"></i>
                       {{ getCategoryName(note.categoryId) }}
                     </span>
+                    <span class="badge badge-recurrence-pill px-1-5 py-0-5 font-size-10 d-inline-flex align-items-center" *ngIf="note.recurrence && note.recurrence !== 'ninguna'" [title]="'Repetición: ' + getRecurrenceLabel(note.recurrence)">
+                      <i class="typcn typcn-arrow-sync mr-1 font-size-11"></i> {{ getRecurrenceLabel(note.recurrence) }}
+                    </span>
                   </div>
 
                   <div class="d-flex align-items-center gap-1">
@@ -844,15 +857,12 @@
                   </div>
                 </div>
 
-                               <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
-                  <span class="badge badge-emerald-light text-emerald font-weight-bold px-2-5 py-1 d-inline-flex align-items-center font-size-11" title="Se eliminará automáticamente si permanece completada durante 15 días continuos">
-                    <i class="typcn typcn-tick mr-1 font-size-13"></i> Finalizada ({{ getCompletedDaysRemaining(note) }}d)
+                <div class="d-flex align-items-center justify-content-between pt-2 mt-1 border-top" (click)="$event.stopPropagation()">
+                  <span class="badge badge-emerald-light text-emerald font-weight-bold px-2-5 py-1 d-inline-flex align-items-center font-size-11" title="Tarea Finalizada">
+                    <i class="typcn typcn-tick mr-1 font-size-13"></i> Finalizada
                   </span>
 
                   <div class="d-flex align-items-center gap-1">
-                    <button type="button" class="btn btn-sm btn-white border font-weight-semibold px-2-5 py-1 d-flex align-items-center rounded-lg text-slate-600 font-size-11" (click)="changeTaskStatus(note, 'en_progreso')" title="Reabrir a En Progreso">
-                      <i class="typcn typcn-arrow-left text-slate-500 font-size-14 mr-1"></i> Reabrir
-                    </button>
                     <button type="button" class="btn btn-sm btn-action-blue rounded-lg d-flex align-items-center justify-content-center" (click)="openEditModal(note)" title="Editar">
                       <i class="typcn typcn-edit font-size-20 text-blue"></i>
                     </button>
@@ -1057,6 +1067,17 @@
           </div>
         </div>
 
+        <!-- Alerta Informativa de Tarea Recurrente / Programada -->
+        <div class="alert bg-amber-50 border border-amber-200 d-flex align-items-start py-2-5 px-3 rounded-xl mb-3" *ngIf="selectedViewNote.recurrence && selectedViewNote.recurrence !== 'ninguna'">
+          <i class="typcn typcn-arrow-sync text-amber font-size-22 mr-2 mt-0-5"></i>
+          <div>
+            <strong class="text-amber-800 font-size-13 d-block">Tarea Periódica (Repetición {{ getRecurrenceLabel(selectedViewNote.recurrence) }})</strong>
+            <small class="text-amber-700 font-size-12 line-height-tight">
+              Esta tarea está programada para regenerarse automáticamente con anticipación antes de su siguiente fecha de entrega vinculada a tu cuenta.
+            </small>
+          </div>
+        </div>
+
         <!-- Badges de Estado y Prioridad -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom">
           <div class="d-flex align-items-center gap-2">
@@ -1076,6 +1097,10 @@
                 'typcn-tick text-emerald': selectedViewNote.status === 'completada'
               }"></i>
               {{ getStatusLabel(selectedViewNote.status) }}
+            </span>
+
+            <span class="badge badge-recurrence-pill px-3 py-1-5 font-size-12 font-weight-bold" *ngIf="selectedViewNote.recurrence && selectedViewNote.recurrence !== 'ninguna'">
+              <i class="typcn typcn-arrow-sync mr-1"></i> {{ getRecurrenceLabel(selectedViewNote.recurrence) }}
             </span>
           </div>
 

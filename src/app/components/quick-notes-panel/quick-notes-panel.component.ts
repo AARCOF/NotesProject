@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { QuickNote } from '../../models/quick-note.model';
 import { Note } from '../../models/note.model';
 import { QuickNotesService } from '../../services/quick-notes.service';
+import { NotesService } from '../../services/notes.service';
 
 @Component({
   selector: 'app-quick-notes-panel',
@@ -22,12 +23,22 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscription: Subscription = new Subscription();
 
-  constructor(private quickNotesService: QuickNotesService) {}
+  constructor(
+    private quickNotesService: QuickNotesService,
+    private notesService: NotesService
+  ) {}
 
   ngOnInit(): void {
-    this.subscription = this.quickNotesService.quickNotes$.subscribe(() => {
-      this.updateSortedNotes();
-    });
+    this.subscription.add(
+      this.quickNotesService.quickNotes$.subscribe(() => {
+        this.updateSortedNotes();
+      })
+    );
+    this.subscription.add(
+      this.notesService.notes$.subscribe(notes => {
+        this.availableTasks = notes;
+      })
+    );
   }
 
   ngOnChanges(): void {
@@ -36,21 +47,23 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   updateSortedNotes(): void {
     const notes = this.quickNotesService.getQuickNotes();
-    const priorityValues: Record<string, number> = { 'alta': 3, 'media': 2, 'baja': 1 };
     
     this.quickNotes = notes.slice().sort((a, b) => {
-      const aLinked = !!a.linkedTaskId;
-      const bLinked = !!b.linkedTaskId;
-      if (aLinked && !bLinked) return -1;
-      if (!aLinked && bLinked) return 1;
+      const aPerm = !!a.isPermanent;
+      const bPerm = !!b.isPermanent;
 
-      if (aLinked && bLinked) {
-        const taskA = this.availableTasks.find(t => t.id === a.linkedTaskId);
-        const taskB = this.availableTasks.find(t => t.id === b.linkedTaskId);
-        const pA = taskA ? priorityValues[taskA.priority] || 0 : 0;
-        const pB = taskB ? priorityValues[taskB.priority] || 0 : 0;
-        
-        if (pA !== pB) return pB - pA;
+      // 1. Las notas permanentes encabezan la lista
+      if (aPerm && !bPerm) return -1;
+      if (!aPerm && bPerm) return 1;
+
+      // Si ambas son permanentes: ordenar por más reciente (createdAt descendente)
+      if (aPerm && bPerm) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+
+      // 2. Para las notas temporales: ordenar por aquellas que se eliminan antes (menor expiresAt primero)
+      if (a.expiresAt !== b.expiresAt) {
+        return a.expiresAt - b.expiresAt;
       }
 
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -77,11 +90,15 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     this.newNoteText = '';
     this.selectedTaskId = '';
-    this.retentionDays = 7;
+    // Keep user's chosen retentionDays or default
   }
 
   deleteNote(id: string): void {
     this.quickNotesService.deleteQuickNote(id);
+  }
+
+  togglePermanent(id: string): void {
+    this.quickNotesService.togglePermanent(id);
   }
 
   get selectedTaskTitle(): string {
@@ -92,13 +109,32 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   getRetentionLabel(days: number): string {
     switch (Number(days)) {
+      case -1: return 'Permanente';
       case 1: return '1 Día';
       case 3: return '3 Días';
-      case 7: return '1 Sem';
-      case 14: return '2 Sem';
-      case 30: return '1 Mes';
+      case 7: return '1 Sem (7d)';
+      case 14: return '2 Sem (14d)';
+      case 30: return '1 Mes (30d)';
       default: return `${days} Días`;
     }
+  }
+
+  getRemainingTimeLabel(note: QuickNote): string {
+    if (note.isPermanent) return 'Permanente';
+    const now = Date.now();
+    const diffMs = note.expiresAt - now;
+    if (diffMs <= 0) return 'Por expirar';
+    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+    if (diffHrs < 24) {
+      if (diffHrs === 0) {
+        const diffMin = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+        return `Expira en ${diffMin}m`;
+      }
+      return `Expira en ${diffHrs}h`;
+    }
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) return 'Expira hoy/mañana';
+    return `Expira en ${diffDays}d`;
   }
 
   selectTask(taskId: string): void {
@@ -106,7 +142,7 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   selectRetention(days: number): void {
-    this.retentionDays = days;
+    this.retentionDays = Number(days);
   }
 
   getLinkedTaskTitle(taskId?: string): string | null {

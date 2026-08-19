@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Note, PriorityLevel, NoteStatus, ChecklistItem } from '../../models/note.model';
+import { Note, PriorityLevel, NoteStatus, ChecklistItem, RecurrenceFrequency } from '../../models/note.model';
 import { Category } from '../../models/category.model';
 import { User } from '../../core/models/user.model';
 import { NotesService } from '../../services/notes.service';
@@ -477,7 +477,10 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     if (event) {
       event.stopPropagation();
     }
-    this.notesService.toggleChecklistItem(note.id, item.id);
+    const updated = this.notesService.toggleChecklistItem(note.id, item.id);
+    if (this.selectedViewNote && this.selectedViewNote.id === note.id && updated) {
+      this.selectedViewNote = updated;
+    }
   }
 
   getCompletedChecklistCount(note: Note): number {
@@ -492,6 +495,10 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   getCompletedDaysRemaining(note: Note): number {
     return this.notesService.getCompletedDaysRemaining(note);
+  }
+
+  getRecurrenceLabel(frequency?: RecurrenceFrequency): string {
+    return this.notesService.getRecurrenceLabel(frequency);
   }
 
   get totalCount(): number {

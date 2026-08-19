@@ -107,4 +107,14 @@ export class DayDetailsModalComponent implements OnChanges {
   onAddNewTask(): void {
     this.createNewTask.emit(this.date);
   }
+
+  getRecurrenceLabel(frequency?: string): string {
+    switch (frequency) {
+      case 'diaria': return 'Diaria';
+      case 'semanal': return 'Semanal';
+      case 'mensual': return 'Mensual';
+      case 'anual': return 'Anual';
+      default: return '';
+    }
+  }
 }

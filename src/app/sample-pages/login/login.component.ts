@@ -8,8 +8,8 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  email: string = 'usuario@ejemplo.com';
-  password: string = 'password123';
+  email: string = '';
+  password: string = '';
   errorMessage: string = '';
   successMessage: string = '';
   isLoading: boolean = false;
