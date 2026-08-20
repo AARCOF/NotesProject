@@ -11,9 +11,19 @@
 
       </div>
     </div>
-    <div class="bg-white rounded-pill px-3 py-2 d-flex flex-column align-items-center justify-content-center shadow-sm">
-      <span class="font-weight-bold text-blue-800 font-size-14 line-height-none">{{ quickNotes.length }}</span>
-      <span class="text-blue-800 font-size-10">Notas</span>
+    <div class="d-flex align-items-center" style="gap: 8px;">
+      <button 
+        type="button" 
+        class="btn btn-sm bg-white text-slate-800 font-weight-bold rounded-pill shadow-xs d-flex align-items-center px-3 py-1-5 hover-lift border-0"
+        (click)="openCreateTaskModal()"
+        title="Crear Nueva Tarea">
+        <i class="typcn typcn-plus font-size-16 text-emerald mr-1"></i> Nueva Tarea
+      </button>
+
+      <div class="bg-white rounded-pill px-3 py-2 d-flex flex-column align-items-center justify-content-center shadow-sm">
+        <span class="font-weight-bold text-blue-800 font-size-14 line-height-none">{{ quickNotes.length }}</span>
+        <span class="text-blue-800 font-size-10">Notas</span>
+      </div>
     </div>
   </div>
 

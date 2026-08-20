@@ -3,6 +3,8 @@ import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../core/models/user.model';
 import { Router } from '@angular/router';
 
+import { NotesService } from '../../services/notes.service';
+
 @Component({
   selector: 'app-mobile-header',
   templateUrl: './mobile-header.component.html',
@@ -15,6 +17,7 @@ export class MobileHeaderComponent implements OnInit {
   @Input() selectedCategory: string = 'Todas';
   @Output() categoryChange = new EventEmitter<string>();
   @Output() openQuickNotes = new EventEmitter<void>();
+  @Output() openCreateTask = new EventEmitter<void>();
   @Output() searchToggle = new EventEmitter<boolean>();
 
   currentUser: User | null = null;
@@ -23,6 +26,7 @@ export class MobileHeaderComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private notesService: NotesService,
     public router: Router
   ) {}
 
@@ -54,5 +58,10 @@ export class MobileHeaderComponent implements OnInit {
 
   onQuickNotesClick(): void {
     this.openQuickNotes.emit();
+  }
+
+  onCreateTaskClick(): void {
+    this.notesService.requestOpenCreateModal();
+    this.openCreateTask.emit();
   }
 }

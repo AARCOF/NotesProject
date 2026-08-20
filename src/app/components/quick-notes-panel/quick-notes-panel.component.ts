@@ -41,6 +41,10 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
+  openCreateTaskModal(): void {
+    this.notesService.requestOpenCreateModal();
+  }
+
   ngOnChanges(): void {
     this.updateSortedNotes();
   }

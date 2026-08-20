@@ -16,8 +16,14 @@
     <!-- Acciones Rápidas -->
     <div class="header-actions">
       <!-- Botón de Notas Rápidas (Post-its) -->
-      <button class="header-icon-btn" (click)="onQuickNotesClick()" title="Notas Rápidas" aria-label="Notas Rápidas">
+      <button class="header-icon-btn btn-quick-notes-trigger" (click)="onQuickNotesClick()" title="Notas Rápidas" aria-label="Notas Rápidas">
         <i class="typcn typcn-flash"></i>
+      </button>
+
+      <!-- Botón de Nueva Tarea (al lado de Notas Rápidas) -->
+      <button class="header-btn-new-task shadow-sm" (click)="onCreateTaskClick()" title="Crear Nueva Tarea" aria-label="Nueva Tarea">
+        <i class="typcn typcn-plus font-size-16 mr-1"></i>
+        <span>Nueva Tarea</span>
       </button>
 
       <!-- Botón de Notificaciones / Recordatorios -->
