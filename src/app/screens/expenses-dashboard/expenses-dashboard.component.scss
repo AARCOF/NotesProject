@@ -68,14 +68,29 @@
   }
 }
 
-/* Vertical KPI Cards */
-.kpi-vertical-card {
+/* Square Horizontal KPI Cards (2x2 Grid) */
+.kpis-grid-container {
+  margin-left: -4px !important;
+  margin-right: -4px !important;
+
+  > [class*="col-"] {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+.kpi-square-card {
   background-color: #f8fafc;
+  border-radius: 14px;
+  min-height: 88px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease;
 
   &:hover {
     border-color: #cbd5e1 !important;
     background-color: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   &.bg-emerald-50-30 {
@@ -89,24 +104,24 @@
   }
 
   .kpi-icon-badge-xs {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
 
     i {
-      font-size: 18px !important;
+      font-size: 16px !important;
     }
   }
 
   .btn-icon-xs {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
     i {
-      font-size: 15px !important;
+      font-size: 14px !important;
     }
   }
 }
