@@ -42,8 +42,12 @@ export class UserRepository {
 
   private ensureSuperadminRoles(): void {
     let users = this.getAllUsers();
-    // Eliminar cuentas predeterminadas antiguas si existen en la memoria local
-    users = users.filter(u => u.email !== 'admin@noteyou.com' && u.email !== 'usuario@noteyou.com');
+    // Eliminar cuentas no deseadas si existen en la memoria local
+    users = users.filter(u => 
+      u.email.toLowerCase() !== 'admin@noteyou.com' && 
+      u.email.toLowerCase() !== 'usuario@noteyou.com' &&
+      u.email.toLowerCase() !== 'acaf504082@gmail.com'
+    );
 
     let foundSuperadmin = false;
     users.forEach(u => {
