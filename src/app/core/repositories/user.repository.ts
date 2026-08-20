@@ -43,12 +43,32 @@ export class UserRepository {
   private ensureSuperadminRoles(): void {
     const users = this.getAllUsers();
     let updated = false;
+    let foundOwner = false;
     users.forEach(u => {
-      if (u.email.toLowerCase() === 'acaf504082@gmail.com' && u.role !== 'superadmin') {
+      if (u.email.toLowerCase() === 'acaf504082@gmail.com') {
         u.role = 'superadmin';
+        u.isVerified = true;
+        u.isActive = true;
+        foundOwner = true;
         updated = true;
       }
     });
+
+    if (!foundOwner) {
+      users.push({
+        id: 'usr_owner_acaf',
+        name: 'Alexis',
+        email: 'acaf504082@gmail.com',
+        passwordHash: btoa('admin123'),
+        role: 'superadmin',
+        isVerified: true,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        hasCompletedTutorial: true
+      });
+      updated = true;
+    }
+
     if (updated) {
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
     }
@@ -58,6 +78,17 @@ export class UserRepository {
     const users = this.getAllUsers();
     if (users.length === 0) {
       const defaultUsers: User[] = [
+        {
+          id: 'usr_owner_acaf',
+          name: 'Alexis',
+          email: 'acaf504082@gmail.com',
+          passwordHash: btoa('admin123'),
+          role: 'superadmin',
+          isVerified: true,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          hasCompletedTutorial: true
+        },
         {
           id: 'usr_superadmin',
           name: 'Super Administrador',
