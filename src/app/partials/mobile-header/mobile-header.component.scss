@@ -105,6 +105,41 @@
   }
 }
 
+.btn-quick-notes-trigger {
+  background: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #d97706 !important;
+}
+
+.header-btn-new-task {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  height: 38px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  i {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  &:active {
+    transform: scale(0.94);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+  }
+}
+
 .categories-scroll-row {
   margin-top: 10px;
   overflow-x: auto;
