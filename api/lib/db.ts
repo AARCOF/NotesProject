@@ -16,7 +16,10 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     throw new Error('MONGODB_URI no está configurada en las variables de entorno de Vercel');
   }
 
-  const client = new MongoClient(MONGODB_URI);
+  const client = new MongoClient(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    connectTimeoutMS: 5000
+  });
   await client.connect();
   const db = client.db(DB_NAME);
 
@@ -28,8 +31,21 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
 
 // Función auxiliar para respuestas JSON con CORS habilitado para Web y APK
 export function sendJsonResponse(res: any, statusCode: number, data: any) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  return res.status(statusCode).json(data);
+  try {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  } catch (e) {}
+
+  if (res && typeof res.status === 'function' && typeof res.json === 'function') {
+    return res.status(statusCode).json(data);
+  }
+
+  if (res) {
+    res.statusCode = statusCode;
+    try {
+      res.setHeader('Content-Type', 'application/json');
+    } catch (e) {}
+    return res.end(JSON.stringify(data));
+  }
 }

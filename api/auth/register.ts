@@ -11,7 +11,11 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { name, email, password } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {}
+    }
+    const { name, email, password } = body || {};
 
     if (!name || !email || !password) {
       return sendJsonResponse(res, 400, { success: false, message: 'Todos los campos son obligatorios' });
