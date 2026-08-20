@@ -50,7 +50,21 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) {}
 
+  mobileKanbanTab: 'pendiente' | 'en_progreso' | 'completada' = 'pendiente';
+
   ngOnInit(): void {
+    this.subscriptions.add(
+      this.notesService.openModalRequest$.subscribe(req => {
+        if (req && req.open) {
+          if (req.note) {
+            this.openEditModal(req.note);
+          } else {
+            this.openCreateModal('pendiente');
+          }
+        }
+      })
+    );
+
     this.subscriptions.add(
       this.categoriesService.categories$.subscribe(cats => {
         this.categories = cats;

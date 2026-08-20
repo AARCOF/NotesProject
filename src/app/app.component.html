@@ -1,26 +1,32 @@
-<div class="app-root-container" [class.is-standalone]="!showNav">
+<div class="app-root-container" [class.is-standalone]="!showNav" [class.is-mobile-app]="isMobileView">
   
-  <!-- Barra de navegación fija (Solo en vista autenticada) -->
-  <app-navbar *ngIf="showNav"></app-navbar>
+  <!-- Barra de navegación fija de Escritorio (Solo en Desktop autenticado) -->
+  <app-navbar *ngIf="showNav && !isMobileView"></app-navbar>
 
-  <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav">
+  <!-- Barra Superior Nativa Móvil (Solo en Celular/APK autenticado) -->
+  <app-mobile-header 
+    *ngIf="showNav && isMobileView"
+    (openQuickNotes)="toggleMobileQuickNotes()">
+  </app-mobile-header>
+
+  <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav" [class.mobile-body-wrapper]="isMobileView">
     
-    <!-- Barra lateral (Solo en vista autenticada) -->
-    <app-sidebar *ngIf="showNav"></app-sidebar>
+    <!-- Barra lateral de Escritorio (Solo en Desktop autenticado) -->
+    <app-sidebar *ngIf="showNav && !isMobileView"></app-sidebar>
 
     <!-- Panel principal -->
-    <div class="main-panel border-0" [class.w-100]="!showNav">
-      <div class="content-wrapper border-0 p-0">
+    <div class="main-panel border-0" [class.w-100]="!showNav || isMobileView">
+      <div class="content-wrapper border-0 p-0" [class.mobile-content-pad]="isMobileView && showNav">
         
-        <div class="workspace-wrapper" [class.public-mode]="!showNav">
+        <div class="workspace-wrapper" [class.public-mode]="!showNav" [class.mobile-workspace]="isMobileView">
           
-          <!-- Columna de Notas Rápidas con ancho fijo rígido (320px) (Oculta en vista de Gastos) -->
-          <aside class="quick-notes-column" *ngIf="showQuickNotes">
+          <!-- Columna de Notas Rápidas de Escritorio (Oculta en Celular y en vista de Gastos) -->
+          <aside class="quick-notes-column" *ngIf="showQuickNotes && !isMobileView">
             <app-quick-notes-panel [availableTasks]="globalTasks"></app-quick-notes-panel>
           </aside>
 
-          <!-- ÚNICO Router Outlet unificado (sin colisiones ni destrucción de rutas) -->
-          <main class="workspace-view-container" [class.authenticated-view]="showNav" [class.public-view]="!showNav">
+          <!-- ÚNICO Router Outlet unificado -->
+          <main class="workspace-view-container" [class.authenticated-view]="showNav" [class.public-view]="!showNav" [class.mobile-view-container]="isMobileView">
             <router-outlet></router-outlet>
           </main>
 
@@ -29,6 +35,28 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Barra de Navegación Inferior Nativa Móvil (Bottom Navigation Bar) -->
+  <app-mobile-bottom-nav 
+    *ngIf="showNav && isMobileView" 
+    (openCreate)="onFabCreate()">
+  </app-mobile-bottom-nav>
+
+  <!-- Bottom Sheet deslizable para Notas Rápidas en Móvil -->
+  <div class="mobile-quick-notes-backdrop" *ngIf="isMobileQuickNotesOpen" (click)="toggleMobileQuickNotes()">
+    <div class="mobile-quick-notes-sheet" (click)="$event.stopPropagation()">
+      <div class="sheet-drag-handle" (click)="toggleMobileQuickNotes()"></div>
+      <div class="sheet-header">
+        <h5 class="sheet-title font-weight-bold mb-0">⚡ Notas Rápidas</h5>
+        <button class="btn btn-sm btn-icon btn-light rounded-circle" (click)="toggleMobileQuickNotes()">
+          <i class="typcn typcn-times"></i>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <app-quick-notes-panel [availableTasks]="globalTasks"></app-quick-notes-panel>
+      </div>
+    </div>
   </div>
 
 </div>

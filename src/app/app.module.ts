@@ -9,11 +9,12 @@ import { AppRoutingModule } from "./app-routing.module";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ChartsModule } from "ng2-charts";
 
-// Components
 import { AppComponent } from "./app.component";
 import { FooterComponent } from "./partials/footer/footer.component";
 import { NavbarComponent } from "./partials/navbar/navbar.component";
 import { SidebarComponent } from "./partials/sidebar/sidebar.component";
+import { MobileBottomNavComponent } from "./partials/mobile-bottom-nav/mobile-bottom-nav.component";
+import { MobileHeaderComponent } from "./partials/mobile-header/mobile-header.component";
 
 import { LandingPageComponent } from "./screens/landing-page/landing-page.component";
 import { NotesDashboardComponent } from "./screens/notes-dashboard/notes-dashboard.component";
@@ -46,6 +47,8 @@ import { AuthGuard } from "./core/guards/auth.guard";
     AppComponent,
     NavbarComponent,
     SidebarComponent,
+    MobileBottomNavComponent,
+    MobileHeaderComponent,
     FooterComponent,
     LandingPageComponent,
     NotesDashboardComponent,

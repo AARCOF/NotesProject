@@ -1,0 +1,44 @@
+<nav class="mobile-bottom-nav">
+  <div class="nav-items-container">
+    
+    <!-- 1. Notas -->
+    <a routerLink="/dashboard" class="nav-tab-item" [class.active]="isActive('/dashboard')">
+      <div class="icon-wrapper">
+        <i class="typcn typcn-clipboard"></i>
+      </div>
+      <span class="tab-label">Notas</span>
+    </a>
+
+    <!-- 2. Finanzas -->
+    <a routerLink="/expenses" class="nav-tab-item" [class.active]="isActive('/expenses')">
+      <div class="icon-wrapper">
+        <i class="typcn typcn-credit-card"></i>
+      </div>
+      <span class="tab-label">Gastos</span>
+    </a>
+
+    <!-- 3. Botón Central FAB (Crear) -->
+    <div class="fab-center-wrapper">
+      <button class="fab-center-btn" (click)="onCreateClick()" title="Crear Tarea o Gasto" aria-label="Crear">
+        <i class="typcn typcn-plus"></i>
+      </button>
+    </div>
+
+    <!-- 4. Calendario / Agenda -->
+    <a routerLink="/calendar" class="nav-tab-item" [class.active]="isActive('/calendar')">
+      <div class="icon-wrapper">
+        <i class="typcn typcn-calendar"></i>
+      </div>
+      <span class="tab-label">Agenda</span>
+    </a>
+
+    <!-- 5. Perfil -->
+    <a routerLink="/profile" class="nav-tab-item" [class.active]="isActive('/profile')">
+      <div class="icon-wrapper">
+        <i class="typcn typcn-user"></i>
+      </div>
+      <span class="tab-label">Perfil</span>
+    </a>
+
+  </div>
+</nav>

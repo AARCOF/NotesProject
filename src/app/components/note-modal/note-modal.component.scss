@@ -361,5 +361,55 @@
   }
 }
 
+// Transformación a Bottom Sheet en Pantallas Móviles / APK
+@media (max-width: 768px) {
+  .modal-custom {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
 
+  .modal-dialog-custom {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
 
+  .modal-content-custom {
+    border-radius: 24px 24px 0 0 !important;
+    border: none !important;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .modal-header-custom {
+    padding: 1rem 1.25rem !important;
+  }
+
+  .modal-body {
+    padding: 1.25rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-footer {
+    padding: 0.875rem 1.25rem !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .form-control, .form-select {
+    font-size: 16px !important; // Previene zoom forzado en Safari iOS
+    min-height: 44px;
+  }
+}
+
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
