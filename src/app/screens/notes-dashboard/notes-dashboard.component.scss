@@ -856,3 +856,124 @@
     }
   }
 }
+
+/* ==========================================================================
+   MOBILE & APK DASHBOARD OPTIMIZATIONS (@media max-width: 991px)
+   ========================================================================== */
+@media (max-width: 991px) {
+  // 1. Toolbar & Search bar scrolls UP naturally with the page instead of floating in the middle
+  .sticky-dashboard-toolbar {
+    position: relative !important;
+    top: auto !important;
+    z-index: 10 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0 !important;
+
+    .card {
+      border-radius: 14px !important;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+    }
+  }
+
+  // 2. Extra bottom clearance so the last task cards are 100% visible above the bottom navigation bar
+  .dashboard-cards-container {
+    padding-bottom: 110px !important;
+    padding-right: 0 !important;
+  }
+
+  .kanban-board-wrapper {
+    margin-bottom: 0 !important;
+    padding-bottom: 110px !important;
+  }
+
+  // 3. Remove nested inner scrolling height limits so the cards flow smoothly in the page
+  .kanban-column {
+    min-height: auto !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .kanban-cards-list {
+    max-height: none !important;
+    min-height: auto !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+    padding-right: 0 !important;
+    gap: 0.65rem !important;
+  }
+
+  // 4. Compact Card Sizing in Mobile / APK (Kanban & Grid)
+  .kanban-card {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+    margin-bottom: 0.5rem !important;
+
+    .card-body {
+      padding: 0.7rem 0.8rem !important;
+    }
+
+    .kanban-priority-stripe {
+      height: 3px !important;
+    }
+
+    h6 {
+      font-size: 0.875rem !important; // 14px
+      margin-bottom: 0.2rem !important;
+      font-weight: 700 !important;
+    }
+
+    p {
+      font-size: 0.775rem !important; // 12.4px
+      margin-bottom: 0.35rem !important;
+      line-height: 1.35 !important;
+    }
+
+    .badge {
+      font-size: 0.6875rem !important; // 11px
+      padding: 0.15rem 0.4rem !important;
+    }
+
+    .card-checklist-container {
+      padding: 0.35rem 0.5rem !important;
+      margin-bottom: 0.35rem !important;
+    }
+
+    .btn-action-blue, .btn-action-rose {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      padding: 0 !important;
+
+      i {
+        font-size: 15px !important;
+      }
+    }
+
+    .btn-status-move-pill {
+      padding: 2px 6px !important;
+      font-size: 0.6875rem !important;
+      border-radius: 6px !important;
+    }
+  }
+
+  .card-note-modern {
+    border-radius: 12px !important;
+    margin-bottom: 0.75rem !important;
+
+    .card-body {
+      padding: 0.75rem 0.85rem !important;
+    }
+
+    .card-title {
+      font-size: 0.875rem !important;
+    }
+
+    .card-text {
+      font-size: 0.775rem !important;
+    }
+  }
+}
