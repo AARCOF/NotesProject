@@ -1,16 +1,7 @@
 const { MongoClient } = require('mongodb');
 
-const CORRECT_URI = 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
-
-let rawUri = process.env.MONGODB_URI || process.env.DATABASE_URL || CORRECT_URI;
-
-// Si en Vercel se guardó una URI sin el subdominio 1gpwhkf, forzar la URI exacta del clúster
-if (!rawUri.includes('1gpwhkf')) {
-  rawUri = CORRECT_URI;
-}
-
-const MONGODB_URI = rawUri;
-const DB_NAME = process.env.DB_NAME || 'noteyou_production';
+const MONGODB_URI = 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
+const DB_NAME = 'noteyou_production';
 
 let cachedClient = null;
 let cachedDb = null;
