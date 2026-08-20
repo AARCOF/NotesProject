@@ -861,19 +861,24 @@
    MOBILE & APK DASHBOARD OPTIMIZATIONS (@media max-width: 991px)
    ========================================================================== */
 @media (max-width: 991px) {
-  // 1. Toolbar & Search bar scrolls UP naturally with the page instead of floating in the middle
+  // 1. Toolbar & Search bar scrolls UP and stays pinned at the very top of the screen (top: 63px)
   .sticky-dashboard-toolbar {
-    position: relative !important;
-    top: auto !important;
-    z-index: 10 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 63px !important;
+    z-index: 1025 !important;
+    margin-left: -4px !important;
+    margin-right: -4px !important;
     margin-bottom: 0.5rem !important;
-    padding: 0 !important;
+    padding: 2px 4px 4px 4px !important;
 
     .card {
       border-radius: 14px !important;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+      background-color: rgba(255, 255, 255, 0.96) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(226, 232, 240, 0.9) !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
     }
   }
 
