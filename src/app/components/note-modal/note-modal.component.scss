@@ -362,10 +362,11 @@
 }
 
 // Transformación a Bottom Sheet en Pantallas Móviles / APK
-@media (max-width: 768px) {
+@media (max-width: 991px) {
   .modal-custom {
     align-items: flex-end !important;
     padding: 0 !important;
+    overflow: hidden !important;
   }
 
   .modal-dialog-custom {
@@ -373,30 +374,53 @@
     max-width: 100% !important;
     width: 100% !important;
     padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-height: 92vh;
   }
 
   .modal-content-custom {
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
+    max-height: 92vh;
+    height: auto;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
     animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25) !important;
+
+    form {
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
   }
 
   .modal-header-custom {
     padding: 1rem 1.25rem !important;
+    flex-shrink: 0 !important;
   }
 
   .modal-body {
-    padding: 1.25rem !important;
+    padding: 1.25rem 1.25rem 2rem 1.25rem !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
   }
 
   .modal-footer {
     padding: 0.875rem 1.25rem !important;
-    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    padding-bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    flex-shrink: 0 !important;
+    background: #ffffff !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
+    z-index: 15;
+    position: relative;
   }
 
   .form-control, .form-select {
