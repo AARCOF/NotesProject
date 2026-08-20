@@ -774,4 +774,111 @@ h1, h2, h3, h4, h5, h6, .card-title {
   color: #9f1239 !important;
 }
 
+/* ==========================================================================
+   GLOBAL AESTHETIC SPACING & BREATHING ROOM UTILITIES
+   ========================================================================== */
+
+/* Flexbox Gap Utilities */
+.gap-0-5 { gap: 0.25rem !important; }
+.gap-1 { gap: 0.45rem !important; }
+.gap-1-5 { gap: 0.65rem !important; }
+.gap-2 { gap: 0.85rem !important; }
+.gap-2-5 { gap: 1rem !important; }
+.gap-3 { gap: 1.25rem !important; }
+.gap-3-5 { gap: 1.5rem !important; }
+.gap-4 { gap: 1.75rem !important; }
+
+/* Custom Margin Helpers */
+.mr-0-5 { margin-right: 0.25rem !important; }
+.mr-1 { margin-right: 0.45rem !important; }
+.mr-1-5 { margin-right: 0.65rem !important; }
+.mr-2 { margin-right: 0.85rem !important; }
+.mr-2-5 { margin-right: 1rem !important; }
+.mr-3 { margin-right: 1.25rem !important; }
+
+.ml-0-5 { margin-left: 0.25rem !important; }
+.ml-1 { margin-left: 0.45rem !important; }
+.ml-1-5 { margin-left: 0.65rem !important; }
+.ml-2 { margin-left: 0.85rem !important; }
+
+.mb-2-5 { margin-bottom: 0.85rem !important; }
+.mb-3-5 { margin-bottom: 1.25rem !important; }
+
+/* Custom Padding Helpers */
+.p-2-5 { padding: 0.85rem !important; }
+.p-3-5 { padding: 1.25rem !important; }
+.px-3-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+.py-2-5 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+
+/* Button & Icon Global Breathing Room */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  letter-spacing: 0.2px;
+
+  i {
+    line-height: 1;
+  }
+}
+
+/* Badges with Icons */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+
+  i {
+    line-height: 1;
+  }
+}
+
+/* Action Icon Buttons Spacing */
+.btn-action-icon, 
+.btn-action-icon-sm, 
+.btn-action-blue, 
+.btn-action-rose {
+  margin: 0 3px !important;
+}
+
+/* Form Groups & Labels Spacing */
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    margin-bottom: 0.45rem;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.875rem;
+    display: inline-block;
+  }
+}
+
+/* Table Cells Spacing */
+.table {
+  th, td {
+    padding: 0.85rem 1rem !important;
+    vertical-align: middle !important;
+  }
+}
+
+/* Sidebar Nav Items Spacing */
+.sidebar {
+  .nav-item {
+    margin-bottom: 4px;
+
+    .nav-link {
+      padding: 0.65rem 1rem !important;
+      display: flex;
+      align-items: center;
+
+      .menu-icon {
+        margin-right: 0.85rem !important;
+      }
+    }
+  }
+}
+
 
