@@ -41,7 +41,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Vista Activa (Pestañas)
   // En Móvil: 'gestion' predeterminada. En Web/Desktop: 'categorias' predeterminada
   isMobile: boolean = false;
-  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'categorias';
+  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'gestion';
+  private isTabInitialized: boolean = false;
 
   @HostListener('window:resize')
   onResize(): void {
@@ -49,12 +50,10 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   }
 
   private checkScreenSize(): void {
-    const wasMobile = this.isMobile;
     this.isMobile = window.innerWidth < 992;
-    if (this.isMobile && (this.activeTab === 'categorias' || !wasMobile)) {
-      this.activeTab = 'gestion';
-    } else if (!this.isMobile && this.activeTab === 'gestion') {
-      this.activeTab = 'categorias';
+    if (!this.isTabInitialized) {
+      this.activeTab = this.isMobile ? 'gestion' : 'categorias';
+      this.isTabInitialized = true;
     }
   }
 
