@@ -33,6 +33,9 @@ export class LandingPageComponent implements OnInit {
   legalModalTitle: string = '';
   legalModalContent: string = '';
 
+  selectedInstallPlatform: 'android' | 'ios' = 'android';
+
+
   // Cuaderno Hero Interactive Notebook State
   notebookTasks = [
     { id: 1, text: 'Comprar café colombiano & fruta orgánica', category: 'Compras', categoryBg: 'bg-emerald', completed: true },

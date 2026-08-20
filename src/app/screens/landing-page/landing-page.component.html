@@ -13,6 +13,7 @@
         <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'inicio'" (click)="scrollTo('inicio')">Inicio</a>
         <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'herramientas'" (click)="scrollTo('herramientas')">Herramientas</a>
         <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'como-funciona'" (click)="scrollTo('como-funciona')">Cómo Funciona</a>
+        <a class="nav-link-custom cursor-pointer" [class.active]="activeSection === 'instalar'" (click)="scrollTo('instalar')">Instalar</a>
       </div>
 
       <div class="d-flex align-items-center gap-3">
@@ -567,6 +568,185 @@
           </a>
         </ng-container>
       </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECCIÓN: Cómo Instalar la App (Android / iPhone)
+       ============================================================ -->
+  <section id="instalar" class="install-section py-5 reveal">
+    <div class="container-fluid px-4 px-lg-5 py-4">
+
+      <!-- Encabezado -->
+      <div class="text-center mb-5">
+        <span class="section-badge mb-3">Instalación Rápida</span>
+        <h2 class="display-section-title text-slate-900 mb-3">
+          Instala <span class="text-gradient-blue-teal">NoteYou</span> en tu dispositivo
+        </h2>
+        <p class="text-slate-500 font-size-16 mx-auto" style="max-width: 520px; line-height: 1.7;">
+          Elige tu dispositivo y sigue los pasos para tener la app en segundos.
+        </p>
+      </div>
+
+      <!-- Selector de plataforma -->
+      <div class="d-flex justify-content-center mb-5">
+        <div class="install-platform-toggle">
+          <button
+            class="platform-btn"
+            [class.active]="selectedInstallPlatform === 'android'"
+            (click)="selectedInstallPlatform = 'android'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M17.523 15.341c-.42 0-.76-.34-.76-.76s.34-.76.76-.76.76.34.76.76-.34.76-.76.76zm-11.046 0c-.42 0-.76-.34-.76-.76s.34-.76.76-.76.76.34.76.76-.34.76-.76.76zm11.4-6.11l1.5-2.598a.313.313 0 0 0-.541-.312l-1.52 2.632A9.31 9.31 0 0 0 12 8c-1.455 0-2.82.332-4.032.924L6.444 6.321a.313.313 0 1 0-.54.312l1.498 2.597A9.344 9.344 0 0 0 2.625 16.5h18.75a9.344 9.344 0 0 0-3.498-7.27z"/>
+            </svg>
+            Android
+          </button>
+          <button
+            class="platform-btn"
+            [class.active]="selectedInstallPlatform === 'ios'"
+            (click)="selectedInstallPlatform = 'ios'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            iPhone (iOS)
+          </button>
+        </div>
+      </div>
+
+      <!-- ======================== ANDROID ======================== -->
+      <div *ngIf="selectedInstallPlatform === 'android'" class="install-steps-container animate-fade-in">
+        <div class="row justify-content-center align-items-start">
+
+          <!-- Pasos -->
+          <div class="col-lg-7 col-md-10 mb-5 mb-lg-0">
+            <div class="install-steps-list">
+
+              <div class="install-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h5 class="step-title">Descarga el archivo APK</h5>
+                  <p class="step-desc">Toca el botón de descarga. El archivo <code>NoteYou.apk</code> se guardará en tu carpeta de Descargas.</p>
+                  <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk"
+                     class="btn btn-gradient-android btn-sm font-weight-bold mt-2 px-4 py-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="mr-1"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.84v4h5.66V9h3.84L12 2z"/></svg>
+                    Descargar APK
+                  </a>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h5 class="step-title">Permite instalar apps externas</h5>
+                  <p class="step-desc">Ve a <strong>Ajustes → Seguridad</strong> (o <strong>Ajustes → Aplicaciones → Fuentes desconocidas</strong>) y activa la opción <em>"Instalar apps de fuentes desconocidas"</em> para tu navegador o gestor de archivos.</p>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h5 class="step-title">Abre el APK y confirma</h5>
+                  <p class="step-desc">Toca el archivo descargado desde el gestor de notificaciones o desde la app <strong>Mis Archivos</strong>. Pulsa <strong>Instalar</strong> cuando aparezca el cuadro de confirmación.</p>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                  <h5 class="step-title">¡Listo! Abre NoteYou</h5>
+                  <p class="step-desc">Busca el ícono de <strong>NoteYou</strong> en tu pantalla de inicio o en el cajón de aplicaciones y empieza a organizar tus ideas. 🎉</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Icono visual Android -->
+          <div class="col-lg-4 d-none d-lg-flex justify-content-center align-items-start">
+            <div class="install-platform-visual android-visual">
+              <div class="platform-icon-glow android-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="72" height="72" fill="currentColor">
+                  <path d="M17.523 15.341c-.42 0-.76-.34-.76-.76s.34-.76.76-.76.76.34.76.76-.34.76-.76.76zm-11.046 0c-.42 0-.76-.34-.76-.76s.34-.76.76-.76.76.34.76.76-.34.76-.76.76zm11.4-6.11l1.5-2.598a.313.313 0 0 0-.541-.312l-1.52 2.632A9.31 9.31 0 0 0 12 8c-1.455 0-2.82.332-4.032.924L6.444 6.321a.313.313 0 1 0-.54.312l1.498 2.597A9.344 9.344 0 0 0 2.625 16.5h18.75a9.344 9.344 0 0 0-3.498-7.27z"/>
+                </svg>
+              </div>
+              <div class="platform-badge android-badge">Android APK</div>
+              <p class="platform-note">Compatible con Android 7.0+ (Nougat en adelante)</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================== iOS ======================== -->
+      <div *ngIf="selectedInstallPlatform === 'ios'" class="install-steps-container animate-fade-in">
+        <div class="row justify-content-center align-items-start">
+
+          <!-- Pasos -->
+          <div class="col-lg-7 col-md-10 mb-5 mb-lg-0">
+            <div class="install-steps-list">
+
+              <div class="install-step">
+                <div class="step-number ios-step">1</div>
+                <div class="step-content">
+                  <h5 class="step-title">Abre Safari en tu iPhone</h5>
+                  <p class="step-desc">Esta opción funciona a través de <strong>Safari</strong> (el navegador de Apple). Otros navegadores como Chrome no admiten la instalación como app.</p>
+                  <div class="install-tip">
+                    <i class="typcn typcn-info-large mr-1"></i>
+                    No necesitas la App Store ni pagar nada.
+                  </div>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number ios-step">2</div>
+                <div class="step-content">
+                  <h5 class="step-title">Visita la web de NoteYou</h5>
+                  <p class="step-desc">Abre Safari y entra a la dirección web de NoteYou. Espera a que cargue completamente antes de continuar.</p>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number ios-step">3</div>
+                <div class="step-content">
+                  <h5 class="step-title">Toca el botón "Compartir"</h5>
+                  <p class="step-desc">En la barra inferior de Safari, toca el ícono de <strong>compartir</strong> (el cuadrado con una flecha hacia arriba ↑). Aparecerá un menú de opciones.</p>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number ios-step">4</div>
+                <div class="step-content">
+                  <h5 class="step-title">Selecciona "Añadir a pantalla de inicio"</h5>
+                  <p class="step-desc">Desplázate en el menú y elige <strong>"Añadir a pantalla de inicio"</strong>. Puedes cambiar el nombre si lo deseas. Luego toca <strong>Agregar</strong>.</p>
+                </div>
+              </div>
+
+              <div class="install-step">
+                <div class="step-number ios-step">5</div>
+                <div class="step-content">
+                  <h5 class="step-title">¡Listo! NoteYou está en tu iPhone 🍎</h5>
+                  <p class="step-desc">El ícono de NoteYou aparecerá en tu pantalla de inicio como si fuera una app nativa. Ábrela directamente desde ahí.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Icono visual iOS -->
+          <div class="col-lg-4 d-none d-lg-flex justify-content-center align-items-start">
+            <div class="install-platform-visual ios-visual">
+              <div class="platform-icon-glow ios-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="72" height="72" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+              </div>
+              <div class="platform-badge ios-badge">iPhone / iPad (PWA)</div>
+              <p class="platform-note">Compatible con iOS 14+ — Sin descargas, sin App Store.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </section>
 
