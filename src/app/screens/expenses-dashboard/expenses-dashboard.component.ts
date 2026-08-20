@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
@@ -34,8 +34,29 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Filtro de búsqueda rápida
   searchTerm: string = '';
 
-  // Vista Activa (Pestañas) - Predeterminada: 'gestion'
-  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'gestion';
+  // Paginación de histórico de gastos
+  historyPage: number = 1;
+  historyPageSize: number = 10;
+
+  // Vista Activa (Pestañas)
+  // En Móvil: 'gestion' predeterminada. En Web/Desktop: 'categorias' predeterminada
+  isMobile: boolean = false;
+  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'categorias';
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize(): void {
+    const wasMobile = this.isMobile;
+    this.isMobile = window.innerWidth < 992;
+    if (this.isMobile && (this.activeTab === 'categorias' || !wasMobile)) {
+      this.activeTab = 'gestion';
+    } else if (!this.isMobile && this.activeTab === 'gestion') {
+      this.activeTab = 'categorias';
+    }
+  }
 
   setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion'): void {
     this.activeTab = tab;
@@ -169,6 +190,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   constructor(private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
+    this.checkScreenSize();
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -514,10 +536,20 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     this.isCategoryModalOpen = false;
   }
 
-  deleteCategory(cat: ExpenseCategory, event?: Event): void {
+  deleteCategory(cat: ExpenseCategory | null, event?: Event): void {
+    if (!cat) return;
     if (event) event.stopPropagation();
     if (confirm(`¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos?`)) {
       this.expenseService.deleteCategory(cat.id);
+      if (this.categoryToEdit && this.categoryToEdit.id === cat.id) {
+        this.isCategoryModalOpen = false;
+      }
+    }
+  }
+
+  deleteCategoryFromModal(): void {
+    if (this.categoryToEdit) {
+      this.deleteCategory(this.categoryToEdit);
     }
   }
 
@@ -633,5 +665,62 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     if (confirm(`¿Eliminar el ingreso extra / bono "${item.title}" de ${this.currencySymbol} ${item.amount}?`)) {
       this.expenseService.deleteExtraIncome(item.id);
     }
+  }
+
+  // --- Paginación y Helpers de Gastos Históricos ---
+
+  getCategoryForExpense(catId: string): ExpenseCategory | undefined {
+    return this.categories.find(c => c.id === catId);
+  }
+
+  getSubcategoryForExpense(subId: string): ExpenseSubcategory | undefined {
+    return this.subcategories.find(s => s.id === subId);
+  }
+
+  getPaginatedMonthExpenses(): ExpenseItem[] {
+    const all = this.getAllMonthExpenses();
+    const start = (this.historyPage - 1) * this.historyPageSize;
+    return all.slice(start, start + this.historyPageSize);
+  }
+
+  getHistoryTotalPages(): number {
+    const all = this.getAllMonthExpenses();
+    return Math.ceil(all.length / this.historyPageSize) || 1;
+  }
+
+  getHistoryRangeText(): string {
+    const all = this.getAllMonthExpenses();
+    if (all.length === 0) return '0 de 0';
+    const start = (this.historyPage - 1) * this.historyPageSize + 1;
+    const end = Math.min(this.historyPage * this.historyPageSize, all.length);
+    return `${start}-${end} de ${all.length}`;
+  }
+
+  getHistoryPageNumbers(): number[] {
+    const total = this.getHistoryTotalPages();
+    const pages: number[] = [];
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  prevHistoryPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.historyPage > 1) {
+      this.historyPage--;
+    }
+  }
+
+  nextHistoryPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.historyPage < this.getHistoryTotalPages()) {
+      this.historyPage++;
+    }
+  }
+
+  setHistoryPage(page: number, event?: Event): void {
+    if (event) event.preventDefault();
+    this.historyPage = page;
   }
 }
