@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, MonthlyBudget } from '../models/expense.model';
+import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem, MonthlyBudget } from '../models/expense.model';
 import { AuthService } from '../core/services/auth.service';
 
 const EXPENSE_CATEGORIES_STORAGE_KEY = 'noteyou_expense_categories_v1';
 const EXPENSE_SUBCATEGORIES_STORAGE_KEY = 'noteyou_expense_subcategories_v1';
 const EXPENSE_ITEMS_STORAGE_KEY = 'noteyou_expense_items_v1';
+const EXTRA_INCOMES_STORAGE_KEY = 'noteyou_extra_incomes_v1';
 const MONTHLY_BUDGET_STORAGE_KEY = 'noteyou_monthly_budgets_v1';
 
 @Injectable({
@@ -20,6 +21,9 @@ export class ExpenseService {
 
   private expensesSubject = new BehaviorSubject<ExpenseItem[]>([]);
   public expenses$: Observable<ExpenseItem[]> = this.expensesSubject.asObservable();
+
+  private extraIncomesSubject = new BehaviorSubject<ExtraIncomeItem[]>([]);
+  public extraIncomes$: Observable<ExtraIncomeItem[]> = this.extraIncomesSubject.asObservable();
 
   private budgetsSubject = new BehaviorSubject<MonthlyBudget[]>([]);
   public budgets$: Observable<MonthlyBudget[]> = this.budgetsSubject.asObservable();
@@ -61,6 +65,7 @@ export class ExpenseService {
       this.categoriesSubject.next([]);
       this.subcategoriesSubject.next([]);
       this.expensesSubject.next([]);
+      this.extraIncomesSubject.next([]);
       this.budgetsSubject.next([]);
       return;
     }
@@ -78,6 +83,10 @@ export class ExpenseService {
     const allExpenses = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
     const userExpenses = allExpenses.filter(e => e.userId === this.currentUserId);
     this.expensesSubject.next(userExpenses);
+
+    const allExtra = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+    const userExtra = allExtra.filter(i => i.userId === this.currentUserId);
+    this.extraIncomesSubject.next(userExtra);
 
     const allBudgets = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
     const userBudgets = allBudgets.filter(b => b.userId === this.currentUserId);
@@ -270,7 +279,7 @@ export class ExpenseService {
     this.refreshData();
   }
 
-  // --- CRUD Gastos Individuales ---
+  // --- CRUD Gastos Individuales (Con soporte para Gastos Recurrentes) ---
 
   public addExpense(item: Omit<ExpenseItem, 'id' | 'createdAt' | 'userId'>): ExpenseItem | null {
     if (!this.currentUserId) return null;
@@ -305,27 +314,100 @@ export class ExpenseService {
     this.refreshData();
   }
 
-  // --- Ingreso Mensual / Presupuesto ---
+  // --- CRUD Bonus o Ingresos Extra ---
+
+  public addExtraIncome(item: Omit<ExtraIncomeItem, 'id' | 'createdAt' | 'userId'>): ExtraIncomeItem | null {
+    if (!this.currentUserId) return null;
+    const newIncome: ExtraIncomeItem = {
+      ...item,
+      id: 'extra_inc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      userId: this.currentUserId,
+      createdAt: new Date().toISOString()
+    };
+
+    const all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+    all.unshift(newIncome);
+    this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
+    this.refreshData();
+    return newIncome;
+  }
+
+  public updateExtraIncome(id: string, changes: Partial<Omit<ExtraIncomeItem, 'id' | 'createdAt' | 'userId'>>): void {
+    const all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+    const index = all.findIndex(i => i.id === id && i.userId === this.currentUserId);
+    if (index !== -1) {
+      all[index] = { ...all[index], ...changes };
+      this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
+      this.refreshData();
+    }
+  }
+
+  public deleteExtraIncome(id: string): void {
+    let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+    all = all.filter(i => !(i.id === id && i.userId === this.currentUserId));
+    this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
+    this.refreshData();
+  }
+
+  public getExtraIncomesForMonth(monthKey: string): ExtraIncomeItem[] {
+    const items = this.extraIncomesSubject.getValue();
+    return items
+      .filter(i => i.date && i.date.startsWith(monthKey))
+      .sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  public getTotalExtraIncomeForMonth(monthKey: string): number {
+    const items = this.getExtraIncomesForMonth(monthKey);
+    return items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  }
+
+  // --- Ingreso Mensual Base (Persistente durante todos los meses) ---
+
+  private getBaseIncomeStorageKey(): string {
+    return 'noteyou_base_monthly_income_' + (this.currentUserId || 'default');
+  }
+
+  public getBaseMonthlyIncome(): number {
+    if (!this.currentUserId) return 0;
+    const val = localStorage.getItem(this.getBaseIncomeStorageKey());
+    return val ? Number(val) || 0 : 0;
+  }
+
+  public setBaseMonthlyIncome(income: number): void {
+    if (!this.currentUserId) return;
+    localStorage.setItem(this.getBaseIncomeStorageKey(), String(Number(income) || 0));
+    this.refreshData();
+  }
 
   public getMonthlyIncome(monthKey: string): number {
     if (!this.currentUserId) return 0;
     const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
     const budget = all.find(b => b.userId === this.currentUserId && b.monthKey === monthKey);
-    return budget ? budget.monthlyIncome : 0;
+    if (budget && budget.monthlyIncome !== undefined && budget.monthlyIncome !== null && budget.monthlyIncome > 0) {
+      return budget.monthlyIncome;
+    }
+    // Si no tiene registro exclusivo para ese mes, hereda el ingreso mensual base persistente
+    return this.getBaseMonthlyIncome();
   }
 
-  public setMonthlyIncome(monthKey: string, income: number): void {
+  public setMonthlyIncome(monthKey: string, income: number, updateBaseIncomeForAllMonths: boolean = true): void {
     if (!this.currentUserId) return;
+    const num = Number(income) || 0;
+
+    if (updateBaseIncomeForAllMonths) {
+      this.setBaseMonthlyIncome(num);
+    }
+
     const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
     const index = all.findIndex(b => b.userId === this.currentUserId && b.monthKey === monthKey);
 
     if (index !== -1) {
-      all[index].monthlyIncome = Number(income) || 0;
+      all[index].monthlyIncome = num;
     } else {
       all.push({
         userId: this.currentUserId,
         monthKey,
-        monthlyIncome: Number(income) || 0
+        monthlyIncome: num
       });
     }
 
@@ -333,11 +415,37 @@ export class ExpenseService {
     this.refreshData();
   }
 
-  // --- Helpers de Sumatorias y Estadísticas ---
+  public getTotalIncomeForMonth(monthKey: string): number {
+    return this.getMonthlyIncome(monthKey) + this.getTotalExtraIncomeForMonth(monthKey);
+  }
+
+  // --- Helpers de Sumatorias y Estadísticas (Incluyendo Gastos Recurrentes) ---
 
   public getExpensesForMonth(monthKey: string): ExpenseItem[] {
     const expenses = this.expensesSubject.getValue();
-    return expenses.filter(e => e.date && e.date.startsWith(monthKey));
+    const result: ExpenseItem[] = [];
+    const seenIds = new Set<string>();
+
+    for (const exp of expenses) {
+      if (!exp.date) continue;
+      const expMonth = exp.date.substring(0, 7);
+
+      if (expMonth === monthKey) {
+        result.push(exp);
+        seenIds.add(exp.id);
+      } else if (exp.isRecurring && expMonth <= monthKey && !seenIds.has(exp.id)) {
+        // Gasto recurrente: proyectar para el mes actual manteniendo el día de cobro
+        const day = exp.date.substring(8, 10) || '01';
+        const projectedDate = `${monthKey}-${day}`;
+        result.push({
+          ...exp,
+          date: projectedDate
+        });
+        seenIds.add(exp.id);
+      }
+    }
+
+    return result.sort((a, b) => b.date.localeCompare(a.date));
   }
 
   public getTotalExpensesForMonth(monthKey: string): number {
