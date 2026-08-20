@@ -257,6 +257,48 @@
   }
 }
 
+.btn-gradient-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    color: #ffffff !important;
+  }
+}
+
+.btn-outline-emerald {
+  color: #059669 !important;
+  background-color: #f0fdf4 !important;
+  border: 1px solid #a7f3d0 !important;
+
+  &:hover {
+    background-color: #dcfce7 !important;
+    color: #047857 !important;
+    border-color: #6ee7b7 !important;
+  }
+}
+
+.badge-emerald-light {
+  background-color: #dcfce7 !important;
+  color: #059669 !important;
+}
+
+.badge-primary-light {
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.extra-income-row {
+  transition: all 0.15s ease;
+  &:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+  }
+}
+
 .btn-pill-tab {
   border: 1px solid #e2e8f0;
   background-color: #f8fafc;

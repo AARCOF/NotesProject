@@ -42,9 +42,7 @@
             <h4 class="font-weight-bold text-slate-900 mb-0 font-size-17">Gestión de Gastos</h4>
             <p class="text-slate-400 font-size-12 mb-0">Control & Presupuesto</p>
           </div>
-        </div>
-
-        <!-- Selector de Mes -->
+              <!-- Selector de Mes -->
         <div class="month-selector-pill d-flex align-items-center justify-content-between bg-slate-50 border border-slate-200 rounded-xl p-1 mb-3">
           <button class="btn btn-icon-nav text-slate-600 hover-blue" (click)="prevMonth()" title="Mes anterior">
             <i class="typcn typcn-chevron-left font-size-16"></i>
@@ -59,20 +57,27 @@
           </button>
         </div>
 
-        <!-- Botón Principal Registrar Gasto -->
-        <button class="btn btn-gradient-blue text-white btn-block rounded-xl font-weight-bold py-2-5 font-size-14 d-flex justify-content-center align-items-center shadow-sm hover-lift mb-3"
-                (click)="openAddExpenseModal()">
-          <i class="typcn typcn-plus font-size-18 mr-2"></i> Registrar Gasto
-        </button>
+        <!-- Botones Principales: Registrar Gasto & Bono Extra -->
+        <div class="d-flex flex-column gap-2 mb-3">
+          <button class="btn btn-gradient-blue text-white btn-block rounded-xl font-weight-bold py-2-5 font-size-14 d-flex justify-content-center align-items-center shadow-sm hover-lift"
+                  (click)="openAddExpenseModal()">
+            <i class="typcn typcn-plus font-size-18 mr-2"></i> Registrar Gasto
+          </button>
+          
+          <button class="btn btn-outline-emerald btn-block rounded-xl font-weight-bold py-2 font-size-13 d-flex justify-content-center align-items-center shadow-xs"
+                  (click)="openAddExtraIncomeModal()">
+            <i class="typcn typcn-gift font-size-17 mr-1-5"></i> + Bono / Ingreso Extra
+          </button>
+        </div>
 
         <!-- 1. VISTA WEB / ESCRITORIO: CARDS KPIS EN VERTICAL -->
         <div class="d-none d-lg-flex flex-column gap-2 mb-3">
           
-          <!-- KPI 1: Ingreso Mensual -->
+          <!-- KPI 1: Sueldo Base Mensual (Persistente) -->
           <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
             <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Ingreso Mensual</span>
-              <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs" (click)="openIncomeModal()" title="Editar Ingreso">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Sueldo Base Fijo</span>
+              <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs" (click)="openIncomeModal()" title="Editar Sueldo Base">
                 <i class="typcn typcn-edit font-size-13"></i>
               </button>
             </div>
@@ -80,14 +85,30 @@
               {{ currencySymbol }} {{ monthlyIncome | number:'1.2-2' }}
             </h4>
             <small class="text-slate-400 font-size-11" *ngIf="monthlyIncome > 0">
-              <i class="typcn typcn-tick text-emerald mr-1 font-size-12"></i> Sueldo base
+              <i class="typcn typcn-arrow-sync text-blue mr-1 font-size-12"></i> Fijo todos los meses
             </small>
             <small class="text-amber-600 font-size-11 cursor-pointer font-weight-medium" *ngIf="monthlyIncome === 0" (click)="openIncomeModal()">
-              <i class="typcn typcn-warning mr-1 font-size-12"></i> Ingresa tu sueldo
+              <i class="typcn typcn-warning mr-1 font-size-12"></i> Ingresa tu sueldo base
             </small>
           </div>
 
-          <!-- KPI 2: Total de Gastos -->
+          <!-- KPI 2: Bonos e Ingresos Extra del Mes -->
+          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-emerald-50-30">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Bonos / Extras</span>
+              <button class="btn btn-icon-xs text-emerald bg-white rounded-circle shadow-2xs" (click)="openAddExtraIncomeModal()" title="Añadir Bono o Ingreso Extra">
+                <i class="typcn typcn-plus font-size-13"></i>
+              </button>
+            </div>
+            <h4 class="font-weight-bold text-emerald-600 mb-0 font-size-18">
+              + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
+            </h4>
+            <small class="text-slate-500 font-size-11 font-weight-medium">
+              {{ extraIncomes.length }} bonos en {{ formattedMonthLabel }}
+            </small>
+          </div>
+
+          <!-- KPI 3: Total de Gastos -->
           <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
             <div class="d-flex align-items-center justify-content-between mb-1">
               <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Gastos Totales</span>
@@ -99,11 +120,11 @@
               {{ currencySymbol }} {{ totalExpenses | number:'1.2-2' }}
             </h4>
             <small class="text-slate-400 font-size-11">
-              {{ expenses.length }} gastos registrados
+              {{ expenses.length }} gastos en el mes
             </small>
           </div>
 
-          <!-- KPI 3: Balance / Ahorro Disponible -->
+          <!-- KPI 4: Balance / Ahorro Disponible -->
           <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100" [ngClass]="balance >= 0 ? 'bg-emerald-50-30' : 'bg-rose-50-30'">
             <div class="d-flex align-items-center justify-content-between mb-1">
               <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Balance Disponible</span>
@@ -120,7 +141,7 @@
             </small>
           </div>
 
-          <!-- KPI 4: % Presupuesto Utilizado -->
+          <!-- KPI 5: % Presupuesto Utilizado -->
           <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
             <div class="d-flex align-items-center justify-content-between mb-1">
               <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Uso de Ingresos</span>
@@ -135,7 +156,7 @@
                    [ngClass]="budgetUsedPercent > 90 ? 'bg-rose-500' : (budgetUsedPercent > 70 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
             </div>
             <small class="text-slate-400 font-size-11">
-              {{ monthlyIncome > 0 ? (100 - budgetUsedPercent) + '% disponible' : 'Sin presupuesto' }}
+              {{ totalIncome > 0 ? (100 - budgetUsedPercent) + '% disponible' : 'Sin ingresos' }}
             </small>
           </div>
 
@@ -144,12 +165,12 @@
         <!-- 2. VISTA MÓVIL / APK: CARDS KPIS EN CUADRADOS (GRID 2x2 HORIZONTAL) -->
         <div class="d-flex d-lg-none row kpis-grid-container mb-3">
           
-          <!-- KPI 1: Ingreso Mensual -->
+          <!-- KPI 1: Sueldo Base -->
           <div class="col-6 mb-2">
             <div class="kpi-square-card rounded-xl p-2-5 border border-slate-100 bg-slate-50-50 h-100 d-flex flex-column justify-content-between">
               <div class="d-flex align-items-center justify-content-between mb-1">
-                <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase text-truncate" title="Ingreso Mensual">Ingreso</span>
-                <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs p-0 flex-shrink-0" (click)="openIncomeModal()" title="Editar Ingreso">
+                <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase text-truncate" title="Sueldo Base Fijo">Sueldo</span>
+                <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs p-0 flex-shrink-0" (click)="openIncomeModal()" title="Editar Sueldo Base">
                   <i class="typcn typcn-edit"></i>
                 </button>
               </div>
@@ -160,7 +181,7 @@
               </div>
               <div>
                 <small class="text-slate-400 font-size-10 d-block text-truncate" *ngIf="monthlyIncome > 0">
-                  <i class="typcn typcn-tick text-emerald mr-0-5"></i> Sueldo base
+                  <i class="typcn typcn-arrow-sync text-blue mr-0-5"></i> Fijo mensual
                 </small>
                 <small class="text-amber-600 font-size-10 cursor-pointer font-weight-medium d-block text-truncate" *ngIf="monthlyIncome === 0" (click)="openIncomeModal()">
                   <i class="typcn typcn-warning mr-0-5"></i> Sin sueldo
@@ -169,7 +190,29 @@
             </div>
           </div>
 
-          <!-- KPI 2: Total de Gastos -->
+          <!-- KPI 2: Bonos / Extra -->
+          <div class="col-6 mb-2">
+            <div class="kpi-square-card rounded-xl p-2-5 border border-slate-100 bg-emerald-50-30 h-100 d-flex flex-column justify-content-between">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase text-truncate" title="Bonos e Ingresos Extra">Bonos</span>
+                <button class="btn btn-icon-xs text-emerald bg-white rounded-circle shadow-2xs p-0 flex-shrink-0" (click)="openAddExtraIncomeModal()" title="Añadir Bono Extra">
+                  <i class="typcn typcn-plus"></i>
+                </button>
+              </div>
+              <div class="my-1">
+                <h5 class="font-weight-bold text-emerald-600 mb-0 font-size-15 text-truncate">
+                  + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
+                </h5>
+              </div>
+              <div>
+                <small class="text-slate-500 font-size-10 d-block text-truncate">
+                  {{ extraIncomes.length }} bonos
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI 3: Total de Gastos -->
           <div class="col-6 mb-2">
             <div class="kpi-square-card rounded-xl p-2-5 border border-slate-100 bg-slate-50-50 h-100 d-flex flex-column justify-content-between">
               <div class="d-flex align-items-center justify-content-between mb-1">
@@ -191,7 +234,7 @@
             </div>
           </div>
 
-          <!-- KPI 3: Balance / Ahorro Disponible -->
+          <!-- KPI 4: Balance / Ahorro Disponible -->
           <div class="col-6 mb-2">
             <div class="kpi-square-card rounded-xl p-2-5 border border-slate-100 h-100 d-flex flex-column justify-content-between" 
                  [ngClass]="balance >= 0 ? 'bg-emerald-50-30' : 'bg-rose-50-30'">
@@ -215,29 +258,37 @@
             </div>
           </div>
 
-          <!-- KPI 4: % Presupuesto Utilizado -->
-          <div class="col-6 mb-2">
-            <div class="kpi-square-card rounded-xl p-2-5 border border-slate-100 bg-slate-50-50 h-100 d-flex flex-column justify-content-between">
-              <div class="d-flex align-items-center justify-content-between mb-1">
-                <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase text-truncate" title="Uso de Ingresos">Uso</span>
-                <span class="badge badge-pill font-weight-bold px-1-5 py-0-5 font-size-10"
-                      [ngClass]="budgetUsedPercent > 90 ? 'badge-rose-light text-rose' : (budgetUsedPercent > 70 ? 'badge-amber-light text-amber' : 'badge-emerald-light text-emerald')">
-                  {{ budgetUsedPercent }}%
-                </span>
+        </div>
+
+        <!-- Lista de Bonos e Ingresos Extra del Mes -->
+        <div class="extra-incomes-section mb-3 pt-2 border-top" *ngIf="extraIncomes.length > 0">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <small class="text-slate-600 font-weight-bold text-uppercase font-size-11 letter-spacing-05">
+              <i class="typcn typcn-gift text-emerald mr-1"></i> Bonos del Mes
+            </small>
+            <span class="badge badge-emerald-light text-emerald font-weight-bold font-size-10 px-2 py-0-5">
+              + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
+            </span>
+          </div>
+
+          <div class="d-flex flex-column gap-1-5">
+            <div class="extra-income-row bg-slate-50 border rounded-lg p-2 d-flex align-items-center justify-content-between font-size-12"
+                 *ngFor="let item of extraIncomes">
+              <div class="text-truncate pr-1">
+                <span class="font-weight-semibold text-slate-800 d-block text-truncate">{{ item.title }}</span>
+                <small class="text-slate-400 font-size-10">{{ item.date }}</small>
               </div>
-              <div class="progress my-1" style="height: 5px; border-radius: 3px; background-color: #e2e8f0;">
-                <div class="progress-bar rounded" role="progressbar" 
-                     [style.width.%]="budgetUsedPercent"
-                     [ngClass]="budgetUsedPercent > 90 ? 'bg-rose-500' : (budgetUsedPercent > 70 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
-              </div>
-              <div>
-                <small class="text-slate-400 font-size-10 d-block text-truncate">
-                  {{ monthlyIncome > 0 ? (100 - budgetUsedPercent) + '% libre' : 'Sin pres.' }}
-                </small>
+              <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                <span class="font-weight-bold text-emerald-600 font-size-12 mr-1">+{{ currencySymbol }} {{ item.amount | number:'1.2-2' }}</span>
+                <button class="btn btn-action-icon-sm btn-action-edit" (click)="openEditExtraIncomeModal(item, $event)" title="Editar Bono">
+                  <i class="typcn typcn-edit font-size-13"></i>
+                </button>
+                <button class="btn btn-action-icon-sm btn-action-delete" (click)="deleteExtraIncome(item, $event)" title="Eliminar Bono">
+                  <i class="typcn typcn-trash font-size-13"></i>
+                </button>
               </div>
             </div>
           </div>
-
         </div>
 
         <!-- Botones Secundarios -->
@@ -263,9 +314,9 @@
       <!-- Barra Superior de Pestañas & Buscador (Solo Desktop) -->
       <div class="view-switcher-bar bg-white rounded-2xl p-2-5 shadow-sm mb-4 border border-slate-100 d-none d-lg-flex align-items-center justify-content-between gap-3">
         
-        <!-- Pestañas de Vista (Registro de Gastos Predeterminado) -->
+        <!-- Pestañas de Vista -->
         <div class="nav-pills-custom d-flex flex-wrap gap-1">
-          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
+          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'gestion' || activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
             <i class="typcn typcn-th-list mr-2 font-size-18"></i> Registro de Gastos ({{ getAllMonthExpenses().length }})
           </button>
 
@@ -577,7 +628,7 @@
       </div>
 
       <!-- VISTA 3: REGISTRO / TABLA DE MOVIMIENTOS -->
-      <div *ngIf="activeTab === 'movimientos'">
+      <div *ngIf="activeTab === 'movimientos' || activeTab === 'gestion'">
         
         <div class="card border-0 rounded-2xl shadow-sm bg-white p-4">
           <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
@@ -619,7 +670,12 @@
                     <i class="typcn typcn-calendar text-slate-400 mr-1 font-size-14"></i> {{ item.date }}
                   </td>
                   <td class="px-3 py-3">
-                    <span class="font-weight-semibold text-slate-800 font-size-14 d-block">{{ item.title }}</span>
+                    <div class="d-flex align-items-center flex-wrap gap-1">
+                      <span class="font-weight-semibold text-slate-800 font-size-14">{{ item.title }}</span>
+                      <span class="badge badge-pill badge-primary-light text-blue font-size-10 font-weight-bold ml-1" *ngIf="item.isRecurring" title="Gasto recurrente mensual">
+                        <i class="typcn typcn-arrow-sync mr-0-5"></i> Recurrente
+                      </span>
+                    </div>
                     <small class="text-slate-400 font-size-11" *ngIf="item.notes">{{ item.notes }}</small>
                   </td>
                   <td class="px-3 py-3">
@@ -752,6 +808,16 @@
           </div>
         </div>
 
+        <!-- Opción Gasto Recurrente Mensual -->
+        <div class="form-group mb-3">
+          <div class="custom-control custom-checkbox bg-slate-50 border border-slate-200 rounded-xl p-2-5 pl-4">
+            <input type="checkbox" class="custom-control-input" id="isRecurringCheck" [(ngModel)]="expenseForm.isRecurring" name="isRecurring">
+            <label class="custom-control-label font-weight-bold text-slate-800 cursor-pointer font-size-13 d-flex align-items-center" for="isRecurringCheck">
+              <i class="typcn typcn-arrow-sync text-blue mr-1-5 font-size-16"></i> Gasto Recurrente Mensual (se aplicará cada mes automáticamente)
+            </label>
+          </div>
+        </div>
+
         <div class="form-group mb-0">
           <label class="font-weight-bold text-slate-700 font-size-13">Notas / Detalles adicionales</label>
           <textarea class="form-control input-custom" rows="2" placeholder="Opcional..." [(ngModel)]="expenseForm.notes"></textarea>
@@ -824,7 +890,7 @@
         <div>
           <button type="button" class="btn btn-outline-danger px-3 py-1-5 rounded-lg font-weight-bold font-size-13 d-inline-flex align-items-center"
                   *ngIf="categoryToEdit"
-                  (click)="deleteCategoryFromModal()">
+                  (click)="deleteCategory(categoryToEdit)">
             <i class="typcn typcn-trash mr-1 font-size-16"></i> Eliminar Categoría
           </button>
         </div>
@@ -886,7 +952,7 @@
   </div>
 </div>
 
-<!-- Modal: Modificar Ingreso Mensual -->
+<!-- Modal: Modificar Sueldo / Ingreso Mensual Base -->
 <div class="modal-backdrop-custom" *ngIf="isIncomeModalOpen" (click)="isIncomeModalOpen = false"></div>
 <div class="modal-custom" *ngIf="isIncomeModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
@@ -894,8 +960,8 @@
       
       <div class="modal-header-custom bg-gradient-blue text-white p-3 px-4">
         <div class="d-flex align-items-center">
-          <i class="typcn typcn-calculator font-size-22 mr-2"></i>
-          <h5 class="modal-title font-weight-bold mb-0 font-size-17">Ingreso Mensual para {{ formattedMonthLabel }}</h5>
+          <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
+          <h5 class="modal-title font-weight-bold mb-0 font-size-17">Sueldo / Ingreso Mensual Base</h5>
         </div>
         <button type="button" class="btn-close-custom text-white" (click)="isIncomeModalOpen = false">
           <i class="typcn typcn-times font-size-20"></i>
@@ -903,22 +969,88 @@
       </div>
 
       <div class="modal-body p-4">
-        <p class="text-slate-600 font-size-14 mb-3">
-          Ingresa tu sueldo o ingresos estimados para calcular automáticamente tu ahorro restante y el porcentaje de presupuesto consumido en <strong>{{ formattedMonthLabel }}</strong>.
+        <p class="text-slate-600 font-size-13 mb-3">
+          Configura tu sueldo o ingreso mensual fijo. Se mantendrá automáticamente para todos los meses hasta que decidas modificarlo.
         </p>
 
-        <div class="form-group mb-0">
-          <label class="font-weight-bold text-slate-700 font-size-13">Monto de Ingreso ({{ currencySymbol }}) *</label>
+        <div class="form-group mb-2">
+          <label class="font-weight-bold text-slate-700 font-size-13">Monto de Sueldo Fijo ({{ currencySymbol }}) *</label>
           <input type="number" step="0.01" class="form-control input-custom font-size-18 font-weight-bold text-slate-900" 
                  placeholder="0.00" 
                  [(ngModel)]="incomeFormAmount">
+        </div>
+
+        <div class="custom-control custom-checkbox mt-3 bg-slate-50 border rounded-xl p-2-5 pl-4">
+          <input type="checkbox" class="custom-control-input" id="incomeApplyToAllMonthsCheck" [(ngModel)]="incomeApplyToAllMonths" name="incomeApplyToAllMonths">
+          <label class="custom-control-label font-weight-bold text-slate-800 cursor-pointer font-size-12" for="incomeApplyToAllMonthsCheck">
+            <i class="typcn typcn-arrow-sync text-blue mr-1"></i> Aplicar como sueldo base fijo para todos los meses
+          </label>
         </div>
       </div>
 
       <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
         <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isIncomeModalOpen = false">Cancelar</button>
         <button type="button" class="btn btn-gradient-blue text-white px-4 rounded-lg font-weight-bold" (click)="saveIncome()">
-          Guardar Ingreso
+          Guardar Sueldo
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Registrar / Editar Bono o Ingreso Extra -->
+<div class="modal-backdrop-custom" *ngIf="isExtraIncomeModalOpen" (click)="isExtraIncomeModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isExtraIncomeModalOpen" tabindex="-1" role="dialog">
+  <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom bg-white">
+      
+      <div class="modal-header-custom bg-gradient-emerald text-white p-3 px-4">
+        <div class="d-flex align-items-center">
+          <i class="typcn typcn-gift font-size-22 mr-2"></i>
+          <h5 class="modal-title font-weight-bold mb-0 font-size-17">
+            {{ extraIncomeToEdit ? 'Editar Bono / Ingreso Extra' : 'Registrar Bono o Ingreso Extra' }}
+          </h5>
+        </div>
+        <button type="button" class="btn-close-custom text-white" (click)="isExtraIncomeModalOpen = false">
+          <i class="typcn typcn-times font-size-20"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4">
+        <p class="text-slate-600 font-size-13 mb-3">
+          Registra bonos por desempeño, gratificaciones, ventas adicionales o trabajos freelance para <strong>{{ formattedMonthLabel }}</strong>.
+        </p>
+
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">Concepto / Motivo *</label>
+          <input type="text" class="form-control input-custom" placeholder="Ej. Bono de productividad, Aguinaldo, Freelance..." [(ngModel)]="extraIncomeForm.title">
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-sm-6 form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-13">Monto Extra ({{ currencySymbol }}) *</label>
+            <input type="number" step="0.01" class="form-control input-custom font-size-16 font-weight-bold text-emerald-600" placeholder="0.00" [(ngModel)]="extraIncomeForm.amount">
+          </div>
+
+          <div class="col-12 col-sm-6 form-group mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-13">Fecha de Cobro *</label>
+            <input type="date" class="form-control input-custom" [(ngModel)]="extraIncomeForm.date">
+          </div>
+        </div>
+
+        <div class="form-group mb-0">
+          <label class="font-weight-bold text-slate-700 font-size-13">Notas / Detalles adicionales</label>
+          <textarea class="form-control input-custom" rows="2" placeholder="Opcional..." [(ngModel)]="extraIncomeForm.notes"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
+        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isExtraIncomeModalOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-gradient-emerald text-white px-4 rounded-lg font-weight-bold" 
+                [disabled]="!extraIncomeForm.title || !extraIncomeForm.amount"
+                (click)="saveExtraIncome()">
+          {{ extraIncomeToEdit ? 'Actualizar Ingreso' : 'Guardar Ingreso Extra' }}
         </button>
       </div>
 

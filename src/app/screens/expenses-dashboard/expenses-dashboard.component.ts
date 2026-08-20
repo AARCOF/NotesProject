@@ -3,7 +3,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 import { ExpenseService } from '../../services/expense.service';
-import { ExpenseCategory, ExpenseSubcategory, ExpenseItem } from '../../models/expense.model';
+import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem } from '../../models/expense.model';
 
 @Component({
   selector: 'app-expenses-dashboard',
@@ -14,13 +14,16 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   categories: ExpenseCategory[] = [];
   subcategories: ExpenseSubcategory[] = [];
   expenses: ExpenseItem[] = [];
+  extraIncomes: ExtraIncomeItem[] = [];
   
   selectedMonthKey: string = ''; // YYYY-MM
   formattedMonthLabel: string = '';
   currencySymbol: string = 'S/.'; // O '$'
 
-  // Presupuesto y KPIs
-  monthlyIncome: number = 0;
+  // Presupuesto, Ingresos y KPIs
+  monthlyIncome: number = 0; // Sueldo o Ingreso base mensual
+  totalExtraIncome: number = 0; // Total de bonos e ingresos extra
+  totalIncome: number = 0; // Ingreso Total = Base + Extra
   totalExpenses: number = 0;
   balance: number = 0;
   budgetUsedPercent: number = 0;
@@ -31,8 +34,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Filtro de búsqueda rápida
   searchTerm: string = '';
 
-  // Vista Activa (Pestañas) - Predeterminada: Registro de Gastos
-  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'movimientos';
+  // Vista Activa (Pestañas) - Predeterminada: 'gestion'
+  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'gestion';
 
   setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion'): void {
     this.activeTab = tab;
@@ -94,7 +97,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   public subcategoryChartType: ChartType = 'bar';
 
   // --- Modales ---
-  // Modal Gasto Individual
+  // Modal Gasto Individual (con soporte de Gasto Recurrente)
   isExpenseModalOpen: boolean = false;
   expenseToEdit: ExpenseItem | null = null;
   expenseForm = {
@@ -103,7 +106,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     categoryId: '',
     subcategoryId: '',
     date: '',
-    notes: ''
+    notes: '',
+    isRecurring: false
   };
 
   // Modal Categoría
@@ -123,9 +127,20 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     name: ''
   };
 
-  // Modal Ingreso Mensual
+  // Modal Ingreso Mensual Base
   isIncomeModalOpen: boolean = false;
   incomeFormAmount: number | null = null;
+  incomeApplyToAllMonths: boolean = true;
+
+  // Modal Bonus / Ingreso Extra
+  isExtraIncomeModalOpen: boolean = false;
+  extraIncomeToEdit: ExtraIncomeItem | null = null;
+  extraIncomeForm = {
+    title: '',
+    amount: null as number | null,
+    date: '',
+    notes: ''
+  };
 
   // Iconos y Colores disponibles
   availableIcons = [
@@ -165,11 +180,13 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         this.expenseService.categories$,
         this.expenseService.subcategories$,
         this.expenseService.expenses$,
+        this.expenseService.extraIncomes$,
         this.expenseService.budgets$
-      ]).subscribe(([cats, subs, exps]) => {
+      ]).subscribe(([cats, subs, exps, extraInc]) => {
         this.categories = cats;
         this.subcategories = subs;
         this.expenses = exps;
+        this.extraIncomes = extraInc;
         this.calculateMetricsAndCharts();
       })
     );
@@ -235,11 +252,13 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   calculateMetricsAndCharts(): void {
     this.monthlyIncome = this.expenseService.getMonthlyIncome(this.selectedMonthKey);
+    this.totalExtraIncome = this.expenseService.getTotalExtraIncomeForMonth(this.selectedMonthKey);
+    this.totalIncome = this.monthlyIncome + this.totalExtraIncome;
     this.totalExpenses = this.expenseService.getTotalExpensesForMonth(this.selectedMonthKey);
-    this.balance = this.monthlyIncome - this.totalExpenses;
+    this.balance = this.totalIncome - this.totalExpenses;
 
-    this.budgetUsedPercent = this.monthlyIncome > 0 
-      ? Math.min(100, Math.round((this.totalExpenses / this.monthlyIncome) * 100))
+    this.budgetUsedPercent = this.totalIncome > 0 
+      ? Math.min(100, Math.round((this.totalExpenses / this.totalIncome) * 100))
       : 0;
 
     this.updateCharts();
@@ -256,41 +275,35 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       if (total > 0) {
         catLabels.push(cat.name);
         catData.push(total);
-        catColors.push(cat.color);
+        catColors.push(cat.color || '#3b82f6');
       }
     });
 
-    this.categoryChartLabels = catLabels.length > 0 ? catLabels : ['Sin Gastos'];
-    this.categoryChartData = catData.length > 0 ? catData : [0];
-    this.categoryChartColors = [{ backgroundColor: catColors.length > 0 ? catColors : ['#e2e8f0'] }];
+    this.categoryChartLabels = catLabels;
+    this.categoryChartData = catData;
+    this.categoryChartColors = [{ backgroundColor: catColors }];
 
-    // 2. Gráfico de Subcategorías Top (Bar)
-    const subTotals: { name: string; total: number; color: string }[] = [];
+    // 2. Gráfico de Subcategorías (Bar Chart Top)
+    const subTotals: { name: string; amount: number }[] = [];
     this.subcategories.forEach(sub => {
       const total = this.expenseService.getSubcategoryTotal(sub.id, this.selectedMonthKey);
       if (total > 0) {
-        const cat = this.categories.find(c => c.id === sub.categoryId);
-        subTotals.push({
-          name: sub.name,
-          total,
-          color: cat ? cat.color : '#3b82f6'
-        });
+        subTotals.push({ name: sub.name, amount: total });
       }
     });
 
-    // Ordenar de mayor a menor y tomar top 7
-    subTotals.sort((a, b) => b.total - a.total);
-    const topSubs = subTotals.slice(0, 7);
+    subTotals.sort((a, b) => b.amount - a.amount);
+    const topSubs = subTotals.slice(0, 6);
 
     this.subcategoryChartLabels = topSubs.map(s => s.name);
     this.subcategoryChartData = [{
-      data: topSubs.map(s => s.total),
+      data: topSubs.map(s => s.amount),
       label: 'Gasto',
-      backgroundColor: topSubs.map(s => s.color)
+      backgroundColor: '#3b82f6'
     }];
   }
 
-  // --- Helpers de Renderizado de Vista ---
+  // --- Getters y Filtros para la Plantilla ---
 
   getCategorySubcategories(categoryId: string): ExpenseSubcategory[] {
     return this.subcategories.filter(s => s.categoryId === categoryId);
@@ -301,7 +314,10 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     let items = monthExpenses.filter(e => e.subcategoryId === subcategoryId);
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      items = items.filter(e => e.title.toLowerCase().includes(term) || (e.notes && e.notes.toLowerCase().includes(term)));
+      items = items.filter(e => 
+        e.title.toLowerCase().includes(term) || 
+        (e.notes && e.notes.toLowerCase().includes(term))
+      );
     }
     return items;
   }
@@ -320,6 +336,29 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     return Math.round((catTotal / this.totalExpenses) * 100);
   }
 
+  getAllMonthExpenses(): ExpenseItem[] {
+    const monthExpenses = this.expenseService.getExpensesForMonth(this.selectedMonthKey);
+    if (!this.searchTerm.trim()) return monthExpenses;
+    const term = this.searchTerm.toLowerCase();
+    return monthExpenses.filter(e => 
+      e.title.toLowerCase().includes(term) || 
+      (e.notes && e.notes.toLowerCase().includes(term))
+    );
+  }
+
+  getMonthExtraIncomes(): ExtraIncomeItem[] {
+    return this.expenseService.getExtraIncomesForMonth(this.selectedMonthKey);
+  }
+
+  getCategoryById(categoryId: string): ExpenseCategory | undefined {
+    return this.categories.find(c => c.id === categoryId);
+  }
+
+  getSubcategoryById(subcategoryId: string): ExpenseSubcategory | undefined {
+    return this.subcategories.find(s => s.id === subcategoryId);
+  }
+
+  // Acordeón
   toggleSubcategory(subId: string): void {
     this.expandedSubcategories[subId] = !this.expandedSubcategories[subId];
   }
@@ -328,115 +367,47 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     return !!this.expandedSubcategories[subId];
   }
 
-  getAllMonthExpenses(): ExpenseItem[] {
-    const monthExpenses = this.expenseService.getExpensesForMonth(this.selectedMonthKey);
-    if (!this.searchTerm.trim()) {
-      return monthExpenses;
-    }
-    const term = this.searchTerm.toLowerCase();
-    return monthExpenses.filter(e => 
-      e.title.toLowerCase().includes(term) || 
-      (e.notes && e.notes.toLowerCase().includes(term))
-    );
+  expandAllSubcategories(): void {
+    this.subcategories.forEach(s => {
+      this.expandedSubcategories[s.id] = true;
+    });
   }
 
-  // --- Paginación para Histórico de Gastos ---
-  historyPage: number = 1;
-  historyPageSize: number = 6;
-
-  getPaginatedMonthExpenses(): ExpenseItem[] {
-    const all = this.getAllMonthExpenses();
-    const totalPages = this.getHistoryTotalPages();
-    if (this.historyPage > totalPages) {
-      this.historyPage = totalPages;
-    }
-    const page = Math.max(1, this.historyPage || 1);
-    const start = (page - 1) * this.historyPageSize;
-    return all.slice(start, start + this.historyPageSize);
+  collapseAllSubcategories(): void {
+    this.expandedSubcategories = {};
   }
 
-  getHistoryTotalPages(): number {
-    const total = this.getAllMonthExpenses().length;
-    return Math.max(1, Math.ceil(total / this.historyPageSize));
-  }
+  // --- Métodos de Modales CRUD ---
 
-  getHistoryRangeText(): string {
-    const total = this.getAllMonthExpenses().length;
-    if (total === 0) return '0 de 0';
-    const totalPages = this.getHistoryTotalPages();
-    const page = Math.min(Math.max(1, this.historyPage || 1), totalPages);
-    const start = (page - 1) * this.historyPageSize + 1;
-    const end = Math.min(page * this.historyPageSize, total);
-    return `${start}-${end} de ${total}`;
-  }
-
-  getHistoryPageNumbers(): number[] {
-    const total = this.getHistoryTotalPages();
-    const pages: number[] = [];
-    for (let i = 1; i <= total; i++) {
-      pages.push(i);
-    }
-    return pages;
-  }
-
-  setHistoryPage(p: number, event?: Event): void {
-    if (event) event.preventDefault();
-    if (p >= 1 && p <= this.getHistoryTotalPages()) {
-      this.historyPage = p;
-    }
-  }
-
-  nextHistoryPage(event?: Event): void {
-    if (event) event.preventDefault();
-    if (this.historyPage < this.getHistoryTotalPages()) {
-      this.historyPage++;
-    }
-  }
-
-  prevHistoryPage(event?: Event): void {
-    if (event) event.preventDefault();
-    if (this.historyPage > 1) {
-      this.historyPage--;
-    }
-  }
-
-  getCategoryForExpense(catId: string): ExpenseCategory | undefined {
-    return this.categories.find(c => c.id === catId);
-  }
-
-  getSubcategoryForExpense(subId: string): ExpenseSubcategory | undefined {
-    return this.subcategories.find(s => s.id === subId);
-  }
-
-  // --- Modales Actions ---
-
-  // Gasto Individual Modal
+  // Gasto Modal
   openAddExpenseModal(subcategoryId?: string, categoryId?: string): void {
     this.expenseToEdit = null;
-    const today = new Date().toISOString().split('T')[0];
-
-    let targetCatId = categoryId || '';
+    let targetCatId = categoryId || (this.categories.length > 0 ? this.categories[0].id : '');
     let targetSubId = subcategoryId || '';
 
-    if (targetSubId && !targetCatId) {
-      const sub = this.subcategories.find(s => s.id === targetSubId);
-      if (sub) targetCatId = sub.categoryId;
-    } else if (targetCatId && !targetSubId) {
-      const subs = this.getCategorySubcategories(targetCatId);
-      if (subs.length > 0) targetSubId = subs[0].id;
-    } else if (!targetCatId && this.categories.length > 0) {
-      targetCatId = this.categories[0].id;
+    if (!targetSubId && targetCatId) {
       const subs = this.getCategorySubcategories(targetCatId);
       if (subs.length > 0) targetSubId = subs[0].id;
     }
+
+    if (targetSubId && !targetCatId) {
+      const foundSub = this.subcategories.find(s => s.id === targetSubId);
+      if (foundSub) targetCatId = foundSub.categoryId;
+    }
+
+    const todayDate = new Date().toISOString().split('T')[0];
+    const defaultDate = todayDate.startsWith(this.selectedMonthKey) 
+      ? todayDate 
+      : `${this.selectedMonthKey}-01`;
 
     this.expenseForm = {
       title: '',
       amount: null,
       categoryId: targetCatId,
       subcategoryId: targetSubId,
-      date: today,
-      notes: ''
+      date: defaultDate,
+      notes: '',
+      isRecurring: false
     };
     this.isExpenseModalOpen = true;
   }
@@ -449,7 +420,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       categoryId: expense.categoryId,
       subcategoryId: expense.subcategoryId,
       date: expense.date,
-      notes: expense.notes || ''
+      notes: expense.notes || '',
+      isRecurring: !!expense.isRecurring
     };
     this.isExpenseModalOpen = true;
   }
@@ -474,7 +446,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         categoryId: catId,
         subcategoryId: this.expenseForm.subcategoryId,
         date: this.expenseForm.date || new Date().toISOString().split('T')[0],
-        notes: this.expenseForm.notes.trim() || undefined
+        notes: this.expenseForm.notes.trim() || undefined,
+        isRecurring: !!this.expenseForm.isRecurring
       });
     } else {
       this.expenseService.addExpense({
@@ -483,7 +456,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         categoryId: catId,
         subcategoryId: this.expenseForm.subcategoryId,
         date: this.expenseForm.date || new Date().toISOString().split('T')[0],
-        notes: this.expenseForm.notes.trim() || undefined
+        notes: this.expenseForm.notes.trim() || undefined,
+        isRecurring: !!this.expenseForm.isRecurring
       });
     }
 
@@ -493,7 +467,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   deleteExpense(expense: ExpenseItem, event?: Event): void {
     if (event) event.stopPropagation();
-    if (confirm(`¿Eliminar el gasto "${expense.title}" de ${this.currencySymbol} ${expense.amount}?`)) {
+    const recurringText = expense.isRecurring ? ' (gasto recurrente mensual)' : '';
+    if (confirm(`¿Eliminar el gasto "${expense.title}" de ${this.currencySymbol} ${expense.amount}${recurringText}?`)) {
       this.expenseService.deleteExpense(expense.id);
     }
   }
@@ -541,29 +516,19 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   deleteCategory(cat: ExpenseCategory, event?: Event): void {
     if (event) event.stopPropagation();
-    if (confirm(`¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos vinculados?`)) {
+    if (confirm(`¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos?`)) {
       this.expenseService.deleteCategory(cat.id);
-      if (this.categoryToEdit && this.categoryToEdit.id === cat.id) {
-        this.isCategoryModalOpen = false;
-      }
-    }
-  }
-
-  deleteCategoryFromModal(): void {
-    if (this.categoryToEdit) {
-      this.deleteCategory(this.categoryToEdit);
     }
   }
 
   restoreSuggestedCategories(): void {
-    if (confirm('¿Deseas restaurar las categorías y subcategorías sugeridas por defecto?')) {
+    if (confirm('¿Restaurar las categorías sugeridas por defecto para organizar tus finanzas?')) {
       this.expenseService.restoreDefaultCategories(true);
     }
   }
 
   // Subcategoría Modal
-  openAddSubcategoryModal(categoryId?: string, event?: Event): void {
-    if (event) event.stopPropagation();
+  openAddSubcategoryModal(categoryId?: string): void {
     this.subcategoryToEdit = null;
     this.subcategoryForm = {
       categoryId: categoryId || (this.categories.length > 0 ? this.categories[0].id : ''),
@@ -600,15 +565,73 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Ingreso Mensual Modal
+  // Ingreso Mensual Base Modal
   openIncomeModal(): void {
     this.incomeFormAmount = this.monthlyIncome > 0 ? this.monthlyIncome : null;
+    this.incomeApplyToAllMonths = true;
     this.isIncomeModalOpen = true;
   }
 
   saveIncome(): void {
     const amount = Number(this.incomeFormAmount) || 0;
-    this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount);
+    this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount, this.incomeApplyToAllMonths);
     this.isIncomeModalOpen = false;
+  }
+
+  // Bonus / Ingreso Extra Modal
+  openAddExtraIncomeModal(): void {
+    this.extraIncomeToEdit = null;
+    const todayDate = new Date().toISOString().split('T')[0];
+    const defaultDate = todayDate.startsWith(this.selectedMonthKey) 
+      ? todayDate 
+      : `${this.selectedMonthKey}-01`;
+
+    this.extraIncomeForm = {
+      title: '',
+      amount: null,
+      date: defaultDate,
+      notes: ''
+    };
+    this.isExtraIncomeModalOpen = true;
+  }
+
+  openEditExtraIncomeModal(item: ExtraIncomeItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.extraIncomeToEdit = item;
+    this.extraIncomeForm = {
+      title: item.title,
+      amount: item.amount,
+      date: item.date,
+      notes: item.notes || ''
+    };
+    this.isExtraIncomeModalOpen = true;
+  }
+
+  saveExtraIncome(): void {
+    if (!this.extraIncomeForm.title.trim() || !this.extraIncomeForm.amount) return;
+
+    if (this.extraIncomeToEdit) {
+      this.expenseService.updateExtraIncome(this.extraIncomeToEdit.id, {
+        title: this.extraIncomeForm.title.trim(),
+        amount: Number(this.extraIncomeForm.amount),
+        date: this.extraIncomeForm.date || new Date().toISOString().split('T')[0],
+        notes: this.extraIncomeForm.notes.trim() || undefined
+      });
+    } else {
+      this.expenseService.addExtraIncome({
+        title: this.extraIncomeForm.title.trim(),
+        amount: Number(this.extraIncomeForm.amount),
+        date: this.extraIncomeForm.date || new Date().toISOString().split('T')[0],
+        notes: this.extraIncomeForm.notes.trim() || undefined
+      });
+    }
+    this.isExtraIncomeModalOpen = false;
+  }
+
+  deleteExtraIncome(item: ExtraIncomeItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (confirm(`¿Eliminar el ingreso extra / bono "${item.title}" de ${this.currencySymbol} ${item.amount}?`)) {
+      this.expenseService.deleteExtraIncome(item.id);
+    }
   }
 }
