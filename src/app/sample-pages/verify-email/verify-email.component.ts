@@ -97,13 +97,13 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     }
   }
 
-  onResendKey(): void {
+  async onResendKey(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
 
-    setTimeout(() => {
-      const result = this.authService.resendVerificationKey(this.email);
+    try {
+      const result = await this.authService.resendVerificationKey(this.email);
       this.isLoading = false;
 
       if (result.success) {
@@ -112,6 +112,9 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
       } else {
         this.errorMessage = result.message;
       }
-    }, 600);
+    } catch (err) {
+      this.isLoading = false;
+      this.errorMessage = 'Error al reenviar el código.';
+    }
   }
 }
