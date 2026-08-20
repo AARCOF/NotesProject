@@ -112,31 +112,34 @@
   width: 100%;
 }
 
-.bg-rose-500 {
-  background-color: #EF4444;
+.bg-rose-500, .bg-rose {
+  background-color: #EF4444 !important;
 }
 
-.bg-amber-500 {
-  background-color: #F59E0B;
+.bg-amber-500, .bg-amber {
+  background-color: #F59E0B !important;
 }
 
-.bg-emerald-500 {
-  background-color: #10B981;
+.bg-emerald-500, .bg-emerald {
+  background-color: #10B981 !important;
 }
 
-/* Shared buttons and badges moved to global styles.scss */
+.bg-blue-500, .bg-blue {
+  background-color: #2563EB !important;
+}
+
+.text-blue {
+  color: #2563EB !important;
+}
+
+.bg-blue-light {
+  background-color: #DBEAFE !important;
+  color: #1E40AF !important;
+}
 
 .text-completed {
   text-decoration: line-through;
   opacity: 0.55;
-}
-
-.text-blue {
-  color: #059669 !important;
-}
-
-.bg-blue-50 {
-  background-color: #ECFDF5 !important;
 }
 
 .font-size-26 {
