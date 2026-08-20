@@ -54,9 +54,9 @@
           </p>
 
           <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-            <a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="btn btn-orange-gradient btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-3 mb-2 shadow-lg">
-              <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Descargar APK
-            </a>
+            <button type="button" (click)="scrollTo('instalar')" class="btn btn-orange-gradient btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-3 mb-2 shadow-lg">
+              <i class="typcn typcn-device-phone mr-2 font-size-22"></i> Instalar App
+            </button>
             
             <ng-container *ngIf="!isAuthenticated">
               <a routerLink="/register" class="btn btn-glass-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-2 mb-2">
@@ -772,7 +772,7 @@
             <li class="mb-2"><a [routerLink]="isAuthenticated ? '/productivity' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Productividad</a></li>
             <li class="mb-2"><a [routerLink]="isAuthenticated ? '/categories' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Categorías</a></li>
             <li class="mb-2"><a [routerLink]="isAuthenticated ? '/canvas' : '/login'" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Pizarra de Dibujo</a></li>
-            <li class="mb-2"><a href="assets/downloads/NoteYou-v1.0.apk" download="NoteYou-v1.0.apk" class="text-slate-400 text-decoration-none hover-text-white transition-all">Descargar APK</a></li>
+            <li class="mb-2"><a (click)="scrollTo('instalar')" class="text-slate-400 text-decoration-none hover-text-white transition-all cursor-pointer">Instalar App</a></li>
           </ul>
         </div>
 
