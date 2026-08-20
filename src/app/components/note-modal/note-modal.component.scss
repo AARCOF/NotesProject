@@ -414,13 +414,45 @@
   }
 
   .modal-footer {
-    padding: 0.875rem 1.25rem !important;
-    padding-bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    padding: 0.75rem 1rem !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
     flex-shrink: 0 !important;
     background: #ffffff !important;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
-    z-index: 15;
-    position: relative;
+    z-index: 20 !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    .btn, button {
+      margin: 0 !important;
+      padding: 0.65rem 0.75rem !important;
+      font-size: 0.875rem !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      white-space: nowrap !important;
+      box-sizing: border-box !important;
+
+      &:first-child {
+        flex: 1 1 35% !important;
+        max-width: 40% !important;
+        min-width: 0 !important;
+      }
+
+      &:last-child {
+        flex: 2 1 65% !important;
+        min-width: 0 !important;
+      }
+    }
   }
 
   .form-control, .form-select {
