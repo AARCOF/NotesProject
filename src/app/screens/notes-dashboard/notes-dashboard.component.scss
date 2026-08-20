@@ -861,12 +861,17 @@
    MOBILE & APK DASHBOARD OPTIMIZATIONS (@media max-width: 991px)
    ========================================================================== */
 @media (max-width: 991px) {
-  // 1. Toolbar & Search bar scrolls UP and stays pinned at the very top of the screen (top: 63px)
+  .notes-dashboard-wrapper {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  // 1. Toolbar & Search bar scrolls UP and stays pinned at the very top of the screen (top: 58px)
   .sticky-dashboard-toolbar {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 63px !important;
-    z-index: 1025 !important;
+    top: 58px !important;
+    z-index: 1018 !important;
     margin-left: -4px !important;
     margin-right: -4px !important;
     margin-bottom: 0.5rem !important;

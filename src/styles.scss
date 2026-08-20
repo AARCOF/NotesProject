@@ -926,24 +926,26 @@ h1, h2, h3, h4, h5, h6, .card-title {
   @media (max-width: 991px) {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 63px !important;
-    z-index: 1028 !important;
+    top: 58px !important;
+    z-index: 1018 !important;
     background: rgba(248, 250, 252, 0.98) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    margin-left: -6px !important;
-    margin-right: -6px !important;
-    padding: 6px 6px 8px 6px !important;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.85) !important;
-    margin-bottom: 0.85rem !important;
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+    padding: 4px 8px 6px 8px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.35rem !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 
     .mobile-notes-segmented-bar,
     .mobile-expenses-segmented-bar {
       background-color: #ffffff !important;
       border: 1px solid #e2e8f0 !important;
-      border-radius: 14px !important;
-      padding: 3px !important;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+      border-radius: 12px !important;
+      padding: 2px !important;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+      margin-bottom: 0 !important;
     }
   }
 }
