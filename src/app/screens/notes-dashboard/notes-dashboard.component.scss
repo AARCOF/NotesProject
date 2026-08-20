@@ -645,3 +645,109 @@
   }
 }
 
+/* ==========================================================================
+   BOTÓN Y MODAL DE FILTROS AVANZADOS
+   ========================================================================== */
+.btn-filter-modal-trigger {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+  border-radius: 12px;
+  padding: 8px 14px;
+  min-height: 42px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-1px);
+  }
+
+  &.active-filters {
+    background-color: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  }
+}
+
+.badge-emerald {
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 3px 7px;
+  font-weight: 700;
+}
+
+.filter-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip-btn {
+  padding: 8px 14px;
+  border-radius: 50rem;
+  border: 1.5px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  &.active {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
+  }
+}
+
+.filter-modal-wrapper {
+  .modal-dialog-custom {
+    max-width: 580px;
+  }
+
+  @media (max-width: 768px) {
+    align-items: flex-end !important;
+    padding: 0 !important;
+
+    .modal-dialog-custom {
+      margin: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      padding: 0 !important;
+    }
+
+    .modal-content-custom {
+      border-radius: 24px 24px 0 0 !important;
+      border: none !important;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
+    .modal-body {
+      max-height: 65vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 1.25rem 1rem !important;
+    }
+
+    .modal-footer {
+      padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    }
+  }
+}

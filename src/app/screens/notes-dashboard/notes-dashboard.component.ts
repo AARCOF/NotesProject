@@ -28,6 +28,21 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   selectedStatus: string = 'all';
   selectedSort: string = 'priority-desc';
 
+  isFilterModalOpen: boolean = false;
+
+  get activeFiltersCount(): number {
+    let count = 0;
+    if (this.selectedCategory !== 'all') count++;
+    if (this.selectedPriority !== 'all') count++;
+    if (this.selectedStatus !== 'all') count++;
+    if (this.selectedSort !== 'priority-desc') count++;
+    return count;
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.activeFiltersCount > 0 || !!this.searchTerm.trim();
+  }
+
   isModalVisible: boolean = false;
   currentUser: User | null = null;
   page: number = 1;
@@ -135,6 +150,11 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   setCategory(catId: string): void {
     this.selectedCategory = catId;
+    this.applyFilters();
+  }
+
+  setStatus(status: string): void {
+    this.selectedStatus = status;
     this.applyFilters();
   }
 
