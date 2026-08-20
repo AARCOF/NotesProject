@@ -34,6 +34,51 @@
 
   </div>
 
+  <!-- PESTAÑAS SECUNDARIAS INTEGRADAS DIRECTAMENTE EN EL ENCABEZADO (0px GAP) -->
+  <!-- En Notas / Dashboard -->
+  <div class="header-subtabs-row mt-1-5 pt-0-5" *ngIf="isNotesRoute">
+    <div class="mobile-notes-segmented-bar bg-slate-100 rounded-xl p-0-5 d-flex align-items-center justify-content-between border border-slate-200">
+      <button type="button" class="btn-mobile-subtab" [class.active]="notesViewMode === 'kanban'" (click)="setNotesViewMode('kanban')">
+        <i class="typcn typcn-th-small"></i>
+        <span>Kanban</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="notesViewMode === 'grid'" (click)="setNotesViewMode('grid')">
+        <i class="typcn typcn-th-large"></i>
+        <span>Cuadrícula</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="notesViewMode === 'categorias'" (click)="setNotesViewMode('categorias')">
+        <i class="typcn typcn-folder-open"></i>
+        <span>Categorías</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="notesViewMode === 'graficos'" (click)="setNotesViewMode('graficos')">
+        <i class="typcn typcn-chart-pie"></i>
+        <span>Gráficos</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- En Gastos -->
+  <div class="header-subtabs-row mt-1-5 pt-0-5" *ngIf="isExpensesRoute">
+    <div class="mobile-expenses-segmented-bar bg-slate-100 rounded-xl p-0-5 d-flex align-items-center justify-content-between border border-slate-200">
+      <button type="button" class="btn-mobile-subtab" [class.active]="expensesActiveTab === 'gestion'" (click)="setExpensesTab('gestion')">
+        <i class="typcn typcn-credit-card"></i>
+        <span>Gestión</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="expensesActiveTab === 'movimientos'" (click)="setExpensesTab('movimientos')">
+        <i class="typcn typcn-th-list"></i>
+        <span>Gastos</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="expensesActiveTab === 'categorias'" (click)="setExpensesTab('categorias')">
+        <i class="typcn typcn-folder-open"></i>
+        <span>Categorías</span>
+      </button>
+      <button type="button" class="btn-mobile-subtab" [class.active]="expensesActiveTab === 'graficas'" (click)="setExpensesTab('graficas')">
+        <i class="typcn typcn-chart-pie"></i>
+        <span>Gráficos</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Carrusel de Filtros de Categorías (Pill Chips) -->
   <div class="categories-scroll-row" *ngIf="showCategories && categories.length > 0">
     <div class="category-chips-track">

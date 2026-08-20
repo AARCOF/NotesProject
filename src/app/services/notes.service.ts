@@ -14,6 +14,17 @@ export class NotesService {
   public notes$: Observable<Note[]> = this.notesSubject.asObservable();
   private currentUserId: string | null = null;
 
+  private activeViewModeSubject = new BehaviorSubject<'kanban' | 'grid' | 'categorias' | 'graficos'>('kanban');
+  public activeViewMode$: Observable<'kanban' | 'grid' | 'categorias' | 'graficos'> = this.activeViewModeSubject.asObservable();
+
+  public setViewMode(mode: 'kanban' | 'grid' | 'categorias' | 'graficos'): void {
+    this.activeViewModeSubject.next(mode);
+  }
+
+  public getViewMode(): 'kanban' | 'grid' | 'categorias' | 'graficos' {
+    return this.activeViewModeSubject.getValue();
+  }
+
   constructor(private authService: AuthService) {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
