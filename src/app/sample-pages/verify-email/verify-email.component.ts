@@ -31,9 +31,12 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private userRepository: UserRepository
   ) { }
 
+  expiresAt: number = Date.now() + 60 * 60 * 1000;
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.email = params['email'] || 'usuario@ejemplo.com';
+      this.expiresAt = Date.now() + 60 * 60 * 1000;
       this.updateTimer();
     });
 
@@ -60,11 +63,13 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
   updateTimer(): void {
     const user = this.userRepository.findByEmail(this.email);
-    if (user && user.keyExpiresAt) {
-      this.timerString = this.verificationKeyService.getRemainingTimeFormatted(user.keyExpiresAt);
-      this.isExpired = Date.now() > user.keyExpiresAt;
+    const targetExpires = (user && user.keyExpiresAt) ? user.keyExpiresAt : this.expiresAt;
+
+    if (targetExpires && Date.now() < targetExpires) {
+      this.timerString = this.verificationKeyService.getRemainingTimeFormatted(targetExpires);
+      this.isExpired = false;
     } else {
-      this.timerString = 'Expirado';
+      this.timerString = '00:00 - Expirado';
       this.isExpired = true;
     }
   }
@@ -108,6 +113,8 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
 
       if (result.success) {
         this.successMessage = result.message;
+        this.expiresAt = Date.now() + 60 * 60 * 1000;
+        this.isExpired = false;
         this.updateTimer();
       } else {
         this.errorMessage = result.message;
