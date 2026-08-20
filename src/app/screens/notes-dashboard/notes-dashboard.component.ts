@@ -29,6 +29,11 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   selectedSort: string = 'priority-desc';
 
   isFilterModalOpen: boolean = false;
+  isMobileSearchOpen: boolean = false;
+
+  toggleMobileSearch(): void {
+    this.isMobileSearchOpen = !this.isMobileSearchOpen;
+  }
 
   get activeFiltersCount(): number {
     let count = 0;
