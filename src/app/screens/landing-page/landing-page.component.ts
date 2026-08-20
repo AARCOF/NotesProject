@@ -174,11 +174,13 @@ export class LandingPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Si la aplicación se ejecuta en APK (Capacitor nativo) o contenedor móvil, ingresar directo al sistema
-    const isMobileNative = Capacitor.isNativePlatform() || 
-                           window.location.search.includes('platform=mobile');
+    // Si la aplicación se ejecuta en APK, celular, o contenedor móvil, ingresar directo al sistema
+    const isMobile = Capacitor.isNativePlatform() || 
+                     window.location.search.includes('platform=mobile') ||
+                     window.innerWidth <= 800 ||
+                     /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-    if (isMobileNative) {
+    if (isMobile) {
       if (this.authService.isAuthenticated()) {
         this.router.navigate(['/dashboard']);
       } else {

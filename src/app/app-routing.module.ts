@@ -17,7 +17,7 @@ import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expense
 import { AuthGuard } from "./core/guards/auth.guard";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/dashboard", pathMatch: "full" },
+  { path: "", redirectTo: "/login", pathMatch: "full" },
   { path: "landing", component: LandingPageComponent },
   { path: "dashboard", component: NotesDashboardComponent, canActivate: [AuthGuard] },
   { path: "expenses", component: ExpensesDashboardComponent, canActivate: [AuthGuard] },
@@ -30,7 +30,7 @@ const routes: Routes = [
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   { path: "verify-email", component: VerifyEmailComponent },
-  { path: "**", redirectTo: "/landing" }
+  { path: "**", redirectTo: "/login" }
 ];
 
 @NgModule({
