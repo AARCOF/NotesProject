@@ -219,6 +219,12 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         }
       })
     );
+
+    this.subscriptions.add(
+      this.expenseService.activeTab$.subscribe(tab => {
+        this.activeTab = tab;
+      })
+    );
   }
 
   ngOnDestroy(): void {

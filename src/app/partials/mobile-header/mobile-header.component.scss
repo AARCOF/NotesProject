@@ -153,6 +153,63 @@
   }
 }
 
+.header-subtabs-row {
+  width: 100%;
+}
+
+.mobile-notes-segmented-bar,
+.mobile-expenses-segmented-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  padding: 2px;
+  width: 100%;
+}
+
+.btn-mobile-subtab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 2px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.70rem;
+  font-weight: 600;
+  line-height: 1.15;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  i {
+    font-size: 16px !important;
+    margin-bottom: 1px;
+    line-height: 1;
+  }
+
+  &.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    font-weight: 700 !important;
+
+    i {
+      color: #3b82f6 !important;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .category-chips-track {
   display: flex;
   align-items: center;

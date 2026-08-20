@@ -128,6 +128,12 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
+      this.notesService.activeViewMode$.subscribe(mode => {
+        this.viewMode = mode;
+      })
+    );
+
+    this.subscriptions.add(
       this.notesService.notes$.subscribe(notes => {
         this.allNotes = notes;
         this.applyFilters();

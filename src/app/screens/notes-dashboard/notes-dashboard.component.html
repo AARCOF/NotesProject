@@ -9,83 +9,49 @@
   </button>
 </div>
 
-<!-- ============================================================== -->
-<!-- BARRA DE PESTAÑAS PARA MÓVIL / APK (Kanban, Cuadrícula, Categorías, Gráficos) -->
-<!-- Siempre arriba de todas las cards y fija con scroll en pantalla -->
-<!-- ============================================================== -->
-<div class="mobile-sticky-top-nav d-block d-lg-none">
-  <div class="mobile-notes-segmented-bar bg-white rounded-2xl p-1 border border-slate-200 shadow-xs d-flex align-items-center justify-content-between">
-    
-    <!-- Pestaña 1: Kanban -->
-    <button type="button" class="btn-mobile-subtab" [class.active]="viewMode === 'kanban'" (click)="viewMode = 'kanban'">
-      <i class="typcn typcn-th-small"></i>
-      <span>Kanban</span>
-    </button>
+<!-- Buscador Predefinido e Integrado en Móvil (Directamente en la cabecera de notas) -->
+<div class="mobile-search-bar-inline my-2 d-block d-lg-none" *ngIf="viewMode === 'kanban' || viewMode === 'grid'">
+  <div class="d-flex align-items-center gap-2">
+    <div class="input-group input-group-custom flex-grow-1 mb-0 shadow-xs rounded-xl overflow-hidden bg-white border border-slate-200">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-white border-0 text-slate-400 py-1 px-2">
+          <i class="typcn typcn-zoom font-size-16"></i>
+        </span>
+      </div>
+      <input 
+        type="text" 
+        class="form-control bg-white border-0 text-slate-800 font-size-13 py-1" 
+        placeholder="Buscar notas..." 
+        [(ngModel)]="searchTerm" 
+        autocomplete="off"
+        (ngModelChange)="onSearchChange()">
+      <div class="input-group-append" *ngIf="searchTerm">
+        <button class="btn btn-white text-slate-400 border-0 py-0 px-2" type="button" (click)="searchTerm = ''; onSearchChange()">
+          <i class="typcn typcn-times font-size-14"></i>
+        </button>
+      </div>
+    </div>
 
-    <!-- Pestaña 2: Cuadrícula -->
-    <button type="button" class="btn-mobile-subtab" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
-      <i class="typcn typcn-th-large"></i>
-      <span>Cuadrícula</span>
+    <button 
+      type="button" 
+      class="btn btn-filter-modal-trigger d-flex align-items-center justify-content-center shadow-xs flex-shrink-0 py-1-5 px-2-5 font-size-12"
+      [class.active-filters]="activeFiltersCount > 0"
+      (click)="isFilterModalOpen = true" 
+      title="Filtros de Tareas">
+      <i class="typcn typcn-adjust-brightness mr-1 font-size-15"></i>
+      <span>Filtros</span>
+      <span class="badge badge-pill badge-emerald ml-1 font-size-10" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
     </button>
-
-    <!-- Pestaña 3: Categorías -->
-    <button type="button" class="btn-mobile-subtab" [class.active]="viewMode === 'categorias'" (click)="viewMode = 'categorias'">
-      <i class="typcn typcn-folder-open"></i>
-      <span>Categorías</span>
-    </button>
-
-    <!-- Pestaña 4: Gráficos & Actividades -->
-    <button type="button" class="btn-mobile-subtab" [class.active]="viewMode === 'graficos'" (click)="viewMode = 'graficos'">
-      <i class="typcn typcn-chart-pie"></i>
-      <span>Gráficos</span>
-    </button>
-
   </div>
 
-  <!-- Buscador Predefinido e Integrado en Móvil (Visible directamente en Kanban y Cuadrícula sin botones) -->
-  <div class="mobile-search-bar-inline" *ngIf="viewMode === 'kanban' || viewMode === 'grid'">
-    <div class="d-flex align-items-center gap-2">
-      <div class="input-group input-group-custom flex-grow-1 mb-0">
-        <div class="input-group-prepend">
-          <span class="input-group-text bg-slate-100 border-0 text-slate-500 py-1 px-2">
-            <i class="typcn typcn-zoom font-size-16"></i>
-          </span>
-        </div>
-        <input 
-          type="text" 
-          class="form-control bg-slate-100 border-0 text-slate-800 font-size-13 py-1" 
-          placeholder="Buscar notas..." 
-          [(ngModel)]="searchTerm" 
-          autocomplete="off"
-          (ngModelChange)="onSearchChange()">
-        <div class="input-group-append" *ngIf="searchTerm">
-          <button class="btn btn-slate-200 text-slate-600 border-0 py-0 px-2" type="button" (click)="searchTerm = ''; onSearchChange()">
-            <i class="typcn typcn-times font-size-14"></i>
-          </button>
-        </div>
-      </div>
-
-      <button 
-        type="button" 
-        class="btn btn-filter-modal-trigger d-flex align-items-center justify-content-center shadow-xs flex-shrink-0 py-1-5 px-2-5 font-size-12"
-        [class.active-filters]="activeFiltersCount > 0"
-        (click)="isFilterModalOpen = true" 
-        title="Filtros de Tareas">
-        <i class="typcn typcn-adjust-brightness mr-1 font-size-15"></i>
-        <span>Filtros</span>
-        <span class="badge badge-pill badge-emerald ml-1 font-size-10" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
-      </button>
-    </div>
-
-    <!-- Chips de Filtros Activos en Móvil -->
-    <div class="mt-1-5 pt-1 d-flex align-items-center flex-wrap" *ngIf="hasActiveFilters">
-      <small class="text-slate-500 mr-1 font-weight-bold font-size-10">Filtros:</small>
-      <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="searchTerm">"{{searchTerm}}"</span>
-      <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedCategory !== 'all'">{{getCategoryName(selectedCategory)}}</span>
-      <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedPriority !== 'all'">{{getPriorityLabel(selectedPriority)}}</span>
-      <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedStatus !== 'all'">{{getStatusLabel(selectedStatus)}}</span>
-      <button class="btn btn-link btn-xs text-rose p-0 ml-1 mb-1 font-weight-bold font-size-10" (click)="clearFilters()">Limpiar</button>
-    </div>
+  <!-- Chips de Filtros Activos en Móvil -->
+  <div class="mt-1-5 pt-1 d-flex align-items-center flex-wrap" *ngIf="hasActiveFilters">
+    <small class="text-slate-500 mr-1 font-weight-bold font-size-10">Filtros:</small>
+    <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="searchTerm">"{{searchTerm}}"</span>
+    <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedCategory !== 'all'">{{getCategoryName(selectedCategory)}}</span>
+    <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedPriority !== 'all'">{{getPriorityLabel(selectedPriority)}}</span>
+    <span class="badge badge-pill badge-blue-light mr-1 mb-1 font-size-10" *ngIf="selectedStatus !== 'all'">{{getStatusLabel(selectedStatus)}}</span>
+    <button class="btn btn-link btn-xs text-rose p-0 ml-1 mb-1 font-weight-bold font-size-10" (click)="clearFilters()">Limpiar</button>
   </div>
 </div>
 
