@@ -163,12 +163,6 @@
                           title="Vista de Cuadrícula">
                     <i class="typcn typcn-th-large font-size-18 mr-1"></i> Cuadrícula
                   </button>
-                  <button class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center" 
-                          [class.active]="viewMode === 'calendar'" 
-                          (click)="viewMode = 'calendar'" 
-                          title="Vista de Calendario">
-                    <i class="typcn typcn-calendar-outline font-size-18 mr-1"></i> Calendario
-                  </button>
                 </div>
 
                 <button class="btn btn-slate-gradient font-weight-bold shadow-sm d-none d-md-flex align-items-center px-3 py-2 text-white" (click)="openCreateModal()">
@@ -1187,12 +1181,7 @@
 
     </div>
 
-      <!-- Vista de Calendario -->
-      <div class="row fade-in-up" *ngIf="viewMode === 'calendar'">
-        <div class="col-12 mb-4">
-          <app-task-calendar [tasks]="filteredNotes"></app-task-calendar>
-        </div>
-      </div>
+
 
     </ng-container>
 

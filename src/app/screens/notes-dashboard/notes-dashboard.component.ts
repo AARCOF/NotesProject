@@ -49,7 +49,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   pageSize: number = 6;
   noteToEdit: Note | null = null;
   initialModalStatus: NoteStatus = 'pendiente';
-  viewMode: 'grid' | 'kanban' | 'calendar' = 'kanban';
+  viewMode: 'grid' | 'kanban' = 'kanban';
 
   // Drag & Drop State
   draggedNote: Note | null = null;
