@@ -139,6 +139,14 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
   }
+
+  // En APK/móvil: el scroll lo maneja workspace-view-container
+  &.is-mobile-app {
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .workspace-wrapper {
@@ -1012,41 +1020,68 @@ h1, h2, h3, h4, h5, h6, .card-title {
 }
 
 /* ============================================================
-   MOBILE PROFILE PAGE — Scroll fix so all content is visible
+   MOBILE APK — Scroll fix definitivo para todas las pantallas
+   La raíz (is-mobile-app) NO hace scroll. Lo hace workspace-view-container.
+   Todos los contenedores intermedios ceden su altura al flex child.
    ============================================================ */
-@media (max-width: 991px) {
-  /* Allow the main scroll container to scroll freely on any inner page */
-  .workspace-view-container.mobile-view-container {
-    overflow-y: auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-    padding: 12px 10px calc(80px + env(safe-area-inset-bottom, 0px)) 10px !important;
-  }
-
-  /* Outer wrappers: release height locks so content stacks and scrolls */
-  .workspace-wrapper.mobile-workspace {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-  }
-
+.is-mobile-app {
+  // page-body-wrapper: crece en flex, sin scroll propio
   .page-body-wrapper.mobile-body-wrapper {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     height: auto !important;
-    min-height: 100dvh !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: row !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
 
+  // main-panel: crece en flex, sin scroll propio
   .main-panel {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     height: auto !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-top: 0 !important;
   }
 
+  // content-wrapper: crece, sin scroll
   .content-wrapper.mobile-content-pad {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     height: auto !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
-  /* Remove Bootstrap h-100 height lock on cards in mobile */
+  // workspace-wrapper: crece, sin scroll
+  .workspace-wrapper.mobile-workspace {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  // workspace-view-container: EL ÚNICO que hace scroll
+  .workspace-view-container.mobile-view-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 10px 10px calc(72px + env(safe-area-inset-bottom, 12px)) 10px !important;
+    display: block !important;
+  }
+
+  // Liberar lock de altura en tarjetas Bootstrap
   .card.h-100 {
     height: auto !important;
   }
