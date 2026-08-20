@@ -374,6 +374,86 @@
   }
 }
 
+.border-top-dashed {
+  border-top: 1px dashed #e2e8f0;
+}
+
+@media (max-width: 991px) {
+  .category-expense-card {
+    border-radius: 14px !important;
+    margin-bottom: 0.75rem !important;
+
+    .card-body {
+      padding: 12px 14px !important;
+    }
+
+    .category-icon-avatar {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      margin-right: 10px !important;
+      border-radius: 10px !important;
+
+      i {
+        font-size: 20px !important;
+      }
+    }
+  }
+
+  .btn-action-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 8px !important;
+
+    i {
+      font-size: 16px !important;
+    }
+  }
+
+  .btn-action-icon-sm {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    border-radius: 7px !important;
+
+    i {
+      font-size: 14px !important;
+    }
+  }
+
+  .subcategory-block {
+    margin-bottom: 6px !important;
+
+    .subcategory-header {
+      padding: 8px 10px !important;
+      min-height: 44px !important;
+
+      .sub-name {
+        font-size: 13px !important;
+        line-height: 1.25 !important;
+      }
+
+      .sub-count {
+        font-size: 10.5px !important;
+      }
+
+      .sub-total-amount {
+        font-size: 13px !important;
+      }
+    }
+
+    .subcategory-expenses-list {
+      padding: 8px 10px !important;
+    }
+  }
+
+  .expense-item-row {
+    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+  }
+}
+
 /* Action Icon Buttons for Edit / Delete / More */
 .btn-action-icon {
   width: 38px;
