@@ -9,7 +9,7 @@ export default async function handler(req: any, res: any) {
       connected: true,
       collections: collections.map(c => c.name)
     });
-  } catch (err: any) {
+  } catch (err) {
     return sendJsonResponse(res, 500, {
       status: 'error',
       connected: false,
