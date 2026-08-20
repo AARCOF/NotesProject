@@ -183,8 +183,29 @@ export class AuthService {
     return { success: true, message: 'Cuenta verificada exitosamente. Se ha iniciado sesión.' };
   }
 
-  public resendVerificationKey(email: string): { success: boolean; message: string } {
-    const user = this.userRepository.findByEmail(email);
+  public async resendVerificationKey(email: string): Promise<{ success: boolean; message: string }> {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Intentar reenviar en la nube (MongoDB Atlas)
+    try {
+      const response: any = await this.http.post('/api/auth/resend', { email: cleanEmail }).toPromise();
+      if (response && response.success) {
+        const user = this.userRepository.findByEmail(cleanEmail);
+        if (user && response.keyExpiresAt) {
+          user.keyExpiresAt = response.keyExpiresAt;
+          this.userRepository.updateUser(user);
+        }
+        return { success: true, message: response.message || `Se ha enviado un nuevo código de acceso a ${cleanEmail}.` };
+      }
+    } catch (apiErr) {
+      const serverMessage = (apiErr as any)?.error?.message;
+      if (serverMessage && !serverMessage.includes('NetworkError') && !serverMessage.includes('404')) {
+        return { success: false, message: serverMessage };
+      }
+    }
+
+    // 2. Reenvío local de respaldo
+    const user = this.userRepository.findByEmail(cleanEmail);
     if (!user) {
       return { success: false, message: 'Usuario no encontrado.' };
     }
