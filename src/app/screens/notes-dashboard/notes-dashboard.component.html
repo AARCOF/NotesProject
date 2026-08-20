@@ -1205,8 +1205,8 @@
       </div>
     </div>
 
-    <!-- Paginación Moderna y Completa (Solo en vista Cuadrícula) -->
-    <div class="card shadow-sm border-0 rounded-xl bg-white p-3 mt-3 mb-5 fade-in-up" *ngIf="viewMode === 'grid' && filteredNotes.length > 0">
+    <!-- Paginación Moderna y Completa (Solo cuando hay más de 1 página en vista Cuadrícula) -->
+    <div class="card shadow-sm border-0 rounded-xl bg-white p-3 mt-3 mb-5 fade-in-up" *ngIf="viewMode === 'grid' && gridTotalPages > 1">
       <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
         
         <!-- Contador de Elementos -->

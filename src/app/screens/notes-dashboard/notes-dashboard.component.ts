@@ -240,11 +240,14 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   getGridStartIndex(): number {
     if (this.filteredNotes.length === 0) return 0;
-    return (this.page - 1) * this.pageSize + 1;
+    const page = Math.min(Math.max(1, this.page || 1), this.gridTotalPages);
+    return (page - 1) * this.pageSize + 1;
   }
 
   getGridEndIndex(): number {
-    return Math.min(this.page * this.pageSize, this.filteredNotes.length);
+    if (this.filteredNotes.length === 0) return 0;
+    const page = Math.min(Math.max(1, this.page || 1), this.gridTotalPages);
+    return Math.min(page * this.pageSize, this.filteredNotes.length);
   }
 
   // --- Paginación y Redimensionamiento para Tablero Kanban ---
@@ -253,7 +256,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     en_progreso: 1,
     completada: 1
   };
-  kanbanPageSize: number = 4;
+  kanbanPageSize: number = 3;
 
   getKanbanNotes(status: NoteStatus): Note[] {
     const allColNotes = this.getNotesByStatus(status);
@@ -274,7 +277,8 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   getKanbanRangeText(status: NoteStatus): string {
     const total = this.getNotesByStatus(status).length;
     if (total === 0) return '0 de 0';
-    const page = this.kanbanPage[status] || 1;
+    const totalPages = this.getKanbanTotalPages(status);
+    const page = Math.min(Math.max(1, this.kanbanPage[status] || 1), totalPages);
     const start = (page - 1) * this.kanbanPageSize + 1;
     const end = Math.min(page * this.kanbanPageSize, total);
     return `${start}-${end} de ${total}`;

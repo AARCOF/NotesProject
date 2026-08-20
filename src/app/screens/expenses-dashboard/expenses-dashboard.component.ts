@@ -340,6 +340,66 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  // --- Paginación para Histórico de Gastos ---
+  historyPage: number = 1;
+  historyPageSize: number = 6;
+
+  getPaginatedMonthExpenses(): ExpenseItem[] {
+    const all = this.getAllMonthExpenses();
+    const totalPages = this.getHistoryTotalPages();
+    if (this.historyPage > totalPages) {
+      this.historyPage = totalPages;
+    }
+    const page = Math.max(1, this.historyPage || 1);
+    const start = (page - 1) * this.historyPageSize;
+    return all.slice(start, start + this.historyPageSize);
+  }
+
+  getHistoryTotalPages(): number {
+    const total = this.getAllMonthExpenses().length;
+    return Math.max(1, Math.ceil(total / this.historyPageSize));
+  }
+
+  getHistoryRangeText(): string {
+    const total = this.getAllMonthExpenses().length;
+    if (total === 0) return '0 de 0';
+    const totalPages = this.getHistoryTotalPages();
+    const page = Math.min(Math.max(1, this.historyPage || 1), totalPages);
+    const start = (page - 1) * this.historyPageSize + 1;
+    const end = Math.min(page * this.historyPageSize, total);
+    return `${start}-${end} de ${total}`;
+  }
+
+  getHistoryPageNumbers(): number[] {
+    const total = this.getHistoryTotalPages();
+    const pages: number[] = [];
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  setHistoryPage(p: number, event?: Event): void {
+    if (event) event.preventDefault();
+    if (p >= 1 && p <= this.getHistoryTotalPages()) {
+      this.historyPage = p;
+    }
+  }
+
+  nextHistoryPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.historyPage < this.getHistoryTotalPages()) {
+      this.historyPage++;
+    }
+  }
+
+  prevHistoryPage(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.historyPage > 1) {
+      this.historyPage--;
+    }
+  }
+
   getCategoryForExpense(catId: string): ExpenseCategory | undefined {
     return this.categories.find(c => c.id === catId);
   }

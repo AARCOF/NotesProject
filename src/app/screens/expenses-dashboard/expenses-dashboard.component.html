@@ -459,7 +459,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of getAllMonthExpenses()">
+                <tr *ngFor="let item of getPaginatedMonthExpenses()">
                   <td class="px-3 py-3 text-slate-600 font-size-13 font-weight-medium">
                     <i class="typcn typcn-calendar text-slate-400 mr-1 font-size-14"></i> {{ item.date }}
                   </td>
@@ -470,7 +470,7 @@
                   <td class="px-3 py-3">
                     <span class="badge badge-pill text-white px-2-5 py-1 font-size-11 font-weight-semibold d-inline-flex align-items-center"
                           [style.backgroundColor]="getCategoryForExpense(item.categoryId)?.color || '#3b82f6'">
-                      <i class="typcn {{ getCategoryForExpense(item.categoryId)?.icon || 'typcn-folder' }} mr-1"></i>
+                       <i class="typcn {{ getCategoryForExpense(item.categoryId)?.icon || 'typcn-folder' }} mr-1"></i>
                       {{ getCategoryForExpense(item.categoryId)?.name || 'Sin Categoría' }}
                     </span>
                   </td>
@@ -495,6 +495,38 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Paginador del Histórico de Gastos (Solo cuando hay más de 1 página) -->
+          <div class="card-footer bg-white border-top p-3 d-flex flex-column flex-md-row align-items-center justify-content-between font-size-13 gap-2" 
+               *ngIf="getHistoryTotalPages() > 1">
+            <span class="text-slate-600 font-weight-medium">
+              Mostrando <strong class="text-slate-800">{{ getHistoryRangeText() }}</strong> movimientos
+            </span>
+            <div class="d-flex align-items-center gap-1">
+              <button 
+                type="button" 
+                class="btn btn-sm btn-white border px-2-5 py-1 rounded-lg text-slate-700 shadow-xs font-weight-semibold" 
+                [disabled]="historyPage === 1" 
+                (click)="prevHistoryPage($event)">
+                <i class="typcn typcn-chevron-left mr-1"></i> Anterior
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm px-3 py-1 rounded-lg font-weight-bold transition-all" 
+                *ngFor="let p of getHistoryPageNumbers()"
+                [ngClass]="historyPage === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-700'"
+                (click)="setHistoryPage(p, $event)">
+                {{ p }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-white border px-2-5 py-1 rounded-lg text-slate-700 shadow-xs font-weight-semibold" 
+                [disabled]="historyPage === getHistoryTotalPages()" 
+                (click)="nextHistoryPage($event)">
+                Siguiente <i class="typcn typcn-chevron-right ml-1"></i>
+              </button>
+            </div>
           </div>
 
         </div>
