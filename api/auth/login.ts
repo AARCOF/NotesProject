@@ -1,6 +1,6 @@
 import { connectToDatabase, sendJsonResponse } from '../lib/db';
 import { generateJwtToken } from '../lib/auth-middleware';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'OPTIONS') {
@@ -29,7 +29,7 @@ export default async function handler(req: any, res: any) {
 
     // Comparación segura con bcrypt
     let isMatch = false;
-    if (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$')) {
+    if (user.passwordHash && (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$'))) {
       isMatch = await bcrypt.compare(password, user.passwordHash);
     } else {
       // Compatibilidad con contraseñas legadas Base64
@@ -83,7 +83,7 @@ export default async function handler(req: any, res: any) {
       token,
       user: userData
     });
-  } catch (err: any) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + err.message });
+  } catch (err) {
+    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err as any)?.message });
   }
 }

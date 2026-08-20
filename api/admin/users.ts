@@ -45,7 +45,7 @@ export default async function handler(req: any, res: any) {
       default:
         return sendJsonResponse(res, 405, { error: 'Método no soportado.' });
     }
-  } catch (err: any) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error en administración de usuarios: ' + err.message });
+  } catch (err) {
+    return sendJsonResponse(res, 500, { success: false, message: 'Error en administración de usuarios: ' + (err as any)?.message });
   }
 }
