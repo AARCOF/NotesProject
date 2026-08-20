@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   showQuickNotes: boolean = true;
   currentUser: User | null = null;
   showTutorial: boolean = false;
+  showCollaborationModal: boolean = false;
   globalTasks: Note[] = [];
   quickNotesCount: number = 0;
 
@@ -67,6 +68,7 @@ export class AppComponent implements OnInit {
       this.currentUser = user;
       this.updateLayoutState(this.router.url);
       this.checkTutorialState();
+      this.checkCollaborationPrompt();
     });
 
     this.notesService.notes$.subscribe(notes => {
@@ -113,6 +115,29 @@ export class AppComponent implements OnInit {
     } else {
       this.showTutorial = false;
     }
+  }
+
+  private checkCollaborationPrompt(): void {
+    // Solo mostrar a usuarios normales (no superadmin ni admin)
+    if (!this.currentUser || this.currentUser.role !== 'user') return;
+
+    const storageKey = `noteyou_last_donation_prompt_${this.currentUser.id}`;
+    const lastShown = localStorage.getItem(storageKey);
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+    if (!lastShown || (Date.now() - parseInt(lastShown, 10)) >= sevenDaysMs) {
+      // Delay pequeño para que primero cargue la app
+      setTimeout(() => {
+        this.showCollaborationModal = true;
+      }, 4000);
+    }
+  }
+
+  onCollaborationModalClose(): void {
+    if (this.currentUser) {
+      localStorage.setItem(`noteyou_last_donation_prompt_${this.currentUser.id}`, Date.now().toString());
+    }
+    this.showCollaborationModal = false;
   }
 
   onTutorialCompleted(): void {

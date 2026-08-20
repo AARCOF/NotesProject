@@ -27,6 +27,7 @@ import { OnboardingWizardComponent } from "./components/onboarding-wizard/onboar
 import { QuickNotesPanelComponent } from "./components/quick-notes-panel/quick-notes-panel.component";
 import { TaskCalendarComponent } from "./components/task-calendar/task-calendar.component";
 import { DayDetailsModalComponent } from "./components/day-details-modal/day-details-modal.component";
+import { CollaborationModalComponent } from "./components/collaboration-modal/collaboration-modal.component";
 
 import { LoginComponent } from "./sample-pages/login/login.component";
 import { RegisterComponent } from "./sample-pages/register/register.component";
@@ -61,6 +62,7 @@ import { AuthGuard } from "./core/guards/auth.guard";
     QuickNotesPanelComponent,
     TaskCalendarComponent,
     DayDetailsModalComponent,
+    CollaborationModalComponent,
     CalendarScreenComponent,
     ProductivityDashboardComponent,
     ProfileSettingsComponent,

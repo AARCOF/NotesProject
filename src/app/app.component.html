@@ -93,3 +93,9 @@
 
 <!-- Onboarding Wizard para primer inicio de sesión -->
 <app-onboarding-wizard *ngIf="showTutorial" (completed)="onTutorialCompleted()"></app-onboarding-wizard>
+
+<!-- Modal de Colaboración con el Proyecto (cada 7 días, solo usuarios normales) -->
+<app-collaboration-modal
+  [isOpen]="showCollaborationModal"
+  (close)="onCollaborationModalClose()">
+</app-collaboration-modal>
