@@ -178,6 +178,85 @@
   box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.04);
 }
 
+.search-box-custom {
+  .search-input-group {
+    display: flex;
+    align-items: stretch;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    height: 40px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      background-color: #ffffff;
+
+      .input-group-text,
+      .form-control,
+      .btn {
+        background-color: #ffffff;
+      }
+    }
+
+    .input-group-prepend {
+      margin-right: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-group-text {
+      background-color: transparent !important;
+      border: none !important;
+      color: #94a3b8;
+      padding: 0 0.5rem 0 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .form-control {
+      background-color: transparent !important;
+      border: none !important;
+      color: #1e293b;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0 0.75rem 0 0.25rem;
+      height: 100%;
+      box-shadow: none !important;
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .input-group-append {
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+
+      .btn-clear-search {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #94a3b8;
+        cursor: pointer;
+
+        &:hover {
+          color: #e11d48;
+        }
+      }
+    }
+  }
+}
+
 .btn-pill-tab {
   border: 1px solid #e2e8f0;
   background-color: #f8fafc;
