@@ -173,6 +173,14 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         this.calculateMetricsAndCharts();
       })
     );
+
+    this.subscriptions.add(
+      this.expenseService.openAddModalRequest$.subscribe(req => {
+        if (req && req.open) {
+          this.openAddExpenseModal(req.subcategoryId, req.categoryId);
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {

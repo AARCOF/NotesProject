@@ -24,6 +24,13 @@ export class ExpenseService {
   private budgetsSubject = new BehaviorSubject<MonthlyBudget[]>([]);
   public budgets$: Observable<MonthlyBudget[]> = this.budgetsSubject.asObservable();
 
+  private openAddModalRequestSubject = new BehaviorSubject<{ open: boolean; subcategoryId?: string; categoryId?: string } | null>(null);
+  public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string } | null> = this.openAddModalRequestSubject.asObservable();
+
+  public requestOpenAddExpenseModal(subcategoryId?: string, categoryId?: string): void {
+    this.openAddModalRequestSubject.next({ open: true, subcategoryId, categoryId });
+  }
+
   private currentUserId: string | null = null;
 
   constructor(private authService: AuthService) {

@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
 import { User } from './core/models/user.model';
 import { NotesService } from './services/notes.service';
+import { ExpenseService } from './services/expense.service';
 import { Note } from './models/note.model';
 import { Capacitor } from '@capacitor/core';
 
@@ -31,7 +32,8 @@ export class AppComponent implements OnInit {
     public router: Router,
     private authService: AuthService,
     private automatedReminderService: AutomatedReminderService,
-    private notesService: NotesService
+    private notesService: NotesService,
+    private expenseService: ExpenseService
   ) {
     this.checkScreenSize();
   }
@@ -80,10 +82,10 @@ export class AppComponent implements OnInit {
 
   public onFabCreate(): void {
     if (this.router.url.includes('/expenses')) {
-      // Si está en gastos, navegar o abrir
-      this.router.navigate(['/expenses']);
+      // Si está en la pantalla de gastos, abrir modal para registrar nuevo gasto
+      this.expenseService.requestOpenAddExpenseModal();
     } else {
-      // Abrir modal de notas
+      // Si está en tareas u otra pantalla, abrir modal de nueva tarea
       if (this.router.url !== '/dashboard') {
         this.router.navigate(['/dashboard']).then(() => {
           setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
