@@ -114,4 +114,11 @@ export class MobileHeaderComponent implements OnInit {
     }
     this.openCreateTask.emit();
   }
+
+  onLogout(): void {
+    if (confirm('¿Deseas cerrar sesión en NoteYou?')) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
+  }
 }

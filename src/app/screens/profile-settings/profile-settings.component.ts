@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { NotesService } from '../../services/notes.service';
 import { QuickNotesService } from '../../services/quick-notes.service';
@@ -32,8 +33,16 @@ export class ProfileSettingsComponent implements OnInit {
     private authService: AuthService,
     private notesService: NotesService,
     private quickNotesService: QuickNotesService,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    private router: Router
   ) {}
+
+  logout(): void {
+    if (confirm('¿Estás seguro de que deseas cerrar sesión en NoteYou?')) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
+  }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
