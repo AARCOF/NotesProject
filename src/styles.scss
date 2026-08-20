@@ -985,22 +985,27 @@ h1, h2, h3, h4, h5, h6, .card-title {
     .mobile-expenses-segmented-bar {
       background-color: #f1f5f9 !important;
       border: 1px solid #e2e8f0 !important;
-      border-radius: 10px !important;
-      padding: 2px !important;
+      border-radius: 12px !important;
+      padding: 3px !important;
       box-shadow: none !important;
       margin-top: 0 !important;
       margin-bottom: 0 !important;
     }
 
     .btn-mobile-subtab {
-      padding: 4px 2px !important;
-      font-size: 0.70rem !important;
-      border-radius: 8px !important;
+      padding: 5px 3px !important;
+      font-size: 0.76rem !important;
+      border-radius: 9px !important;
+
+      i {
+        font-size: 19px !important;
+        margin-bottom: 2px !important;
+      }
 
       &.active {
         background: #ffffff !important;
         color: #0f172a !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
       }
     }
   }
