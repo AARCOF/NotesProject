@@ -959,16 +959,16 @@ h1, h2, h3, h4, h5, h6, .card-title {
   .mobile-sticky-top-nav {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: calc(52px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(48px + env(safe-area-inset-top, 0px)) !important;
     z-index: 1018 !important;
     background: rgba(248, 250, 252, 0.98) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     margin-left: -8px !important;
     margin-right: -8px !important;
-    padding: 0 8px 3px 8px !important;
+    padding: 0 8px 2px 8px !important;
     margin-top: 0 !important;
-    margin-bottom: 0.2rem !important;
+    margin-bottom: 0.15rem !important;
     border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 
     .mobile-notes-segmented-bar,
