@@ -1011,4 +1011,45 @@ h1, h2, h3, h4, h5, h6, .card-title {
   }
 }
 
+/* ============================================================
+   MOBILE PROFILE PAGE — Scroll fix so all content is visible
+   ============================================================ */
+@media (max-width: 991px) {
+  /* Allow the main scroll container to scroll freely on any inner page */
+  .workspace-view-container.mobile-view-container {
+    overflow-y: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px 10px calc(80px + env(safe-area-inset-bottom, 0px)) 10px !important;
+  }
+
+  /* Outer wrappers: release height locks so content stacks and scrolls */
+  .workspace-wrapper.mobile-workspace {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .page-body-wrapper.mobile-body-wrapper {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow-y: auto !important;
+  }
+
+  .main-panel {
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+
+  .content-wrapper.mobile-content-pad {
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+
+  /* Remove Bootstrap h-100 height lock on cards in mobile */
+  .card.h-100 {
+    height: auto !important;
+  }
+}
+
 
