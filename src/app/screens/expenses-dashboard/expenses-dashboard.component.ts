@@ -31,10 +31,10 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Filtro de búsqueda rápida
   searchTerm: string = '';
 
-  // Vista Activa (Pestañas superiores) - Predeterminada: Registro de Gastos
-  activeTab: 'categorias' | 'graficas' | 'movimientos' = 'movimientos';
+  // Vista Activa (Pestañas) - Predeterminada: Registro de Gastos
+  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'movimientos';
 
-  setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos'): void {
+  setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion'): void {
     this.activeTab = tab;
   }
 

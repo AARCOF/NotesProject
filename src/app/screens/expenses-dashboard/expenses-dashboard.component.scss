@@ -285,6 +285,61 @@
   }
 }
 
+/* Mobile Segmented Bar for Expenses Views (APK / Phone) */
+.mobile-expenses-segmented-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f1f5f9;
+  border-radius: 14px;
+  padding: 4px;
+}
+
+.btn-mobile-subtab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 3px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+
+  i {
+    font-size: 18px !important;
+    margin-bottom: 2px;
+    line-height: 1;
+  }
+
+  &:hover {
+    color: #1e293b;
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &.active {
+    background-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+
+    i {
+      color: #ffffff !important;
+    }
+  }
+}
+
+.d-none-mobile {
+  @media (max-width: 991px) {
+    display: none !important;
+  }
+}
+
 /* Category Expense Cards */
 .category-expense-card {
   border: 1px solid #e2e8f0 !important;
