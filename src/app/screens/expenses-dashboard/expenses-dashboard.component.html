@@ -40,8 +40,84 @@
           <i class="typcn typcn-plus font-size-18 mr-2"></i> Registrar Gasto
         </button>
 
-        <!-- CARDS KPIS EN CUADRADOS (GRID HORIZONTAL 2x2 PARA AHORRAR ESPACIO) -->
-        <div class="row kpis-grid-container mb-3">
+        <!-- 1. VISTA WEB / ESCRITORIO: CARDS KPIS EN VERTICAL -->
+        <div class="d-none d-lg-flex flex-column gap-2 mb-3">
+          
+          <!-- KPI 1: Ingreso Mensual -->
+          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Ingreso Mensual</span>
+              <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs" (click)="openIncomeModal()" title="Editar Ingreso">
+                <i class="typcn typcn-edit font-size-13"></i>
+              </button>
+            </div>
+            <h4 class="font-weight-bold text-slate-900 mb-0 font-size-18">
+              {{ currencySymbol }} {{ monthlyIncome | number:'1.2-2' }}
+            </h4>
+            <small class="text-slate-400 font-size-11" *ngIf="monthlyIncome > 0">
+              <i class="typcn typcn-tick text-emerald mr-1 font-size-12"></i> Sueldo base
+            </small>
+            <small class="text-amber-600 font-size-11 cursor-pointer font-weight-medium" *ngIf="monthlyIncome === 0" (click)="openIncomeModal()">
+              <i class="typcn typcn-warning mr-1 font-size-12"></i> Ingresa tu sueldo
+            </small>
+          </div>
+
+          <!-- KPI 2: Total de Gastos -->
+          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Gastos Totales</span>
+              <div class="kpi-icon-badge-xs bg-rose-50 text-rose rounded-circle d-flex align-items-center justify-content-center">
+                <i class="typcn typcn-arrow-down-thick font-size-14"></i>
+              </div>
+            </div>
+            <h4 class="font-weight-bold text-rose-600 mb-0 font-size-18">
+              {{ currencySymbol }} {{ totalExpenses | number:'1.2-2' }}
+            </h4>
+            <small class="text-slate-400 font-size-11">
+              {{ expenses.length }} gastos registrados
+            </small>
+          </div>
+
+          <!-- KPI 3: Balance / Ahorro Disponible -->
+          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100" [ngClass]="balance >= 0 ? 'bg-emerald-50-30' : 'bg-rose-50-30'">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Balance Disponible</span>
+              <div class="kpi-icon-badge-xs rounded-circle d-flex align-items-center justify-content-center"
+                   [ngClass]="balance >= 0 ? 'bg-emerald-50 text-emerald' : 'bg-rose-50 text-rose'">
+                <i class="typcn font-size-14" [ngClass]="balance >= 0 ? 'typcn-shield' : 'typcn-warning'"></i>
+              </div>
+            </div>
+            <h4 class="font-weight-bold mb-0 font-size-18" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+              {{ currencySymbol }} {{ balance | number:'1.2-2' }}
+            </h4>
+            <small class="font-size-11 font-weight-medium" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+              {{ balance >= 0 ? 'Superávit / Ahorro' : 'Deficit / Excedido' }}
+            </small>
+          </div>
+
+          <!-- KPI 4: % Presupuesto Utilizado -->
+          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Uso de Ingresos</span>
+              <span class="badge badge-pill font-weight-bold px-2 py-0-5 font-size-10"
+                    [ngClass]="budgetUsedPercent > 90 ? 'badge-rose-light text-rose' : (budgetUsedPercent > 70 ? 'badge-amber-light text-amber' : 'badge-emerald-light text-emerald')">
+                {{ budgetUsedPercent }}%
+              </span>
+            </div>
+            <div class="progress my-1-5" style="height: 6px; border-radius: 3px; background-color: #e2e8f0;">
+              <div class="progress-bar rounded" role="progressbar" 
+                   [style.width.%]="budgetUsedPercent"
+                   [ngClass]="budgetUsedPercent > 90 ? 'bg-rose-500' : (budgetUsedPercent > 70 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
+            </div>
+            <small class="text-slate-400 font-size-11">
+              {{ monthlyIncome > 0 ? (100 - budgetUsedPercent) + '% disponible' : 'Sin presupuesto' }}
+            </small>
+          </div>
+
+        </div>
+
+        <!-- 2. VISTA MÓVIL / APK: CARDS KPIS EN CUADRADOS (GRID 2x2 HORIZONTAL) -->
+        <div class="d-flex d-lg-none row kpis-grid-container mb-3">
           
           <!-- KPI 1: Ingreso Mensual -->
           <div class="col-6 mb-2">

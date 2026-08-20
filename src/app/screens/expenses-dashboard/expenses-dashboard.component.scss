@@ -68,7 +68,50 @@
   }
 }
 
-/* Square Horizontal KPI Cards (2x2 Grid) */
+/* Vertical KPI Cards (Web / Desktop) */
+.kpi-vertical-card {
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9;
+  }
+
+  &.bg-emerald-50-30 {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0 !important;
+  }
+
+  &.bg-rose-50-30 {
+    background-color: #fff1f2;
+    border-color: #fecdd3 !important;
+  }
+
+  .kpi-icon-badge-xs {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    i {
+      font-size: 18px !important;
+    }
+  }
+
+  .btn-icon-xs {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: 15px !important;
+    }
+  }
+}
+
+/* Square Horizontal KPI Cards (Mobile / APK 2x2 Grid) */
 .kpis-grid-container {
   margin-left: -4px !important;
   margin-right: -4px !important;
