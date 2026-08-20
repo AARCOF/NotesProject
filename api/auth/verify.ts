@@ -11,7 +11,11 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { email, key } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {}
+    }
+    const { email, key } = body || {};
 
     if (!email || !key) {
       return sendJsonResponse(res, 400, { success: false, message: 'Correo y código son requeridos' });

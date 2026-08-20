@@ -12,7 +12,11 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { email, password } = req.body || {};
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {}
+    }
+    const { email, password } = body || {};
 
     if (!email || !password) {
       return sendJsonResponse(res, 400, { success: false, message: 'Por favor ingresa correo y contraseña' });
