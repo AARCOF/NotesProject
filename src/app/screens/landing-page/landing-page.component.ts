@@ -174,13 +174,11 @@ export class LandingPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Si la aplicación se ejecuta en APK, celular, o contenedor móvil, ingresar directo al sistema
-    const isMobile = Capacitor.isNativePlatform() || 
-                     window.location.search.includes('platform=mobile') ||
-                     window.innerWidth <= 800 ||
-                     /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    // Si la aplicación se ejecuta dentro del APK nativo (Capacitor) o contenedor móvil Expo:
+    const isNativeAPK = Capacitor.isNativePlatform() || 
+                        window.location.search.includes('platform=mobile');
 
-    if (isMobile) {
+    if (isNativeAPK) {
       if (this.authService.isAuthenticated()) {
         this.router.navigate(['/dashboard']);
       } else {
@@ -189,6 +187,7 @@ export class LandingPageComponent implements OnInit {
       return;
     }
 
+    // En la versión Web (navegadores de PC y móviles), se muestra la Landing Page:
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
     });
