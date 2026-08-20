@@ -1,4 +1,6 @@
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 import { AuthService } from '../../core/services/auth.service';
 
 export interface PhoneDemoTask {
@@ -166,9 +168,25 @@ export class LandingPageComponent implements OnInit {
     }
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    // Si la aplicación se ejecuta en APK (Capacitor nativo) o contenedor móvil, ingresar directo al sistema
+    const isMobileNative = Capacitor.isNativePlatform() || 
+                           window.location.search.includes('platform=mobile');
+
+    if (isMobileNative) {
+      if (this.authService.isAuthenticated()) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.router.navigate(['/login']);
+      }
+      return;
+    }
+
     this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
     });

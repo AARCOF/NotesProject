@@ -13,8 +13,8 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 
-// ⚙️ Dirección IP local de tu computadora para desarrollo:
-const LOCAL_DEV_URL = 'http://192.168.1.21:4200';
+// ⚙️ Dirección IP local de tu computadora para desarrollo (Ingresa directo al sistema):
+const LOCAL_DEV_URL = 'http://192.168.1.21:4200/dashboard?platform=mobile';
 
 export default function App() {
   const webViewRef = useRef(null);
