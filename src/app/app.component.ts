@@ -125,11 +125,29 @@ export class AppComponent implements OnInit {
     const lastShown = localStorage.getItem(storageKey);
     const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 
-    if (!lastShown || (Date.now() - parseInt(lastShown, 10)) >= sevenDaysMs) {
+    let shouldShow = false;
+
+    if (!lastShown) {
+      // Primera vez: calcular desde la fecha de creación de la cuenta.
+      // Si han pasado >= 7 días desde que se creó la cuenta, mostrar.
+      // Para usuarios existentes sin marca, mostrar ahora mismo la primera vez.
+      const accountCreatedAt = this.currentUser.createdAt
+        ? new Date(this.currentUser.createdAt).getTime()
+        : Date.now();
+      const daysSinceCreation = Date.now() - accountCreatedAt;
+      // Mostrar si han pasado 7 días desde la creación O si nunca se ha mostrado
+      // (para que usuarios existentes lo vean ahora y luego cada 7 días)
+      shouldShow = daysSinceCreation >= sevenDaysMs || daysSinceCreation >= 0;
+    } else {
+      // Ya se mostró antes: esperar 7 días desde la última vez que se cerró
+      shouldShow = (Date.now() - parseInt(lastShown, 10)) >= sevenDaysMs;
+    }
+
+    if (shouldShow) {
       // Delay pequeño para que primero cargue la app
       setTimeout(() => {
         this.showCollaborationModal = true;
-      }, 4000);
+      }, 2000);
     }
   }
 
