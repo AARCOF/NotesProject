@@ -412,4 +412,15 @@ export class NotesService {
 
     return result;
   }
+
+  private openModalRequestSubject = new BehaviorSubject<{ open: boolean; note?: Note | null }>({ open: false });
+  public openModalRequest$ = this.openModalRequestSubject.asObservable();
+
+  public requestOpenCreateModal(note: Note | null = null): void {
+    this.openModalRequestSubject.next({ open: true, note });
+  }
+
+  public closeCreateModal(): void {
+    this.openModalRequestSubject.next({ open: false, note: null });
+  }
 }

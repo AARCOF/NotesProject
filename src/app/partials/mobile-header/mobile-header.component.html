@@ -1,0 +1,43 @@
+<header class="mobile-app-header">
+  <div class="header-top-row">
+    
+    <!-- Usuario & Saludo -->
+    <div class="user-greeting-wrapper" routerLink="/profile">
+      <div class="user-avatar-pill">
+        <span class="avatar-initial">{{ userInitial }}</span>
+        <span class="online-dot"></span>
+      </div>
+      <div class="greeting-text">
+        <span class="sub-greeting">Hola,</span>
+        <h4 class="user-name">{{ userFirstName }} 👋</h4>
+      </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="header-actions">
+      <!-- Botón de Notas Rápidas (Post-its) -->
+      <button class="header-icon-btn" (click)="onQuickNotesClick()" title="Notas Rápidas" aria-label="Notas Rápidas">
+        <i class="typcn typcn-flash"></i>
+      </button>
+
+      <!-- Botón de Notificaciones / Recordatorios -->
+      <button class="header-icon-btn" routerLink="/calendar" title="Agenda & Alertas" aria-label="Agenda">
+        <i class="typcn typcn-bell"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Carrusel de Filtros de Categorías (Pill Chips) -->
+  <div class="categories-scroll-row" *ngIf="showCategories && categories.length > 0">
+    <div class="category-chips-track">
+      <button 
+        *ngFor="let cat of categories"
+        class="category-pill-chip" 
+        [class.active]="selectedCategory === cat"
+        (click)="onSelectCategory(cat)">
+        {{ cat }}
+      </button>
+    </div>
+  </div>
+</header>

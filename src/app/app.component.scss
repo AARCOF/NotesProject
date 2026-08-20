@@ -7,3 +7,93 @@
   font-size: 1rem;
   font-family: $type-1;
 }
+
+.app-root-container.is-mobile-app {
+  .mobile-body-wrapper {
+    padding-top: 0 !important;
+    min-height: 100vh;
+  }
+
+  .mobile-content-pad {
+    padding: 12px 14px 90px 14px !important;
+  }
+
+  .mobile-workspace {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .mobile-view-container {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+// Bottom Sheet para Notas Rápidas en Móvil
+.mobile-quick-notes-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1060;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.mobile-quick-notes-sheet {
+  background: #ffffff;
+  width: 100%;
+  max-width: 540px;
+  max-height: 80vh;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px 24px 16px;
+  animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+
+  .sheet-drag-handle {
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: #cbd5e1;
+    margin: 4px auto 12px auto;
+    cursor: pointer;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .sheet-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 80px);
+    padding-top: 12px;
+  }
+}
+
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
