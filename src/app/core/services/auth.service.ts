@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User, UserRole } from '../models/user.model';
 import { UserRepository } from '../repositories/user.repository';
@@ -21,7 +22,8 @@ export class AuthService {
     private userRepository: UserRepository,
     private jwtService: JwtService,
     private verificationKeyService: VerificationKeyService,
-    private recaptchaService: RecaptchaService
+    private recaptchaService: RecaptchaService,
+    private http: HttpClient
   ) {
     this.checkInitialAuth();
   }
@@ -31,9 +33,27 @@ export class AuthService {
     if (token && !this.jwtService.isTokenExpired(token)) {
       const payload = this.jwtService.decodeToken(token);
       if (payload) {
-        const user = this.userRepository.findById(payload.sub);
+        let user = this.userRepository.findById(payload.sub);
+        if (!user && payload.email) {
+          user = this.userRepository.findByEmail(payload.email);
+        }
         if (user && user.isVerified && user.isActive !== false) {
           this.currentUserSubject.next(user);
+          return;
+        } else if (payload.sub && payload.name && payload.email) {
+          // Reconstruir usuario desde el payload del token si no está en local
+          const fallbackUser: User = {
+            id: payload.sub,
+            name: payload.name,
+            email: payload.email,
+            passwordHash: '',
+            role: (payload as any).role || 'user',
+            isVerified: true,
+            isActive: true,
+            createdAt: new Date().toISOString()
+          };
+          this.userRepository.saveUser(fallbackUser);
+          this.currentUserSubject.next(fallbackUser);
           return;
         }
       }
@@ -42,20 +62,44 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  public register(name: string, email: string, password: string): { success: boolean; message: string; email?: string } {
+  public async register(name: string, email: string, password: string): Promise<{ success: boolean; message: string; email?: string }> {
     if (!this.recaptchaService.isVerified()) {
       return { success: false, message: 'Por favor completa la verificación reCAPTCHA No soy un robot.' };
     }
 
-    const existing = this.userRepository.findByEmail(email);
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Intentar registrar en MongoDB Atlas a través de la API
+    try {
+      const response: any = await this.http.post('/api/auth/register', {
+        name: name.trim(),
+        email: cleanEmail,
+        password
+      }).toPromise();
+
+      if (response && response.success) {
+        this.recaptchaService.reset();
+        return {
+          success: true,
+          message: response.message,
+          email: cleanEmail
+        };
+      }
+    } catch (apiErr) {
+      const serverMessage = (apiErr as any)?.error?.message;
+      if (serverMessage) {
+        return { success: false, message: serverMessage };
+      }
+    }
+
+    // 2. Modo de respaldo local
+    const existing = this.userRepository.findByEmail(cleanEmail);
     if (existing && existing.isVerified) {
       return { success: false, message: 'Este correo electrónico ya está registrado y verificado. Procede al inicio de sesión.' };
     }
 
     const securityKey = this.verificationKeyService.generateSecurityKey();
     const expiresAt = this.verificationKeyService.calculateExpirationTime();
-
-    const cleanEmail = email.trim().toLowerCase();
     const assignedRole: UserRole = cleanEmail === 'acaf504082@gmail.com' ? 'superadmin' : 'user';
 
     const newUser: User = {
@@ -83,13 +127,41 @@ export class AuthService {
     };
   }
 
-  public verifyAccountWithKey(email: string, inputKey: string): { success: boolean; message: string } {
-    const user = this.userRepository.findByEmail(email);
+  public async verifyAccountWithKey(email: string, inputKey: string): Promise<{ success: boolean; message: string }> {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanKey = inputKey.trim();
+
+    // 1. Intentar verificar en la nube (MongoDB Atlas)
+    try {
+      const response: any = await this.http.post('/api/auth/verify', {
+        email: cleanEmail,
+        key: cleanKey
+      }).toPromise();
+
+      if (response && response.success) {
+        if (response.token) {
+          this.jwtService.saveToken(response.token);
+        }
+        if (response.user) {
+          this.userRepository.saveUser(response.user);
+          this.currentUserSubject.next(response.user);
+        }
+        return { success: true, message: response.message || 'Cuenta verificada exitosamente.' };
+      }
+    } catch (apiErr) {
+      const serverMessage = (apiErr as any)?.error?.message;
+      if (serverMessage && !serverMessage.includes('NetworkError') && !serverMessage.includes('404')) {
+        return { success: false, message: serverMessage };
+      }
+    }
+
+    // 2. Verificación en repositorio local
+    const user = this.userRepository.findByEmail(cleanEmail);
     if (!user) {
       return { success: false, message: 'Usuario no encontrado.' };
     }
 
-    const result = this.verificationKeyService.validateKey(inputKey, user.verificationKey, user.keyExpiresAt);
+    const result = this.verificationKeyService.validateKey(cleanKey, user.verificationKey, user.keyExpiresAt);
     if (!result.isValid) {
       return { success: false, message: result.message };
     }
@@ -129,12 +201,48 @@ export class AuthService {
     return { success: true, message: `Se ha enviado un nuevo código de acceso a ${user.email} con validez de 1 hora.` };
   }
 
-  public login(email: string, password: string): { success: boolean; message: string; requiresVerification?: boolean } {
+  public async login(email: string, password: string): Promise<{ success: boolean; message: string; requiresVerification?: boolean }> {
     if (!this.recaptchaService.isVerified()) {
       return { success: false, message: 'Por favor completa la verificación reCAPTCHA No soy un robot.' };
     }
 
-    const user = this.userRepository.findByEmail(email);
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Intentar inicio de sesión en MongoDB Atlas
+    try {
+      const response: any = await this.http.post('/api/auth/login', {
+        email: cleanEmail,
+        password
+      }).toPromise();
+
+      if (response && response.success) {
+        if (response.token) {
+          this.jwtService.saveToken(response.token);
+        }
+        if (response.user) {
+          this.userRepository.saveUser(response.user);
+          this.currentUserSubject.next(response.user);
+        }
+        this.recaptchaService.reset();
+        return { success: true, message: 'Inicio de sesión exitoso.' };
+      }
+    } catch (apiErr) {
+      const errObj = apiErr as any;
+      if (errObj?.error?.requiresVerification) {
+        return {
+          success: false,
+          message: errObj.error.message || 'Tu cuenta requiere verificación por correo.',
+          requiresVerification: true
+        };
+      }
+      const serverMessage = errObj?.error?.message;
+      if (serverMessage && !serverMessage.includes('NetworkError') && !serverMessage.includes('404')) {
+        return { success: false, message: serverMessage };
+      }
+    }
+
+    // 2. Modo de respaldo local
+    const user = this.userRepository.findByEmail(cleanEmail);
     if (!user || user.passwordHash !== btoa(password)) {
       return { success: false, message: 'Credenciales inválidas. Por favor verifica tu correo y contraseña.' };
     }

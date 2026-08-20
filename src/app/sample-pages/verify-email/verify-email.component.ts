@@ -69,7 +69,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     }
   }
 
-  onVerify(): void {
+  async onVerify(): Promise<void> {
     if (!this.inputKey.trim()) {
       this.errorMessage = 'Por favor ingresa la llave de seguridad de 6 dígitos.';
       return;
@@ -79,19 +79,22 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.successMessage = '';
 
-    setTimeout(() => {
-      const result = this.authService.verifyAccountWithKey(this.email, this.inputKey.trim());
+    try {
+      const result = await this.authService.verifyAccountWithKey(this.email, this.inputKey.trim());
       this.isLoading = false;
 
       if (result.success) {
         this.successMessage = result.message;
         setTimeout(() => {
           this.router.navigate(['/dashboard']);
-        }, 1200);
+        }, 1000);
       } else {
         this.errorMessage = result.message;
       }
-    }, 600);
+    } catch (err) {
+      this.isLoading = false;
+      this.errorMessage = 'Error al verificar la cuenta.';
+    }
   }
 
   onResendKey(): void {

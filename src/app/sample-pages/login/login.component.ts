@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onLogin(): void {
+  async onLogin(): Promise<void> {
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor ingresa tu correo y contraseña.';
       return;
@@ -39,15 +39,15 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    setTimeout(() => {
-      const result = this.authService.login(this.email, this.password);
+    try {
+      const result = await this.authService.login(this.email, this.password);
       this.isLoading = false;
 
       if (result.success) {
         this.successMessage = '¡Inicio de sesión exitoso! Redirigiendo...';
         setTimeout(() => {
           this.router.navigateByUrl(this.returnUrl);
-        }, 800);
+        }, 600);
       } else {
         this.errorMessage = result.message;
         if (result.requiresVerification) {
@@ -56,6 +56,9 @@ export class LoginComponent implements OnInit {
           }, 1500);
         }
       }
-    }, 600);
+    } catch (err) {
+      this.isLoading = false;
+      this.errorMessage = 'Error al iniciar sesión. Intenta nuevamente.';
+    }
   }
 }

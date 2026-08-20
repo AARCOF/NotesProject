@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { User, UserRole } from '../models/user.model';
 
 const USERS_STORAGE_KEY = 'noteyou_users_v2';
@@ -7,9 +10,34 @@ const USERS_STORAGE_KEY = 'noteyou_users_v2';
   providedIn: 'root'
 })
 export class UserRepository {
-  constructor() {
+  constructor(private http: HttpClient) {
     this.initDefaultUsers();
     this.ensureSuperadminRoles();
+  }
+
+  public getCloudUsers(): Observable<User[]> {
+    return this.http.get<{ success: boolean; users: User[] }>('/api/admin/users').pipe(
+      map(res => {
+        if (res && res.success && Array.isArray(res.users) && res.users.length > 0) {
+          const cleanUsers: User[] = res.users.map(u => ({
+            id: u.id || (u as any)._id?.toString() || 'usr_' + Math.random().toString(36).substr(2, 6),
+            name: u.name,
+            email: u.email,
+            passwordHash: u.passwordHash || '',
+            role: u.role || 'user',
+            isVerified: u.isVerified ?? true,
+            isActive: u.isActive ?? true,
+            createdAt: u.createdAt || new Date().toISOString(),
+            hasCompletedTutorial: u.hasCompletedTutorial || false
+          }));
+
+          localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(cleanUsers));
+          return cleanUsers;
+        }
+        return this.getAllUsers();
+      }),
+      catchError(() => of(this.getAllUsers()))
+    );
   }
 
   private ensureSuperadminRoles(): void {
