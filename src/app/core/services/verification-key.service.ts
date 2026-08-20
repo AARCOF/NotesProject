@@ -71,18 +71,47 @@ export class VerificationKeyService {
     priority: string,
     dueDate?: string
   ): Observable<boolean> {
-    const subject = `Recordatorio NoteYou: ${taskTitle}`;
     const payload = {
       service_id: 'NoteYou_er',
       template_id: 'template_ftjjwe7',
       user_id: 'NJyM41WnepByrp24u',
       template_params: {
         to_email: toEmail,
-        task_title: taskTitle,
-        task_content: taskContent,
-        category: categoryName,
-        priority: priority,
-        due_date: dueDate || 'Sin fecha de vencimiento'
+        task_title: `⏰ Recordatorio de Tarea: ${taskTitle}`,
+        task_content: taskContent || 'Tienes una tarea programada en NoteYou que vence mañana.',
+        category: categoryName || 'General',
+        priority: priority ? priority.toUpperCase() : 'MEDIA',
+        due_date: dueDate || 'Mañana'
+      }
+    };
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.post('https://api.emailjs.com/api/v1.0/email/send', payload, { headers, responseType: 'text' }).pipe(
+      catchError(() => of(true))
+    ) as Observable<any>;
+  }
+
+  public sendPaymentReminderEmail(
+    toEmail: string,
+    paymentTitle: string,
+    amount: number,
+    currencySymbol: string,
+    categoryName: string,
+    dueDate: string,
+    notes?: string
+  ): Observable<boolean> {
+    const payload = {
+      service_id: 'NoteYou_er',
+      template_id: 'template_ftjjwe7',
+      user_id: 'NJyM41WnepByrp24u',
+      template_params: {
+        to_email: toEmail,
+        task_title: `💳 Recordatorio de Pago: ${paymentTitle} (${currencySymbol} ${amount.toLocaleString()})`,
+        task_content: notes ? `Detalles del pago: ${notes}` : `Tienes un pago programado por un monto de ${currencySymbol} ${amount.toLocaleString()} que vence mañana.`,
+        category: categoryName || 'Finanzas',
+        priority: 'ALTA (Pago/Finanzas)',
+        due_date: dueDate
       }
     };
 

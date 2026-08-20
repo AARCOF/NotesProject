@@ -95,6 +95,8 @@ export class AutomatedReminderService implements OnDestroy {
   private checkTaskReminders(user: any): void {
     const sub = this.notesService.notes$.subscribe(notes => {
       const now = new Date();
+      const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
       
       notes.forEach(note => {
         if (note.dueDate && note.status !== 'completada') {
@@ -102,15 +104,17 @@ export class AutomatedReminderService implements OnDestroy {
           const timeDiff = dueDate.getTime() - now.getTime();
           const hoursDiff = timeDiff / (1000 * 3600);
           
-          // Si faltan 24 horas o menos para vencer, o es el día de hoy
-          if (hoursDiff <= 24 && hoursDiff >= -12) {
-            // Notificación nativa en el celular
+          // Se activa cuando la tarea está a 1 día (24 horas o menos) de cumplir su fecha de vencimiento
+          const isOneDayBefore = (hoursDiff <= 24 && hoursDiff > 0) || note.dueDate === tomorrowStr;
+
+          if (isOneDayBefore) {
+            // 1. Notificación emergente en el celular / web
             const notifTitle = `⏰ Recordatorio de Tarea: ${note.title}`;
-            const notifBody = `Tu tarea con prioridad ${note.priority.toUpperCase()} vence el ${note.dueDate}. ¡No la olvides!`;
+            const notifBody = `Tu tarea con prioridad ${note.priority.toUpperCase()} vence mañana (${note.dueDate}). ¡No la olvides!`;
             this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}`);
 
-            // Enviar por email si no se ha enviado
-            if (!note.reminderSent && user.email && hoursDiff > 0) {
+            // 2. Notificación vía Gmail (EmailJS)
+            if (!note.reminderSent && user.email) {
               this.verificationKeyService.sendTaskReminderEmail(
                 user.email,
                 note.title,
@@ -121,8 +125,9 @@ export class AutomatedReminderService implements OnDestroy {
               ).subscribe(() => {
                 const updatedNote = { reminderSent: true };
                 this.notesService.updateNote(note.id, updatedNote);
+                console.log(`Email de recordatorio enviado para tarea: ${note.title}`);
               }, err => {
-                console.error('Error al enviar el email de recordatorio', err);
+                console.error('Error al enviar email de recordatorio de tarea', err);
               });
             }
           }
@@ -146,16 +151,41 @@ export class AutomatedReminderService implements OnDestroy {
       const tomorrowStr = tomorrow.toISOString().split('T')[0];
       const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-      // 1. Recordatorio de Gastos y Pagos Programados para Hoy o Mañana
+      // 1. Recordatorio de Pagos y Gastos a 1 DÍA de vencer (Mañana)
       expenses.forEach(exp => {
-        if (exp.date === todayStr) {
-          const notifTitle = `💳 Pago Registrado Hoy: ${exp.title}`;
-          const notifBody = `Gasto de $${exp.amount.toLocaleString()} registrado para el día de hoy.`;
-          this.triggerDeviceNotification(notifTitle, notifBody, `exp_${exp.id}_today`);
-        } else if (exp.date === tomorrowStr) {
-          const notifTitle = `📅 Recordatorio de Pago Mañana: ${exp.title}`;
-          const notifBody = `Tienes un gasto programado de $${exp.amount.toLocaleString()} para mañana.`;
+        const expDate = new Date(`${exp.date}T00:00:00`);
+        const timeDiff = expDate.getTime() - now.getTime();
+        const hoursDiff = timeDiff / (1000 * 3600);
+
+        const isOneDayBefore = (hoursDiff <= 24 && hoursDiff > 0) || exp.date === tomorrowStr;
+
+        if (isOneDayBefore) {
+          const cat = categories.find(c => c.id === exp.categoryId);
+          const catName = cat ? cat.name : 'Finanzas';
+
+          // Notificación en el dispositivo (celular / APK / web)
+          const notifTitle = `💳 Recordatorio de Pago: ${exp.title}`;
+          const notifBody = `Tienes un pago programado por $${exp.amount.toLocaleString()} que vence mañana (${exp.date}).`;
           this.triggerDeviceNotification(notifTitle, notifBody, `exp_${exp.id}_tomorrow`);
+
+          // Notificación por Gmail
+          const emailTrackingKey = `expense_email_sent_${exp.id}_${exp.date}`;
+          if (!localStorage.getItem(emailTrackingKey) && user.email) {
+            this.verificationKeyService.sendPaymentReminderEmail(
+              user.email,
+              exp.title,
+              exp.amount,
+              '$',
+              catName,
+              exp.date,
+              exp.notes
+            ).subscribe(() => {
+              localStorage.setItem(emailTrackingKey, 'true');
+              console.log(`Email de recordatorio enviado para pago: ${exp.title}`);
+            }, err => {
+              console.error('Error al enviar email de recordatorio de pago', err);
+            });
+          }
         }
       });
 
