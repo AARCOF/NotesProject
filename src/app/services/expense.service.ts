@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, MonthlyBudget } from '../models/expense.model';
 import { AuthService } from '../core/services/auth.service';
 
@@ -24,8 +24,8 @@ export class ExpenseService {
   private budgetsSubject = new BehaviorSubject<MonthlyBudget[]>([]);
   public budgets$: Observable<MonthlyBudget[]> = this.budgetsSubject.asObservable();
 
-  private openAddModalRequestSubject = new BehaviorSubject<{ open: boolean; subcategoryId?: string; categoryId?: string } | null>(null);
-  public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string } | null> = this.openAddModalRequestSubject.asObservable();
+  private openAddModalRequestSubject = new Subject<{ open: boolean; subcategoryId?: string; categoryId?: string }>();
+  public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string }> = this.openAddModalRequestSubject.asObservable();
 
   public requestOpenAddExpenseModal(subcategoryId?: string, categoryId?: string): void {
     this.openAddModalRequestSubject.next({ open: true, subcategoryId, categoryId });

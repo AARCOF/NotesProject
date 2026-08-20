@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Note, PriorityLevel, NoteStatus, RecurrenceFrequency } from '../models/note.model';
 import { AuthService } from '../core/services/auth.service';
 
@@ -413,7 +413,7 @@ export class NotesService {
     return result;
   }
 
-  private openModalRequestSubject = new BehaviorSubject<{ open: boolean; note?: Note | null }>({ open: false });
+  private openModalRequestSubject = new Subject<{ open: boolean; note?: Note | null }>();
   public openModalRequest$ = this.openModalRequestSubject.asObservable();
 
   public requestOpenCreateModal(note: Note | null = null): void {
