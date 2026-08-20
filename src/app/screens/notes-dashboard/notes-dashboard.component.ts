@@ -56,7 +56,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   pageSize: number = 6;
   noteToEdit: Note | null = null;
   initialModalStatus: NoteStatus = 'pendiente';
-  viewMode: 'grid' | 'kanban' | 'graficos' = 'kanban';
+  viewMode: 'grid' | 'kanban' | 'graficos' | 'categorias' = 'kanban';
 
   // Gráficos ng2-charts
   public chartOptions: ChartOptions = {
@@ -644,5 +644,89 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   get completedCount(): number {
     return this.allNotes.filter(n => n.status === 'completada').length;
+  }
+
+  // --- Gestión de Categorías dentro del Dashboard ---
+  isCategoryModalOpen: boolean = false;
+  categoryToEdit: Category | null = null;
+  catName: string = '';
+  catDescription: string = '';
+  catColor: string = '#059669';
+  catIcon: string = 'typcn-folder';
+
+  availableCatColors: string[] = [
+    '#059669', '#0284C7', '#06B6D4', '#8B5CF6',
+    '#EC4899', '#F59E0B', '#EF4444', '#10B981',
+    '#6366F1', '#14B8A6', '#84CC16', '#64748B'
+  ];
+
+  availableCatIcons: { class: string; label: string }[] = [
+    { class: 'typcn-book', label: 'Estudio' },
+    { class: 'typcn-home', label: 'Hogar' },
+    { class: 'typcn-briefcase', label: 'Trabajo' },
+    { class: 'typcn-user', label: 'Personal' },
+    { class: 'typcn-folder', label: 'Carpeta' },
+    { class: 'typcn-star', label: 'Favorito' },
+    { class: 'typcn-heart', label: 'Salud' },
+    { class: 'typcn-shopping-cart', label: 'Compras' },
+    { class: 'typcn-plane', label: 'Viajes' },
+    { class: 'typcn-flash', label: 'Ideas' },
+    { class: 'typcn-code', label: 'Código' },
+    { class: 'typcn-tag', label: 'Etiqueta' }
+  ];
+
+  openCreateCategoryModal(): void {
+    this.categoryToEdit = null;
+    this.catName = '';
+    this.catDescription = '';
+    this.catColor = '#059669';
+    this.catIcon = 'typcn-folder';
+    this.isCategoryModalOpen = true;
+  }
+
+  openEditCategoryModal(cat: Category): void {
+    this.categoryToEdit = cat;
+    this.catName = cat.name;
+    this.catDescription = cat.description || '';
+    this.catColor = cat.color || '#059669';
+    this.catIcon = cat.icon || 'typcn-folder';
+    this.isCategoryModalOpen = true;
+  }
+
+  closeCategoryModal(): void {
+    this.isCategoryModalOpen = false;
+    this.categoryToEdit = null;
+  }
+
+  saveCategoryForm(): void {
+    if (!this.catName.trim()) return;
+
+    if (this.categoryToEdit) {
+      this.categoriesService.updateCategory(this.categoryToEdit.id, {
+        name: this.catName.trim(),
+        description: this.catDescription.trim(),
+        color: this.catColor,
+        icon: this.catIcon
+      });
+    } else {
+      this.categoriesService.addCategory({
+        name: this.catName.trim(),
+        description: this.catDescription.trim(),
+        color: this.catColor,
+        icon: this.catIcon
+      });
+    }
+    this.closeCategoryModal();
+  }
+
+  deleteCategory(cat: Category): void {
+    if (cat.isSystem) return;
+    if (confirm(`¿Estás seguro de eliminar la categoría "${cat.name}"?`)) {
+      this.categoriesService.deleteCategory(cat.id);
+    }
+  }
+
+  getNoteCountForCategory(catId: string): number {
+    return this.allNotes.filter(n => n.categoryId === catId).length;
   }
 }
