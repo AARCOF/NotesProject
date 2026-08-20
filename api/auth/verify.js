@@ -1,7 +1,7 @@
-import { connectToDatabase, sendJsonResponse } from '../lib/db';
-import { generateJwtToken } from '../lib/auth-middleware';
+const { connectToDatabase, sendJsonResponse } = require('../lib/db');
+const { generateJwtToken } = require('../lib/auth-middleware');
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return sendJsonResponse(res, 200, { ok: true });
   }
@@ -54,7 +54,6 @@ export default async function handler(req: any, res: any) {
       return sendJsonResponse(res, 400, { success: false, message: 'El código de seguridad ha expirado. Solicita uno nuevo.' });
     }
 
-    // Activar usuario
     await usersCollection.updateOne(
       { _id: user._id },
       {
@@ -82,6 +81,6 @@ export default async function handler(req: any, res: any) {
       user: userData
     });
   } catch (err) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error al verificar cuenta: ' + (err as any)?.message });
+    return sendJsonResponse(res, 500, { success: false, message: 'Error al verificar cuenta: ' + (err ? err.message : err) });
   }
-}
+};

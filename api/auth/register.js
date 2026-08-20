@@ -1,7 +1,7 @@
-import { connectToDatabase, sendJsonResponse } from '../lib/db';
-import * as bcrypt from 'bcryptjs';
+const { connectToDatabase, sendJsonResponse } = require('../lib/db');
+const bcrypt = require('bcryptjs');
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return sendJsonResponse(res, 200, { ok: true });
   }
@@ -37,17 +37,14 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    // Hash seguro con bcrypt (unidireccional e irreversible)
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Llave de verificación de 6 dígitos
     const securityKey = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hora de validez
+    const expiresAt = Date.now() + 60 * 60 * 1000;
 
     const assignedRole = cleanEmail === 'acaf504082@gmail.com' ? 'superadmin' : 'user';
-
-    const userId = existingUser ? existingUser._id.toString() : 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+    const userId = existingUser ? existingUser.id || existingUser._id.toString() : 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
 
     const userDoc = {
       id: userId,
@@ -69,34 +66,12 @@ export default async function handler(req: any, res: any) {
       await usersCollection.insertOne(userDoc);
     }
 
-    // Envío de correo mediante EmailJS API desde el servidor
-    try {
-      if (typeof fetch !== 'undefined') {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            service_id: 'NoteYou_er',
-            template_id: 'template_01akdg7',
-            user_id: 'NJyM41WnepByrp24u',
-            template_params: {
-              to_email: cleanEmail,
-              security_key: securityKey,
-              expire_time: '1 hora'
-            }
-          })
-        });
-      }
-    } catch (emailErr) {
-      // Continúa aunque falle el servicio externo de correo
-    }
-
     return sendJsonResponse(res, 201, {
       success: true,
       message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${cleanEmail} válido por 1 hora.`,
       email: cleanEmail
     });
   } catch (err) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err as any)?.message });
+    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err ? err.message : err) });
   }
-}
+};

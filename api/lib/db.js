@@ -1,25 +1,21 @@
-import { MongoClient, Db } from 'mongodb';
+const { MongoClient } = require('mongodb');
 
-// En Vercel se configura MONGODB_URI en Settings > Environment Variables
 const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
 const DB_NAME = process.env.DB_NAME || 'noteyou_production';
 
-let cachedClient: MongoClient | null = null;
-let cachedDb: Db | null = null;
+let cachedClient = null;
+let cachedDb = null;
 
-export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
-  }
-
-  if (!MONGODB_URI) {
-    throw new Error('MONGODB_URI no está configurada en las variables de entorno de Vercel');
   }
 
   const client = new MongoClient(MONGODB_URI, {
     serverSelectionTimeoutMS: 5000,
     connectTimeoutMS: 5000
   });
+
   await client.connect();
   const db = client.db(DB_NAME);
 
@@ -29,8 +25,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
   return { client, db };
 }
 
-// Función auxiliar para respuestas JSON con CORS habilitado para Web y APK
-export function sendJsonResponse(res: any, statusCode: number, data: any) {
+function sendJsonResponse(res, statusCode, data) {
   try {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -49,3 +44,8 @@ export function sendJsonResponse(res: any, statusCode: number, data: any) {
     return res.end(JSON.stringify(data));
   }
 }
+
+module.exports = {
+  connectToDatabase,
+  sendJsonResponse
+};

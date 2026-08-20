@@ -1,8 +1,8 @@
-import { connectToDatabase, sendJsonResponse } from '../lib/db';
-import { generateJwtToken } from '../lib/auth-middleware';
-import * as bcrypt from 'bcryptjs';
+const { connectToDatabase, sendJsonResponse } = require('../lib/db');
+const { generateJwtToken } = require('../lib/auth-middleware');
+const bcrypt = require('bcryptjs');
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return sendJsonResponse(res, 200, { ok: true });
   }
@@ -31,15 +31,12 @@ export default async function handler(req: any, res: any) {
       return sendJsonResponse(res, 401, { success: false, message: 'Credenciales inválidas. Por favor verifica tu correo y contraseña.' });
     }
 
-    // Comparación segura con bcrypt
     let isMatch = false;
     if (user.passwordHash && (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$'))) {
       isMatch = await bcrypt.compare(password, user.passwordHash);
     } else {
-      // Compatibilidad con contraseñas legadas Base64
-      isMatch = user.passwordHash === btoa(password);
+      isMatch = user.passwordHash === Buffer.from(password).toString('base64');
       if (isMatch) {
-        // Auto-actualizar al vuelo a hash seguro bcrypt
         const salt = await bcrypt.genSalt(10);
         const newHash = await bcrypt.hash(password, salt);
         await usersCollection.updateOne({ _id: user._id }, { $set: { passwordHash: newHash } });
@@ -62,7 +59,6 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    // Auto-elevación a superadmin para acaf504082@gmail.com si aún no lo tiene
     let userRole = user.role;
     if (cleanEmail === 'acaf504082@gmail.com' && userRole !== 'superadmin') {
       userRole = 'superadmin';
@@ -88,6 +84,6 @@ export default async function handler(req: any, res: any) {
       user: userData
     });
   } catch (err) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err as any)?.message });
+    return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err ? err.message : err) });
   }
-}
+};
