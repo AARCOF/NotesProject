@@ -419,44 +419,49 @@
               <div class="card-body p-3-5">
                 
                 <!-- Encabezado de la Categoría -->
-                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
-                  <div class="d-flex align-items-center">
-                    <div class="category-icon-avatar text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs mr-3 flex-shrink-0"
-                         [style.backgroundColor]="cat.color">
-                      <i class="typcn {{ cat.icon }} font-size-22"></i>
+                <div class="category-card-header mb-3 border-bottom pb-2-5">
+                  <div class="d-flex align-items-center justify-content-between">
+                    
+                    <!-- Icono & Nombre de Categoría -->
+                    <div class="d-flex align-items-center overflow-hidden mr-2">
+                      <div class="category-icon-avatar text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs mr-2-5 flex-shrink-0"
+                           [style.backgroundColor]="cat.color">
+                        <i class="typcn {{ cat.icon }} font-size-22"></i>
+                      </div>
+                      <div class="text-truncate">
+                        <h5 class="font-weight-bold text-slate-800 mb-0 font-size-15 text-truncate">{{ cat.name }}</h5>
+                        <small class="text-slate-400 font-size-11 font-weight-medium text-truncate d-block">
+                          {{ getCategorySubcategories(cat.id).length }} subcat. &bull; {{ getCategoryPercentage(cat.id) }}% del total
+                        </small>
+                      </div>
                     </div>
-                    <div>
-                      <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">{{ cat.name }}</h5>
-                      <small class="text-slate-400 font-size-12 font-weight-medium">
-                        {{ getCategorySubcategories(cat.id).length }} subcategorías &bull; {{ getCategoryPercentage(cat.id) }}% del total
-                      </small>
+
+                    <!-- Botones de Acción de Categoría -->
+                    <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                      <button class="btn btn-action-icon btn-action-edit" (click)="openEditCategoryModal(cat, $event)" title="Editar Categoría">
+                        <i class="typcn typcn-edit"></i>
+                      </button>
+                      <button class="btn btn-action-icon btn-action-delete" (click)="deleteCategory(cat, $event)" title="Eliminar Categoría">
+                        <i class="typcn typcn-trash"></i>
+                      </button>
                     </div>
+
                   </div>
 
-                  <div class="d-flex align-items-center gap-1-5 flex-shrink-0">
-                    <div class="text-right mr-2 flex-shrink-0">
-                      <span class="font-weight-bold text-slate-900 font-size-17 d-block">
+                  <!-- Barra Inferior de la Cabecera: Total Acumulado + Añadir Subcategoría -->
+                  <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top-dashed">
+                    <div class="d-flex align-items-baseline">
+                      <small class="text-slate-400 font-size-11 font-weight-semibold mr-1-5">Total:</small>
+                      <span class="font-weight-bold text-slate-900 font-size-15">
                         {{ currencySymbol }} {{ getCategoryTotal(cat.id) | number:'1.2-2' }}
                       </span>
-                      <small class="text-slate-400 font-size-11 font-weight-semibold">Total acumulado</small>
                     </div>
 
-                    <!-- Botón Directo: Añadir Subcategoría -->
-                    <button class="btn btn-xs btn-outline-emerald rounded-lg px-2-5 py-1-5 font-size-12 font-weight-semibold d-inline-flex align-items-center"
+                    <button class="btn btn-xs btn-outline-emerald rounded-lg px-2 py-1 font-size-11 font-weight-semibold d-inline-flex align-items-center"
                             (click)="openAddSubcategoryModal(cat.id)"
                             title="Añadir Subcategoría">
                       <i class="typcn typcn-plus mr-1"></i> Subcategoría
                     </button>
-
-                    <!-- Acciones Rápidas de Categoría (Botones ampliados) -->
-                    <button class="btn btn-action-icon btn-action-edit" (click)="openEditCategoryModal(cat, $event)" title="Editar Categoría">
-                      <i class="typcn typcn-edit"></i>
-                    </button>
-
-                    <button class="btn btn-action-icon btn-action-delete" (click)="deleteCategory(cat, $event)" title="Eliminar Categoría">
-                      <i class="typcn typcn-trash"></i>
-                    </button>
-
                   </div>
                 </div>
 
@@ -470,27 +475,27 @@
                     <div class="subcategory-header d-flex align-items-center justify-content-between cursor-pointer"
                          (click)="toggleSubcategory(sub.id)">
                       
-                      <div class="sub-title-box d-flex align-items-center overflow-hidden">
-                        <i class="typcn font-size-18 text-slate-400 flex-shrink-0 mr-2"
+                      <div class="sub-title-box d-flex align-items-center overflow-hidden mr-1">
+                        <i class="typcn font-size-18 text-slate-400 flex-shrink-0 mr-1-5"
                            [ngClass]="isSubcategoryExpanded(sub.id) ? 'typcn-arrow-sorted-down text-blue' : 'typcn-arrow-sorted-up-outline'"></i>
                         <div class="text-truncate">
-                          <span class="sub-name font-weight-bold text-slate-800 font-size-14 text-truncate d-block">{{ sub.name }}</span>
-                          <small class="sub-count text-slate-400 font-size-11">
-                            {{ getSubcategoryExpenses(sub.id).length }} gasto(s) registrados
+                          <span class="sub-name font-weight-bold text-slate-800 font-size-13 text-truncate d-block">{{ sub.name }}</span>
+                          <small class="sub-count text-slate-400 font-size-10">
+                            {{ getSubcategoryExpenses(sub.id).length }} gasto(s)
                           </small>
                         </div>
                       </div>
 
-                      <!-- Acciones Directas de la Subcategoría (100% visibles sin dropdowns cortados) -->
-                      <div class="sub-actions-box d-flex align-items-center gap-1-5 flex-shrink-0">
-                        <span class="sub-total-amount font-weight-bold text-slate-900 font-size-14 mr-1">
+                      <!-- Acciones Directas de la Subcategoría (100% alineadas y nítidas) -->
+                      <div class="sub-actions-box d-flex align-items-center gap-1 flex-shrink-0">
+                        <span class="sub-total-amount font-weight-bold text-slate-900 font-size-13 mr-1">
                           {{ currencySymbol }} {{ getSubcategoryTotal(sub.id) | number:'1.2-2' }}
                         </span>
 
-                        <button class="btn btn-xs btn-outline-blue rounded-lg px-2-5 py-1 font-size-11 font-weight-semibold d-inline-flex align-items-center" 
+                        <button class="btn btn-xs btn-outline-blue rounded-lg px-2 py-0-5 font-size-11 font-weight-semibold d-inline-flex align-items-center" 
                                 (click)="$event.stopPropagation(); openAddExpenseModal(sub.id, cat.id)"
                                 title="Registrar gasto en esta subcategoría">
-                          <i class="typcn typcn-plus mr-1"></i> Gasto
+                          <i class="typcn typcn-plus mr-0-5"></i> Gasto
                         </button>
 
                         <button class="btn btn-action-icon-sm btn-action-edit" 
