@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ChartOptions, ChartType } from 'chart.js';
+import { Label, SingleDataSet } from 'ng2-charts';
 import { Note, PriorityLevel, NoteStatus, ChecklistItem, RecurrenceFrequency } from '../../models/note.model';
 import { Category } from '../../models/category.model';
 import { User } from '../../core/models/user.model';
@@ -54,7 +56,40 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   pageSize: number = 6;
   noteToEdit: Note | null = null;
   initialModalStatus: NoteStatus = 'pendiente';
-  viewMode: 'grid' | 'kanban' = 'kanban';
+  viewMode: 'grid' | 'kanban' | 'graficos' = 'kanban';
+
+  // Gráficos ng2-charts
+  public chartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      position: 'bottom',
+      labels: {
+        fontColor: '#475569',
+        fontSize: 11,
+        boxWidth: 12,
+        padding: 10
+      }
+    }
+  };
+
+  // Status Chart (Doughnut)
+  public statusChartLabels: Label[] = ['Por Hacer', 'En Proceso', 'Completadas'];
+  public statusChartData: SingleDataSet = [0, 0, 0];
+  public statusChartType: ChartType = 'doughnut';
+  public statusChartColors: any[] = [{ backgroundColor: ['#f59e0b', '#3b82f6', '#10b981'] }];
+
+  // Priority Chart (Pie)
+  public priorityChartLabels: Label[] = ['Alta', 'Media', 'Baja'];
+  public priorityChartData: SingleDataSet = [0, 0, 0];
+  public priorityChartType: ChartType = 'pie';
+  public priorityChartColors: any[] = [{ backgroundColor: ['#f43f5e', '#fbbf24', '#34d399'] }];
+
+  // Category Chart (Doughnut)
+  public categoryChartLabels: Label[] = [];
+  public categoryChartData: SingleDataSet = [];
+  public categoryChartType: ChartType = 'doughnut';
+  public categoryChartColors: any[] = [{ backgroundColor: [] }];
 
   // Drag & Drop State
   draggedNote: Note | null = null;
@@ -122,6 +157,45 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
       this.selectedStatus,
       this.selectedSort
     );
+    this.updateChartData();
+  }
+
+  updateChartData(): void {
+    // 1. Status Chart (Pendiente, En Progreso, Completada)
+    const pending = this.allNotes.filter(n => n.status === 'pendiente').length;
+    const inProgress = this.allNotes.filter(n => n.status === 'en_progreso').length;
+    const completed = this.allNotes.filter(n => n.status === 'completada').length;
+    this.statusChartData = [pending, inProgress, completed];
+
+    // 2. Priority Chart (Alta, Media, Baja)
+    const high = this.allNotes.filter(n => n.priority === 'alta').length;
+    const medium = this.allNotes.filter(n => n.priority === 'media').length;
+    const low = this.allNotes.filter(n => n.priority === 'baja').length;
+    this.priorityChartData = [high, medium, low];
+
+    // 3. Category Chart
+    const catLabels: string[] = [];
+    const catData: number[] = [];
+    const catColors: string[] = [];
+
+    this.categories.forEach(c => {
+      const count = this.allNotes.filter(n => n.categoryId === c.id).length;
+      if (count > 0) {
+        catLabels.push(c.name);
+        catData.push(count);
+        catColors.push(c.color || '#6366f1');
+      }
+    });
+
+    if (catLabels.length === 0) {
+      catLabels.push('Sin tareas');
+      catData.push(0);
+      catColors.push('#cbd5e1');
+    }
+
+    this.categoryChartLabels = catLabels;
+    this.categoryChartData = catData;
+    this.categoryChartColors = [{ backgroundColor: catColors }];
   }
 
   onSearchChange(): void {
