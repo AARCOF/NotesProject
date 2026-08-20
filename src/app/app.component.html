@@ -43,19 +43,49 @@
     (openCreate)="onFabCreate()">
   </app-mobile-bottom-nav>
 
-  <!-- Bottom Sheet deslizable para Notas Rápidas en Móvil -->
+  <!-- Burbuja Flotante de Notas Rápidas (Estilo Chat Flotante en Móvil / APK - Lado Inferior Derecho) -->
+  <button 
+    type="button" 
+    class="mobile-quick-notes-fab-bubble" 
+    *ngIf="showNav && isMobileView" 
+    (click)="toggleMobileQuickNotes()"
+    [class.active]="isMobileQuickNotesOpen"
+    title="Notas Rápidas"
+    aria-label="Abrir Notas Rápidas">
+    <div class="fab-bubble-icon">
+      <i class="typcn typcn-flash"></i>
+    </div>
+    <span class="fab-badge-count shadow-sm" *ngIf="quickNotesCount > 0">{{ quickNotesCount }}</span>
+  </button>
+
+  <!-- Ventana de Chat de Notas Rápidas en Móvil / APK -->
   <div class="mobile-quick-notes-backdrop" *ngIf="isMobileQuickNotesOpen" (click)="toggleMobileQuickNotes()">
-    <div class="mobile-quick-notes-sheet" (click)="$event.stopPropagation()">
-      <div class="sheet-drag-handle" (click)="toggleMobileQuickNotes()"></div>
-      <div class="sheet-header">
-        <h5 class="sheet-title font-weight-bold mb-0">⚡ Notas Rápidas</h5>
-        <button class="btn btn-sm btn-icon btn-light rounded-circle" (click)="toggleMobileQuickNotes()">
-          <i class="typcn typcn-times"></i>
+    <div class="mobile-quick-notes-chat-window shadow-2xl" (click)="$event.stopPropagation()">
+      
+      <!-- Encabezado Estilo Chat -->
+      <div class="chat-window-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <div class="chat-avatar-pill text-white rounded-circle d-flex align-items-center justify-content-center">
+            <i class="typcn typcn-flash font-size-18"></i>
+          </div>
+          <div>
+            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 line-height-tight">Notas Rápidas</h6>
+            <div class="d-flex align-items-center mt-0-5">
+              <span class="chat-status-dot mr-1"></span>
+              <small class="text-slate-400 font-size-10 font-weight-medium">Chat de Apuntes & Post-its</small>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-chat-window" (click)="toggleMobileQuickNotes()" aria-label="Cerrar Chat">
+          <i class="typcn typcn-times font-size-18 text-slate-500"></i>
         </button>
       </div>
-      <div class="sheet-body">
+
+      <!-- Cuerpo del Chat (Panel de Notas con feed y barra de entrada) -->
+      <div class="chat-window-body">
         <app-quick-notes-panel [availableTasks]="globalTasks"></app-quick-notes-panel>
       </div>
+
     </div>
   </div>
 
