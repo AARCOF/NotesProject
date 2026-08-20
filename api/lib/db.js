@@ -1,6 +1,15 @@
 const { MongoClient } = require('mongodb');
 
-const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
+const CORRECT_URI = 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
+
+let rawUri = process.env.MONGODB_URI || process.env.DATABASE_URL || CORRECT_URI;
+
+// Si en Vercel se guardó como cluster0.mongodb.net sin el ID del clúster (1gpwhkf), auto-corregirlo:
+if (rawUri.includes('@cluster0.mongodb.net')) {
+  rawUri = rawUri.replace('@cluster0.mongodb.net', '@cluster0.1gpwhkf.mongodb.net');
+}
+
+const MONGODB_URI = rawUri;
 const DB_NAME = process.env.DB_NAME || 'noteyou_production';
 
 let cachedClient = null;
