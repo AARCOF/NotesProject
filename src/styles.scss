@@ -929,7 +929,8 @@ h1, h2, h3, h4, h5, h6, .card-title {
 
 /* Universal Mobile Sticky Top Nav Bar (Gastos & Tareas) & Zero-Gap Mobile Layout */
 @media (max-width: 991px) {
-  .page-body-wrapper {
+  .page-body-wrapper,
+  .mobile-body-wrapper {
     padding-top: 0 !important;
     margin-top: 0 !important;
   }
@@ -939,15 +940,25 @@ h1, h2, h3, h4, h5, h6, .card-title {
     margin-top: 0 !important;
   }
 
-  .content-wrapper {
+  .content-wrapper,
+  .mobile-content-pad {
     padding-top: 0 !important;
     margin-top: 0 !important;
   }
 
   .workspace-wrapper,
-  .workspace-view-container {
+  .mobile-workspace {
     padding-top: 0 !important;
     margin-top: 0 !important;
+  }
+
+  .workspace-view-container,
+  .workspace-view-container.authenticated-view,
+  .mobile-view-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .notes-dashboard-wrapper,
@@ -962,25 +973,35 @@ h1, h2, h3, h4, h5, h6, .card-title {
     top: 0 !important;
     top: env(safe-area-inset-top, 0px) !important;
     z-index: 1025 !important;
-    background: rgba(248, 250, 252, 0.98) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    background: #ffffff !important;
     margin-left: -8px !important;
     margin-right: -8px !important;
-    padding: 0 8px 2px 8px !important;
-    margin-top: -3px !important;
-    margin-bottom: 0.1rem !important;
+    padding: 0 8px 4px 8px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.2rem !important;
     border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 
     .mobile-notes-segmented-bar,
     .mobile-expenses-segmented-bar {
-      background-color: #ffffff !important;
+      background-color: #f1f5f9 !important;
       border: 1px solid #e2e8f0 !important;
       border-radius: 10px !important;
-      padding: 1px !important;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+      padding: 2px !important;
+      box-shadow: none !important;
       margin-top: 0 !important;
       margin-bottom: 0 !important;
+    }
+
+    .btn-mobile-subtab {
+      padding: 4px 2px !important;
+      font-size: 0.70rem !important;
+      border-radius: 8px !important;
+
+      &.active {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+      }
     }
   }
 }
