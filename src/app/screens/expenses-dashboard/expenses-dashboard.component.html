@@ -314,14 +314,14 @@
       <!-- Barra Superior de Pestañas & Buscador (Solo Desktop) -->
       <div class="view-switcher-bar bg-white rounded-2xl p-2-5 shadow-sm mb-4 border border-slate-100 d-none d-lg-flex align-items-center justify-content-between gap-3">
         
-        <!-- Pestañas de Vista -->
+        <!-- Pestañas de Vista en Web: 1. Categorías primero, luego 2. Gastos, 3. Gráficas -->
         <div class="nav-pills-custom d-flex flex-wrap gap-1">
-          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'gestion' || activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
-            <i class="typcn typcn-th-list mr-2 font-size-18"></i> Registro de Gastos ({{ getAllMonthExpenses().length }})
-          </button>
-
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'categorias'" (click)="setActiveTab('categorias')">
             <i class="typcn typcn-folder-open mr-2 font-size-18"></i> Categorías & Subcategorías
+          </button>
+
+          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
+            <i class="typcn typcn-th-list mr-2 font-size-18"></i> Registro de Gastos ({{ getAllMonthExpenses().length }})
           </button>
 
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'graficas'" (click)="setActiveTab('graficas')">
@@ -628,7 +628,7 @@
       </div>
 
       <!-- VISTA 3: REGISTRO / TABLA DE MOVIMIENTOS -->
-      <div *ngIf="activeTab === 'movimientos' || activeTab === 'gestion'">
+      <div *ngIf="activeTab === 'movimientos'">
         
         <div class="card border-0 rounded-2xl shadow-sm bg-white p-4">
           <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
