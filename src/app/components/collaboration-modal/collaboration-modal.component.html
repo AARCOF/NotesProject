@@ -1,0 +1,49 @@
+<div class="collaboration-modal-backdrop" *ngIf="isOpen" (click)="onDismiss()">
+  <div class="collaboration-modal-dialog" (click)="$event.stopPropagation()">
+    
+    <!-- Botón Cerrar Superior -->
+    <button type="button" class="btn-close-modal" (click)="onDismiss()" aria-label="Cerrar">
+      <i class="typcn typcn-times"></i>
+    </button>
+
+    <!-- Contenido del Modal -->
+    <div class="modal-content-wrapper text-center">
+      
+      <!-- Icono & Encabezado -->
+      <div class="collab-icon-badge shadow-sm mx-auto mb-3">
+        <i class="typcn typcn-heart-full-outline"></i>
+      </div>
+
+      <h3 class="font-weight-bold text-slate-800 mb-2 font-size-20">¡Colabora con el proyecto!</h3>
+      
+      <p class="text-slate-600 font-size-13 line-height-relaxed mb-3 px-2">
+        <strong>NoteYou</strong> es un proyecto independiente creado con dedicación para ayudarte a gestionar tus tareas y finanzas sin costo obligatorio.
+        Si la aplicación te es de utilidad y deseas apoyar el mantenimiento de los servidores y el desarrollo de nuevas funciones, ¡tu contribución voluntaria es de gran ayuda!
+      </p>
+
+      <!-- Tarjeta QR Yape sin nombre -->
+      <div class="qr-card-container mx-auto mb-3 shadow-md">
+        <img src="assets/images/qr-colaboracion.jpg" alt="QR Yape para colaborar con el proyecto" class="img-fluid qr-image rounded-xl">
+      </div>
+
+      <div class="yape-pill-notice mb-4 d-inline-flex align-items-center justify-content-center">
+        <i class="typcn typcn-device-phone mr-1 font-size-16"></i>
+        <span>Escanea el código desde tu app de <strong>Yape</strong></span>
+      </div>
+
+      <!-- Acciones Inferiores -->
+      <div class="modal-actions-row d-flex flex-column gap-2">
+        <button type="button" class="btn btn-primary-gradient w-100 py-2-5 rounded-xl font-weight-bold shadow-sm font-size-14" (click)="onDismiss()">
+          <i class="typcn typcn-tick mr-1 font-size-16"></i>
+          <span>Entendido, gracias</span>
+        </button>
+
+        <button type="button" class="btn btn-link text-slate-400 font-size-12 p-1 font-weight-medium" (click)="onDismiss()">
+          Recordármelo en 7 días
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
