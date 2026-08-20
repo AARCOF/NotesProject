@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
     const securityKey = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = Date.now() + 60 * 60 * 1000;
 
-    const assignedRole = cleanEmail === 'acaf504082@gmail.com' ? 'superadmin' : 'user';
+    const assignedRole = cleanEmail === 'superadmin@noteyou.com' ? 'superadmin' : 'user';
     const userId = existingUser ? existingUser.id || existingUser._id.toString() : 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
 
     const userDoc = {

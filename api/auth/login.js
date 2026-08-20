@@ -59,11 +59,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    let userRole = user.role;
-    if (cleanEmail === 'acaf504082@gmail.com' && userRole !== 'superadmin') {
-      userRole = 'superadmin';
-      await usersCollection.updateOne({ _id: user._id }, { $set: { role: 'superadmin' } });
-    }
+    const userRole = user.role || 'user';
 
     const userData = {
       id: user.id || user._id.toString(),
