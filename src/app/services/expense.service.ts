@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem, MonthlyBudget } from '../models/expense.model';
 import { AuthService } from '../core/services/auth.service';
@@ -48,7 +49,10 @@ export class ExpenseService {
 
   private currentUserId: string | null = null;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.refreshData();
@@ -102,6 +106,37 @@ export class ExpenseService {
     const allBudgets = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
     const userBudgets = allBudgets.filter(b => b.userId === this.currentUserId);
     this.budgetsSubject.next(userBudgets);
+
+    this.fetchCloudExpenses();
+  }
+
+  public syncToCloud(): void {
+    if (!this.currentUserId) return;
+    const allExpenses = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY).filter(e => e.userId === this.currentUserId);
+    const allBudgets = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY).filter(b => b.userId === this.currentUserId);
+    const allExtra = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY).filter(i => i.userId === this.currentUserId);
+
+    this.http.post('/api/expenses', {
+      expenses: allExpenses,
+      budgets: allBudgets,
+      extraIncomes: allExtra
+    }).subscribe({ error: () => {} });
+  }
+
+  private fetchCloudExpenses(): void {
+    if (!this.currentUserId) return;
+    this.http.get<{ success: boolean; expenses: ExpenseItem[] }>('/api/expenses').subscribe({
+      next: (res) => {
+        if (res && res.success && Array.isArray(res.expenses) && res.expenses.length > 0) {
+          const cloudExpenses = res.expenses;
+          let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+          const other = all.filter(e => e.userId !== this.currentUserId);
+          this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...cloudExpenses, ...other]);
+          this.expensesSubject.next(cloudExpenses);
+        }
+      },
+      error: () => {}
+    });
   }
 
   private ensureDefaultCategoriesAndSubcategories(): void {

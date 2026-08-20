@@ -1,7 +1,7 @@
-import { connectToDatabase, sendJsonResponse } from '../lib/db';
-import { verifyAuthToken } from '../lib/auth-middleware';
+const { connectToDatabase, sendJsonResponse } = require('../lib/db');
+const { verifyAuthToken } = require('../lib/auth-middleware');
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return sendJsonResponse(res, 200, { ok: true });
   }
@@ -16,6 +16,11 @@ export default async function handler(req: any, res: any) {
     const notesCollection = db.collection('notes');
     const userId = authUser.sub;
 
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {}
+    }
+
     switch (req.method) {
       case 'GET': {
         const notes = await notesCollection.find({ userId }).sort({ createdAt: -1 }).toArray();
@@ -23,8 +28,8 @@ export default async function handler(req: any, res: any) {
       }
 
       case 'POST': {
-        const noteData = req.body;
-        if (!noteData.title) {
+        const noteData = body;
+        if (!noteData || !noteData.title) {
           return sendJsonResponse(res, 400, { success: false, message: 'El título de la nota es obligatorio.' });
         }
 
@@ -35,40 +40,39 @@ export default async function handler(req: any, res: any) {
           createdAt: noteData.createdAt || new Date().toISOString()
         };
 
-        await notesCollection.insertOne(newNote);
+        // Upsert by id and userId so batch sync or creation works cleanly
+        await notesCollection.updateOne(
+          { id: newNote.id, userId },
+          { $set: newNote },
+          { upsert: true }
+        );
+
         return sendJsonResponse(res, 201, { success: true, note: newNote });
       }
 
       case 'PUT': {
-        const { id, ...updateData } = req.body;
+        const { id, ...updateData } = body || {};
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de nota es obligatorio.' });
         }
 
         const result = await notesCollection.updateOne(
           { id, userId },
-          { $set: updateData }
+          { $set: updateData },
+          { upsert: true }
         );
-
-        if (result.matchedCount === 0) {
-          return sendJsonResponse(res, 404, { success: false, message: 'Nota no encontrada o sin permisos.' });
-        }
 
         const updatedNote = await notesCollection.findOne({ id, userId });
         return sendJsonResponse(res, 200, { success: true, note: updatedNote });
       }
 
       case 'DELETE': {
-        const { id } = req.query;
+        const id = req.query?.id || (req.body && req.body.id);
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de nota es requerido.' });
         }
 
-        const result = await notesCollection.deleteOne({ id, userId });
-        if (result.deletedCount === 0) {
-          return sendJsonResponse(res, 404, { success: false, message: 'Nota no encontrada o sin permisos.' });
-        }
-
+        await notesCollection.deleteOne({ id, userId });
         return sendJsonResponse(res, 200, { success: true, message: 'Nota eliminada correctamente.' });
       }
 
@@ -76,6 +80,6 @@ export default async function handler(req: any, res: any) {
         return sendJsonResponse(res, 405, { error: 'Método no soportado.' });
     }
   } catch (err) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error en servidor de notas: ' + (err as any)?.message });
+    return sendJsonResponse(res, 500, { success: false, message: 'Error en servidor de notas: ' + (err ? err.message : err) });
   }
-}
+};
