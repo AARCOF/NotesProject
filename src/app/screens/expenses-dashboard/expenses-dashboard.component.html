@@ -316,7 +316,7 @@
         
         <!-- Pestañas de Vista en Web: 1. Categorías primero, luego 2. Gastos, 3. Gráficas -->
         <div class="nav-pills-custom d-flex flex-wrap gap-1">
-          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'categorias'" (click)="setActiveTab('categorias')">
+          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'categorias' || (!isMobile && activeTab === 'gestion')" (click)="setActiveTab('categorias')">
             <i class="typcn typcn-folder-open mr-2 font-size-18"></i> Categorías & Subcategorías
           </button>
 
@@ -437,7 +437,7 @@
       </div>
 
       <!-- VISTA 2: CATEGORÍAS Y SUBCATEGORÍAS -->
-      <div *ngIf="activeTab === 'categorias'">
+      <div *ngIf="activeTab === 'categorias' || (!isMobile && activeTab === 'gestion')">
         
         <!-- Estado vacío si el usuario eliminó todas las categorías -->
         <div *ngIf="categories.length === 0" class="card border-0 rounded-2xl shadow-sm bg-white p-5 text-center my-3">

@@ -63,10 +63,16 @@ body {
 }
 
 .page-body-wrapper {
-  padding-top: 63px !important; /* clears the 63px fixed navbar */
+  padding-top: 63px; /* clears the 63px fixed navbar on desktop */
   min-height: calc(100vh - 63px);
 
-  &.full-page-wrapper {
+  @media (max-width: 991px) {
+    padding-top: 0 !important;
+    min-height: 100vh;
+  }
+
+  &.full-page-wrapper,
+  &.mobile-body-wrapper {
     padding-top: 0 !important;
     min-height: 100vh;
   }
