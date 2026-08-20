@@ -921,21 +921,48 @@ h1, h2, h3, h4, h5, h6, .card-title {
   }
 }
 
-/* Universal Mobile Sticky Top Nav Bar (Gastos & Tareas) */
-.mobile-sticky-top-nav {
-  @media (max-width: 991px) {
+/* Universal Mobile Sticky Top Nav Bar (Gastos & Tareas) & Zero-Gap Mobile Layout */
+@media (max-width: 991px) {
+  .page-body-wrapper {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .main-panel {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .content-wrapper {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .workspace-wrapper,
+  .workspace-view-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .notes-dashboard-wrapper,
+  .expenses-dashboard-wrapper {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .mobile-sticky-top-nav {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 58px !important;
+    top: calc(52px + env(safe-area-inset-top, 0px)) !important;
     z-index: 1018 !important;
     background: rgba(248, 250, 252, 0.98) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     margin-left: -8px !important;
     margin-right: -8px !important;
-    padding: 4px 8px 6px 8px !important;
+    padding: 0 8px 3px 8px !important;
     margin-top: 0 !important;
-    margin-bottom: 0.35rem !important;
+    margin-bottom: 0.2rem !important;
     border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 
     .mobile-notes-segmented-bar,
@@ -945,6 +972,7 @@ h1, h2, h3, h4, h5, h6, .card-title {
       border-radius: 12px !important;
       padding: 2px !important;
       box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+      margin-top: 0 !important;
       margin-bottom: 0 !important;
     }
   }
