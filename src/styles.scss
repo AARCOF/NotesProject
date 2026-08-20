@@ -967,18 +967,18 @@ h1, h2, h3, h4, h5, h6, .card-title {
     -webkit-backdrop-filter: blur(20px) !important;
     margin-left: -8px !important;
     margin-right: -8px !important;
-    padding: 2px 8px 3px 8px !important;
-    margin-top: 0 !important;
-    margin-bottom: 0.15rem !important;
+    padding: 0 8px 2px 8px !important;
+    margin-top: -3px !important;
+    margin-bottom: 0.1rem !important;
     border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
 
     .mobile-notes-segmented-bar,
     .mobile-expenses-segmented-bar {
       background-color: #ffffff !important;
       border: 1px solid #e2e8f0 !important;
-      border-radius: 12px !important;
-      padding: 2px !important;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+      border-radius: 10px !important;
+      padding: 1px !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
       margin-top: 0 !important;
       margin-bottom: 0 !important;
     }
