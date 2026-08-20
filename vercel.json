@@ -1,9 +1,24 @@
 {
   "version": 2,
-  "rewrites": [
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/**/*.js": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "routes": [
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
