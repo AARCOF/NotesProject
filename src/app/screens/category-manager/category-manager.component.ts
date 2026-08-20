@@ -35,7 +35,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     { icon: 'typcn-home', label: 'Hogar' },
     { icon: 'typcn-briefcase', label: 'Trabajo' },
     { icon: 'typcn-user', label: 'Personal' },
-    { icon: 'typcn-calculator', label: 'Finanzas' },
+    { icon: 'typcn-lightbulb', label: 'Ideas' },
     { icon: 'typcn-star', label: 'Favoritos' },
     { icon: 'typcn-heart', label: 'Salud' },
     { icon: 'typcn-shopping-cart', label: 'Compras' },

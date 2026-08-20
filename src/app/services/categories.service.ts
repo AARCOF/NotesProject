@@ -45,14 +45,6 @@ export class CategoriesService {
       color: '#8B5CF6',
       icon: 'typcn-user',
       isSystem: true
-    },
-    {
-      id: 'cat_finanzas',
-      name: 'Finanzas',
-      description: 'Presupuestos, pagos pendientes y control financiero',
-      color: '#10B981',
-      icon: 'typcn-calculator',
-      isSystem: true
     }
   ];
 
@@ -69,8 +61,8 @@ export class CategoriesService {
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
-        // Filtrar categorías que no son del sistema
-        return parsed.filter((c: Category) => !c.isSystem);
+        // Filtrar categorías que no son del sistema y excluir cualquier remanente de Finanzas
+        return parsed.filter((c: Category) => !c.isSystem && c.id !== 'cat_finanzas' && c.name?.toLowerCase() !== 'finanzas');
       }
       return [];
     } catch {
@@ -90,7 +82,11 @@ export class CategoriesService {
       return;
     }
 
-    const userCustomCats = customCats.filter(c => c.userId === this.currentUserId || (!c.userId && this.currentUserId === 'usr_superadmin'));
+    const userCustomCats = customCats.filter(c => 
+      (c.userId === this.currentUserId || (!c.userId && this.currentUserId === 'usr_superadmin')) &&
+      c.id !== 'cat_finanzas' && 
+      c.name?.toLowerCase() !== 'finanzas'
+    );
     this.categoriesSubject.next([...this.defaultCategories, ...userCustomCats]);
   }
 
