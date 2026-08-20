@@ -597,6 +597,50 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       transform: scale(1.02);
     }
+
+    &.drag-target-hover {
+      background: #dbeafe !important;
+      color: #1d4ed8 !important;
+      outline: 2px dashed #3b82f6;
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25) !important;
+    }
+  }
+}
+
+.mobile-card-status-actions {
+  .btn-status-move-pill {
+    padding: 3px 8px;
+    border-radius: 50rem;
+    font-size: 10.5px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    &:hover {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+
+    &.active-pill {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+      font-weight: 700;
+    }
   }
 }
 

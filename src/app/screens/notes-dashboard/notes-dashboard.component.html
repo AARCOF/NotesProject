@@ -537,12 +537,17 @@
       </div>
     </div>
 
-    <!-- Control Segmentado para Celulares (Solo visible en pantallas móviles) -->
+    <!-- Control Segmentado para Celulares (Solo visible en pantallas móviles) con Zona de Soltado / Drop -->
     <div class="mobile-kanban-segmented-nav d-block d-lg-none mb-3" *ngIf="viewMode === 'kanban'">
       <div class="segmented-control-track">
         <button 
+          type="button"
           class="segmented-tab" 
           [class.active]="mobileKanbanTab === 'pendiente'"
+          [class.drag-target-hover]="activeDropZone === 'pendiente'"
+          (dragover)="onDragOver($event, 'pendiente')"
+          (dragleave)="onDragLeave($event, 'pendiente')"
+          (drop)="onTabDrop($event, 'pendiente')"
           (click)="mobileKanbanTab = 'pendiente'">
           <span class="tab-dot bg-amber-500"></span>
           <span>Por Hacer</span>
@@ -550,8 +555,13 @@
         </button>
         
         <button 
+          type="button"
           class="segmented-tab" 
           [class.active]="mobileKanbanTab === 'en_progreso'"
+          [class.drag-target-hover]="activeDropZone === 'en_progreso'"
+          (dragover)="onDragOver($event, 'en_progreso')"
+          (dragleave)="onDragLeave($event, 'en_progreso')"
+          (drop)="onTabDrop($event, 'en_progreso')"
           (click)="mobileKanbanTab = 'en_progreso'">
           <span class="tab-dot bg-blue-500"></span>
           <span>En Proceso</span>
@@ -559,8 +569,13 @@
         </button>
         
         <button 
+          type="button"
           class="segmented-tab" 
           [class.active]="mobileKanbanTab === 'completada'"
+          [class.drag-target-hover]="activeDropZone === 'completada'"
+          (dragover)="onDragOver($event, 'completada')"
+          (dragleave)="onDragLeave($event, 'completada')"
+          (drop)="onTabDrop($event, 'completada')"
           (click)="mobileKanbanTab = 'completada'">
           <span class="tab-dot bg-emerald-500"></span>
           <span>Hechas</span>
@@ -703,6 +718,37 @@
                     </button>
                     <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
                       <i class="typcn typcn-trash font-size-20 text-rose"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Selector Rápido de Cambio de Estado en Móvil -->
+                <div class="mobile-card-status-actions d-flex d-lg-none align-items-center justify-content-between pt-2 mt-2 border-top" (click)="$event.stopPropagation()">
+                  <small class="text-slate-400 font-size-11 font-weight-semibold">Mover a:</small>
+                  <div class="d-flex align-items-center" style="gap: 4px;">
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'pendiente'"
+                      (click)="changeTaskStatus(note, 'pendiente'); mobileKanbanTab = 'pendiente'"
+                      title="Mover a Por Hacer">
+                      <span class="dot bg-amber-500"></span> Hacer
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'en_progreso'"
+                      (click)="changeTaskStatus(note, 'en_progreso'); mobileKanbanTab = 'en_progreso'"
+                      title="Mover a En Proceso">
+                      <span class="dot bg-blue-500"></span> Proceso
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'completada'"
+                      (click)="changeTaskStatus(note, 'completada'); mobileKanbanTab = 'completada'"
+                      title="Mover a Completada">
+                      <span class="dot bg-emerald-500"></span> Hecha
                     </button>
                   </div>
                 </div>
@@ -878,6 +924,37 @@
                   </div>
                 </div>
 
+                <!-- Selector Rápido de Cambio de Estado en Móvil -->
+                <div class="mobile-card-status-actions d-flex d-lg-none align-items-center justify-content-between pt-2 mt-2 border-top" (click)="$event.stopPropagation()">
+                  <small class="text-slate-400 font-size-11 font-weight-semibold">Mover a:</small>
+                  <div class="d-flex align-items-center" style="gap: 4px;">
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'pendiente'"
+                      (click)="changeTaskStatus(note, 'pendiente'); mobileKanbanTab = 'pendiente'"
+                      title="Mover a Por Hacer">
+                      <span class="dot bg-amber-500"></span> Hacer
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'en_progreso'"
+                      (click)="changeTaskStatus(note, 'en_progreso'); mobileKanbanTab = 'en_progreso'"
+                      title="Mover a En Proceso">
+                      <span class="dot bg-blue-500"></span> Proceso
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'completada'"
+                      (click)="changeTaskStatus(note, 'completada'); mobileKanbanTab = 'completada'"
+                      title="Mover a Completada">
+                      <span class="dot bg-emerald-500"></span> Hecha
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
 
@@ -1037,6 +1114,37 @@
                     </button>
                     <button type="button" class="btn btn-sm btn-action-rose rounded-lg d-flex align-items-center justify-content-center" (click)="deleteNote(note)" title="Eliminar">
                       <i class="typcn typcn-trash font-size-20 text-rose"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Selector Rápido de Cambio de Estado en Móvil -->
+                <div class="mobile-card-status-actions d-flex d-lg-none align-items-center justify-content-between pt-2 mt-2 border-top" (click)="$event.stopPropagation()">
+                  <small class="text-slate-400 font-size-11 font-weight-semibold">Mover a:</small>
+                  <div class="d-flex align-items-center" style="gap: 4px;">
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'pendiente'"
+                      (click)="changeTaskStatus(note, 'pendiente'); mobileKanbanTab = 'pendiente'"
+                      title="Mover a Por Hacer">
+                      <span class="dot bg-amber-500"></span> Hacer
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'en_progreso'"
+                      (click)="changeTaskStatus(note, 'en_progreso'); mobileKanbanTab = 'en_progreso'"
+                      title="Mover a En Proceso">
+                      <span class="dot bg-blue-500"></span> Proceso
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-status-move-pill" 
+                      [class.active-pill]="note.status === 'completada'"
+                      (click)="changeTaskStatus(note, 'completada'); mobileKanbanTab = 'completada'"
+                      title="Mover a Completada">
+                      <span class="dot bg-emerald-500"></span> Hecha
                     </button>
                   </div>
                 </div>

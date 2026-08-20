@@ -347,6 +347,18 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.activeDropZone = null;
   }
 
+  onTabDrop(event: DragEvent, targetStatus: NoteStatus): void {
+    event.preventDefault();
+    if (this.draggedNote) {
+      if (this.draggedNote.status !== targetStatus) {
+        this.changeTaskStatus(this.draggedNote, targetStatus);
+      }
+      this.mobileKanbanTab = targetStatus;
+    }
+    this.draggedNote = null;
+    this.activeDropZone = null;
+  }
+
   onDragEnd(): void {
     this.draggedNote = null;
     this.activeDropZone = null;
