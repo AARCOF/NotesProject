@@ -4,9 +4,9 @@ const CORRECT_URI = 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.
 
 let rawUri = process.env.MONGODB_URI || process.env.DATABASE_URL || CORRECT_URI;
 
-// Si en Vercel se guardó como cluster0.mongodb.net sin el ID del clúster (1gpwhkf), auto-corregirlo:
-if (rawUri.includes('@cluster0.mongodb.net')) {
-  rawUri = rawUri.replace('@cluster0.mongodb.net', '@cluster0.1gpwhkf.mongodb.net');
+// Si en Vercel se guardó una URI sin el subdominio 1gpwhkf, forzar la URI exacta del clúster
+if (!rawUri.includes('1gpwhkf')) {
+  rawUri = CORRECT_URI;
 }
 
 const MONGODB_URI = rawUri;
