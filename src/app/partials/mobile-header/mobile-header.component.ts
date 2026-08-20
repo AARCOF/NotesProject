@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../core/models/user.model';
-import { Router } from '@angular/router';
-
 import { NotesService } from '../../services/notes.service';
+import { ExpenseService } from '../../services/expense.service';
 
 @Component({
   selector: 'app-mobile-header',
@@ -27,6 +27,7 @@ export class MobileHeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private notesService: NotesService,
+    private expenseService: ExpenseService,
     public router: Router
   ) {}
 
@@ -34,6 +35,10 @@ export class MobileHeaderComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
+  }
+
+  get isExpensesRoute(): boolean {
+    return this.router.url.includes('/expenses');
   }
 
   get userInitial(): string {
@@ -60,8 +65,18 @@ export class MobileHeaderComponent implements OnInit {
     this.openQuickNotes.emit();
   }
 
-  onCreateTaskClick(): void {
-    this.notesService.requestOpenCreateModal();
+  onCreateActionClick(): void {
+    if (this.isExpensesRoute) {
+      this.expenseService.requestOpenAddExpenseModal();
+    } else {
+      if (this.router.url !== '/dashboard') {
+        this.router.navigate(['/dashboard']).then(() => {
+          setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
+        });
+      } else {
+        this.notesService.requestOpenCreateModal();
+      }
+    }
     this.openCreateTask.emit();
   }
 }
