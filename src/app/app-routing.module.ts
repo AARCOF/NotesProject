@@ -17,7 +17,7 @@ import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expense
 import { AuthGuard } from "./core/guards/auth.guard";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/landing", pathMatch: "full" },
+  { path: "", redirectTo: "/dashboard", pathMatch: "full" },
   { path: "landing", component: LandingPageComponent },
   { path: "dashboard", component: NotesDashboardComponent, canActivate: [AuthGuard] },
   { path: "expenses", component: ExpensesDashboardComponent, canActivate: [AuthGuard] },
