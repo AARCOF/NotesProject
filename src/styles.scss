@@ -134,14 +134,16 @@ body {
   flex-direction: column;
 
   &.is-standalone {
-    height: auto;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    display: block !important;
+    width: 100% !important;
   }
 
-  // En APK/móvil: el scroll lo maneja workspace-view-container
-  &.is-mobile-app {
+  // En APK/móvil autenticado: el scroll lo maneja workspace-view-container
+  &.is-mobile-app:not(.is-standalone) {
     height: 100dvh;
     overflow: hidden;
     display: flex;
@@ -156,10 +158,11 @@ body {
   overflow: hidden;
 
   &.public-mode {
-    display: block;
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    width: 100% !important;
   }
 }
 
@@ -191,10 +194,12 @@ body {
   }
 
   &.public-view {
-    padding: 0;
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    display: block !important;
+    width: 100% !important;
   }
 }
 
@@ -1024,7 +1029,7 @@ h1, h2, h3, h4, h5, h6, .card-title {
    La raíz (is-mobile-app) NO hace scroll. Lo hace workspace-view-container.
    Todos los contenedores intermedios ceden su altura al flex child.
    ============================================================ */
-.is-mobile-app {
+.is-mobile-app:not(.is-standalone) {
   // page-body-wrapper: crece en flex, sin scroll propio
   .page-body-wrapper.mobile-body-wrapper {
     flex: 1 1 auto !important;
