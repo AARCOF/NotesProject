@@ -77,7 +77,7 @@ export default async function handler(req: any, res: any) {
       token,
       user: userData
     });
-  } catch (err: any) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error al verificar cuenta: ' + err.message });
+  } catch (err) {
+    return sendJsonResponse(res, 500, { success: false, message: 'Error al verificar cuenta: ' + (err as any)?.message });
   }
 }
