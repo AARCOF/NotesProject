@@ -30,12 +30,6 @@
 
     <ul class="navbar-nav navbar-nav-right ml-auto d-flex align-items-center" style="gap: 10px;">
       
-      <li class="nav-item">
-        <a routerLink="/landing" class="btn btn-outline-light btn-sm font-weight-bold px-3 py-1 d-flex align-items-center">
-          <i class="typcn typcn-arrow-left-outline mr-1 font-size-18"></i> Ir al Landing
-        </a>
-      </li>
-
       <li class="nav-item" *ngIf="!currentUser">
         <a routerLink="/login" class="btn btn-gradient-blue font-weight-bold text-white px-4 py-2">
           Iniciar Sesión

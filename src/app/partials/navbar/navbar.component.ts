@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/landing']);
+    this.router.navigate(['/login']);
   }
 
   toggleIconOnlySidebar(): void {
