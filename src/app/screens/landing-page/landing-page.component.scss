@@ -1168,6 +1168,26 @@
 
 /* Responsive mobile */
 @media (max-width: 768px) {
+  .landing-wrapper {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .display-custom {
+    font-size: 2.1rem;
+    line-height: 1.2;
+  }
+
+  .mobile-mockup-frame {
+    max-width: 100% !important;
+    width: 100% !important;
+    border-width: 8px !important;
+    border-radius: 32px !important;
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+  }
+
   .install-platform-toggle .platform-btn {
     padding: 9px 18px;
     font-size: 0.88rem;
@@ -1183,6 +1203,25 @@
   .install-step::after {
     left: 18px;
     top: 52px;
+  }
+}
+
+@media (max-width: 480px) {
+  .display-custom {
+    font-size: 1.85rem;
+  }
+
+  .btn-orange-gradient,
+  .btn-glass-light {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0 !important;
+  }
+
+  .mobile-mockup-frame {
+    height: 520px !important;
+    min-height: 520px !important;
+    max-height: 520px !important;
   }
 }
 

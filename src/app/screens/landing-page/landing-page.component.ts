@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { AuthService } from '../../core/services/auth.service';
@@ -23,7 +23,7 @@ export interface PhoneDemoTask {
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss']
 })
-export class LandingPageComponent implements OnInit {
+export class LandingPageComponent implements OnInit, AfterViewInit {
   @ViewChild('phoneTasksContainer', { static: false }) phoneTasksContainer?: ElementRef;
 
   isAuthenticated: boolean = false;
@@ -329,9 +329,15 @@ export class LandingPageComponent implements OnInit {
     this.isLegalModalOpen = false;
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.onScroll();
+    }, 100);
+  }
+
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
-    const sections = ['inicio', 'herramientas', 'como-funciona'];
+    const sections = ['inicio', 'herramientas', 'como-funciona', 'instalar'];
     const scrollPosition = window.pageYOffset + 100; // offset
 
     for (const section of sections) {
@@ -350,7 +356,7 @@ export class LandingPageComponent implements OnInit {
     for (let i = 0; i < reveals.length; i++) {
       const windowHeight = window.innerHeight;
       const elementTop = reveals[i].getBoundingClientRect().top;
-      const elementVisible = 100;
+      const elementVisible = 80;
       if (elementTop < windowHeight - elementVisible) {
         reveals[i].classList.add('active');
       }

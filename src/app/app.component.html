@@ -1,4 +1,4 @@
-<div class="app-root-container" [class.is-standalone]="!showNav" [class.is-mobile-app]="isMobileView">
+<div class="app-root-container" [class.is-standalone]="!showNav" [class.is-mobile-app]="isMobileView && showNav">
   
   <!-- Barra de navegación fija de Escritorio (Solo en Desktop autenticado) -->
   <app-navbar *ngIf="showNav && !isMobileView"></app-navbar>
@@ -9,7 +9,7 @@
     (openQuickNotes)="toggleMobileQuickNotes()">
   </app-mobile-header>
 
-  <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav" [class.mobile-body-wrapper]="isMobileView">
+  <div class="container-fluid page-body-wrapper" [class.full-page-wrapper]="!showNav" [class.mobile-body-wrapper]="isMobileView && showNav">
     
     <!-- Barra lateral de Escritorio (Solo en Desktop autenticado) -->
     <app-sidebar *ngIf="showNav && !isMobileView"></app-sidebar>
@@ -18,7 +18,7 @@
     <div class="main-panel border-0" [class.w-100]="!showNav || isMobileView">
       <div class="content-wrapper border-0 p-0" [class.mobile-content-pad]="isMobileView && showNav">
         
-        <div class="workspace-wrapper" [class.public-mode]="!showNav" [class.mobile-workspace]="isMobileView">
+        <div class="workspace-wrapper" [class.public-mode]="!showNav" [class.mobile-workspace]="isMobileView && showNav">
           
           <!-- Columna de Notas Rápidas de Escritorio (Oculta en Celular y en vista de Gastos) -->
           <aside class="quick-notes-column" *ngIf="showQuickNotes && !isMobileView">
@@ -26,7 +26,7 @@
           </aside>
 
           <!-- ÚNICO Router Outlet unificado -->
-          <main class="workspace-view-container" [class.authenticated-view]="showNav" [class.public-view]="!showNav" [class.mobile-view-container]="isMobileView">
+          <main class="workspace-view-container" [class.authenticated-view]="showNav" [class.public-view]="!showNav" [class.mobile-view-container]="isMobileView && showNav">
             <router-outlet></router-outlet>
           </main>
 
