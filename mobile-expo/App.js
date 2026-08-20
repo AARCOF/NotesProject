@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  ActivityIndicator, 
-  BackHandler, 
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  BackHandler,
   Platform,
   Alert,
   Text,
@@ -13,8 +13,8 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
 
-// ⚙️ Dirección IP local de tu computadora para desarrollo (Ingresa directo al Login):
-const LOCAL_DEV_URL = 'http://192.168.1.21:4200/login?platform=mobile';
+// ⚙️ URL de producción de tu aplicación:
+const LOCAL_DEV_URL = 'https://notes-project-one-iota.vercel.app/login?platform=mobile';
 
 export default function App() {
   const webViewRef = useRef(null);
