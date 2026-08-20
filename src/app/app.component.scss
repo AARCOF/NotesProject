@@ -29,67 +29,174 @@
   }
 }
 
-// Bottom Sheet para Notas Rápidas en Móvil
+// Burbuja Flotante de Notas Rápidas (Estilo Chat Flotante en Móvil / APK - Lado Inferior Derecho)
+.mobile-quick-notes-fab-bubble {
+  position: fixed;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  right: 18px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1045;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  .fab-bubble-icon {
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fab-badge-count {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+
+  &:active {
+    transform: scale(0.90);
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+  }
+
+  &.active {
+    transform: scale(0.92);
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  }
+}
+
+// Ventana de Chat de Notas Rápidas en Móvil / APK
 .mobile-quick-notes-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 1060;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  animation: fadeIn 0.25s ease-out;
+  justify-content: flex-end;
+  padding: 0 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px;
+  animation: fadeIn 0.2s ease-out;
+
+  @media (max-width: 575px) {
+    justify-content: center;
+    padding: 0 8px calc(76px + env(safe-area-inset-bottom, 0px)) 8px;
+  }
 }
 
-.mobile-quick-notes-sheet {
+.mobile-quick-notes-chat-window {
   background: #ffffff;
   width: 100%;
-  max-width: 540px;
-  max-height: 80vh;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  height: 72vh;
+  max-height: 540px;
+  border-radius: 20px;
+  box-shadow: 0 16px 48px -8px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   display: flex;
   flex-direction: column;
-  padding: 12px 16px 24px 16px;
-  animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  animation: chatSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
-  .sheet-drag-handle {
-    width: 44px;
-    height: 5px;
-    border-radius: 3px;
-    background: #cbd5e1;
-    margin: 4px auto 12px auto;
-    cursor: pointer;
-  }
-
-  .sheet-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 12px;
+  .chat-window-header {
+    background: #ffffff;
+    padding: 10px 14px;
     border-bottom: 1px solid #f1f5f9;
+    flex-shrink: 0;
+
+    .chat-avatar-pill {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .chat-status-dot {
+      width: 7px;
+      height: 7px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .btn-close-chat-window {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      &:active {
+        background: #e2e8f0;
+      }
+    }
   }
 
-  .sheet-body {
-    overflow-y: auto;
-    max-height: calc(80vh - 80px);
-    padding-top: 12px;
+  .chat-window-body {
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+
+    app-quick-notes-panel {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+
+      .card-quick-notes {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        height: 100% !important;
+
+        .card-header {
+          display: none !important; /* El encabezado ya está en chat-window-header */
+        }
+      }
+    }
   }
 }
 
-@keyframes slideUpSheet {
+@keyframes chatSlideIn {
   from {
-    transform: translateY(100%);
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
   }
   to {
-    transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

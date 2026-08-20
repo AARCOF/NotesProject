@@ -8,6 +8,7 @@ import { User } from './core/models/user.model';
 import { NotesService } from './services/notes.service';
 import { ExpenseService } from './services/expense.service';
 import { Note } from './models/note.model';
+import { QuickNotesService } from './services/quick-notes.service';
 import { Capacitor } from '@capacitor/core';
 
 @Component({
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
   currentUser: User | null = null;
   showTutorial: boolean = false;
   globalTasks: Note[] = [];
+  quickNotesCount: number = 0;
 
   // Mobile App Layout State
   isMobileView: boolean = false;
@@ -33,7 +35,8 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private automatedReminderService: AutomatedReminderService,
     private notesService: NotesService,
-    private expenseService: ExpenseService
+    private expenseService: ExpenseService,
+    private quickNotesService: QuickNotesService
   ) {
     this.checkScreenSize();
   }
@@ -68,6 +71,10 @@ export class AppComponent implements OnInit {
 
     this.notesService.notes$.subscribe(notes => {
       this.globalTasks = notes;
+    });
+
+    this.quickNotesService.quickNotes$.subscribe(notes => {
+      this.quickNotesCount = notes ? notes.length : 0;
     });
   }
 
