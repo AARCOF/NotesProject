@@ -1,7 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 
 // En Vercel se configura MONGODB_URI en Settings > Environment Variables
-const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || '';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb+srv://acaf504082_db_user:4gWF3FzDgb6pupsm@cluster0.1gpwhkf.mongodb.net/noteyou?retryWrites=true&w=majority&appName=Cluster0';
 const DB_NAME = process.env.DB_NAME || 'noteyou_production';
 
 let cachedClient: MongoClient | null = null;

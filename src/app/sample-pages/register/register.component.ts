@@ -24,7 +24,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onRegister(): void {
+  async onRegister(): Promise<void> {
     if (!this.name.trim() || !this.email.trim() || !this.password) {
       this.errorMessage = 'Por favor completa todos los campos obligatorios.';
       return;
@@ -39,18 +39,21 @@ export class RegisterComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    setTimeout(() => {
-      const result = this.authService.register(this.name.trim(), this.email.trim(), this.password);
+    try {
+      const result = await this.authService.register(this.name.trim(), this.email.trim(), this.password);
       this.isLoading = false;
 
       if (result.success) {
         this.successMessage = result.message;
         setTimeout(() => {
           this.router.navigate(['/verify-email'], { queryParams: { email: result.email } });
-        }, 1500);
+        }, 1200);
       } else {
         this.errorMessage = result.message;
       }
-    }, 700);
+    } catch (err) {
+      this.isLoading = false;
+      this.errorMessage = 'Error al procesar el registro. Intenta nuevamente.';
+    }
   }
 }

@@ -33,7 +33,9 @@ export class AdminPanelComponent implements OnInit {
   }
 
   loadUsers(): void {
-    this.users = this.userRepository.getAllUsers();
+    this.userRepository.getCloudUsers().subscribe(users => {
+      this.users = users;
+    });
   }
 
   get filteredUsers(): User[] {
