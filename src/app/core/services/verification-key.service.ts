@@ -45,9 +45,6 @@ export class VerificationKeyService {
     };
     this.lastSentEmailSubject.next(emailData);
 
-    // TODO: Eliminar esto en producción. Se imprime en consola para pruebas de desarrollo.
-    console.log(`[DEV MODE] Llave de seguridad generada para ${toEmail}:`, securityKey);
-
     const payload = {
       service_id: 'NoteYou_er',
       template_id: 'template_01akdg7',
