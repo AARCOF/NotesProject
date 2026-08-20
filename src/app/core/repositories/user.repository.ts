@@ -41,24 +41,25 @@ export class UserRepository {
   }
 
   private ensureSuperadminRoles(): void {
-    const users = this.getAllUsers();
-    let updated = false;
-    let foundOwner = false;
+    let users = this.getAllUsers();
+    // Eliminar cuentas predeterminadas antiguas si existen en la memoria local
+    users = users.filter(u => u.email !== 'admin@noteyou.com' && u.email !== 'usuario@noteyou.com');
+
+    let foundSuperadmin = false;
     users.forEach(u => {
-      if (u.email.toLowerCase() === 'acaf504082@gmail.com') {
+      if (u.email.toLowerCase() === 'superadmin@noteyou.com') {
         u.role = 'superadmin';
         u.isVerified = true;
         u.isActive = true;
-        foundOwner = true;
-        updated = true;
+        foundSuperadmin = true;
       }
     });
 
-    if (!foundOwner) {
-      users.push({
-        id: 'usr_owner_acaf',
-        name: 'Alexis',
-        email: 'acaf504082@gmail.com',
+    if (!foundSuperadmin) {
+      users.unshift({
+        id: 'usr_superadmin',
+        name: 'Super Administrador',
+        email: 'superadmin@noteyou.com',
         passwordHash: btoa('admin123'),
         role: 'superadmin',
         isVerified: true,
@@ -66,29 +67,15 @@ export class UserRepository {
         createdAt: new Date().toISOString(),
         hasCompletedTutorial: true
       });
-      updated = true;
     }
 
-    if (updated) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    }
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
   }
 
   private initDefaultUsers(): void {
     const users = this.getAllUsers();
     if (users.length === 0) {
       const defaultUsers: User[] = [
-        {
-          id: 'usr_owner_acaf',
-          name: 'Alexis',
-          email: 'acaf504082@gmail.com',
-          passwordHash: btoa('admin123'),
-          role: 'superadmin',
-          isVerified: true,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          hasCompletedTutorial: true
-        },
         {
           id: 'usr_superadmin',
           name: 'Super Administrador',
@@ -99,28 +86,6 @@ export class UserRepository {
           isActive: true,
           createdAt: new Date().toISOString(),
           hasCompletedTutorial: true
-        },
-        {
-          id: 'usr_admin',
-          name: 'Administrador Sistema',
-          email: 'admin@noteyou.com',
-          passwordHash: btoa('admin123'),
-          role: 'admin',
-          isVerified: true,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          hasCompletedTutorial: true
-        },
-        {
-          id: 'usr_user',
-          name: 'Usuario Común',
-          email: 'usuario@noteyou.com',
-          passwordHash: btoa('user123'),
-          role: 'user',
-          isVerified: true,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          hasCompletedTutorial: false
         }
       ];
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(defaultUsers));
