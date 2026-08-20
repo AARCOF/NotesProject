@@ -161,10 +161,10 @@
 .mobile-expenses-segmented-bar {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   background-color: #f1f5f9;
-  border-radius: 10px;
-  padding: 2px;
+  border-radius: 12px;
+  padding: 3px;
   width: 100%;
 }
 
@@ -174,14 +174,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3px 2px;
-  border-radius: 8px;
+  padding: 5px 3px;
+  border-radius: 9px;
   border: none;
   background: transparent;
   color: #64748b;
-  font-size: 0.70rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  line-height: 1.15;
+  line-height: 1.2;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
   position: relative;
@@ -189,15 +189,15 @@
   -webkit-tap-highlight-color: transparent;
 
   i {
-    font-size: 16px !important;
-    margin-bottom: 1px;
+    font-size: 19px !important;
+    margin-bottom: 2px;
     line-height: 1;
   }
 
   &.active {
     background: #ffffff !important;
     color: #0f172a !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
     font-weight: 700 !important;
 
     i {
