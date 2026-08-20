@@ -1,7 +1,7 @@
-import { connectToDatabase, sendJsonResponse } from '../lib/db';
-import { verifyAuthToken } from '../lib/auth-middleware';
+const { connectToDatabase, sendJsonResponse } = require('../lib/db');
+const { verifyAuthToken } = require('../lib/auth-middleware');
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return sendJsonResponse(res, 200, { ok: true });
   }
@@ -16,6 +16,11 @@ export default async function handler(req: any, res: any) {
     const categoriesCollection = db.collection('categories');
     const userId = authUser.sub;
 
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {}
+    }
+
     switch (req.method) {
       case 'GET': {
         const categories = await categoriesCollection.find({ userId }).toArray();
@@ -23,7 +28,7 @@ export default async function handler(req: any, res: any) {
       }
 
       case 'POST': {
-        const catData = req.body;
+        const catData = body || {};
         if (!catData.name) {
           return sendJsonResponse(res, 400, { success: false, message: 'El nombre de la categoría es requerido.' });
         }
@@ -34,12 +39,17 @@ export default async function handler(req: any, res: any) {
           userId
         };
 
-        await categoriesCollection.insertOne(newCategory);
+        await categoriesCollection.updateOne(
+          { id: newCategory.id, userId },
+          { $set: newCategory },
+          { upsert: true }
+        );
+
         return sendJsonResponse(res, 201, { success: true, category: newCategory });
       }
 
       case 'DELETE': {
-        const { id } = req.query;
+        const id = req.query?.id || (req.body && req.body.id);
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID es requerido.' });
         }
@@ -52,6 +62,6 @@ export default async function handler(req: any, res: any) {
         return sendJsonResponse(res, 405, { error: 'Método no soportado.' });
     }
   } catch (err) {
-    return sendJsonResponse(res, 500, { success: false, message: 'Error en categorías: ' + (err as any)?.message });
+    return sendJsonResponse(res, 500, { success: false, message: 'Error en categorías: ' + (err ? err.message : err) });
   }
-}
+};

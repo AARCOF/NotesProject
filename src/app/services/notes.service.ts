@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Note, PriorityLevel, NoteStatus, RecurrenceFrequency } from '../models/note.model';
 import { AuthService } from '../core/services/auth.service';
@@ -25,7 +26,10 @@ export class NotesService {
     return this.activeViewModeSubject.getValue();
   }
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.refreshNotesForCurrentUser();
@@ -246,6 +250,41 @@ export class NotesService {
     // Filtrar tareas que pertenecen al usuario activo
     const userNotes = allNotes.filter(n => n.userId === this.currentUserId || (!n.userId && this.currentUserId === 'usr_superadmin'));
     this.notesSubject.next(userNotes);
+
+    // 3. Sincronización en tiempo real con MongoDB Atlas en la nube
+    this.fetchCloudNotes();
+  }
+
+  private fetchCloudNotes(): void {
+    if (!this.currentUserId) return;
+
+    this.http.get<{ success: boolean; notes: Note[] }>('/api/notes').subscribe({
+      next: (res) => {
+        if (res && res.success && Array.isArray(res.notes)) {
+          const cloudNotes = res.notes;
+          let allNotes = this.getAllStorageNotes();
+
+          const cloudMap = new Map<string, Note>();
+          cloudNotes.forEach(cn => cloudMap.set(cn.id, cn));
+
+          // Enviar notas locales del usuario a la nube si aún no existen
+          const localUserNotes = allNotes.filter(n => n.userId === this.currentUserId);
+          localUserNotes.forEach(ln => {
+            if (!cloudMap.has(ln.id)) {
+              this.http.post('/api/notes', ln).subscribe({ error: () => {} });
+            }
+          });
+
+          // Combinar notas de otros usuarios y actualizar las del usuario activo con la nube
+          const otherUsersNotes = allNotes.filter(n => n.userId !== this.currentUserId && (n.userId || this.currentUserId !== 'usr_superadmin'));
+          const mergedAll = [...cloudNotes, ...otherUsersNotes];
+
+          this.saveAllStorageNotes(mergedAll);
+          this.notesSubject.next(cloudNotes);
+        }
+      },
+      error: () => {}
+    });
   }
 
   public getNotes(): Note[] {
@@ -273,6 +312,10 @@ export class NotesService {
     this.saveAllStorageNotes(updatedAll);
 
     this.refreshNotesForCurrentUser();
+
+    // Sincronizar creación en MongoDB Atlas
+    this.http.post('/api/notes', newNote).subscribe({ error: () => {} });
+
     return newNote;
   }
 
@@ -298,6 +341,10 @@ export class NotesService {
     allNotes[index] = updatedNote;
     this.saveAllStorageNotes(allNotes);
     this.refreshNotesForCurrentUser();
+
+    // Sincronizar actualización en MongoDB Atlas
+    this.http.put('/api/notes', updatedNote).subscribe({ error: () => {} });
+
     return updatedNote;
   }
 
@@ -308,6 +355,10 @@ export class NotesService {
 
     this.saveAllStorageNotes(filtered);
     this.refreshNotesForCurrentUser();
+
+    // Sincronizar eliminación en MongoDB Atlas
+    this.http.delete('/api/notes?id=' + id).subscribe({ error: () => {} });
+
     return true;
   }
 
