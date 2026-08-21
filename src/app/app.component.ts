@@ -110,10 +110,20 @@ export class AppComponent implements OnInit {
   }
 
   private checkTutorialState(): void {
-    if (this.currentUser && this.currentUser.hasCompletedTutorial === false && this.authService.isAuthenticated()) {
-      this.showTutorial = true;
-    } else {
+    if (!this.currentUser || !this.authService.isAuthenticated()) {
       this.showTutorial = false;
+      return;
+    }
+
+    const userId = this.currentUser.id;
+    const email = (this.currentUser.email || '').toLowerCase();
+    const localFlag = localStorage.getItem('noteyou_tutorial_completed_' + userId) || localStorage.getItem('noteyou_tutorial_completed_' + email);
+
+    // Si ya completó el tutorial previamente en la nube o en el dispositivo, no mostrarlo nunca más
+    if (localFlag === 'true' || this.currentUser.hasCompletedTutorial === true) {
+      this.showTutorial = false;
+    } else {
+      this.showTutorial = true;
     }
   }
 

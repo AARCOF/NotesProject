@@ -7,18 +7,22 @@ module.exports = async function handler(req, res) {
   }
 
   const authUser = verifyAuthToken(req);
-  if (!authUser || authUser.role !== 'superadmin') {
+  const isSuper = authUser && authUser.role === 'superadmin';
+  const isSelf = authUser && (authUser.sub === body?.userId || authUser.email === body?.userId);
+
+  if (req.method === 'GET' && !isSuper) {
     return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Superadministradores.' });
+  }
+  if (req.method === 'DELETE' && !isSuper) {
+    return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Superadministradores.' });
+  }
+  if (req.method === 'PUT' && !isSuper && !isSelf) {
+    return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido.' });
   }
 
   try {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
-
-    let body = req.body;
-    if (typeof body === 'string') {
-      try { body = JSON.parse(body); } catch (e) {}
-    }
 
     switch (req.method) {
       case 'GET': {
@@ -29,15 +33,16 @@ module.exports = async function handler(req, res) {
       }
 
       case 'PUT': {
-        const { userId, role, isActive, isVerified } = body || {};
+        const { userId, role, isActive, isVerified, hasCompletedTutorial } = body || {};
         if (!userId) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de usuario requerido.' });
         }
 
         const updateFields = {};
-        if (role) updateFields.role = role;
-        if (typeof isActive === 'boolean') updateFields.isActive = isActive;
-        if (typeof isVerified === 'boolean') updateFields.isVerified = isVerified;
+        if (isSuper && role) updateFields.role = role;
+        if (isSuper && typeof isActive === 'boolean') updateFields.isActive = isActive;
+        if (isSuper && typeof isVerified === 'boolean') updateFields.isVerified = isVerified;
+        if (typeof hasCompletedTutorial === 'boolean') updateFields.hasCompletedTutorial = hasCompletedTutorial;
 
         await usersCollection.updateMany(
           { $or: [{ id: userId }, { email: userId }] },
