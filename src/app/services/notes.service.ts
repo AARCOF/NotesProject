@@ -18,6 +18,13 @@ export class NotesService {
   private activeViewModeSubject = new BehaviorSubject<'kanban' | 'grid' | 'categorias' | 'graficos'>('kanban');
   public activeViewMode$: Observable<'kanban' | 'grid' | 'categorias' | 'graficos'> = this.activeViewModeSubject.asObservable();
 
+  private openCreateCategoryModalRequestSubject = new Subject<void>();
+  public openCreateCategoryModalRequest$: Observable<void> = this.openCreateCategoryModalRequestSubject.asObservable();
+
+  public requestOpenCreateCategoryModal(): void {
+    this.openCreateCategoryModalRequestSubject.next();
+  }
+
   public setViewMode(mode: 'kanban' | 'grid' | 'categorias' | 'graficos'): void {
     this.activeViewModeSubject.next(mode);
   }

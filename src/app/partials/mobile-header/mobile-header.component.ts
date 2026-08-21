@@ -100,16 +100,33 @@ export class MobileHeaderComponent implements OnInit {
     this.openQuickNotes.emit();
   }
 
+  get createButtonLabel(): string {
+    if (this.isExpensesRoute) {
+      return this.expensesActiveTab === 'categorias' ? 'Nueva Categoría' : 'Nuevo Gasto';
+    }
+    return this.notesViewMode === 'categorias' ? 'Nueva Categoría' : 'Nueva Tarea';
+  }
+
   onCreateActionClick(): void {
     if (this.isExpensesRoute) {
       this.expenseService.requestOpenAddExpenseModal();
     } else {
-      if (this.router.url !== '/dashboard') {
-        this.router.navigate(['/dashboard']).then(() => {
-          setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
-        });
+      if (this.notesViewMode === 'categorias') {
+        if (this.router.url !== '/dashboard') {
+          this.router.navigate(['/dashboard']).then(() => {
+            setTimeout(() => this.notesService.requestOpenCreateCategoryModal(), 150);
+          });
+        } else {
+          this.notesService.requestOpenCreateCategoryModal();
+        }
       } else {
-        this.notesService.requestOpenCreateModal();
+        if (this.router.url !== '/dashboard') {
+          this.router.navigate(['/dashboard']).then(() => {
+            setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
+          });
+        } else {
+          this.notesService.requestOpenCreateModal();
+        }
       }
     }
     this.openCreateTask.emit();
