@@ -5,7 +5,10 @@
     <div class="modal-content-custom">
       
       <!-- Encabezado de Bienvenida -->
-      <div class="wizard-header text-center p-4 bg-gradient-blue-celeste text-white">
+      <div class="wizard-header position-relative text-center p-4 bg-gradient-blue-celeste text-white">
+        <button type="button" class="btn btn-sm btn-link text-white position-absolute font-weight-bold" style="top: 10px; right: 12px; opacity: 0.9; text-decoration: none;" (click)="skipTutorial()" title="Omitir recorrido">
+          <i class="typcn typcn-times mr-1"></i> Omitir
+        </button>
         <div class="wizard-step-indicator mb-3">
           <span class="step-dot" [class.active]="currentStep >= 1">1</span>
           <span class="step-line" [class.active]="currentStep >= 2"></span>

@@ -68,4 +68,9 @@ export class OnboardingWizardComponent implements OnInit {
     this.authService.markTutorialAsCompleted();
     this.completed.emit();
   }
+
+  skipTutorial(): void {
+    this.authService.markTutorialAsCompleted();
+    this.completed.emit();
+  }
 }
