@@ -49,12 +49,20 @@ module.exports = async function handler(req, res) {
       }
 
       case 'DELETE': {
-        const id = req.query?.id || (req.body && req.body.id);
+        let id = req.query ? req.query.id : null;
+        if (!id && req.url && req.url.includes('id=')) {
+          const parts = req.url.split('id=');
+          id = parts[1] ? parts[1].split('&')[0] : null;
+        }
+        if (!id && req.body && req.body.id) {
+          id = req.body.id;
+        }
+
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID es requerido.' });
         }
 
-        await categoriesCollection.deleteOne({ id, userId });
+        await categoriesCollection.deleteMany({ id: id.toString() });
         return sendJsonResponse(res, 200, { success: true, message: 'Categoría eliminada.' });
       }
 
