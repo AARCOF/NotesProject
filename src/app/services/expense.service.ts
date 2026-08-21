@@ -48,6 +48,7 @@ export class ExpenseService {
   }
 
   private currentUserId: string | null = null;
+  private syncTimerSubscription: any = null;
 
   constructor(
     private authService: AuthService,
@@ -56,7 +57,29 @@ export class ExpenseService {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.refreshData();
+      this.initAutoSync();
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', () => this.fetchCloudExpenses());
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) this.fetchCloudExpenses();
+        });
+      }
+    }
+  }
+
+  private initAutoSync(): void {
+    if (this.syncTimerSubscription) {
+      clearInterval(this.syncTimerSubscription);
+      this.syncTimerSubscription = null;
+    }
+    if (this.currentUserId) {
+      this.syncTimerSubscription = setInterval(() => {
+        this.fetchCloudExpenses();
+      }, 3000);
+    }
   }
 
   // --- LocalStorage Helpers ---
@@ -115,24 +138,64 @@ export class ExpenseService {
     const allExpenses = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY).filter(e => e.userId === this.currentUserId);
     const allBudgets = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY).filter(b => b.userId === this.currentUserId);
     const allExtra = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY).filter(i => i.userId === this.currentUserId);
+    const allCats = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY).filter(c => c.userId === this.currentUserId);
+    const allSubs = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY).filter(s => s.userId === this.currentUserId);
 
     this.http.post('/api/expenses', {
       expenses: allExpenses,
       budgets: allBudgets,
-      extraIncomes: allExtra
+      extraIncomes: allExtra,
+      categories: allCats,
+      subcategories: allSubs
     }).subscribe({ error: () => {} });
   }
 
-  private fetchCloudExpenses(): void {
+  public fetchCloudExpenses(): void {
     if (!this.currentUserId) return;
-    this.http.get<{ success: boolean; expenses: ExpenseItem[] }>('/api/expenses').subscribe({
+    this.http.get<{
+      success: boolean;
+      expenses?: ExpenseItem[];
+      budgets?: MonthlyBudget[];
+      extraIncomes?: ExtraIncomeItem[];
+      categories?: ExpenseCategory[];
+      subcategories?: ExpenseSubcategory[];
+    }>('/api/expenses').subscribe({
       next: (res) => {
-        if (res && res.success && Array.isArray(res.expenses) && res.expenses.length > 0) {
-          const cloudExpenses = res.expenses;
-          let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
-          const other = all.filter(e => e.userId !== this.currentUserId);
-          this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...cloudExpenses, ...other]);
-          this.expensesSubject.next(cloudExpenses);
+        if (res && res.success) {
+          if (Array.isArray(res.expenses)) {
+            let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+            const other = all.filter(e => e.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...res.expenses, ...other]);
+            this.expensesSubject.next(res.expenses);
+          }
+
+          if (Array.isArray(res.budgets)) {
+            let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
+            const other = all.filter(b => b.userId !== this.currentUserId);
+            this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...res.budgets, ...other]);
+            this.budgetsSubject.next(res.budgets);
+          }
+
+          if (Array.isArray(res.extraIncomes)) {
+            let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+            const other = all.filter(i => i.userId !== this.currentUserId);
+            this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...res.extraIncomes, ...other]);
+            this.extraIncomesSubject.next(res.extraIncomes);
+          }
+
+          if (Array.isArray(res.categories) && res.categories.length > 0) {
+            let all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
+            const other = all.filter(c => c.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...res.categories, ...other]);
+            this.categoriesSubject.next(res.categories);
+          }
+
+          if (Array.isArray(res.subcategories) && res.subcategories.length > 0) {
+            let all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
+            const other = all.filter(s => s.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...res.subcategories, ...other]);
+            this.subcategoriesSubject.next(res.subcategories);
+          }
         }
       },
       error: () => {}
@@ -254,6 +317,7 @@ export class ExpenseService {
     all.push(newCategory);
     this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
     return newCategory;
   }
 
@@ -264,6 +328,7 @@ export class ExpenseService {
       all[index] = { ...all[index], ...changes };
       this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, all);
       this.refreshData();
+      this.syncToCloud();
     }
   }
 
@@ -282,6 +347,7 @@ export class ExpenseService {
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, allExpenses);
 
     this.refreshData();
+    this.syncToCloud();
   }
 
   // --- CRUD Subcategorías ---
@@ -300,6 +366,7 @@ export class ExpenseService {
     all.push(newSub);
     this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
     return newSub;
   }
 
@@ -310,6 +377,7 @@ export class ExpenseService {
       all[index].name = name.trim();
       this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, all);
       this.refreshData();
+      this.syncToCloud();
     }
   }
 
@@ -323,6 +391,7 @@ export class ExpenseService {
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, allExpenses);
 
     this.refreshData();
+    this.syncToCloud();
   }
 
   // --- CRUD Gastos Individuales (Con soporte para Gastos Recurrentes) ---
@@ -340,6 +409,7 @@ export class ExpenseService {
     all.unshift(newExpense);
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
     return newExpense;
   }
 
@@ -350,6 +420,7 @@ export class ExpenseService {
       all[index] = { ...all[index], ...changes };
       this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
       this.refreshData();
+      this.syncToCloud();
     }
   }
 
@@ -358,6 +429,7 @@ export class ExpenseService {
     all = all.filter(e => !(e.id === id && e.userId === this.currentUserId));
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
   }
 
   // --- CRUD Bonus o Ingresos Extra ---
@@ -375,6 +447,7 @@ export class ExpenseService {
     all.unshift(newIncome);
     this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
     return newIncome;
   }
 
@@ -385,6 +458,7 @@ export class ExpenseService {
       all[index] = { ...all[index], ...changes };
       this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
       this.refreshData();
+      this.syncToCloud();
     }
   }
 
@@ -393,6 +467,7 @@ export class ExpenseService {
     all = all.filter(i => !(i.id === id && i.userId === this.currentUserId));
     this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
   }
 
   public getExtraIncomesForMonth(monthKey: string): ExtraIncomeItem[] {
@@ -423,6 +498,7 @@ export class ExpenseService {
     if (!this.currentUserId) return;
     localStorage.setItem(this.getBaseIncomeStorageKey(), String(Number(income) || 0));
     this.refreshData();
+    this.syncToCloud();
   }
 
   public getMonthlyIncome(monthKey: string): number {
@@ -459,6 +535,7 @@ export class ExpenseService {
 
     this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, all);
     this.refreshData();
+    this.syncToCloud();
   }
 
   public getTotalIncomeForMonth(monthKey: string): number {

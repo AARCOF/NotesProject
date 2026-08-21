@@ -26,10 +26,11 @@ module.exports = async function handler(req, res) {
         const data = await expensesCollection.findOne({ userId });
         return sendJsonResponse(res, 200, {
           success: true,
-          expenses: data ? data.expenses : [],
-          budgetState: data ? data.budgetState : null,
-          fixedExpenses: data ? data.fixedExpenses : [],
-          financialGoals: data ? data.financialGoals : []
+          expenses: data ? data.expenses || [] : [],
+          budgets: data ? data.budgets || [] : [],
+          extraIncomes: data ? data.extraIncomes || [] : [],
+          categories: data ? data.categories || [] : [],
+          subcategories: data ? data.subcategories || [] : []
         });
       }
 
@@ -42,16 +43,17 @@ module.exports = async function handler(req, res) {
             $set: {
               userId,
               expenses: payload.expenses || [],
-              budgetState: payload.budgetState || null,
-              fixedExpenses: payload.fixedExpenses || [],
-              financialGoals: payload.financialGoals || [],
+              budgets: payload.budgets || [],
+              extraIncomes: payload.extraIncomes || [],
+              categories: payload.categories || [],
+              subcategories: payload.subcategories || [],
               updatedAt: new Date().toISOString()
             }
           },
           { upsert: true }
         );
 
-        return sendJsonResponse(res, 200, { success: true, message: 'Datos financieros sincronizados en la nube.' });
+        return sendJsonResponse(res, 200, { success: true, message: 'Datos de pagos y finanzas sincronizados.' });
       }
 
       default:
