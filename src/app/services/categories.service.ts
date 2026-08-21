@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Category } from '../models/category.model';
 import { AuthService } from '../core/services/auth.service';
@@ -12,6 +13,7 @@ export class CategoriesService {
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
   public categories$: Observable<Category[]> = this.categoriesSubject.asObservable();
   private currentUserId: string | null = null;
+  private syncTimerSubscription: any = null;
 
   private defaultCategories: Category[] = [
     {
@@ -48,10 +50,57 @@ export class CategoriesService {
     }
   ];
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.refreshCategoriesForCurrentUser();
+      this.initAutoSync();
+    });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', () => this.fetchCloudCategories());
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) this.fetchCloudCategories();
+        });
+      }
+    }
+  }
+
+  private initAutoSync(): void {
+    if (this.syncTimerSubscription) {
+      clearInterval(this.syncTimerSubscription);
+      this.syncTimerSubscription = null;
+    }
+    if (this.currentUserId) {
+      this.syncTimerSubscription = setInterval(() => {
+        this.fetchCloudCategories();
+      }, 3000);
+    }
+  }
+
+  public fetchCloudCategories(): void {
+    if (!this.currentUserId) return;
+
+    this.http.get<{ success: boolean; categories: Category[] }>('/api/categories').subscribe({
+      next: (res) => {
+        if (res && res.success && Array.isArray(res.categories)) {
+          const cloudCats = res.categories;
+          let all = this.getAllCustomCategories();
+          const other = all.filter(c => c.userId && c.userId !== this.currentUserId);
+          const merged = [...cloudCats, ...other];
+          this.saveAllCustomCategories(merged);
+
+          const userCustomCats = cloudCats.filter(c => 
+            c.id !== 'cat_finanzas' && c.name?.toLowerCase() !== 'finanzas'
+          );
+          this.categoriesSubject.next([...this.defaultCategories, ...userCustomCats]);
+        }
+      },
+      error: () => {}
     });
   }
 
@@ -61,7 +110,6 @@ export class CategoriesService {
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
-        // Filtrar categorías que no son del sistema y excluir cualquier remanente de Finanzas
         return parsed.filter((c: Category) => !c.isSystem && c.id !== 'cat_finanzas' && c.name?.toLowerCase() !== 'finanzas');
       }
       return [];
@@ -88,6 +136,8 @@ export class CategoriesService {
       c.name?.toLowerCase() !== 'finanzas'
     );
     this.categoriesSubject.next([...this.defaultCategories, ...userCustomCats]);
+
+    this.fetchCloudCategories();
   }
 
   public getCategories(): Category[] {
@@ -112,6 +162,10 @@ export class CategoriesService {
     this.saveAllCustomCategories(updated);
 
     this.refreshCategoriesForCurrentUser();
+
+    // Sincronizar en MongoDB Atlas
+    this.http.post('/api/categories', newCategory).subscribe({ error: () => {} });
+
     return newCategory;
   }
 
@@ -125,6 +179,10 @@ export class CategoriesService {
     this.saveAllCustomCategories(customCats);
 
     this.refreshCategoriesForCurrentUser();
+
+    // Sincronizar en MongoDB Atlas
+    this.http.post('/api/categories', updatedCategory).subscribe({ error: () => {} });
+
     return updatedCategory;
   }
 
@@ -135,6 +193,10 @@ export class CategoriesService {
 
     this.saveAllCustomCategories(filtered);
     this.refreshCategoriesForCurrentUser();
+
+    // Sincronizar en MongoDB Atlas
+    this.http.delete('/api/categories?id=' + id).subscribe({ error: () => {} });
+
     return true;
   }
 }
