@@ -26,6 +26,8 @@ export class NotesService {
     return this.activeViewModeSubject.getValue();
   }
 
+  private syncTimerSubscription: any = null;
+
   constructor(
     private authService: AuthService,
     private http: HttpClient
@@ -33,7 +35,30 @@ export class NotesService {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user ? user.id : null;
       this.refreshNotesForCurrentUser();
+      this.initAutoSync();
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', () => this.fetchCloudNotes());
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) this.fetchCloudNotes();
+        });
+      }
+    }
+  }
+
+  private initAutoSync(): void {
+    if (this.syncTimerSubscription) {
+      clearInterval(this.syncTimerSubscription);
+      this.syncTimerSubscription = null;
+    }
+    if (this.currentUserId) {
+      // Sincronización en vivo cada 3 segundos
+      this.syncTimerSubscription = setInterval(() => {
+        this.fetchCloudNotes();
+      }, 3000);
+    }
   }
 
   private getAllStorageNotes(): Note[] {
@@ -255,7 +280,7 @@ export class NotesService {
     this.fetchCloudNotes();
   }
 
-  private fetchCloudNotes(): void {
+  public fetchCloudNotes(): void {
     if (!this.currentUserId) return;
 
     this.http.get<{ success: boolean; notes: Note[] }>('/api/notes').subscribe({
@@ -264,19 +289,8 @@ export class NotesService {
           const cloudNotes = res.notes;
           let allNotes = this.getAllStorageNotes();
 
-          const cloudMap = new Map<string, Note>();
-          cloudNotes.forEach(cn => cloudMap.set(cn.id, cn));
-
-          // Enviar notas locales del usuario a la nube si aún no existen
-          const localUserNotes = allNotes.filter(n => n.userId === this.currentUserId);
-          localUserNotes.forEach(ln => {
-            if (!cloudMap.has(ln.id)) {
-              this.http.post('/api/notes', ln).subscribe({ error: () => {} });
-            }
-          });
-
-          // Combinar notas de otros usuarios y actualizar las del usuario activo con la nube
-          const otherUsersNotes = allNotes.filter(n => n.userId !== this.currentUserId && (n.userId || this.currentUserId !== 'usr_superadmin'));
+          // Mantener notas de otras cuentas si las hay y actualizar las del usuario activo con MongoDB
+          const otherUsersNotes = allNotes.filter(n => n.userId && n.userId !== this.currentUserId);
           const mergedAll = [...cloudNotes, ...otherUsersNotes];
 
           this.saveAllStorageNotes(mergedAll);
@@ -350,11 +364,11 @@ export class NotesService {
 
   public deleteNote(id: string): boolean {
     const allNotes = this.getAllStorageNotes();
-    const filtered = allNotes.filter(n => !(n.id === id && (n.userId === this.currentUserId || !n.userId)));
-    if (filtered.length === allNotes.length) return false;
-
+    const filtered = allNotes.filter(n => n.id !== id);
     this.saveAllStorageNotes(filtered);
-    this.refreshNotesForCurrentUser();
+
+    const currentUserNotes = filtered.filter(n => n.userId === this.currentUserId);
+    this.notesSubject.next(currentUserNotes);
 
     // Sincronizar eliminación en MongoDB Atlas
     this.http.delete('/api/notes?id=' + id).subscribe({ error: () => {} });
