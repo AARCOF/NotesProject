@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
       }
 
       case 'PUT': {
-        const { userId, role, isActive } = body || {};
+        const { userId, role, isActive, isVerified } = body || {};
         if (!userId) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de usuario requerido.' });
         }
@@ -37,13 +37,14 @@ module.exports = async function handler(req, res) {
         const updateFields = {};
         if (role) updateFields.role = role;
         if (typeof isActive === 'boolean') updateFields.isActive = isActive;
+        if (typeof isVerified === 'boolean') updateFields.isVerified = isVerified;
 
-        await usersCollection.updateOne(
-          { id: userId },
+        await usersCollection.updateMany(
+          { $or: [{ id: userId }, { email: userId }] },
           { $set: updateFields }
         );
 
-        return sendJsonResponse(res, 200, { success: true, message: 'Usuario actualizado.' });
+        return sendJsonResponse(res, 200, { success: true, message: 'Usuario actualizado en MongoDB Atlas.' });
       }
 
       case 'DELETE': {

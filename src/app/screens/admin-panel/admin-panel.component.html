@@ -155,38 +155,44 @@
             </td>
 
             <td class="px-4 py-3 text-right">
-              <div class="btn-group">
+              <div class="d-flex align-items-center justify-content-end gap-2">
                 
-                <!-- Selector de Rol (Superadmin Únicamente) -->
-                <div class="dropdown mr-2" ngbDropdown *ngIf="isSuperAdmin">
-                  <button class="btn btn-sm btn-outline-blue font-weight-semibold dropdown-toggle" ngbDropdownToggle>
-                    Cambiar Rol
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right shadow-md border-0" ngbDropdownMenu>
-                    <button class="dropdown-item" (click)="changeRole(u, 'superadmin')">Superadministrador</button>
-                    <button class="dropdown-item" (click)="changeRole(u, 'admin')">Administrador</button>
-                    <button class="dropdown-item" (click)="changeRole(u, 'user')">Usuario Común</button>
-                  </div>
+                <!-- Selector de Rol Inline (Superadmin Únicamente) -->
+                <div class="role-selector-wrapper mr-2" *ngIf="isSuperAdmin">
+                  <select 
+                    class="custom-select custom-select-sm select-role-pill" 
+                    [ngModel]="u.role" 
+                    (ngModelChange)="changeRole(u, $event)"
+                    [disabled]="u.id === currentUser?.id"
+                    title="Cambiar rol">
+                    <option value="superadmin">⭐ Superadmin</option>
+                    <option value="admin">🛡️ Admin</option>
+                    <option value="user">👤 Usuario</option>
+                  </select>
                 </div>
 
                 <!-- Botón de Estado Inactivo/Activo (Superadmin Únicamente) -->
                 <button 
                   type="button" 
-                  class="btn btn-sm mr-2 font-weight-semibold" 
+                  class="btn btn-sm mr-1 font-weight-semibold btn-action-pill" 
                   [class.btn-outline-danger]="u.isActive !== false" 
                   [class.btn-outline-success]="u.isActive === false"
                   *ngIf="isSuperAdmin" 
                   (click)="toggleActive(u)" 
                   [title]="u.isActive !== false ? 'Desactivar Cuenta' : 'Activar Cuenta'">
+                  <i class="typcn" [class.typcn-user-delete]="u.isActive !== false" [class.typcn-user-add]="u.isActive === false"></i>
                   {{ u.isActive !== false ? 'Desactivar' : 'Activar' }}
                 </button>
 
                 <!-- Botón de Verificación (Admin y Superadmin) -->
                 <button 
                   type="button" 
-                  class="btn btn-sm btn-outline-primary font-weight-semibold" 
+                  class="btn btn-sm font-weight-semibold btn-action-pill" 
+                  [class.btn-outline-warning]="u.isVerified"
+                  [class.btn-outline-primary]="!u.isVerified"
                   (click)="toggleVerification(u)"
                   [title]="u.isVerified ? 'Marcar como pendiente' : 'Verificar manualmente'">
+                  <i class="typcn" [class.typcn-times]="u.isVerified" [class.typcn-tick]="!u.isVerified"></i>
                   {{ u.isVerified ? 'Desverificar' : 'Verificar' }}
                 </button>
 

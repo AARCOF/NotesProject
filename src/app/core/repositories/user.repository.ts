@@ -42,11 +42,10 @@ export class UserRepository {
 
   private ensureSuperadminRoles(): void {
     let users = this.getAllUsers();
-    // Eliminar cuentas no deseadas si existen en la memoria local
+    // Eliminar cuentas por defecto no deseadas si existen en la memoria local
     users = users.filter(u => 
       u.email.toLowerCase() !== 'admin@noteyou.com' && 
-      u.email.toLowerCase() !== 'usuario@noteyou.com' &&
-      u.email.toLowerCase() !== 'acaf504082@gmail.com'
+      u.email.toLowerCase() !== 'usuario@noteyou.com'
     );
 
     let foundSuperadmin = false;
@@ -135,6 +134,9 @@ export class UserRepository {
     if (!user) return false;
     user.role = newRole;
     this.saveUser(user);
+
+    // Sincronizar actualización de rol en MongoDB Atlas
+    this.http.put('/api/admin/users', { userId, role: newRole }).subscribe({ error: () => {} });
     return true;
   }
 
@@ -143,6 +145,9 @@ export class UserRepository {
     if (!user) return false;
     user.isActive = !user.isActive;
     this.saveUser(user);
+
+    // Sincronizar estado activo en MongoDB Atlas
+    this.http.put('/api/admin/users', { userId, isActive: user.isActive }).subscribe({ error: () => {} });
     return true;
   }
 
@@ -151,6 +156,9 @@ export class UserRepository {
     if (!user) return false;
     user.isVerified = !user.isVerified;
     this.saveUser(user);
+
+    // Sincronizar verificación en MongoDB Atlas
+    this.http.put('/api/admin/users', { userId, isVerified: user.isVerified }).subscribe({ error: () => {} });
     return true;
   }
 }
