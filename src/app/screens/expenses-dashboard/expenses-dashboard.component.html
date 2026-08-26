@@ -416,6 +416,30 @@
       <!-- VISTA 2: CATEGORÍAS Y SUBCATEGORÍAS -->
       <div *ngIf="activeTab === 'categorias' || (!isMobile && activeTab === 'gestion')">
         
+        <!-- Banner de Cabecera de Categorías (Gastos) -->
+        <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3-5">
+          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <div class="d-flex align-items-center">
+              <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center mr-3 shadow-xs" style="width: 44px; height: 44px; min-width: 44px;">
+                <i class="typcn typcn-folder-open font-size-22"></i>
+              </div>
+              <div>
+                <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">Categorías de Gastos</h5>
+                <small class="text-slate-500 font-size-12">Gestiona tus categorías, subcategorías y presupuestos</small>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge badge-pill badge-primary-light font-weight-bold px-3 py-1-5 font-size-12">
+                {{ categories.length }} Categorías
+              </span>
+              <button class="btn btn-gradient-blue font-weight-bold shadow-sm d-flex align-items-center px-3-5 py-2 text-white rounded-xl font-size-13 hover-lift" (click)="openAddCategoryModal()">
+                <i class="typcn typcn-plus mr-1-5 font-size-16"></i> Nueva Categoría
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Estado vacío si el usuario eliminó todas las categorías -->
         <div *ngIf="categories.length === 0" class="card border-0 rounded-2xl shadow-sm bg-white p-5 text-center my-3">
           <div class="mx-auto mb-3 bg-blue-50 text-blue rounded-circle d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">

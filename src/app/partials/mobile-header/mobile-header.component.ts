@@ -109,7 +109,8 @@ export class MobileHeaderComponent implements OnInit {
 
   onCreateActionClick(): void {
     if (this.isExpensesRoute) {
-      if (this.expensesActiveTab === 'categorias') {
+      const currentTab = this.expenseService.getActiveTab();
+      if (currentTab === 'categorias' || this.expensesActiveTab === 'categorias') {
         if (this.router.url !== '/expenses') {
           this.router.navigate(['/expenses']).then(() => {
             setTimeout(() => this.expenseService.requestOpenAddCategoryModal(), 150);
@@ -127,7 +128,8 @@ export class MobileHeaderComponent implements OnInit {
         }
       }
     } else {
-      if (this.notesViewMode === 'categorias') {
+      const currentMode = this.notesService.getViewMode();
+      if (currentMode === 'categorias' || this.notesViewMode === 'categorias') {
         if (this.router.url !== '/dashboard') {
           this.router.navigate(['/dashboard']).then(() => {
             setTimeout(() => this.notesService.requestOpenCreateCategoryModal(), 150);
@@ -145,7 +147,6 @@ export class MobileHeaderComponent implements OnInit {
         }
       }
     }
-    this.openCreateTask.emit();
   }
 
   onLogout(): void {

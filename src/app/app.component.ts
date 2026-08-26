@@ -91,16 +91,28 @@ export class AppComponent implements OnInit {
 
   public onFabCreate(): void {
     if (this.router.url.includes('/expenses')) {
-      // Si está en la pantalla de gastos, abrir modal para registrar nuevo gasto
-      this.expenseService.requestOpenAddExpenseModal();
-    } else {
-      // Si está en tareas u otra pantalla, abrir modal de nueva tarea
-      if (this.router.url !== '/dashboard') {
-        this.router.navigate(['/dashboard']).then(() => {
-          setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
-        });
+      if (this.expenseService.getActiveTab() === 'categorias') {
+        this.expenseService.requestOpenAddCategoryModal();
       } else {
-        this.notesService.requestOpenCreateModal();
+        this.expenseService.requestOpenAddExpenseModal();
+      }
+    } else {
+      if (this.notesService.getViewMode() === 'categorias') {
+        if (this.router.url !== '/dashboard') {
+          this.router.navigate(['/dashboard']).then(() => {
+            setTimeout(() => this.notesService.requestOpenCreateCategoryModal(), 150);
+          });
+        } else {
+          this.notesService.requestOpenCreateCategoryModal();
+        }
+      } else {
+        if (this.router.url !== '/dashboard') {
+          this.router.navigate(['/dashboard']).then(() => {
+            setTimeout(() => this.notesService.requestOpenCreateModal(), 150);
+          });
+        } else {
+          this.notesService.requestOpenCreateModal();
+        }
       }
     }
   }

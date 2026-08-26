@@ -52,13 +52,16 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   private checkScreenSize(): void {
     this.isMobile = window.innerWidth < 992;
     if (!this.isTabInitialized) {
-      this.activeTab = this.isMobile ? 'gestion' : 'categorias';
+      const currentServiceTab = this.expenseService.getActiveTab();
+      this.activeTab = currentServiceTab || (this.isMobile ? 'gestion' : 'categorias');
+      this.expenseService.setActiveTab(this.activeTab);
       this.isTabInitialized = true;
     }
   }
 
   setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion'): void {
     this.activeTab = tab;
+    this.expenseService.setActiveTab(tab);
   }
 
   // Gráficos ng2-charts
