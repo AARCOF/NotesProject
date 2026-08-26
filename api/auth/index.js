@@ -31,6 +31,22 @@ module.exports = async function handler(req, res) {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
 
+    // Limpieza activa global: eliminar registros no verificados que hayan superado las 2 horas
+    try {
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      await usersCollection.deleteMany({
+        isVerified: false,
+        $or: [
+          { createdAt: { $lt: twoHoursAgo } },
+          { unverifiedExpiresAt: { $lt: new Date() } },
+          { keyExpiresAt: { $lt: Date.now() } },
+          { createdAt: { $exists: false } }
+        ]
+      });
+    } catch (cleanupErr) {
+      console.error('Error en limpieza activa de usuarios no verificados:', cleanupErr);
+    }
+
     switch (action) {
       // ----------------------------------------------------
       // 1. INICIO DE SESIÓN (LOGIN)

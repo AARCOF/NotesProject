@@ -13,6 +13,7 @@ import { ProductivityDashboardComponent } from "./screens/productivity-dashboard
 import { ProfileSettingsComponent } from "./screens/profile-settings/profile-settings.component";
 import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
 import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expenses-dashboard.component";
+import { NotebookSavedComponent } from "./screens/notebook-saved/notebook-saved.component";
 
 import { AuthGuard } from "./core/guards/auth.guard";
 
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: "productivity", component: ProductivityDashboardComponent, canActivate: [AuthGuard] },
   { path: "categories", component: CategoryManagerComponent, canActivate: [AuthGuard] },
   { path: "canvas", component: CanvasBoardComponent, canActivate: [AuthGuard] },
+  { path: "saved-links", component: NotebookSavedComponent, canActivate: [AuthGuard] },
   { path: "profile", component: ProfileSettingsComponent, canActivate: [AuthGuard] },
   { path: "admin-panel", component: AdminPanelComponent, canActivate: [AuthGuard] },
   { path: "login", component: LoginComponent },

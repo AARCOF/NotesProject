@@ -1,0 +1,157 @@
+.bg-slate-950 {
+  background-color: #020617 !important;
+}
+
+.border-slate {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ==========================================================================
+   QUICK NOTES CUSTOM STYLING
+   ========================================================================== */
+.quick-notes-scroll-container {
+  /* Ocultar barra de scroll pero mantener funcionalidad */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+}
+
+.quick-note-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(2, 132, 199, 0.3) !important;
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ==========================================================================
+   SAVED LINKS SQUARE CARDS
+   ========================================================================== */
+.link-square-card {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Forzar proporción cuadrada */
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+
+  /* Estilos del wrapper del icono */
+  .link-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    background-color: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    transition: all 0.25s ease;
+
+    i {
+      font-size: 22px;
+      line-height: 1;
+    }
+  }
+
+  /* Acciones flotantes */
+  .card-floating-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(-5px);
+    z-index: 10;
+  }
+
+  /* Título y Dominio */
+  .link-card-title {
+    font-size: 0.825rem;
+    line-height: 1.3;
+    padding: 0 4px;
+  }
+
+  .link-card-domain {
+    font-size: 0.65rem;
+    letter-spacing: 0.2px;
+  }
+
+  .link-card-desc {
+    font-size: 0.68rem;
+    line-height: 1.25;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  /* Efectos hover */
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(16, 185, 129, 0.35) !important;
+    box-shadow: 0 12px 20px -8px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    .link-icon-wrapper {
+      background-color: #10b981;
+      border-color: #10b981;
+
+      i {
+        color: #ffffff !important;
+      }
+    }
+
+    .card-floating-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ==========================================================================
+   ICON SELECTOR
+   ========================================================================== */
+.icon-picker-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+
+  .icon-select-btn {
+    aspect-ratio: 1;
+    padding: 0;
+    background-color: #020617;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+      background-color: rgba(14, 165, 233, 0.1);
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+    }
+  }
+}
+
+/* ==========================================================================
+   TEXT TRUNCATE 2 LINES
+   ========================================================================== */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

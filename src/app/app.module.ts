@@ -38,6 +38,7 @@ import { ProductivityDashboardComponent } from "./screens/productivity-dashboard
 import { ProfileSettingsComponent } from "./screens/profile-settings/profile-settings.component";
 import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
 import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expenses-dashboard.component";
+import { NotebookSavedComponent } from "./screens/notebook-saved/notebook-saved.component";
 
 // Interceptors & Guards
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
@@ -68,6 +69,7 @@ import { AuthGuard } from "./core/guards/auth.guard";
     ProfileSettingsComponent,
     CanvasBoardComponent,
     ExpensesDashboardComponent,
+    NotebookSavedComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent

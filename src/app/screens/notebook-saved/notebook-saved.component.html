@@ -1,0 +1,282 @@
+<div class="container-fluid pt-4 px-4 pb-5">
+  <!-- Cabecera de la Sección -->
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+    <div>
+      <h3 class="font-weight-bold text-white mb-1 d-flex align-items-center">
+        <i class="typcn typcn-bookmark text-cyan-400 mr-2 font-size-26"></i>
+        Libreta y Guardado
+      </h3>
+      <p class="text-slate-400 font-size-13 mb-0">
+        Tu espacio personal para notas temporales rápidas y marcadores de enlaces favoritos.
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- Botón para añadir nuevo enlace -->
+      <button 
+        class="btn btn-gradient-blue text-white px-3-5 py-2 font-weight-bold rounded-xl shadow-sm d-flex align-items-center font-size-13 hover-lift"
+        (click)="openAddLinkModal()">
+        <i class="typcn typcn-plus mr-1-5 font-size-16"></i> Guardar Enlace
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- ========================================== -->
+    <!-- COLUMNA 1: NOTAS RÁPIDAS (Izquierda) -->
+    <!-- ========================================== -->
+    <div class="col-lg-5 col-md-12 mb-4">
+      <div class="card bg-slate-900 border-bottom-slate rounded-xl p-4 shadow-sm h-100">
+        <h5 class="font-weight-bold text-white mb-3 d-flex align-items-center">
+          <i class="typcn typcn-edit text-blue mr-2 font-size-20"></i>
+          Notas Rápidas
+        </h5>
+
+        <!-- Formulario para agregar Notas Rápidas -->
+        <form (submit)="addQuickNote($event)" class="mb-4">
+          <div class="form-group mb-3">
+            <textarea
+              [(ngModel)]="newNoteContent"
+              name="newNoteContent"
+              class="form-control bg-slate-950 text-white border-slate rounded-xl p-3 font-size-13"
+              rows="3"
+              placeholder="Escribe algo rápido para recordar..."
+              required></textarea>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <!-- Selector de Duración -->
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-slate-400 font-size-12">Duración:</span>
+              <select 
+                [(ngModel)]="retentionDays" 
+                name="retentionDays"
+                class="form-control form-control-sm bg-slate-950 text-white border-slate rounded-lg font-size-12 px-2 py-1"
+                style="width: 120px; height: 32px;">
+                <option [value]="1">1 Día</option>
+                <option [value]="3">3 Días</option>
+                <option [value]="7">1 Semana</option>
+                <option [value]="14">2 Semanas</option>
+                <option [value]="30">1 Mes</option>
+                <option [value]="-1">Permanente</option>
+              </select>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn btn-outline-primary px-3 py-1-5 rounded-lg font-weight-bold font-size-12 hover-lift"
+              [disabled]="!newNoteContent.trim()">
+              <i class="typcn typcn-tick mr-1"></i> Guardar Nota
+            </button>
+          </div>
+        </form>
+
+        <hr class="border-slate my-3">
+
+        <!-- Lista de Notas Rápidas -->
+        <div class="quick-notes-scroll-container d-flex flex-column gap-2" style="max-height: 480px; overflow-y: auto;">
+          <div *ngIf="quickNotes.length === 0" class="text-center py-5 text-slate-500">
+            <i class="typcn typcn-document-delete font-size-36 d-block mb-2"></i>
+            <span class="font-size-13">No tienes notas rápidas activas.</span>
+          </div>
+
+          <div 
+            *ngFor="let note of quickNotes" 
+            class="quick-note-card bg-slate-950 border-slate rounded-xl p-3 position-relative transition-all shadow-2xs">
+            
+            <p class="text-slate-200 font-size-13 mb-3" style="white-space: pre-wrap; word-break: break-word;">{{ note.content }}</p>
+            
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top border-slate-900 font-size-11 text-slate-400">
+              <span class="d-flex align-items-center">
+                <i class="typcn typcn-time mr-1 text-slate-500"></i> {{ note.createdAt | date:'shortTime' }}
+              </span>
+
+              <div class="d-flex align-items-center gap-1-5">
+                <!-- Badge de Permanencia / Expiración -->
+                <span 
+                  class="badge px-2 py-1 rounded font-weight-bold"
+                  [ngClass]="note.isPermanent ? 'bg-indigo-light text-indigo-400 border-0' : 'bg-amber-light text-amber-500 border-0'">
+                  {{ note.retentionLabel }}
+                </span>
+
+                <!-- Pin / Toggle Permanente -->
+                <button 
+                  type="button" 
+                  class="btn btn-icon-xs text-slate-400 hover-blue" 
+                  (click)="togglePermanent(note.id)" 
+                  title="Fijar / Cambiar Permanencia">
+                  <i class="typcn font-size-16" [ngClass]="note.isPermanent ? 'typcn-pin text-blue' : 'typcn-pin-outline'"></i>
+                </button>
+
+                <!-- Eliminar -->
+                <button 
+                  type="button" 
+                  class="btn btn-icon-xs text-slate-400 hover-rose" 
+                  (click)="deleteQuickNote(note.id)" 
+                  title="Eliminar Nota">
+                  <i class="typcn typcn-trash font-size-16"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- COLUMNA 2: ENLACES GUARDADOS (Derecha) -->
+    <!-- ========================================== -->
+    <div class="col-lg-7 col-md-12 mb-4">
+      <div class="card bg-slate-900 border-bottom-slate rounded-xl p-4 shadow-sm h-100">
+        <h5 class="font-weight-bold text-white mb-3 d-flex align-items-center justify-content-between">
+          <span class="d-flex align-items-center">
+            <i class="typcn typcn-link text-emerald-400 mr-2 font-size-20"></i>
+            Mis Enlaces Guardados
+          </span>
+          <span class="badge badge-emerald-light font-weight-bold font-size-11">{{ savedLinks.length }} Guardados</span>
+        </h5>
+
+        <div *ngIf="savedLinks.length === 0" class="text-center py-5 my-5 text-slate-500">
+          <i class="typcn typcn-link-outline font-size-48 d-block mb-3 text-slate-600"></i>
+          <p class="font-size-14 mb-3">Guarda links importantes de referencia rápida aquí.</p>
+          <button 
+            class="btn btn-outline-emerald rounded-lg px-4 py-2 font-weight-bold font-size-13" 
+            (click)="openAddLinkModal()">
+            <i class="typcn typcn-plus mr-1 font-size-15"></i> Guardar mi primer enlace
+          </button>
+        </div>
+
+        <!-- Grid de tarjetas cuadradas de enlaces -->
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 pt-2">
+          <div *ngFor="let link of savedLinks" class="col mb-3">
+            <div class="link-square-card bg-slate-950 border-slate rounded-xl p-3 d-flex flex-column align-items-center text-center position-relative transition-all cursor-pointer h-100 shadow-sm"
+                 (click)="openLink(link.url)"
+                 [title]="link.description || link.title">
+              
+              <!-- Acciones Flotantes de la Tarjeta -->
+              <div class="card-floating-actions">
+                <button 
+                  type="button" 
+                  class="btn btn-icon-xs text-slate-400 hover-rose" 
+                  (click)="deleteSavedLink(link.id, $event)" 
+                  title="Eliminar enlace">
+                  <i class="typcn typcn-trash font-size-14"></i>
+                </button>
+              </div>
+
+              <!-- Contenedor del Icono -->
+              <div class="link-icon-wrapper rounded-circle mb-2-5 d-flex align-items-center justify-content-center">
+                <i class="typcn {{ link.icon }} font-size-22 text-emerald-400"></i>
+              </div>
+
+              <!-- Título -->
+              <h6 class="link-card-title text-white font-weight-bold mb-1 text-truncate w-100 font-size-12-5">
+                {{ link.title }}
+              </h6>
+
+              <!-- Hostname resumido -->
+              <span class="link-card-domain text-slate-500 font-size-10 text-truncate w-100">
+                {{ getDomainName(link.url) }}
+              </span>
+
+              <!-- Descripción Breve (si existe) -->
+              <p *ngIf="link.description" class="link-card-desc text-slate-400 font-size-10-5 line-height-tight mt-1-5 mb-0 text-truncate-2 w-100">
+                {{ link.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: AGREGAR NUEVO ENLACE -->
+<!-- ========================================== -->
+<div class="modal-backdrop-custom fade-in" *ngIf="isAddModalOpen" (click)="closeAddLinkModal()"></div>
+<div class="modal-custom" *ngIf="isAddModalOpen" (click)="closeAddLinkModal()">
+  <div class="modal-dialog-custom modal-dialog-sm" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom bg-slate-900 border-slate text-white shadow-lg rounded-xl">
+      
+      <!-- Cabecera del Modal -->
+      <div class="modal-header-custom bg-slate-950 border-bottom-slate p-3 px-4 d-flex align-items-center justify-content-between">
+        <h5 class="modal-title font-weight-bold text-white mb-0 d-flex align-items-center">
+          <i class="typcn typcn-plus text-emerald-400 mr-2 font-size-20"></i>
+          Guardar Enlace
+        </h5>
+        <button type="button" class="btn-close-custom text-slate-400 hover-white border-0 bg-transparent p-0" (click)="closeAddLinkModal()">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <form (submit)="saveLink($event)">
+        <!-- Cuerpo del Modal -->
+        <div class="p-4">
+          <!-- Campo URL -->
+          <div class="form-group mb-3">
+            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Enlace / URL *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="linkUrl" 
+              name="linkUrl"
+              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              placeholder="ej: www.google.com o https://github.com"
+              required>
+          </div>
+
+          <!-- Campo Título -->
+          <div class="form-group mb-3">
+            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Nombre para Visualización *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="linkTitle" 
+              name="linkTitle"
+              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              placeholder="ej: Mi Repositorio GitHub"
+              required>
+          </div>
+
+          <!-- Campo Descripción (Opcional) -->
+          <div class="form-group mb-3.5">
+            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Descripción Breve (Opcional)</label>
+            <textarea 
+              [(ngModel)]="linkDescription" 
+              name="linkDescription"
+              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              placeholder="ej: Enlace de referencia para diseño..."
+              rows="2"></textarea>
+          </div>
+
+          <!-- Selector de Icono -->
+          <div class="form-group mb-0">
+            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1-5 d-block">Selecciona un Icono</label>
+            <div class="icon-picker-grid d-flex flex-wrap gap-2 pt-1">
+              <button 
+                type="button" 
+                class="icon-select-btn rounded-lg d-flex align-items-center justify-content-center transition-all"
+                *ngFor="let ic of availableIcons" 
+                [class.active]="selectedIcon === ic"
+                (click)="selectedIcon = ic">
+                <i class="typcn {{ ic }} font-size-22"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie de Modal -->
+        <div class="modal-footer bg-slate-950 border-top-slate p-3 px-4 d-flex justify-content-end align-items-center gap-2">
+          <button type="button" class="btn btn-secondary px-3.5 rounded-lg font-weight-semibold font-size-12-5" (click)="closeAddLinkModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-gradient-blue text-white px-4 rounded-lg font-weight-bold font-size-12-5 shadow-sm"
+                  [disabled]="!linkUrl.trim() || !linkTitle.trim()">
+            Guardar Enlace
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
