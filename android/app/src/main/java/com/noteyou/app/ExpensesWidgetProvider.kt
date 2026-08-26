@@ -38,7 +38,7 @@ class ExpensesWidgetProvider : AppWidgetProvider() {
             // Read variables from SharedPreferences
             try {
                 val prefs: SharedPreferences = context.getSharedPreferences("CapacitorStorage", Context.MODE_PRIVATE)
-                val jsonStr = prefs.getString("widget_expenses_json", "{}") ?: "{}"
+                val jsonStr = prefs.getString("_cap_widget_expenses_json", "{}") ?: "{}"
                 val data = JSONObject(jsonStr)
 
                 val balance = data.optString("balance", "S/. 0.00")

@@ -82,8 +82,8 @@ class TasksWidgetFactory(private val context: Context) : RemoteViewsService.Remo
     private fun loadData() {
         try {
             val prefs: SharedPreferences = context.getSharedPreferences("CapacitorStorage", Context.MODE_PRIVATE)
-            // Capacitor prefixes storage keys. By default preferences are saved directly under the key.
-            val tasksJsonStr = prefs.getString("widget_tasks_json", "[]") ?: "[]"
+            // Capacitor prefixes keys saved via Preferences with _cap_ prefix in SharedPreferences
+            val tasksJsonStr = prefs.getString("_cap_widget_tasks_json", "[]") ?: "[]"
             
             val tempArray = JSONArray(tasksJsonStr)
             val temp = ArrayList<JSONObject>()
