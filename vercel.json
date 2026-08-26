@@ -3,6 +3,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/assets/downloads/noteyou.apk",
+      "destination": "/assets/downloads/NoteYou-v1.0.apk"
+    },
+    {
       "source": "/api/auth/:action",
       "destination": "/api/auth?action=:action"
     },
