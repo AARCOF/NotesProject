@@ -109,7 +109,23 @@ export class MobileHeaderComponent implements OnInit {
 
   onCreateActionClick(): void {
     if (this.isExpensesRoute) {
-      this.expenseService.requestOpenAddExpenseModal();
+      if (this.expensesActiveTab === 'categorias') {
+        if (this.router.url !== '/expenses') {
+          this.router.navigate(['/expenses']).then(() => {
+            setTimeout(() => this.expenseService.requestOpenAddCategoryModal(), 150);
+          });
+        } else {
+          this.expenseService.requestOpenAddCategoryModal();
+        }
+      } else {
+        if (this.router.url !== '/expenses') {
+          this.router.navigate(['/expenses']).then(() => {
+            setTimeout(() => this.expenseService.requestOpenAddExpenseModal(), 150);
+          });
+        } else {
+          this.expenseService.requestOpenAddExpenseModal();
+        }
+      }
     } else {
       if (this.notesViewMode === 'categorias') {
         if (this.router.url !== '/dashboard') {

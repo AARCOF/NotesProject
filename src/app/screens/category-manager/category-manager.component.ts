@@ -75,33 +75,51 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     return this.notes.filter(n => n.categoryId === categoryId).length;
   }
 
-  private savedScrollTop: number | null = null;
+  private savedScrollTop: number = 0;
 
   private recordScrollPosition(): void {
     const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
     if (container) {
       this.savedScrollTop = container.scrollTop;
+      container.classList.add('modal-open-locked');
     } else if (typeof window !== 'undefined') {
-      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop;
+      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.add('modal-open-locked');
     }
   }
 
   private restoreScrollPosition(): void {
-    if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
-      (document.activeElement as HTMLElement).blur();
+    if (typeof document !== 'undefined') {
+      if (document.body) {
+        document.body.classList.remove('modal-open-locked');
+      }
+      const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+      if (container) {
+        container.classList.remove('modal-open-locked');
+      }
+      if (document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
+        (document.activeElement as HTMLElement).blur();
+      }
     }
-    const saved = this.savedScrollTop;
-    this.savedScrollTop = null;
-    if (saved !== null && saved !== undefined) {
-      setTimeout(() => {
-        const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
-        if (container) {
-          container.scrollTop = saved;
-        } else if (typeof window !== 'undefined') {
-          window.scrollTo(0, saved);
-        }
-      }, 30);
-    }
+    const target = this.savedScrollTop;
+    const applyScroll = () => {
+      const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+      if (container) {
+        container.scrollTop = target;
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, target);
+      }
+    };
+
+    applyScroll();
+    requestAnimationFrame(applyScroll);
+    setTimeout(applyScroll, 20);
+    setTimeout(applyScroll, 80);
+    setTimeout(applyScroll, 180);
+    setTimeout(applyScroll, 350);
   }
 
   openCreateModal(): void {

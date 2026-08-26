@@ -819,64 +819,98 @@
 <div class="modal-backdrop-custom" *ngIf="isCategoryModalOpen" (click)="closeCategoryModal()"></div>
 <div class="modal-custom" *ngIf="isCategoryModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
-    <div class="modal-content-custom bg-white">
+    <div class="modal-content-custom bg-white shadow-xl rounded-2xl border-0 overflow-hidden">
       
-      <div class="modal-header-custom bg-slate-900 text-white p-3 px-4">
-        <h5 class="modal-title font-weight-bold mb-0 font-size-17">
-          {{ categoryToEdit ? 'Editar Categoría de Gasto' : 'Nueva Categoría de Gasto' }}
-        </h5>
+      <!-- Cabecera Dinámica con Color de Categoría -->
+      <div class="modal-header-custom p-3 px-4 text-white d-flex align-items-center justify-content-between transition-all"
+           [style.backgroundColor]="categoryForm.color || '#3b82f6'">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge bg-white-20 rounded-xl p-2 mr-2-5 d-flex align-items-center justify-content-center shadow-xs">
+            <i class="typcn {{ categoryForm.icon || 'typcn-folder' }} font-size-22 text-white"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
+              {{ categoryToEdit ? 'Editar Categoría de Gasto' : 'Nueva Categoría de Gasto' }}
+            </h5>
+            <small class="text-white-80 font-size-11">Personaliza el nombre, color e icono distintivo</small>
+          </div>
+        </div>
         <button type="button" class="btn-close-custom text-white" (click)="closeCategoryModal()">
-          <i class="typcn typcn-times font-size-20"></i>
+          <i class="typcn typcn-times font-size-22"></i>
         </button>
       </div>
 
       <div class="modal-body p-4">
         
-        <div class="form-group mb-3">
-          <label class="font-weight-bold text-slate-700 font-size-13">Nombre de la Categoría *</label>
-          <input type="text" class="form-control input-custom" placeholder="Ej. Educación, Mascotas, etc." [(ngModel)]="categoryForm.name">
+        <!-- Nombre -->
+        <div class="form-group mb-3-5">
+          <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Nombre de la Categoría <span class="text-danger">*</span></label>
+          <input type="text" class="form-control input-custom" placeholder="Ej. Educación, Mascotas, etc." [(ngModel)]="categoryForm.name" autocomplete="off">
         </div>
 
-        <div class="form-group mb-3">
-          <label class="font-weight-bold text-slate-700 font-size-13">Color Distintivo</label>
-          <div class="d-flex flex-wrap gap-2 pt-1">
-            <button type="button" class="color-picker-btn" 
+        <!-- Selector de Color Distintivo -->
+        <div class="form-group mb-3-5">
+          <div class="d-flex align-items-center justify-content-between mb-1-5">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-0">Color de Etiqueta</label>
+            <span class="badge badge-pill font-weight-bold font-size-11 px-2 py-0-5" [style.backgroundColor]="categoryForm.color + '20'" [style.color]="categoryForm.color">
+              {{ categoryForm.color }}
+            </span>
+          </div>
+          
+          <div class="d-flex flex-wrap gap-2 pt-1 mb-2">
+            <button type="button" 
+                    class="color-picker-dot shadow-xs" 
                     *ngFor="let c of availableColors"
                     [style.backgroundColor]="c"
                     [class.selected]="categoryForm.color === c"
-                    (click)="categoryForm.color = c"></button>
+                    (click)="categoryForm.color = c">
+              <i class="typcn typcn-tick text-white font-size-14" *ngIf="categoryForm.color === c"></i>
+            </button>
+          </div>
+
+          <div class="input-group input-group-sm mt-1" style="max-width: 240px;">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-slate-100 border-0 text-slate-600 font-weight-semibold font-size-11">Personalizado:</span>
+            </div>
+            <input type="color" class="form-control form-control-color border-0 p-0" [(ngModel)]="categoryForm.color" style="height: 32px; cursor: pointer;">
           </div>
         </div>
 
+        <!-- Selector de Icono que adopta el Color de Selección -->
         <div class="form-group mb-0">
-          <label class="font-weight-bold text-slate-700 font-size-13">Icono</label>
+          <label class="font-weight-bold text-slate-700 font-size-13 mb-1-5">Icono Representativo</label>
           <div class="d-flex flex-wrap gap-2 pt-1">
-            <button type="button" class="icon-picker-btn btn btn-light"
+            <button type="button" 
+                    class="icon-picker-btn shadow-2xs"
                     *ngFor="let ic of availableIcons"
                     [class.active]="categoryForm.icon === ic.class"
+                    [style.borderColor]="categoryForm.icon === ic.class ? categoryForm.color : '#e2e8f0'"
+                    [style.backgroundColor]="categoryForm.icon === ic.class ? (categoryForm.color + '18') : '#f8fafc'"
                     (click)="categoryForm.icon = ic.class"
                     title="{{ ic.label }}">
-              <i class="typcn {{ ic.class }} font-size-18"></i>
+              <i class="typcn {{ ic.class }} font-size-22" 
+                 [style.color]="categoryForm.icon === ic.class ? categoryForm.color : '#64748b'"></i>
             </button>
           </div>
         </div>
 
       </div>
 
-      <div class="modal-footer bg-slate-50 p-3 d-flex align-items-center justify-content-between border-top">
+      <div class="modal-footer bg-slate-50 p-3 px-4 d-flex align-items-center justify-content-between border-top">
         <div>
-          <button type="button" class="btn btn-outline-danger px-3 py-1-5 rounded-lg font-weight-bold font-size-13 d-inline-flex align-items-center"
+          <button type="button" class="btn btn-outline-danger px-3 py-1-5 rounded-xl font-weight-bold font-size-13 d-inline-flex align-items-center"
                   *ngIf="categoryToEdit"
                   (click)="deleteCategory(categoryToEdit)">
             <i class="typcn typcn-trash mr-1 font-size-16"></i> Eliminar Categoría
           </button>
         </div>
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeCategoryModal()">Cancelar</button>
-          <button type="button" class="btn btn-primary px-4 rounded-lg font-weight-bold" 
+          <button type="button" class="btn btn-secondary px-3-5 py-2 rounded-xl font-weight-semibold font-size-13" (click)="closeCategoryModal()">Cancelar</button>
+          <button type="button" class="btn btn-gradient-blue text-white px-4 py-2 rounded-xl font-weight-bold font-size-13 shadow-sm" 
                   [disabled]="!categoryForm.name"
+                  [style.backgroundColor]="categoryForm.color"
                   (click)="saveCategory()">
-            {{ categoryToEdit ? 'Actualizar Categoría' : 'Guardar Categoría' }}
+            <i class="typcn typcn-tick mr-1"></i> {{ categoryToEdit ? 'Actualizar Categoría' : 'Guardar Categoría' }}
           </button>
         </div>
       </div>

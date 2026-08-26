@@ -26,6 +26,7 @@ export interface Note {
   parentRecurringId?: string;
   nextRecurrenceDate?: string;
   recurrenceGeneratedFor?: string;
+  updatedAt?: string;
 }
 
 

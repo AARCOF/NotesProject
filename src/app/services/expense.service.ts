@@ -35,6 +35,9 @@ export class ExpenseService {
   private openAddModalRequestSubject = new Subject<{ open: boolean; subcategoryId?: string; categoryId?: string }>();
   public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string }> = this.openAddModalRequestSubject.asObservable();
 
+  private openAddCategoryModalRequestSubject = new Subject<void>();
+  public openAddCategoryModalRequest$: Observable<void> = this.openAddCategoryModalRequestSubject.asObservable();
+
   private activeTabSubject = new BehaviorSubject<'gestion' | 'movimientos' | 'categorias' | 'graficas'>('gestion');
   public activeTab$: Observable<'gestion' | 'movimientos' | 'categorias' | 'graficas'> = this.activeTabSubject.asObservable();
 
@@ -48,6 +51,10 @@ export class ExpenseService {
 
   public requestOpenAddExpenseModal(subcategoryId?: string, categoryId?: string): void {
     this.openAddModalRequestSubject.next({ open: true, subcategoryId, categoryId });
+  }
+
+  public requestOpenAddCategoryModal(): void {
+    this.openAddCategoryModalRequestSubject.next();
   }
 
   private currentUserId: string | null = null;

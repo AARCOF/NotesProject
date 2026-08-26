@@ -1631,20 +1631,22 @@
   <div class="modal-dialog-custom modal-dialog-centered" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white shadow-xl rounded-2xl border-0 overflow-hidden">
       
-      <div class="modal-header-custom bg-gradient-blue text-white d-flex align-items-center justify-content-between p-3 px-4">
+      <!-- Cabecera Dinámica de Categoría -->
+      <div class="modal-header-custom text-white d-flex align-items-center justify-content-between p-3 px-4 transition-all"
+           [style.backgroundColor]="catColor || '#6366f1'">
         <div class="d-flex align-items-center">
-          <div class="modal-icon-badge mr-2-5 bg-white-20 rounded-xl p-2 d-flex align-items-center justify-content-center">
-            <i class="typcn typcn-folder-add font-size-22"></i>
+          <div class="modal-icon-badge mr-2-5 bg-white-20 rounded-xl p-2 d-flex align-items-center justify-content-center shadow-xs">
+            <i class="typcn {{ catIcon || 'typcn-folder' }} font-size-22 text-white"></i>
           </div>
           <div>
-            <h5 class="modal-title font-weight-bold mb-0 font-size-16">
+            <h5 class="modal-title font-weight-bold mb-0 font-size-16 text-white">
               {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
             </h5>
-            <small class="text-white-80 font-size-11">Organización de notas</small>
+            <small class="text-white-80 font-size-11">Organización y clasificación de notas</small>
           </div>
         </div>
         <button type="button" class="btn-close-custom text-white" (click)="closeCategoryModal()">
-          <i class="typcn typcn-times font-size-20"></i>
+          <i class="typcn typcn-times font-size-22"></i>
         </button>
       </div>
 
@@ -1652,7 +1654,7 @@
         <div class="modal-body p-3 p-md-4">
           
           <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-13">Nombre de la Categoría <span class="text-danger">*</span></label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Nombre de la Categoría <span class="text-danger">*</span></label>
             <input 
               type="text" 
               class="form-control input-custom" 
@@ -1664,7 +1666,7 @@
           </div>
 
           <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-13">Descripción (Opcional)</label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Descripción (Opcional)</label>
             <textarea 
               class="form-control input-custom" 
               rows="2" 
@@ -1674,12 +1676,15 @@
           </div>
 
           <!-- Selección de Color -->
-          <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-13 d-flex justify-content-between align-items-center">
-              <span>Color Identificador</span>
-              <span class="badge badge-pill badge-slate-light" [style.color]="catColor">{{ catColor }}</span>
-            </label>
-            <div class="d-flex flex-wrap gap-2 pt-1">
+          <div class="form-group mb-3-5">
+            <div class="d-flex align-items-center justify-content-between mb-1-5">
+              <label class="font-weight-bold text-slate-700 font-size-13 mb-0">Color Identificador</label>
+              <span class="badge badge-pill font-weight-bold font-size-11 px-2 py-0-5" [style.backgroundColor]="catColor + '20'" [style.color]="catColor">
+                {{ catColor }}
+              </span>
+            </div>
+            
+            <div class="d-flex flex-wrap gap-2 pt-1 mb-2">
               <button 
                 type="button" 
                 class="color-picker-dot shadow-xs" 
@@ -1687,23 +1692,33 @@
                 [style.backgroundColor]="col"
                 [class.active-color]="catColor === col"
                 (click)="catColor = col">
-                <i class="typcn typcn-tick text-white font-size-12" *ngIf="catColor === col"></i>
+                <i class="typcn typcn-tick text-white font-size-14" *ngIf="catColor === col"></i>
               </button>
+            </div>
+
+            <div class="input-group input-group-sm mt-1" style="max-width: 240px;">
+              <div class="input-group-prepend">
+                <span class="input-group-text bg-slate-100 border-0 text-slate-600 font-weight-semibold font-size-11">Personalizado:</span>
+              </div>
+              <input type="color" class="form-control form-control-color border-0 p-0" [(ngModel)]="catColor" name="customCatColor" style="height: 32px; cursor: pointer;">
             </div>
           </div>
 
-          <!-- Selección de Icono -->
-          <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-13">Icono Representativo</label>
-            <div class="icon-picker-grid pt-1">
+          <!-- Selección de Icono que adopta el Color Seleccionado -->
+          <div class="form-group mb-1">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1-5">Icono Representativo</label>
+            <div class="d-flex flex-wrap gap-2 pt-1">
               <button 
                 type="button" 
-                class="icon-picker-item shadow-2xs" 
+                class="icon-picker-btn shadow-2xs" 
                 *ngFor="let ic of availableCatIcons" 
-                [class.active-icon]="catIcon === ic.class"
+                [class.active]="catIcon === ic.class"
+                [style.borderColor]="catIcon === ic.class ? catColor : '#e2e8f0'"
+                [style.backgroundColor]="catIcon === ic.class ? (catColor + '18') : '#f8fafc'"
                 (click)="catIcon = ic.class"
                 [title]="ic.label">
-                <i class="typcn {{ ic.class }} font-size-20" [style.color]="catIcon === ic.class ? '#ffffff' : catColor"></i>
+                <i class="typcn {{ ic.class }} font-size-22" 
+                   [style.color]="catIcon === ic.class ? catColor : '#64748b'"></i>
               </button>
             </div>
           </div>
@@ -1711,10 +1726,13 @@
         </div>
 
         <div class="modal-footer bg-slate-50 p-3 px-4 d-flex justify-content-end align-items-center border-top gap-2">
-          <button type="button" class="btn btn-outline-secondary rounded-xl font-weight-bold px-3 py-2 font-size-13" (click)="closeCategoryModal()">
+          <button type="button" class="btn btn-secondary rounded-xl font-weight-semibold px-3-5 py-2 font-size-13" (click)="closeCategoryModal()">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-gradient-blue text-white rounded-xl font-weight-bold px-4 py-2 font-size-13 shadow-sm" [disabled]="!catName.trim()">
+          <button type="submit" 
+                  class="btn btn-gradient-blue text-white rounded-xl font-weight-bold px-4 py-2 font-size-13 shadow-sm" 
+                  [disabled]="!catName.trim()"
+                  [style.backgroundColor]="catColor">
             <i class="typcn typcn-tick mr-1"></i> {{ categoryToEdit ? 'Guardar Cambios' : 'Crear Categoría' }}
           </button>
         </div>

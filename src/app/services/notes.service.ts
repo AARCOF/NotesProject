@@ -287,6 +287,29 @@ export class NotesService {
     this.fetchCloudNotes();
   }
 
+  private trackDeletedNoteId(id: string): void {
+    if (!this.currentUserId) return;
+    const key = 'noteyou_deleted_note_ids_' + this.currentUserId;
+    const data = localStorage.getItem(key);
+    let ids: string[] = [];
+    try { ids = data ? JSON.parse(data) : []; } catch { ids = []; }
+    if (!ids.includes(id)) {
+      ids.push(id);
+      localStorage.setItem(key, JSON.stringify(ids));
+    }
+  }
+
+  private getDeletedNoteIds(): Set<string> {
+    if (!this.currentUserId) return new Set();
+    const key = 'noteyou_deleted_note_ids_' + this.currentUserId;
+    const data = localStorage.getItem(key);
+    try {
+      return new Set(data ? JSON.parse(data) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
   public fetchCloudNotes(): void {
     if (!this.currentUserId) return;
 
@@ -294,21 +317,56 @@ export class NotesService {
       next: (res) => {
         if (res && res.success && Array.isArray(res.notes)) {
           const cloudNotes = res.notes;
+          const deletedIds = this.getDeletedNoteIds();
           let allNotes = this.getAllStorageNotes();
 
           const otherUsersNotes = allNotes.filter(n => n.userId && n.userId !== this.currentUserId);
           const localUserNotes = allNotes.filter(n => n.userId === this.currentUserId);
 
-          const map = new Map<string, Note>();
-          cloudNotes.forEach(n => map.set(n.id, n));
-          localUserNotes.forEach(n => {
-            if (!map.has(n.id)) {
-              map.set(n.id, n);
-              this.http.post('/api/notes', n).subscribe({ error: () => {} });
+          const localMap = new Map<string, Note>();
+          localUserNotes.forEach(n => localMap.set(n.id, n));
+
+          const finalMap = new Map<string, Note>();
+
+          // 1. Procesar notas que vienen de la nube
+          cloudNotes.forEach(cloudNote => {
+            if (deletedIds.has(cloudNote.id)) {
+              // Se eliminó localmente en este dispositivo pero la nube aún la tenía
+              this.http.delete('/api/notes?id=' + cloudNote.id).subscribe({ error: () => {} });
+              return;
+            }
+
+            const localNote = localMap.get(cloudNote.id);
+            if (!localNote) {
+              finalMap.set(cloudNote.id, cloudNote);
+            } else {
+              const cloudTime = new Date(cloudNote.updatedAt || cloudNote.createdAt || 0).getTime();
+              const localTime = new Date(localNote.updatedAt || localNote.createdAt || 0).getTime();
+
+              if (localTime > cloudTime) {
+                // Editada localmente más recientemente
+                finalMap.set(localNote.id, localNote);
+                this.http.put('/api/notes', localNote).subscribe({ error: () => {} });
+              } else {
+                finalMap.set(cloudNote.id, cloudNote);
+              }
             }
           });
 
-          const mergedUserNotes = Array.from(map.values());
+          // 2. Procesar notas creadas localmente recientemente que aún no están en la nube
+          const now = Date.now();
+          localUserNotes.forEach(localNote => {
+            if (deletedIds.has(localNote.id)) return;
+            if (!finalMap.has(localNote.id)) {
+              const localTime = new Date(localNote.updatedAt || localNote.createdAt || 0).getTime();
+              if (now - localTime < 60000) {
+                finalMap.set(localNote.id, localNote);
+                this.http.post('/api/notes', localNote).subscribe({ error: () => {} });
+              }
+            }
+          });
+
+          const mergedUserNotes = Array.from(finalMap.values());
           const mergedAll = [...mergedUserNotes, ...otherUsersNotes];
 
           this.saveAllStorageNotes(mergedAll);
@@ -330,13 +388,15 @@ export class NotesService {
   public addNote(noteData: Omit<Note, 'id' | 'createdAt'>): Note {
     const userId = this.currentUserId || 'anonymous';
     const isCompleted = noteData.status === 'completada';
+    const now = new Date().toISOString();
 
     const newNote: Note = {
       ...noteData,
       id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId,
-      createdAt: new Date().toISOString(),
-      completedAt: isCompleted ? new Date().toISOString() : undefined
+      createdAt: now,
+      updatedAt: now,
+      completedAt: isCompleted ? now : undefined
     };
 
     const allNotes = this.getAllStorageNotes();
@@ -357,13 +417,14 @@ export class NotesService {
     if (index === -1) return undefined;
 
     const oldNote = allNotes[index];
-    const updatedNote: Note = { ...oldNote, ...changes };
+    const now = new Date().toISOString();
+    const updatedNote: Note = { ...oldNote, ...changes, updatedAt: now };
 
     // Manejo de fecha de completada y reinicio si se reabre
     if (changes.status) {
       if (changes.status === 'completada') {
         if (!updatedNote.completedAt) {
-          updatedNote.completedAt = new Date().toISOString();
+          updatedNote.completedAt = now;
         }
       } else {
         delete updatedNote.completedAt;
@@ -381,6 +442,8 @@ export class NotesService {
   }
 
   public deleteNote(id: string): boolean {
+    this.trackDeletedNoteId(id);
+
     const allNotes = this.getAllStorageNotes();
     const filtered = allNotes.filter(n => n.id !== id);
     this.saveAllStorageNotes(filtered);

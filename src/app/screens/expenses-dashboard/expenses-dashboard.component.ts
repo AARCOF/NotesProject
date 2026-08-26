@@ -222,6 +222,12 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
+      this.expenseService.openAddCategoryModalRequest$.subscribe(() => {
+        this.openAddCategoryModal();
+      })
+    );
+
+    this.subscriptions.add(
       this.expenseService.activeTab$.subscribe(tab => {
         this.activeTab = tab;
       })
@@ -415,14 +421,27 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
     if (container) {
       this.savedScrollTop = container.scrollTop;
+      container.classList.add('modal-open-locked');
     } else if (typeof window !== 'undefined') {
       this.savedScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.add('modal-open-locked');
     }
   }
 
   private restoreScrollPosition(): void {
-    if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
-      (document.activeElement as HTMLElement).blur();
+    if (typeof document !== 'undefined') {
+      if (document.body) {
+        document.body.classList.remove('modal-open-locked');
+      }
+      const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+      if (container) {
+        container.classList.remove('modal-open-locked');
+      }
+      if (document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
+        (document.activeElement as HTMLElement).blur();
+      }
     }
     const target = this.savedScrollTop;
     const applyScroll = () => {
@@ -436,6 +455,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     };
 
     applyScroll();
+    requestAnimationFrame(applyScroll);
     setTimeout(applyScroll, 20);
     setTimeout(applyScroll, 80);
     setTimeout(applyScroll, 180);

@@ -904,6 +904,12 @@ h1, h2, h3, h4, h5, h6, .card-title {
 }
 
 /* Universal Modal Backdrop & Container Styles with Scroll Chaining Prevention */
+body.modal-open-locked,
+.workspace-view-container.modal-open-locked {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
 .modal-backdrop-custom {
   position: fixed !important;
   top: 0 !important;
@@ -944,6 +950,73 @@ h1, h2, h3, h4, h5, h6, .card-title {
     padding: 0 !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
+  }
+}
+
+/* Color Picker Dots Styling */
+.color-picker-dot,
+.color-picker-btn {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  padding: 0 !important;
+  outline: none !important;
+
+  &:hover {
+    transform: scale(1.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+  }
+
+  &.active,
+  &.active-color,
+  &.selected {
+    transform: scale(1.2) !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
+/* Icon Picker Items Styling */
+.icon-picker-btn,
+.icon-picker-item {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+  outline: none !important;
+
+  i {
+    font-size: 22px !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  &:hover {
+    border-color: #cbd5e1 !important;
+    background: #f1f5f9 !important;
+    transform: translateY(-2px) !important;
+  }
+
+  &.active,
+  &.active-icon {
+    border-width: 2px !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   }
 }
 

@@ -110,22 +110,24 @@
 
 <div class="modal-custom" *ngIf="isModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
-    <div class="modal-content-custom">
+    <div class="modal-content-custom bg-white shadow-xl rounded-2xl border-0 overflow-hidden">
       
-      <div class="modal-header-custom">
+      <!-- Cabecera Dinámica de Categoría -->
+      <div class="modal-header-custom p-3 px-4 text-white d-flex align-items-center justify-content-between transition-all"
+           [style.backgroundColor]="color || '#6366f1'">
         <div class="d-flex align-items-center">
-          <div class="modal-icon-badge mr-3">
-            <i class="typcn typcn-folder-add font-size-22"></i>
+          <div class="modal-icon-badge mr-2-5 bg-white-20 rounded-xl p-2 d-flex align-items-center justify-content-center shadow-xs">
+            <i class="typcn {{ icon || 'typcn-folder' }} font-size-22 text-white"></i>
           </div>
           <div>
-            <h5 class="modal-title font-weight-bold mb-0 font-size-18">
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
               {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
             </h5>
-            <small class="text-white-80 font-weight-medium">Gestión de categorías de notas</small>
+            <small class="text-white-80 font-weight-medium font-size-11">Gestión de categorías de notas</small>
           </div>
         </div>
-        <button type="button" class="btn-close-custom" (click)="closeModal()">
-          <i class="typcn typcn-times font-size-20"></i>
+        <button type="button" class="btn-close-custom text-white" (click)="closeModal()">
+          <i class="typcn typcn-times font-size-22"></i>
         </button>
       </div>
 
@@ -133,7 +135,7 @@
         <div class="modal-body p-4 bg-white">
           
           <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Nombre de la Categoría <span class="text-danger">*</span></label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Nombre de la Categoría <span class="text-danger">*</span></label>
             <input 
               type="text" 
               class="form-control input-custom" 
@@ -148,7 +150,7 @@
           </div>
 
           <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Descripción</label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Descripción</label>
             <textarea 
               class="form-control input-custom" 
               rows="2" 
@@ -159,47 +161,61 @@
               spellcheck="false"></textarea>
           </div>
 
-          <div class="form-group mb-3">
-            <label class="font-weight-bold text-slate-700 font-size-14">Color de Etiqueta</label>
-            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+          <!-- Selector de Color -->
+          <div class="form-group mb-3-5">
+            <div class="d-flex align-items-center justify-content-between mb-1-5">
+              <label class="font-weight-bold text-slate-700 font-size-13 mb-0">Color de Etiqueta</label>
+              <span class="badge badge-pill font-weight-bold font-size-11 px-2 py-0-5" [style.backgroundColor]="color + '20'" [style.color]="color">
+                {{ color }}
+              </span>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pt-1">
               <button 
                 type="button" 
-                class="color-dot border-0" 
+                class="color-picker-dot shadow-xs" 
                 *ngFor="let c of presetColors" 
                 [style.backgroundColor]="c" 
-                [class.selected-dot]="color === c"
+                [class.selected]="color === c"
                 (click)="color = c">
+                <i class="typcn typcn-tick text-white font-size-14" *ngIf="color === c"></i>
               </button>
             </div>
-            <div class="input-group input-group-sm mt-2">
+            <div class="input-group input-group-sm mt-1" style="max-width: 240px;">
               <div class="input-group-prepend">
-                <span class="input-group-text bg-slate-100 border-0 text-slate-600 font-weight-semibold">Personalizado:</span>
+                <span class="input-group-text bg-slate-100 border-0 text-slate-600 font-weight-semibold font-size-11">Personalizado:</span>
               </div>
-              <input type="color" class="form-control form-control-color border-0" [(ngModel)]="color" name="customColor">
+              <input type="color" class="form-control form-control-color border-0 p-0" [(ngModel)]="color" name="customColor" style="height: 32px; cursor: pointer;">
             </div>
           </div>
 
+          <!-- Selector de Icono con Color Dinámico -->
           <div class="form-group mb-0">
-            <label class="font-weight-bold text-slate-700 font-size-14">Icono Representativo</label>
-            <div class="icon-grid d-flex flex-wrap gap-2">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1-5">Icono Representativo</label>
+            <div class="icon-grid d-flex flex-wrap gap-2 pt-1">
               <button 
                 type="button" 
-                class="btn btn-outline-secondary btn-icon-select" 
+                class="icon-picker-btn shadow-2xs" 
                 *ngFor="let item of presetIcons" 
                 [class.active]="icon === item.icon"
+                [style.borderColor]="icon === item.icon ? color : '#e2e8f0'"
+                [style.backgroundColor]="icon === item.icon ? (color + '18') : '#f8fafc'"
                 (click)="icon = item.icon"
                 [title]="item.label">
-                <i class="typcn {{ item.icon }} font-size-18"></i>
+                <i class="typcn {{ item.icon }} font-size-22"
+                   [style.color]="icon === item.icon ? color : '#64748b'"></i>
               </button>
             </div>
           </div>
 
         </div>
 
-        <div class="modal-footer bg-slate-50 p-3 border-top d-flex justify-content-end">
-          <button type="button" class="btn btn-secondary px-4 font-weight-bold rounded-lg mr-2" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-gradient-indigo px-4 font-weight-bold text-white" [disabled]="!name.trim()">
-            {{ categoryToEdit ? 'Guardar Cambios' : 'Registrar Categoría' }}
+        <div class="modal-footer bg-slate-50 p-3 px-4 border-top d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-secondary px-3-5 py-2 font-weight-semibold rounded-xl font-size-13" (click)="closeModal()">Cancelar</button>
+          <button type="submit" 
+                  class="btn btn-gradient-blue px-4 py-2 font-weight-bold text-white rounded-xl font-size-13 shadow-sm" 
+                  [disabled]="!name.trim()"
+                  [style.backgroundColor]="color">
+            <i class="typcn typcn-tick mr-1"></i> {{ categoryToEdit ? 'Guardar Cambios' : 'Registrar Categoría' }}
           </button>
         </div>
       </form>
