@@ -2,7 +2,6 @@
   max-width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
 
   @media (min-width: 992px) {
     padding-top: 0 !important;
@@ -13,9 +12,8 @@
       align-items: flex-start !important;
     }
 
-    .expenses-sidebar-card {
-      margin-top: 0 !important;
-      top: 0 !important;
+    .sidebar-column {
+      align-self: flex-start !important;
     }
 
     .view-switcher-bar {
@@ -52,10 +50,11 @@
   box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
 
   @media (min-width: 992px) {
+    position: -webkit-sticky !important;
     position: sticky !important;
-    top: 0 !important;
+    top: 0.75rem !important;
     z-index: 10;
-    max-height: calc(100vh - 65px);
+    max-height: calc(100vh - 55px);
     overflow-y: auto;
     scrollbar-width: thin;
 
@@ -70,15 +69,15 @@
 }
 
 .header-icon-box {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  margin-right: 10px !important;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin-right: 12px !important;
+  border-radius: 12px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 
   i {
-    font-size: 18px !important;
+    font-size: 20px !important;
   }
 }
 
