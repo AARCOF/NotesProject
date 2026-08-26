@@ -409,14 +409,14 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   // Gasto Modal
   // Scroll helper to prevent unwanted auto-scroll on mobile when modals open/close
-  private savedScrollTop: number | null = null;
+  private savedScrollTop: number = 0;
 
   private recordScrollPosition(): void {
     const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
     if (container) {
       this.savedScrollTop = container.scrollTop;
     } else if (typeof window !== 'undefined') {
-      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop;
+      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop || 0;
     }
   }
 
@@ -424,18 +424,38 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
       (document.activeElement as HTMLElement).blur();
     }
-    const saved = this.savedScrollTop;
-    this.savedScrollTop = null;
-    if (saved !== null && saved !== undefined) {
-      setTimeout(() => {
-        const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
-        if (container) {
-          container.scrollTop = saved;
-        } else if (typeof window !== 'undefined') {
-          window.scrollTo(0, saved);
-        }
-      }, 30);
-    }
+    const target = this.savedScrollTop;
+    const applyScroll = () => {
+      const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+      if (container) {
+        container.scrollTop = target;
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, target);
+      }
+    };
+
+    applyScroll();
+    setTimeout(applyScroll, 20);
+    setTimeout(applyScroll, 80);
+    setTimeout(applyScroll, 180);
+    setTimeout(applyScroll, 350);
+  }
+
+  trackByCat(index: number, cat: ExpenseCategory): string {
+    return cat ? cat.id : String(index);
+  }
+
+  trackBySub(index: number, sub: ExpenseSubcategory): string {
+    return sub ? sub.id : String(index);
+  }
+
+  trackByExp(index: number, exp: ExpenseItem): string {
+    return exp ? exp.id : String(index);
+  }
+
+  trackByIncome(index: number, inc: ExtraIncomeItem): string {
+    return inc ? inc.id : String(index);
   }
 
   openAddExpenseModal(subcategoryId?: string, categoryId?: string): void {

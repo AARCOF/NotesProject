@@ -438,7 +438,7 @@
         <!-- Grid de Categorías -->
         <div class="row" *ngIf="categories.length > 0">
           
-          <div class="col-12 col-xl-6 mb-4" *ngFor="let cat of categories">
+          <div class="col-12 col-xl-6 mb-4" *ngFor="let cat of categories; trackBy: trackByCat">
             <div class="card category-expense-card border-0 rounded-2xl shadow-sm bg-white h-100 overflow-hidden">
               
               <!-- Franja de Color de Categoría -->
@@ -497,7 +497,7 @@
                 <div class="subcategories-container d-flex flex-column gap-2">
                   
                   <div class="subcategory-block border rounded-xl" 
-                       *ngFor="let sub of getCategorySubcategories(cat.id)">
+                       *ngFor="let sub of getCategorySubcategories(cat.id); trackBy: trackBySub">
                     
                     <!-- Cabecera de Subcategoría (Clickable) -->
                     <div class="subcategory-header d-flex align-items-center justify-content-between cursor-pointer"
@@ -555,7 +555,7 @@
                       </div>
 
                       <div class="expense-item-row"
-                           *ngFor="let item of getSubcategoryExpenses(sub.id)">
+                           *ngFor="let item of getSubcategoryExpenses(sub.id); trackBy: trackByExp">
                         
                         <div class="d-flex align-items-center overflow-hidden pr-2">
                           <div class="expense-dot bg-blue mr-2 flex-shrink-0" style="width: 6px; height: 6px; border-radius: 50%;"></div>
@@ -642,7 +642,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of getPaginatedMonthExpenses()">
+                <tr *ngFor="let item of getPaginatedMonthExpenses(); trackBy: trackByExp">
                   <td class="px-3 py-3 text-slate-600 font-size-13 font-weight-medium">
                     <i class="typcn typcn-calendar text-slate-400 mr-1 font-size-14"></i> {{ item.date }}
                   </td>
