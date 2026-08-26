@@ -9,11 +9,10 @@
 
     > .row {
       margin-top: 0 !important;
-      align-items: flex-start !important;
     }
 
     .sidebar-column {
-      align-self: flex-start !important;
+      position: relative !important;
     }
 
     .view-switcher-bar {
