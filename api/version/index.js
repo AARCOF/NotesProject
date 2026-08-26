@@ -6,17 +6,16 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.1.0',
-    versionCode: 310,
+    version: '3.2.0',
+    versionCode: 320,
     releasedAt: '2026-08-26',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
     releaseNotes: [
-      'Nuevo logo oficial blanco en alta definición.',
-      'Soporte multi-moneda desde el perfil de usuario (PEN, USD, EUR, MXN, COP, etc.).',
-      'Sincronización en tiempo real entre PC y Celular sin pérdida de datos.',
-      'Proyección de pagos y recordatorios estrictamente desde la fecha actual hacia el futuro.',
-      'Eliminación automática de registros no verificados tras 2 horas.'
+      'Nuevos widgets de escritorio para Android (Lista de tareas y Balance financiero).',
+      'Nueva sección Libreta/Guardado para notas rápidas y marcadores de enlaces favoritos en la versión web.',
+      'Descarga optimizada del APK como un único archivo directo y seguro.',
+      'Correcciones de contraste de botones, color y tamaño de iconos en el panel.'
     ],
     isMandatory: false
   };

@@ -16,8 +16,8 @@ export interface AppVersionInfo {
   providedIn: 'root'
 })
 export class AppUpdateService {
-  public readonly CURRENT_VERSION = '3.0.0';
-  public readonly CURRENT_VERSION_CODE = 300;
+  public readonly CURRENT_VERSION = '3.2.0';
+  public readonly CURRENT_VERSION_CODE = 320;
 
   private updateAvailableSubject = new BehaviorSubject<AppVersionInfo | null>(null);
   public updateAvailable$: Observable<AppVersionInfo | null> = this.updateAvailableSubject.asObservable();
@@ -49,15 +49,10 @@ export class AppUpdateService {
       ? downloadUrl 
       : (baseDomain + (downloadUrl.startsWith('/') ? downloadUrl : '/' + downloadUrl));
     
-    const a = document.createElement('a');
-    a.href = finalUrl;
-    a.download = 'NoteYou.apk';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-    }, 500);
+    if (typeof window !== 'undefined') {
+      // Open in native system browser to let the Android OS handle the file download
+      window.open(finalUrl, '_system');
+    }
   }
 
   public dismissUpdate(): void {
