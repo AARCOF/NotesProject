@@ -3,6 +3,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/api/auth/:action",
+      "destination": "/api/auth?action=:action"
+    },
+    {
       "source": "/api/:match*",
       "destination": "/api/:match*"
     },
