@@ -1333,143 +1333,193 @@
     </div>
 
     <!-- ============================================================== -->
-    <!-- VISTA DE GRÁFICOS Y ANÁLISIS DE ACTIVIDADES (Móvil / APK)      -->
+    <!-- VISTA DE GRÁFICOS Y ANÁLISIS DE ACTIVIDADES (Móvil / APK / Web) -->
     <!-- ============================================================== -->
     <div class="fade-in-up mb-4" *ngIf="viewMode === 'graficos'">
       
-      <!-- Tarjetas de Conteo de Actividades en Colores (Grid 2x2 en móvil) -->
+      <!-- Banner de Cabecera de Gráficos (Estilo Gastos) -->
+      <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3-5">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center mr-3 shadow-xs" style="width: 44px; height: 44px; min-width: 44px;">
+              <i class="typcn typcn-chart-pie font-size-22"></i>
+            </div>
+            <div>
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">Métricas de Productividad</h5>
+              <small class="text-slate-500 font-size-12">Análisis visual y distribución de todas tus tareas</small>
+            </div>
+          </div>
+          <span class="badge badge-pill badge-primary-light font-weight-bold px-3 py-1-5 font-size-12 d-none d-sm-inline-flex">
+            {{ allNotes.length }} Actividades
+          </span>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Conteo de Actividades en Colores (Grid 2x2 en móvil / 4 columnas en Desktop) -->
       <div class="row mb-3">
         <!-- 1. Total Notas -->
-        <div class="col-6 mb-2">
-          <div class="card card-stat-gradient bg-stat-blue text-white shadow-sm rounded-xl h-100">
-            <div class="card-body p-2-5 d-flex flex-column justify-content-between">
-              <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Total Notas</p>
-              <div class="d-flex align-items-baseline justify-content-between">
-                <h3 class="font-weight-bold mb-0 font-size-22">{{ totalCount }}</h3>
-                <i class="typcn typcn-document-text font-size-20 text-white-80"></i>
+        <div class="col-6 col-md-3 mb-2-5">
+          <div class="card card-stat-gradient bg-stat-blue text-white shadow-sm rounded-2xl h-100 overflow-hidden border-0">
+            <div class="card-body p-3 d-flex flex-column justify-content-between">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <p class="mb-0 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Total Tareas</p>
+                <div class="stat-icon-circle bg-white-20 text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 8px;">
+                  <i class="typcn typcn-document-text font-size-16"></i>
+                </div>
+              </div>
+              <div class="d-flex align-items-baseline justify-content-between mt-1">
+                <h3 class="font-weight-bold mb-0 font-size-24">{{ totalCount }}</h3>
+                <small class="text-white-80 font-size-11 font-weight-medium">100%</small>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 2. Alta Prioridad -->
-        <div class="col-6 mb-2">
-          <div class="card card-stat-gradient bg-stat-rose text-white shadow-sm rounded-xl h-100">
-            <div class="card-body p-2-5 d-flex flex-column justify-content-between">
-              <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Alta Prioridad</p>
-              <div class="d-flex align-items-baseline justify-content-between">
-                <h3 class="font-weight-bold mb-0 font-size-22">{{ highPriorityCount }}</h3>
-                <i class="typcn typcn-warning font-size-20 text-white-80"></i>
+        <div class="col-6 col-md-3 mb-2-5">
+          <div class="card card-stat-gradient bg-stat-rose text-white shadow-sm rounded-2xl h-100 overflow-hidden border-0">
+            <div class="card-body p-3 d-flex flex-column justify-content-between">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <p class="mb-0 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Alta Prioridad</p>
+                <div class="stat-icon-circle bg-white-20 text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 8px;">
+                  <i class="typcn typcn-warning font-size-16"></i>
+                </div>
+              </div>
+              <div class="d-flex align-items-baseline justify-content-between mt-1">
+                <h3 class="font-weight-bold mb-0 font-size-24">{{ highPriorityCount }}</h3>
+                <small class="text-white-80 font-size-11 font-weight-medium">Urgentes</small>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 3. Pendientes -->
-        <div class="col-6 mb-2">
-          <div class="card card-stat-gradient bg-stat-amber text-white shadow-sm rounded-xl h-100">
-            <div class="card-body p-2-5 d-flex flex-column justify-content-between">
-              <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Por Hacer</p>
-              <div class="d-flex align-items-baseline justify-content-between">
-                <h3 class="font-weight-bold mb-0 font-size-22">{{ pendingCount }}</h3>
-                <i class="typcn typcn-time font-size-20 text-white-80"></i>
+        <div class="col-6 col-md-3 mb-2-5">
+          <div class="card card-stat-gradient bg-stat-amber text-white shadow-sm rounded-2xl h-100 overflow-hidden border-0">
+            <div class="card-body p-3 d-flex flex-column justify-content-between">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <p class="mb-0 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Por Hacer</p>
+                <div class="stat-icon-circle bg-white-20 text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 8px;">
+                  <i class="typcn typcn-time font-size-16"></i>
+                </div>
+              </div>
+              <div class="d-flex align-items-baseline justify-content-between mt-1">
+                <h3 class="font-weight-bold mb-0 font-size-24">{{ pendingCount }}</h3>
+                <small class="text-white-80 font-size-11 font-weight-medium">Pendientes</small>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 4. Completadas -->
-        <div class="col-6 mb-2">
-          <div class="card card-stat-gradient bg-stat-emerald text-white shadow-sm rounded-xl h-100">
-            <div class="card-body p-2-5 d-flex flex-column justify-content-between">
-              <p class="mb-1 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Completadas</p>
-              <div class="d-flex align-items-baseline justify-content-between">
-                <h3 class="font-weight-bold mb-0 font-size-22">{{ completedCount }}</h3>
-                <i class="typcn typcn-tick font-size-20 text-white-80"></i>
+        <div class="col-6 col-md-3 mb-2-5">
+          <div class="card card-stat-gradient bg-stat-emerald text-white shadow-sm rounded-2xl h-100 overflow-hidden border-0">
+            <div class="card-body p-3 d-flex flex-column justify-content-between">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <p class="mb-0 text-white-80 font-weight-semibold font-size-11 text-uppercase letter-spacing-1">Hechas</p>
+                <div class="stat-icon-circle bg-white-20 text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; border-radius: 8px;">
+                  <i class="typcn typcn-tick font-size-16"></i>
+                </div>
+              </div>
+              <div class="d-flex align-items-baseline justify-content-between mt-1">
+                <h3 class="font-weight-bold mb-0 font-size-24">{{ completedCount }}</h3>
+                <small class="text-white-80 font-size-11 font-weight-medium">Completadas</small>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Gráfica 1: Distribución por Estado (Doughnut) -->
-      <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3">
-        <div class="d-flex align-items-center justify-content-between mb-2 border-bottom pb-2">
-          <div>
-            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
-              <i class="typcn typcn-chart-pie text-blue mr-1-5 font-size-18"></i> Tareas por Estado
-            </h6>
-            <small class="text-slate-400 font-size-11">Progreso general de tus actividades</small>
+      <!-- Fila de Gráficas Visuales -->
+      <div class="row">
+        
+        <!-- Gráfica 1: Distribución por Estado (Doughnut) -->
+        <div class="col-12 col-lg-4 mb-3-5">
+          <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
+              <div>
+                <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
+                  <i class="typcn typcn-chart-pie text-blue mr-1-5 font-size-18"></i> Tareas por Estado
+                </h6>
+                <small class="text-slate-400 font-size-11">Progreso general de actividades</small>
+              </div>
+              <span class="badge badge-primary-light font-weight-bold px-2 py-1 font-size-10 rounded-lg">Estado</span>
+            </div>
+            <div class="chart-container d-flex align-items-center justify-content-center" style="height: 230px; position: relative;">
+              <canvas *ngIf="allNotes.length > 0"
+                baseChart
+                [data]="statusChartData"
+                [labels]="statusChartLabels"
+                [chartType]="statusChartType"
+                [options]="chartOptions"
+                [colors]="statusChartColors">
+              </canvas>
+              <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
+                <i class="typcn typcn-chart-pie font-size-36 text-slate-300 mb-1"></i>
+                <p class="font-size-12 mb-0">No hay tareas registradas</p>
+              </div>
+            </div>
           </div>
-          <span class="badge badge-light text-slate-600 font-size-11 font-weight-bold">{{ allNotes.length }} Total</span>
         </div>
-        <div class="chart-container" style="height: 220px; position: relative;">
-          <canvas *ngIf="allNotes.length > 0"
-            baseChart
-            [data]="statusChartData"
-            [labels]="statusChartLabels"
-            [chartType]="statusChartType"
-            [options]="chartOptions"
-            [colors]="statusChartColors">
-          </canvas>
-          <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
-            <i class="typcn typcn-chart-pie font-size-36 text-slate-300 mb-1"></i>
-            <p class="font-size-12 mb-0">No hay tareas registradas</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Gráfica 2: Distribución por Prioridad (Pie) -->
-      <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3">
-        <div class="d-flex align-items-center justify-content-between mb-2 border-bottom pb-2">
-          <div>
-            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
-              <i class="typcn typcn-flash text-amber mr-1-5 font-size-18"></i> Nivel de Prioridad
-            </h6>
-            <small class="text-slate-400 font-size-11">Tareas críticas vs cotidianas</small>
+        <!-- Gráfica 2: Distribución por Prioridad (Pie) -->
+        <div class="col-12 col-lg-4 mb-3-5">
+          <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
+              <div>
+                <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
+                  <i class="typcn typcn-flash text-amber mr-1-5 font-size-18"></i> Nivel de Prioridad
+                </h6>
+                <small class="text-slate-400 font-size-11">Tareas críticas vs cotidianas</small>
+              </div>
+              <span class="badge badge-amber-light font-weight-bold px-2 py-1 font-size-10 rounded-lg" style="background: #fef3c7; color: #d97706;">Prioridad</span>
+            </div>
+            <div class="chart-container d-flex align-items-center justify-content-center" style="height: 230px; position: relative;">
+              <canvas *ngIf="allNotes.length > 0"
+                baseChart
+                [data]="priorityChartData"
+                [labels]="priorityChartLabels"
+                [chartType]="priorityChartType"
+                [options]="chartOptions"
+                [colors]="priorityChartColors">
+              </canvas>
+              <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
+                <i class="typcn typcn-flash font-size-36 text-slate-300 mb-1"></i>
+                <p class="font-size-12 mb-0">No hay tareas registradas</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="chart-container" style="height: 220px; position: relative;">
-          <canvas *ngIf="allNotes.length > 0"
-            baseChart
-            [data]="priorityChartData"
-            [labels]="priorityChartLabels"
-            [chartType]="priorityChartType"
-            [options]="chartOptions"
-            [colors]="priorityChartColors">
-          </canvas>
-          <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
-            <i class="typcn typcn-flash font-size-36 text-slate-300 mb-1"></i>
-            <p class="font-size-12 mb-0">No hay tareas registradas</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Gráfica 3: Tareas por Categoría (Doughnut) -->
-      <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3" *ngIf="categories.length > 0">
-        <div class="d-flex align-items-center justify-content-between mb-2 border-bottom pb-2">
-          <div>
-            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
-              <i class="typcn typcn-folder-open text-purple mr-1-5 font-size-18"></i> Tareas por Categoría
-            </h6>
-            <small class="text-slate-400 font-size-11">Distribución por área o proyecto</small>
+        <!-- Gráfica 3: Tareas por Categoría (Doughnut) -->
+        <div class="col-12 col-lg-4 mb-3-5" *ngIf="categories.length > 0">
+          <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
+              <div>
+                <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
+                  <i class="typcn typcn-folder-open text-purple mr-1-5 font-size-18"></i> Tareas por Categoría
+                </h6>
+                <small class="text-slate-400 font-size-11">Distribución temática</small>
+              </div>
+              <span class="badge font-weight-bold px-2 py-1 font-size-10 rounded-lg" style="background: #f3e8ff; color: #9333ea;">{{ categories.length }} Cat.</span>
+            </div>
+            <div class="chart-container d-flex align-items-center justify-content-center" style="height: 230px; position: relative;">
+              <canvas *ngIf="allNotes.length > 0"
+                baseChart
+                [data]="categoryChartData"
+                [labels]="categoryChartLabels"
+                [chartType]="categoryChartType"
+                [options]="chartOptions"
+                [colors]="categoryChartColors">
+              </canvas>
+              <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
+                <i class="typcn typcn-folder-open font-size-36 text-slate-300 mb-1"></i>
+                <p class="font-size-12 mb-0">No hay tareas registradas</p>
+              </div>
+            </div>
           </div>
-          <span class="badge badge-light text-slate-600 font-size-11 font-weight-bold">{{ categories.length }} Categorías</span>
         </div>
-        <div class="chart-container" style="height: 220px; position: relative;">
-          <canvas *ngIf="allNotes.length > 0"
-            baseChart
-            [data]="categoryChartData"
-            [labels]="categoryChartLabels"
-            [chartType]="categoryChartType"
-            [options]="chartOptions"
-            [colors]="categoryChartColors">
-          </canvas>
-          <div *ngIf="allNotes.length === 0" class="h-100 d-flex flex-column align-items-center justify-content-center text-slate-400">
-            <i class="typcn typcn-folder-open font-size-36 text-slate-300 mb-1"></i>
-            <p class="font-size-12 mb-0">No hay tareas registradas</p>
-          </div>
-        </div>
+
       </div>
 
     </div>
@@ -1479,62 +1529,98 @@
     <!-- ============================================================== -->
     <div class="fade-in-up mb-4" *ngIf="viewMode === 'categorias'">
       
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">Categorías de Notas</h5>
-          <small class="text-slate-500 font-size-12">Gestiona y organiza tus categorías</small>
+      <!-- Banner de Cabecera de Categorías (Estilo Gastos) -->
+      <div class="card border-0 rounded-2xl shadow-sm bg-white p-3-5 mb-3-5">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+          <div class="d-flex align-items-center">
+            <div class="header-icon-badge bg-gradient-indigo text-white rounded-xl d-flex align-items-center justify-content-center mr-3 shadow-xs" style="width: 44px; height: 44px; min-width: 44px;">
+              <i class="typcn typcn-folder-open font-size-22"></i>
+            </div>
+            <div>
+              <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">Categorías de Notas</h5>
+              <small class="text-slate-500 font-size-12">Organiza y clasifica tus actividades por temas y proyectos</small>
+            </div>
+          </div>
+          
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge badge-pill badge-primary-light font-weight-bold px-3 py-1-5 font-size-12">
+              {{ categories.length }} Categorías
+            </span>
+            <button class="btn btn-indigo-gradient font-weight-bold shadow-sm d-flex align-items-center px-3-5 py-2 text-white rounded-xl font-size-13 hover-lift" (click)="openCreateCategoryModal()">
+              <i class="typcn typcn-plus mr-1-5 font-size-16"></i> Nueva Categoría
+            </button>
+          </div>
         </div>
-        <button class="btn btn-indigo-gradient font-weight-bold shadow-sm d-flex align-items-center px-3 py-1-5 text-white rounded-xl font-size-13" (click)="openCreateCategoryModal()">
-          <i class="typcn typcn-plus mr-1 font-size-16"></i> Nueva Categoría
-        </button>
       </div>
 
-      <!-- Listado de Categorías -->
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-4 mb-3" *ngFor="let cat of categories">
-          <div class="card card-category-modern shadow-sm border-0 rounded-xl overflow-hidden bg-white">
-            <div class="category-banner" [style.backgroundColor]="cat.color" style="height: 5px;"></div>
-            <div class="card-body p-3-5 d-flex flex-column justify-content-between">
+      <!-- Listado de Categorías con Tarjetas Modernas -->
+      <div class="row" *ngIf="categories.length > 0">
+        <div class="col-12 col-md-6 col-xl-4 mb-3-5" *ngFor="let cat of categories; trackBy: trackByCat">
+          <div class="card category-expense-card border-0 rounded-2xl shadow-sm bg-white h-100 overflow-hidden d-flex flex-column justify-content-between">
+            
+            <!-- Franja Superior de Color de Categoría -->
+            <div class="category-top-bar" [style.backgroundColor]="cat.color" style="height: 5px; width: 100%;"></div>
+
+            <div class="card-body p-3-5 d-flex flex-column justify-content-between flex-grow-1">
               <div>
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <div class="d-flex align-items-center">
-                    <div class="icon-avatar-md text-white mr-2-5 d-flex align-items-center justify-content-center shadow-xs rounded-xl" [style.backgroundColor]="cat.color" style="width: 38px; height: 38px;">
+                <!-- Encabezado de la Tarjeta -->
+                <div class="d-flex align-items-center justify-content-between mb-2-5">
+                  <div class="d-flex align-items-center overflow-hidden mr-2">
+                    <div class="category-icon-avatar text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs mr-2-5 flex-shrink-0"
+                         [style.backgroundColor]="cat.color" style="width: 38px; height: 38px;">
                       <i class="typcn {{ cat.icon }} font-size-20"></i>
                     </div>
-                    <div>
-                      <h6 class="font-weight-bold text-slate-800 mb-0 font-size-15">{{ cat.name }}</h6>
-                      <small class="text-slate-400 font-weight-semibold font-size-10" *ngIf="cat.isSystem">Categoría Principal</small>
-                      <small class="text-indigo font-weight-semibold font-size-10" *ngIf="!cat.isSystem">Categoría Personalizada</small>
+                    <div class="text-truncate">
+                      <h6 class="font-weight-bold text-slate-800 mb-0 font-size-15 text-truncate">{{ cat.name }}</h6>
+                      <small class="text-slate-400 font-weight-semibold font-size-11" *ngIf="cat.isSystem">Categoría Principal</small>
+                      <small class="text-indigo font-weight-semibold font-size-11" *ngIf="!cat.isSystem">Personalizada</small>
                     </div>
                   </div>
 
-                  <span class="badge badge-pill badge-slate-light border font-weight-bold px-2-5 py-1 font-size-11">
+                  <span class="badge badge-pill badge-slate-light border font-weight-bold px-2-5 py-1 font-size-11 flex-shrink-0">
                     {{ getNoteCountForCategory(cat.id) }} notas
                   </span>
                 </div>
 
+                <!-- Descripción de la Categoría -->
                 <p class="text-slate-500 font-size-12 mb-3 line-height-relaxed" *ngIf="cat.description">
                   {{ cat.description }}
                 </p>
+                <p class="text-slate-400 font-size-12 mb-3 font-italic" *ngIf="!cat.description">
+                  Sin descripción especificada.
+                </p>
               </div>
 
-              <div class="d-flex align-items-center justify-content-end pt-2 border-top">
-                <button type="button" class="btn btn-sm btn-action-indigo mr-2 px-3 py-1 font-weight-semibold font-size-12" (click)="openEditCategoryModal(cat)">
+              <!-- Acciones Inferiores -->
+              <div class="d-flex align-items-center justify-content-end pt-2-5 border-top gap-1-5">
+                <button type="button" class="btn btn-sm btn-action-indigo px-3 py-1-5 font-weight-semibold font-size-12 rounded-lg d-inline-flex align-items-center" (click)="openEditCategoryModal(cat)">
                   <i class="typcn typcn-edit mr-1"></i> Editar
                 </button>
                 <button 
                   type="button" 
-                  class="btn btn-sm btn-action-rose px-3 py-1 font-weight-semibold font-size-12" 
+                  class="btn btn-sm btn-action-rose px-3 py-1-5 font-weight-semibold font-size-12 rounded-lg d-inline-flex align-items-center" 
                   [disabled]="cat.isSystem" 
                   (click)="deleteCategory(cat)" 
                   [title]="cat.isSystem ? 'Categorías del sistema no eliminables' : 'Eliminar categoría'">
                   <i class="typcn typcn-trash mr-1"></i> Eliminar
                 </button>
               </div>
+
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Estado Vacío de Categorías -->
+      <div class="card border-0 rounded-2xl shadow-sm bg-white p-5 text-center" *ngIf="categories.length === 0">
+        <i class="typcn typcn-folder font-size-48 text-slate-300 mb-2 d-block"></i>
+        <h5 class="font-weight-bold text-slate-800 mb-1">No tienes categorías registradas</h5>
+        <p class="text-slate-400 font-size-13 mb-3">Crea tu primera categoría para organizar tus actividades eficientemente.</p>
+        <button class="btn btn-indigo-gradient font-weight-bold px-4 py-2 text-white rounded-xl mx-auto" (click)="openCreateCategoryModal()">
+          <i class="typcn typcn-plus mr-1"></i> Crear primera categoría
+        </button>
+      </div>
+
     </div>
 
     </div> <!-- Fin Contenedor Scroll Interno -->
