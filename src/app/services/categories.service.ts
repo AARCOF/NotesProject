@@ -82,6 +82,29 @@ export class CategoriesService {
     }
   }
 
+  private trackDeletedCategoryId(id: string): void {
+    if (!this.currentUserId) return;
+    const key = 'noteyou_deleted_note_cats_' + this.currentUserId;
+    const data = localStorage.getItem(key);
+    let ids: string[] = [];
+    try { ids = data ? JSON.parse(data) : []; } catch { ids = []; }
+    if (!ids.includes(id)) {
+      ids.push(id);
+      localStorage.setItem(key, JSON.stringify(ids));
+    }
+  }
+
+  private getDeletedCategoryIds(): Set<string> {
+    if (!this.currentUserId) return new Set();
+    const key = 'noteyou_deleted_note_cats_' + this.currentUserId;
+    const data = localStorage.getItem(key);
+    try {
+      return new Set(data ? JSON.parse(data) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
   public fetchCloudCategories(): void {
     if (!this.currentUserId) return;
 
@@ -89,15 +112,59 @@ export class CategoriesService {
       next: (res) => {
         if (res && res.success && Array.isArray(res.categories)) {
           const cloudCats = res.categories;
+          const deletedIds = this.getDeletedCategoryIds();
           let all = this.getAllCustomCategories();
           const other = all.filter(c => c.userId && c.userId !== this.currentUserId);
-          const merged = [...cloudCats, ...other];
-          this.saveAllCustomCategories(merged);
+          const localUserCats = all.filter(c => c.userId === this.currentUserId);
 
-          const userCustomCats = cloudCats.filter(c => 
+          const localMap = new Map<string, Category>();
+          localUserCats.forEach(c => localMap.set(c.id, c));
+
+          const finalMap = new Map<string, Category>();
+
+          // 1. Procesar categorías que vienen de la nube
+          cloudCats.forEach(cloudCat => {
+            if (deletedIds.has(cloudCat.id)) {
+              this.http.delete('/api/categories?id=' + cloudCat.id).subscribe({ error: () => {} });
+              return;
+            }
+
+            const localCat = localMap.get(cloudCat.id);
+            if (!localCat) {
+              finalMap.set(cloudCat.id, cloudCat);
+            } else {
+              const cloudTime = new Date(cloudCat.updatedAt || cloudCat.createdAt || 0).getTime();
+              const localTime = new Date(localCat.updatedAt || localCat.createdAt || 0).getTime();
+
+              if (localTime > cloudTime) {
+                finalMap.set(localCat.id, localCat);
+                this.http.put('/api/categories', localCat).subscribe({ error: () => {} });
+              } else {
+                finalMap.set(cloudCat.id, cloudCat);
+              }
+            }
+          });
+
+          // 2. Procesar categorías locales creadas recientemente que aún no están en la nube
+          const now = Date.now();
+          localUserCats.forEach(localCat => {
+            if (deletedIds.has(localCat.id)) return;
+            if (!finalMap.has(localCat.id)) {
+              const localTime = new Date(localCat.updatedAt || localCat.createdAt || 0).getTime();
+              if (now - localTime < 60000) {
+                finalMap.set(localCat.id, localCat);
+                this.http.post('/api/categories', localCat).subscribe({ error: () => {} });
+              }
+            }
+          });
+
+          const mergedUserCats = Array.from(finalMap.values()).filter(c => 
             c.id !== 'cat_finanzas' && c.name?.toLowerCase() !== 'finanzas'
           );
-          this.categoriesSubject.next([...this.defaultCategories, ...userCustomCats]);
+          const mergedAll = [...mergedUserCats, ...other];
+          this.saveAllCustomCategories(mergedAll);
+
+          this.categoriesSubject.next([...this.defaultCategories, ...mergedUserCats]);
         }
       },
       error: () => {}
@@ -150,11 +217,14 @@ export class CategoriesService {
 
   public addCategory(catData: Omit<Category, 'id' | 'isSystem'>): Category {
     const userId = this.currentUserId || 'anonymous';
+    const now = new Date().toISOString();
     const newCategory: Category = {
       ...catData,
       id: 'cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId,
-      isSystem: false
+      isSystem: false,
+      createdAt: now,
+      updatedAt: now
     };
 
     const customCats = this.getAllCustomCategories();
@@ -174,19 +244,27 @@ export class CategoriesService {
     const index = customCats.findIndex(c => c.id === id && (c.userId === this.currentUserId || !c.userId));
     if (index === -1) return undefined;
 
-    const updatedCategory = { ...customCats[index], ...changes, isSystem: false };
+    const now = new Date().toISOString();
+    const updatedCategory: Category = { 
+      ...customCats[index], 
+      ...changes, 
+      isSystem: false,
+      updatedAt: now 
+    };
     customCats[index] = updatedCategory;
     this.saveAllCustomCategories(customCats);
 
     this.refreshCategoriesForCurrentUser();
 
     // Sincronizar en MongoDB Atlas
-    this.http.post('/api/categories', updatedCategory).subscribe({ error: () => {} });
+    this.http.put('/api/categories', updatedCategory).subscribe({ error: () => {} });
 
     return updatedCategory;
   }
 
   public deleteCategory(id: string): boolean {
+    this.trackDeletedCategoryId(id);
+
     const customCats = this.getAllCustomCategories();
     const filtered = customCats.filter(c => !(c.id === id && (c.userId === this.currentUserId || !c.userId)));
     if (filtered.length === customCats.length) return false;

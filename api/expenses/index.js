@@ -38,16 +38,32 @@ module.exports = async function handler(req, res) {
       case 'POST':
       case 'PUT': {
         const payload = body || {};
+        delete payload._id;
+
+        const cleanList = (arr) => Array.isArray(arr) ? arr.map(item => {
+          if (item && typeof item === 'object') {
+            const { _id, ...rest } = item;
+            return rest;
+          }
+          return item;
+        }) : [];
+
+        const cleanExpenses = cleanList(payload.expenses);
+        const cleanBudgets = cleanList(payload.budgets);
+        const cleanExtraIncomes = cleanList(payload.extraIncomes);
+        const cleanCategories = cleanList(payload.categories);
+        const cleanSubcategories = cleanList(payload.subcategories);
+
         await expensesCollection.updateOne(
           { userId },
           {
             $set: {
               userId,
-              expenses: payload.expenses || [],
-              budgets: payload.budgets || [],
-              extraIncomes: payload.extraIncomes || [],
-              categories: payload.categories || [],
-              subcategories: payload.subcategories || [],
+              expenses: cleanExpenses,
+              budgets: cleanBudgets,
+              extraIncomes: cleanExtraIncomes,
+              categories: cleanCategories,
+              subcategories: cleanSubcategories,
               baseMonthlyIncome: Number(payload.baseMonthlyIncome) || 0,
               updatedAt: new Date().toISOString()
             }

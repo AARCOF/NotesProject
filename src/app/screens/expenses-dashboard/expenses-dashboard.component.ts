@@ -466,19 +466,19 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   }
 
   trackByCat(index: number, cat: ExpenseCategory): string {
-    return cat ? cat.id : String(index);
+    return cat ? `${cat.id}_${cat.name}_${cat.color}_${cat.icon}_${cat.updatedAt || ''}` : String(index);
   }
 
   trackBySub(index: number, sub: ExpenseSubcategory): string {
-    return sub ? sub.id : String(index);
+    return sub ? `${sub.id}_${sub.name}_${sub.updatedAt || ''}` : String(index);
   }
 
   trackByExp(index: number, exp: ExpenseItem): string {
-    return exp ? exp.id : String(index);
+    return exp ? `${exp.id}_${exp.title}_${exp.amount}_${exp.date}_${exp.subcategoryId}_${exp.updatedAt || ''}` : String(index);
   }
 
   trackByIncome(index: number, inc: ExtraIncomeItem): string {
-    return inc ? inc.id : String(index);
+    return inc ? `${inc.id}_${inc.title}_${inc.amount}_${inc.date}_${inc.updatedAt || ''}` : String(index);
   }
 
   openAddExpenseModal(subcategoryId?: string, categoryId?: string): void {

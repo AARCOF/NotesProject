@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
       }
 
       case 'POST': {
-        const noteData = body;
+        const noteData = body || {};
         if (!noteData || !noteData.title) {
           return sendJsonResponse(res, 400, { success: false, message: 'El título de la nota es obligatorio.' });
         }
@@ -37,8 +37,10 @@ module.exports = async function handler(req, res) {
           ...noteData,
           id: noteData.id || 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
           userId,
-          createdAt: noteData.createdAt || new Date().toISOString()
+          createdAt: noteData.createdAt || new Date().toISOString(),
+          updatedAt: noteData.updatedAt || new Date().toISOString()
         };
+        delete newNote._id;
 
         // Upsert by id and userId so batch sync or creation works cleanly
         await notesCollection.updateOne(
@@ -51,12 +53,14 @@ module.exports = async function handler(req, res) {
       }
 
       case 'PUT': {
-        const { id, ...updateData } = body || {};
+        const { id, _id, ...updateData } = body || {};
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de nota es obligatorio.' });
         }
 
-        const result = await notesCollection.updateOne(
+        updateData.updatedAt = updateData.updatedAt || new Date().toISOString();
+
+        await notesCollection.updateOne(
           { id, userId },
           { $set: updateData },
           { upsert: true }

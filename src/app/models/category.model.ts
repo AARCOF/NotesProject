@@ -6,4 +6,6 @@ export interface Category {
   icon: string;
   description?: string;
   isSystem?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

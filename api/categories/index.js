@@ -27,7 +27,8 @@ module.exports = async function handler(req, res) {
         return sendJsonResponse(res, 200, { success: true, categories });
       }
 
-      case 'POST': {
+      case 'POST':
+      case 'PUT': {
         const catData = body || {};
         if (!catData.name) {
           return sendJsonResponse(res, 400, { success: false, message: 'El nombre de la categoría es requerido.' });
@@ -36,8 +37,10 @@ module.exports = async function handler(req, res) {
         const newCategory = {
           ...catData,
           id: catData.id || 'cat_' + Date.now(),
-          userId
+          userId,
+          updatedAt: catData.updatedAt || new Date().toISOString()
         };
+        delete newCategory._id;
 
         await categoriesCollection.updateOne(
           { id: newCategory.id, userId },
@@ -45,7 +48,7 @@ module.exports = async function handler(req, res) {
           { upsert: true }
         );
 
-        return sendJsonResponse(res, 201, { success: true, category: newCategory });
+        return sendJsonResponse(res, 200, { success: true, category: newCategory });
       }
 
       case 'DELETE': {
