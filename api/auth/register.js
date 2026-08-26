@@ -84,10 +84,32 @@ module.exports = async function handler(req, res) {
       await usersCollection.insertOne(userDoc);
     }
 
+    // Enviar correo de verificación mediante EmailJS desde el backend
+    try {
+      if (typeof fetch !== 'undefined') {
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: 'NoteYou_er',
+            template_id: 'template_01akdg7',
+            user_id: 'NJyM41WnepByrp24u',
+            template_params: {
+              to_email: cleanEmail,
+              security_key: securityKey,
+              expire_time: '2 horas'
+            }
+          })
+        });
+      }
+    } catch (e) {}
+
     return sendJsonResponse(res, 201, {
       success: true,
       message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${cleanEmail} con validez de 2 horas. Si no se verifica en 2 horas, la cuenta será eliminada.`,
-      email: cleanEmail
+      email: cleanEmail,
+      securityKey,
+      keyExpiresAt: expiresAt
     });
   } catch (err) {
     return sendJsonResponse(res, 500, { success: false, message: 'Error interno del servidor: ' + (err ? err.message : err) });

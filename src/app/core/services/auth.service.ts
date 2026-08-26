@@ -78,7 +78,29 @@ export class AuthService {
       }).toPromise();
 
       if (response && response.success) {
+        const securityKey = response.securityKey || this.verificationKeyService.generateSecurityKey();
+        const expiresAt = response.keyExpiresAt || (Date.now() + 2 * 60 * 60 * 1000);
+
+        const assignedRole: UserRole = cleanEmail === 'superadmin@noteyou.com' ? 'superadmin' : 'user';
+        const localUser: User = {
+          id: response.userId || 'usr_' + Date.now(),
+          name: name.trim(),
+          email: cleanEmail,
+          passwordHash: btoa(password),
+          role: assignedRole,
+          isVerified: false,
+          isActive: true,
+          verificationKey: securityKey,
+          keyExpiresAt: expiresAt,
+          createdAt: new Date().toISOString(),
+          hasCompletedTutorial: false
+        };
+        this.userRepository.saveUser(localUser);
+
+        // Disparar envío de correo mediante EmailJS
+        this.verificationKeyService.sendVerificationEmail(cleanEmail, securityKey, expiresAt).subscribe();
         this.recaptchaService.reset();
+
         return {
           success: true,
           message: response.message,

@@ -52,7 +52,7 @@ export class VerificationKeyService {
       template_params: {
         to_email: toEmail,
         security_key: securityKey,
-        expire_time: '1 hora'
+        expire_time: '2 horas'
       }
     };
 
