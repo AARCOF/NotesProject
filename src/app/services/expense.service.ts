@@ -692,7 +692,34 @@ export class ExpenseService {
     const now = new Date().toISOString();
 
     if (updateBaseIncomeForAllMonths) {
-      this.setBaseMonthlyIncome(num);
+      this.setBaseMonthlyIncome(num, false);
+      const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
+      
+      // Actualizar todos los meses existentes del usuario con el nuevo sueldo base
+      let foundCurrent = false;
+      for (const b of all) {
+        if (b.userId === this.currentUserId) {
+          b.monthlyIncome = num;
+          b.updatedAt = now;
+          if (b.monthKey === monthKey) {
+            foundCurrent = true;
+          }
+        }
+      }
+
+      if (!foundCurrent) {
+        all.push({
+          userId: this.currentUserId,
+          monthKey,
+          monthlyIncome: num,
+          updatedAt: now
+        });
+      }
+
+      this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, all);
+      this.refreshData();
+      this.syncToCloud();
+      return;
     }
 
     const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);

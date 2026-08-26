@@ -713,6 +713,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   saveIncome(): void {
     const amount = Number(this.incomeFormAmount) || 0;
     this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount, this.incomeApplyToAllMonths);
+    this.calculateMetricsAndCharts();
     this.closeIncomeModal();
   }
 
