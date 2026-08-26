@@ -6,133 +6,133 @@
     <!-- COLUMNA IZQUIERDA: PANEL DE CONTROL & KPIS -->
     <!-- ========================================== -->
     <div class="col-12 col-lg-4 col-xl-3 mb-4 mb-lg-0" [class.d-none-mobile]="activeTab !== 'gestion'">
-      <div class="expenses-sidebar-card bg-white rounded-2xl p-3-5 shadow-sm border border-slate-100 sticky-top" style="top: 0; z-index: 10;">
+      <div class="expenses-sidebar-card bg-white rounded-2xl p-2-5 p-xl-3 shadow-sm border border-slate-100 sticky-top">
         
         <!-- Header con Título -->
-        <div class="d-flex align-items-center mb-3">
-          <div class="header-icon-box bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-sm mr-3 flex-shrink-0">
-            <i class="typcn typcn-credit-card font-size-22"></i>
+        <div class="d-flex align-items-center mb-2">
+          <div class="header-icon-box bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-sm mr-2-5 flex-shrink-0">
+            <i class="typcn typcn-credit-card font-size-18"></i>
           </div>
           <div>
-            <h4 class="font-weight-bold text-slate-900 mb-0 font-size-17">Gestión de Gastos</h4>
-            <p class="text-slate-400 font-size-12 mb-0">Control & Presupuesto</p>
+            <h4 class="font-weight-bold text-slate-900 mb-0 font-size-15 line-height-tight">Gestión de Gastos</h4>
+            <p class="text-slate-400 font-size-11 mb-0">Control & Presupuesto</p>
           </div>
         </div>
 
         <!-- Selector de Mes -->
-        <div class="month-selector-pill d-flex align-items-center justify-content-between bg-slate-50 border border-slate-200 rounded-xl p-1 mb-3">
+        <div class="month-selector-pill d-flex align-items-center justify-content-between bg-slate-50 border border-slate-200 rounded-xl p-0-5 mb-2">
           <button class="btn btn-icon-nav text-slate-600 hover-blue" (click)="prevMonth()" title="Mes anterior">
-            <i class="typcn typcn-chevron-left font-size-16"></i>
+            <i class="typcn typcn-chevron-left font-size-15"></i>
           </button>
 
-          <span class="month-display-text px-2 font-weight-bold text-slate-800 font-size-13 text-center text-truncate">
+          <span class="month-display-text px-1 font-weight-bold text-slate-800 font-size-12 text-center text-truncate">
             {{ formattedMonthLabel }}
           </span>
 
           <button class="btn btn-icon-nav text-slate-600 hover-blue" (click)="nextMonth()" title="Mes siguiente">
-            <i class="typcn typcn-chevron-right font-size-16"></i>
+            <i class="typcn typcn-chevron-right font-size-15"></i>
           </button>
         </div>
 
         <!-- Botones Principales: Registrar Gasto & Bono Extra -->
-        <div class="d-flex flex-column gap-2 mb-3">
-          <button class="btn btn-gradient-blue text-white btn-block rounded-xl font-weight-bold py-2-5 font-size-14 d-flex justify-content-center align-items-center shadow-sm hover-lift"
+        <div class="d-flex flex-column gap-1-5 mb-2">
+          <button class="btn btn-gradient-blue text-white btn-block rounded-xl font-weight-bold py-2 font-size-13 d-flex justify-content-center align-items-center shadow-sm hover-lift"
                   (click)="openAddExpenseModal()">
-            <i class="typcn typcn-plus font-size-18 mr-2"></i> Registrar Gasto
+            <i class="typcn typcn-plus font-size-16 mr-1-5"></i> Registrar Gasto
           </button>
           
-          <button class="btn btn-outline-emerald btn-block rounded-xl font-weight-bold py-2 font-size-13 d-flex justify-content-center align-items-center shadow-xs"
+          <button class="btn btn-outline-emerald btn-block rounded-xl font-weight-bold py-1-5 font-size-12 d-flex justify-content-center align-items-center shadow-xs"
                   (click)="openAddExtraIncomeModal()">
-            <i class="typcn typcn-gift font-size-17 mr-1-5"></i> + Bono / Ingreso Extra
+            <i class="typcn typcn-gift font-size-15 mr-1"></i> + Bono / Ingreso Extra
           </button>
         </div>
 
-        <!-- 1. VISTA WEB / ESCRITORIO: CARDS KPIS EN VERTICAL -->
-        <div class="d-none d-lg-flex flex-column gap-2 mb-3">
+        <!-- 1. VISTA WEB / ESCRITORIO: CARDS KPIS EN VERTICAL COMPACTAS -->
+        <div class="d-none d-lg-flex flex-column gap-1-5 mb-2">
           
           <!-- KPI 1: Sueldo Base Mensual (Persistente) -->
-          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Sueldo Base Fijo</span>
+          <div class="kpi-vertical-card rounded-xl p-2 px-2-5 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-0-5">
+              <span class="text-slate-500 font-weight-semibold font-size-10 text-uppercase letter-spacing-05">Sueldo Base Fijo</span>
               <button class="btn btn-icon-xs text-blue bg-white rounded-circle shadow-2xs" (click)="openIncomeModal()" title="Editar Sueldo Base">
-                <i class="typcn typcn-edit font-size-13"></i>
+                <i class="typcn typcn-edit font-size-12"></i>
               </button>
             </div>
-            <h4 class="font-weight-bold text-slate-900 mb-0 font-size-18">
+            <h5 class="font-weight-bold text-slate-900 mb-0 font-size-15">
               {{ currencySymbol }} {{ monthlyIncome | number:'1.2-2' }}
-            </h4>
-            <small class="text-slate-400 font-size-11" *ngIf="monthlyIncome > 0">
-              <i class="typcn typcn-arrow-sync text-blue mr-1 font-size-12"></i> Fijo todos los meses
+            </h5>
+            <small class="text-slate-400 font-size-10" *ngIf="monthlyIncome > 0">
+              <i class="typcn typcn-arrow-sync text-blue mr-0-5 font-size-11"></i> Fijo mensual
             </small>
-            <small class="text-amber-600 font-size-11 cursor-pointer font-weight-medium" *ngIf="monthlyIncome === 0" (click)="openIncomeModal()">
-              <i class="typcn typcn-warning mr-1 font-size-12"></i> Ingresa tu sueldo base
+            <small class="text-amber-600 font-size-10 cursor-pointer font-weight-medium" *ngIf="monthlyIncome === 0" (click)="openIncomeModal()">
+              <i class="typcn typcn-warning mr-0-5 font-size-11"></i> Ingresa sueldo base
             </small>
           </div>
 
           <!-- KPI 2: Bonos e Ingresos Extra del Mes -->
-          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-emerald-50-30">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Bonos / Extras</span>
+          <div class="kpi-vertical-card rounded-xl p-2 px-2-5 border border-slate-100 bg-emerald-50-30">
+            <div class="d-flex align-items-center justify-content-between mb-0-5">
+              <span class="text-slate-500 font-weight-semibold font-size-10 text-uppercase letter-spacing-05">Bonos / Extras</span>
               <button class="btn btn-icon-xs text-emerald bg-white rounded-circle shadow-2xs" (click)="openAddExtraIncomeModal()" title="Añadir Bono o Ingreso Extra">
-                <i class="typcn typcn-plus font-size-13"></i>
+                <i class="typcn typcn-plus font-size-12"></i>
               </button>
             </div>
-            <h4 class="font-weight-bold text-emerald-600 mb-0 font-size-18">
+            <h5 class="font-weight-bold text-emerald-600 mb-0 font-size-15">
               + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
-            </h4>
-            <small class="text-slate-500 font-size-11 font-weight-medium">
+            </h5>
+            <small class="text-slate-500 font-size-10 font-weight-medium">
               {{ extraIncomes.length }} bonos en {{ formattedMonthLabel }}
             </small>
           </div>
 
           <!-- KPI 3: Total de Gastos -->
-          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Gastos Totales</span>
+          <div class="kpi-vertical-card rounded-xl p-2 px-2-5 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-0-5">
+              <span class="text-slate-500 font-weight-semibold font-size-10 text-uppercase letter-spacing-05">Gastos Totales</span>
               <div class="kpi-icon-badge-xs bg-rose-50 text-rose rounded-circle d-flex align-items-center justify-content-center">
-                <i class="typcn typcn-arrow-down-thick font-size-14"></i>
+                <i class="typcn typcn-arrow-down-thick font-size-12"></i>
               </div>
             </div>
-            <h4 class="font-weight-bold text-rose-600 mb-0 font-size-18">
+            <h5 class="font-weight-bold text-rose-600 mb-0 font-size-15">
               {{ currencySymbol }} {{ totalExpenses | number:'1.2-2' }}
-            </h4>
-            <small class="text-slate-400 font-size-11">
+            </h5>
+            <small class="text-slate-400 font-size-10">
               {{ expenses.length }} gastos en el mes
             </small>
           </div>
 
           <!-- KPI 4: Balance / Ahorro Disponible -->
-          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100" [ngClass]="balance >= 0 ? 'bg-emerald-50-30' : 'bg-rose-50-30'">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Balance Disponible</span>
+          <div class="kpi-vertical-card rounded-xl p-2 px-2-5 border border-slate-100" [ngClass]="balance >= 0 ? 'bg-emerald-50-30' : 'bg-rose-50-30'">
+            <div class="d-flex align-items-center justify-content-between mb-0-5">
+              <span class="text-slate-500 font-weight-semibold font-size-10 text-uppercase letter-spacing-05">Balance Disponible</span>
               <div class="kpi-icon-badge-xs rounded-circle d-flex align-items-center justify-content-center"
                    [ngClass]="balance >= 0 ? 'bg-emerald-50 text-emerald' : 'bg-rose-50 text-rose'">
-                <i class="typcn font-size-14" [ngClass]="balance >= 0 ? 'typcn-shield' : 'typcn-warning'"></i>
+                <i class="typcn font-size-12" [ngClass]="balance >= 0 ? 'typcn-shield' : 'typcn-warning'"></i>
               </div>
             </div>
-            <h4 class="font-weight-bold mb-0 font-size-18" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+            <h5 class="font-weight-bold mb-0 font-size-15" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
               {{ currencySymbol }} {{ balance | number:'1.2-2' }}
-            </h4>
-            <small class="font-size-11 font-weight-medium" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+            </h5>
+            <small class="font-size-10 font-weight-medium" [ngClass]="balance >= 0 ? 'text-emerald-600' : 'text-rose-600'">
               {{ balance >= 0 ? 'Superávit / Ahorro' : 'Deficit / Excedido' }}
             </small>
           </div>
 
           <!-- KPI 5: % Presupuesto Utilizado -->
-          <div class="kpi-vertical-card rounded-xl p-3 border border-slate-100 bg-slate-50-50">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-slate-500 font-weight-semibold font-size-11 text-uppercase letter-spacing-05">Uso de Ingresos</span>
-              <span class="badge badge-pill font-weight-bold px-2 py-0-5 font-size-10"
+          <div class="kpi-vertical-card rounded-xl p-2 px-2-5 border border-slate-100 bg-slate-50-50">
+            <div class="d-flex align-items-center justify-content-between mb-0-5">
+              <span class="text-slate-500 font-weight-semibold font-size-10 text-uppercase letter-spacing-05">Uso de Ingresos</span>
+              <span class="badge badge-pill font-weight-bold px-1-5 py-0-5 font-size-10"
                     [ngClass]="budgetUsedPercent > 90 ? 'badge-rose-light text-rose' : (budgetUsedPercent > 70 ? 'badge-amber-light text-amber' : 'badge-emerald-light text-emerald')">
                 {{ budgetUsedPercent }}%
               </span>
             </div>
-            <div class="progress my-1-5" style="height: 6px; border-radius: 3px; background-color: #e2e8f0;">
+            <div class="progress my-1" style="height: 5px; border-radius: 3px; background-color: #e2e8f0;">
               <div class="progress-bar rounded" role="progressbar" 
                    [style.width.%]="budgetUsedPercent"
                    [ngClass]="budgetUsedPercent > 90 ? 'bg-rose-500' : (budgetUsedPercent > 70 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
             </div>
-            <small class="text-slate-400 font-size-11">
+            <small class="text-slate-400 font-size-10">
               {{ totalIncome > 0 ? (100 - budgetUsedPercent) + '% disponible' : 'Sin ingresos' }}
             </small>
           </div>

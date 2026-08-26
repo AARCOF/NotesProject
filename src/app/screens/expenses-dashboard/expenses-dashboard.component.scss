@@ -50,18 +50,35 @@
 /* Sidebar Card Panel */
 .expenses-sidebar-card {
   box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+
+  @media (min-width: 992px) {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10;
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 4px;
+    }
+  }
 }
 
 .header-icon-box {
-  width: 50px;
-  height: 50px;
-  min-width: 50px;
-  margin-right: 14px !important;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  margin-right: 10px !important;
+  border-radius: 10px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 
   i {
-    font-size: 26px !important;
+    font-size: 18px !important;
   }
 }
 
