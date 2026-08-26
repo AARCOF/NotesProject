@@ -39,7 +39,15 @@ export class AppUpdateService {
 
   public downloadAndInstallUpdate(downloadUrl: string): void {
     if (!downloadUrl) return;
-    const finalUrl = downloadUrl.startsWith('http') ? downloadUrl : (window.location.origin + (downloadUrl.startsWith('/') ? downloadUrl : '/' + downloadUrl));
+    
+    let baseDomain = 'https://notes-project-one-iota.vercel.app';
+    if (typeof window !== 'undefined' && !window.location.origin.includes('localhost') && !window.location.origin.includes('capacitor')) {
+      baseDomain = window.location.origin;
+    }
+    
+    const finalUrl = downloadUrl.startsWith('http') 
+      ? downloadUrl 
+      : (baseDomain + (downloadUrl.startsWith('/') ? downloadUrl : '/' + downloadUrl));
     
     const a = document.createElement('a');
     a.href = finalUrl;
