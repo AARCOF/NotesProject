@@ -202,7 +202,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         this.expenseService.subcategories$,
         this.expenseService.expenses$,
         this.expenseService.extraIncomes$,
-        this.expenseService.budgets$
+        this.expenseService.budgets$,
+        this.expenseService.baseMonthlyIncome$
       ]).subscribe(([cats, subs, exps, extraInc]) => {
         this.categories = cats;
         this.subcategories = subs;
@@ -407,7 +408,38 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // --- Métodos de Modales CRUD ---
 
   // Gasto Modal
+  // Scroll helper to prevent unwanted auto-scroll on mobile when modals open/close
+  private savedScrollTop: number | null = null;
+
+  private recordScrollPosition(): void {
+    const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+    if (container) {
+      this.savedScrollTop = container.scrollTop;
+    } else if (typeof window !== 'undefined') {
+      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop;
+    }
+  }
+
+  private restoreScrollPosition(): void {
+    if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
+      (document.activeElement as HTMLElement).blur();
+    }
+    const saved = this.savedScrollTop;
+    this.savedScrollTop = null;
+    if (saved !== null && saved !== undefined) {
+      setTimeout(() => {
+        const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+        if (container) {
+          container.scrollTop = saved;
+        } else if (typeof window !== 'undefined') {
+          window.scrollTo(0, saved);
+        }
+      }, 30);
+    }
+  }
+
   openAddExpenseModal(subcategoryId?: string, categoryId?: string): void {
+    this.recordScrollPosition();
     this.expenseToEdit = null;
     let targetCatId = categoryId || (this.categories.length > 0 ? this.categories[0].id : '');
     let targetSubId = subcategoryId || '';
@@ -440,6 +472,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   }
 
   openEditExpenseModal(expense: ExpenseItem): void {
+    this.recordScrollPosition();
     this.expenseToEdit = expense;
     this.expenseForm = {
       title: expense.title,
@@ -451,6 +484,11 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       isRecurring: !!expense.isRecurring
     };
     this.isExpenseModalOpen = true;
+  }
+
+  closeExpenseModal(): void {
+    this.isExpenseModalOpen = false;
+    this.restoreScrollPosition();
   }
 
   onExpenseCategoryChange(): void {
@@ -489,7 +527,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     }
 
     this.expandedSubcategories[this.expenseForm.subcategoryId] = true;
-    this.isExpenseModalOpen = false;
+    this.closeExpenseModal();
   }
 
   deleteExpense(expense: ExpenseItem, event?: Event): void {
@@ -502,6 +540,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   // Categoría Modal
   openAddCategoryModal(): void {
+    this.recordScrollPosition();
     this.categoryToEdit = null;
     this.categoryForm = {
       name: '',
@@ -513,6 +552,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   openEditCategoryModal(cat: ExpenseCategory, event?: Event): void {
     if (event) event.stopPropagation();
+    this.recordScrollPosition();
     this.categoryToEdit = cat;
     this.categoryForm = {
       name: cat.name,
@@ -520,6 +560,11 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       color: cat.color
     };
     this.isCategoryModalOpen = true;
+  }
+
+  closeCategoryModal(): void {
+    this.isCategoryModalOpen = false;
+    this.restoreScrollPosition();
   }
 
   saveCategory(): void {
@@ -538,7 +583,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         this.categoryForm.color
       );
     }
-    this.isCategoryModalOpen = false;
+    this.closeCategoryModal();
   }
 
   deleteCategory(cat: ExpenseCategory | null, event?: Event): void {
@@ -547,7 +592,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     if (confirm(`¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos?`)) {
       this.expenseService.deleteCategory(cat.id);
       if (this.categoryToEdit && this.categoryToEdit.id === cat.id) {
-        this.isCategoryModalOpen = false;
+        this.closeCategoryModal();
       }
     }
   }
@@ -566,6 +611,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   // Subcategoría Modal
   openAddSubcategoryModal(categoryId?: string): void {
+    this.recordScrollPosition();
     this.subcategoryToEdit = null;
     this.subcategoryForm = {
       categoryId: categoryId || (this.categories.length > 0 ? this.categories[0].id : ''),
@@ -576,12 +622,18 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   openEditSubcategoryModal(sub: ExpenseSubcategory, event?: Event): void {
     if (event) event.stopPropagation();
+    this.recordScrollPosition();
     this.subcategoryToEdit = sub;
     this.subcategoryForm = {
       categoryId: sub.categoryId,
       name: sub.name
     };
     this.isSubcategoryModalOpen = true;
+  }
+
+  closeSubcategoryModal(): void {
+    this.isSubcategoryModalOpen = false;
+    this.restoreScrollPosition();
   }
 
   saveSubcategory(): void {
@@ -592,7 +644,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     } else {
       this.expenseService.addSubcategory(this.subcategoryForm.categoryId, this.subcategoryForm.name.trim());
     }
-    this.isSubcategoryModalOpen = false;
+    this.closeSubcategoryModal();
   }
 
   deleteSubcategory(sub: ExpenseSubcategory, event?: Event): void {
@@ -604,19 +656,26 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   // Ingreso Mensual Base Modal
   openIncomeModal(): void {
+    this.recordScrollPosition();
     this.incomeFormAmount = this.monthlyIncome > 0 ? this.monthlyIncome : null;
     this.incomeApplyToAllMonths = true;
     this.isIncomeModalOpen = true;
   }
 
+  closeIncomeModal(): void {
+    this.isIncomeModalOpen = false;
+    this.restoreScrollPosition();
+  }
+
   saveIncome(): void {
     const amount = Number(this.incomeFormAmount) || 0;
     this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount, this.incomeApplyToAllMonths);
-    this.isIncomeModalOpen = false;
+    this.closeIncomeModal();
   }
 
   // Bonus / Ingreso Extra Modal
   openAddExtraIncomeModal(): void {
+    this.recordScrollPosition();
     this.extraIncomeToEdit = null;
     const todayDate = new Date().toISOString().split('T')[0];
     const defaultDate = todayDate.startsWith(this.selectedMonthKey) 
@@ -634,6 +693,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   openEditExtraIncomeModal(item: ExtraIncomeItem, event?: Event): void {
     if (event) event.stopPropagation();
+    this.recordScrollPosition();
     this.extraIncomeToEdit = item;
     this.extraIncomeForm = {
       title: item.title,
@@ -642,6 +702,11 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       notes: item.notes || ''
     };
     this.isExtraIncomeModalOpen = true;
+  }
+
+  closeExtraIncomeModal(): void {
+    this.isExtraIncomeModalOpen = false;
+    this.restoreScrollPosition();
   }
 
   saveExtraIncome(): void {
@@ -662,7 +727,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
         notes: this.extraIncomeForm.notes.trim() || undefined
       });
     }
-    this.isExtraIncomeModalOpen = false;
+    this.closeExtraIncomeModal();
   }
 
   deleteExtraIncome(item: ExtraIncomeItem, event?: Event): void {

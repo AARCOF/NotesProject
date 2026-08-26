@@ -363,7 +363,10 @@ export class AuthService {
       this.currentUserSubject.next(user);
 
       localStorage.setItem('noteyou_tutorial_completed_' + user.id, 'true');
-      localStorage.setItem('noteyou_tutorial_completed_' + user.email.toLowerCase(), 'true');
+      if (user.email) {
+        localStorage.setItem('noteyou_tutorial_completed_' + user.email.toLowerCase(), 'true');
+      }
+      localStorage.setItem('noteyou_tutorial_completed_global', 'true');
 
       // Persistir en MongoDB Atlas
       this.http.put('/api/admin/users', { userId: user.id, hasCompletedTutorial: true }).subscribe({ error: () => {} });

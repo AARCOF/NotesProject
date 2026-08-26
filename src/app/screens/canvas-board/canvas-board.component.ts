@@ -10,7 +10,12 @@ type DrawingTool = 'brush' | 'highlighter' | 'eraser';
 })
 export class CanvasBoardComponent implements OnInit, AfterViewInit {
   @ViewChild('drawingCanvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
-  
+  @ViewChild('notepadTextarea', { static: false }) notepadRef!: ElementRef<HTMLTextAreaElement>;
+
+  // Mode: Canva (Drawing) or Notepad (Plain text)
+  activeMode: 'canvas' | 'notepad' = 'canvas';
+
+  // --- Drawing State ---
   private ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
   private lastX: number = 0;
@@ -46,6 +51,12 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
   private historyStep: number = -1;
   private maxHistory: number = 25;
 
+  // --- Notepad / Plain Text State ---
+  notepadText: string = '';
+  notepadFontSize: number = 15;
+  notepadFontFamily: 'sans' | 'mono' | 'serif' = 'sans';
+  notepadWordWrap: boolean = true;
+
   statusMessage: string = '';
   private currentUserId: string = 'guest';
 
@@ -56,9 +67,17 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
     if (user) {
       this.currentUserId = user.id;
     }
+    this.loadSavedNotepad();
   }
 
   ngAfterViewInit(): void {
+    if (this.activeMode === 'canvas') {
+      this.initCanvas();
+    }
+  }
+
+  private initCanvas(): void {
+    if (!this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     const context = canvas.getContext('2d') as CanvasRenderingContext2D | null;
     if (!context) return;
@@ -68,28 +87,42 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
     this.loadSavedCanvas();
   }
 
+  setMode(mode: 'canvas' | 'notepad'): void {
+    this.activeMode = mode;
+    if (mode === 'canvas') {
+      setTimeout(() => {
+        this.initCanvas();
+      }, 60);
+    } else {
+      setTimeout(() => {
+        if (this.notepadRef && this.notepadRef.nativeElement) {
+          this.notepadRef.nativeElement.focus();
+        }
+      }, 60);
+    }
+  }
+
   @HostListener('window:resize')
   onResize(): void {
-    // When resizing, preserve image content
-    if (!this.ctx) return;
-    const savedData = this.ctx.getImageData(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
-    this.resizeCanvas();
-    this.ctx.putImageData(savedData, 0, 0);
+    if (this.activeMode === 'canvas' && this.ctx && this.canvasRef) {
+      const savedData = this.ctx.getImageData(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+      this.resizeCanvas();
+      this.ctx.putImageData(savedData, 0, 0);
+    }
   }
 
   private resizeCanvas(): void {
+    if (!this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     const parent = canvas.parentElement;
     if (!parent) return;
 
-    // Create a square/responsive canvas area
     const width = parent.clientWidth;
-    const height = Math.max(600, window.innerHeight - 280);
+    const height = Math.max(550, window.innerHeight - 290);
 
     canvas.width = width;
     canvas.height = height;
 
-    // Fill white background initially
     this.ctx.fillStyle = '#ffffff';
     this.ctx.fillRect(0, 0, width, height);
 
@@ -183,14 +216,13 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
     this.strokeWidth = width;
   }
 
-  // --- Undo / Redo / Clear / Export ---
+  // --- Undo / Redo / Clear / Export (Drawing) ---
 
   private saveState(): void {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     const imgData = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    // Discard any redos after current step
     this.history = this.history.slice(0, this.historyStep + 1);
     this.history.push(imgData);
 
@@ -228,6 +260,7 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
   }
 
   clearCanvas(): void {
+    if (!this.canvasRef || !this.ctx) return;
     const canvas = this.canvasRef.nativeElement;
     this.ctx.fillStyle = '#ffffff';
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -237,6 +270,7 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
   }
 
   downloadImage(): void {
+    if (!this.canvasRef) return;
     const canvas = this.canvasRef.nativeElement;
     const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
@@ -246,20 +280,104 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
     this.showToast('¡Imagen PNG descargada con éxito!');
   }
 
+  // --- Notepad / Plain Text Logic ---
+
+  onTextChange(): void {
+    this.autoSaveNotepad();
+  }
+
+  getCharCount(): number {
+    return this.notepadText ? this.notepadText.length : 0;
+  }
+
+  getWordCount(): number {
+    if (!this.notepadText || !this.notepadText.trim()) return 0;
+    return this.notepadText.trim().split(/\s+/).length;
+  }
+
+  getLineCount(): number {
+    if (!this.notepadText) return 1;
+    return this.notepadText.split('\n').length;
+  }
+
+  insertDateTime(): void {
+    const now = new Date();
+    const formatted = `\n--- [${now.toLocaleDateString()} ${now.toLocaleTimeString()}] ---\n`;
+    this.notepadText = (this.notepadText ? this.notepadText : '') + formatted;
+    this.onTextChange();
+    this.showToast('Marca de fecha y hora insertada');
+  }
+
+  copyToClipboard(): void {
+    if (!this.notepadText) {
+      this.showToast('No hay texto para copiar.');
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(this.notepadText).then(() => {
+        this.showToast('¡Texto copiado al portapapeles!');
+      }).catch(() => {
+        this.fallbackCopyText();
+      });
+    } else {
+      this.fallbackCopyText();
+    }
+  }
+
+  private fallbackCopyText(): void {
+    const textarea = document.createElement('textarea');
+    textarea.value = this.notepadText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    this.showToast('¡Texto copiado al portapapeles!');
+  }
+
+  downloadTxt(): void {
+    if (!this.notepadText.trim()) {
+      this.showToast('El bloc de notas está vacío.');
+      return;
+    }
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+    const filename = `NoteYou-Texto-${dateStr}_${timeStr}.txt`;
+    const blob = new Blob([this.notepadText], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    this.showToast('¡Archivo .txt descargado con éxito!');
+  }
+
+  clearNotepad(): void {
+    if (!this.notepadText.trim()) return;
+    if (confirm('¿Estás seguro de que deseas vaciar todo el texto del bloc de notas?')) {
+      this.notepadText = '';
+      this.onTextChange();
+      this.showToast('Bloc de notas vaciado');
+    }
+  }
+
   // --- LocalStorage Persistence ---
 
   private getStorageKey(): string {
     return `noteyou_canvas_${this.currentUserId}`;
   }
 
+  private getNotepadStorageKey(): string {
+    return `noteyou_notepad_${this.currentUserId}`;
+  }
+
   private autoSaveToStorage(): void {
     try {
+      if (!this.canvasRef) return;
       const canvas = this.canvasRef.nativeElement;
       const dataUrl = canvas.toDataURL('image/png');
       localStorage.setItem(this.getStorageKey(), dataUrl);
-    } catch (e) {
-      // Storage quota or error safe guard
-    }
+    } catch (e) {}
   }
 
   private loadSavedCanvas(): void {
@@ -276,7 +394,22 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
     } catch (e) {}
   }
 
-  private showToast(msg: string): void {
+  private autoSaveNotepad(): void {
+    try {
+      localStorage.setItem(this.getNotepadStorageKey(), this.notepadText);
+    } catch (e) {}
+  }
+
+  private loadSavedNotepad(): void {
+    try {
+      const savedText = localStorage.getItem(this.getNotepadStorageKey());
+      if (savedText !== null) {
+        this.notepadText = savedText;
+      }
+    } catch (e) {}
+  }
+
+  public showToast(msg: string): void {
     this.statusMessage = msg;
     setTimeout(() => {
       this.statusMessage = '';

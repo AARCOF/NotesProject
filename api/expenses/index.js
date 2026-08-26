@@ -30,7 +30,8 @@ module.exports = async function handler(req, res) {
           budgets: data ? data.budgets || [] : [],
           extraIncomes: data ? data.extraIncomes || [] : [],
           categories: data ? data.categories || [] : [],
-          subcategories: data ? data.subcategories || [] : []
+          subcategories: data ? data.subcategories || [] : [],
+          baseMonthlyIncome: data ? data.baseMonthlyIncome || 0 : 0
         });
       }
 
@@ -47,6 +48,7 @@ module.exports = async function handler(req, res) {
               extraIncomes: payload.extraIncomes || [],
               categories: payload.categories || [],
               subcategories: payload.subcategories || [],
+              baseMonthlyIncome: Number(payload.baseMonthlyIncome) || 0,
               updatedAt: new Date().toISOString()
             }
           },

@@ -687,7 +687,37 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     { class: 'typcn-tag', label: 'Etiqueta' }
   ];
 
+  private savedScrollTop: number | null = null;
+
+  private recordScrollPosition(): void {
+    const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+    if (container) {
+      this.savedScrollTop = container.scrollTop;
+    } else if (typeof window !== 'undefined') {
+      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop;
+    }
+  }
+
+  private restoreScrollPosition(): void {
+    if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
+      (document.activeElement as HTMLElement).blur();
+    }
+    const saved = this.savedScrollTop;
+    this.savedScrollTop = null;
+    if (saved !== null && saved !== undefined) {
+      setTimeout(() => {
+        const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+        if (container) {
+          container.scrollTop = saved;
+        } else if (typeof window !== 'undefined') {
+          window.scrollTo(0, saved);
+        }
+      }, 30);
+    }
+  }
+
   openCreateCategoryModal(): void {
+    this.recordScrollPosition();
     this.categoryToEdit = null;
     this.catName = '';
     this.catDescription = '';
@@ -697,6 +727,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   }
 
   openEditCategoryModal(cat: Category): void {
+    this.recordScrollPosition();
     this.categoryToEdit = cat;
     this.catName = cat.name;
     this.catDescription = cat.description || '';
@@ -708,6 +739,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   closeCategoryModal(): void {
     this.isCategoryModalOpen = false;
     this.categoryToEdit = null;
+    this.restoreScrollPosition();
   }
 
   saveCategoryForm(): void {

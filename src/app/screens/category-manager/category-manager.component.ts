@@ -75,7 +75,37 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
     return this.notes.filter(n => n.categoryId === categoryId).length;
   }
 
+  private savedScrollTop: number | null = null;
+
+  private recordScrollPosition(): void {
+    const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+    if (container) {
+      this.savedScrollTop = container.scrollTop;
+    } else if (typeof window !== 'undefined') {
+      this.savedScrollTop = window.scrollY || document.documentElement.scrollTop;
+    }
+  }
+
+  private restoreScrollPosition(): void {
+    if (typeof document !== 'undefined' && document.activeElement && typeof (document.activeElement as HTMLElement).blur === 'function') {
+      (document.activeElement as HTMLElement).blur();
+    }
+    const saved = this.savedScrollTop;
+    this.savedScrollTop = null;
+    if (saved !== null && saved !== undefined) {
+      setTimeout(() => {
+        const container = document.querySelector('.workspace-view-container') || document.querySelector('.main-panel');
+        if (container) {
+          container.scrollTop = saved;
+        } else if (typeof window !== 'undefined') {
+          window.scrollTo(0, saved);
+        }
+      }, 30);
+    }
+  }
+
   openCreateModal(): void {
+    this.recordScrollPosition();
     this.categoryToEdit = null;
     this.name = '';
     this.description = '';
@@ -85,6 +115,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
   }
 
   openEditModal(category: Category): void {
+    this.recordScrollPosition();
     this.categoryToEdit = category;
     this.name = category.name;
     this.description = category.description || '';
@@ -96,6 +127,7 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.isModalOpen = false;
     this.categoryToEdit = null;
+    this.restoreScrollPosition();
   }
 
   saveCategory(): void {

@@ -1,16 +1,44 @@
 <div class="row">
   <div class="col-12">
     <div class="card shadow-sm border-0 rounded-xl bg-white mb-4">
-      <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+      <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-          <h4 class="font-weight-bold text-slate-800 mb-1">
-            <i class="typcn typcn-brush text-blue mr-2"></i> Mi Lienzo / Canva
+          <h4 class="font-weight-bold text-slate-800 mb-1 d-flex align-items-center">
+            <span class="p-2 rounded-lg bg-blue-50 text-blue mr-2 d-inline-flex align-items-center justify-content-center">
+              <i class="typcn" [ngClass]="activeMode === 'canvas' ? 'typcn-brush' : 'typcn-document-text'"></i>
+            </span>
+            Canva / Texto
           </h4>
-          <p class="text-slate-500 mb-0">Dibuja, bosqueja ideas, crea diagramas o notas visuales a mano alzada.</p>
+          <p class="text-slate-500 mb-0 font-size-13">
+            {{ activeMode === 'canvas' 
+                ? 'Dibuja, bosqueja ideas, crea diagramas o notas visuales a mano alzada.' 
+                : 'Escribe notas rápidas en texto plano tipo Bloc de Notas y descárgalas en formato .txt.' }}
+          </p>
         </div>
         
-        <div class="d-flex align-items-center gap-2 mt-3 mt-md-0" *ngIf="statusMessage">
-          <div class="badge badge-emerald-light text-emerald px-3 py-2 font-weight-bold fade-in-up">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <!-- Selector de Modo: Canva vs Texto Plano -->
+          <div class="mode-switch-container bg-slate-100 p-1 rounded-xl d-flex border shadow-xs">
+            <button 
+              type="button" 
+              class="btn btn-sm btn-mode-toggle"
+              [class.active]="activeMode === 'canvas'"
+              (click)="setMode('canvas')">
+              <i class="typcn typcn-brush font-size-16 mr-1"></i>
+              <span>Dibujo (Canva)</span>
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-mode-toggle"
+              [class.active]="activeMode === 'notepad'"
+              (click)="setMode('notepad')">
+              <i class="typcn typcn-document-text font-size-16 mr-1"></i>
+              <span>Texto Plano (Notepad)</span>
+            </button>
+          </div>
+
+          <!-- Toast Message -->
+          <div class="badge badge-emerald-light text-emerald px-3 py-2 font-weight-bold fade-in-up" *ngIf="statusMessage">
             <i class="typcn typcn-tick mr-1"></i> {{ statusMessage }}
           </div>
         </div>
@@ -19,12 +47,14 @@
   </div>
 </div>
 
-<!-- Toolbar + Canvas Area -->
-<div class="row fade-in-up">
+<!-- ========================================== -->
+<!-- 1. MODO CANVA / PIZARRA DE DIBUJO          -->
+<!-- ========================================== -->
+<div class="row fade-in-up" *ngIf="activeMode === 'canvas'">
   <div class="col-12">
     <div class="card shadow-sm border-0 rounded-xl bg-white overflow-hidden">
       
-      <!-- Toolbar Superior -->
+      <!-- Toolbar Superior Dibujo -->
       <div class="canvas-toolbar p-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3 bg-slate-50">
         
         <!-- Herramientas Principales -->
@@ -96,7 +126,7 @@
           </div>
         </div>
 
-        <!-- Acciones: Deshacer, Rehacer, Limpiar, Descargar -->
+        <!-- Acciones: Deshacer, Rehacer, Limpiar, Descargar PNG -->
         <div class="d-flex align-items-center gap-2">
           <button 
             class="btn btn-white btn-sm border shadow-xs rounded-lg text-slate-700 font-weight-bold hover-lift"
@@ -144,6 +174,157 @@
           (touchmove)="draw($event)"
           (touchend)="stopDrawing()">
         </canvas>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2. MODO TEXTO PLANO / BLOC DE NOTAS        -->
+<!-- ========================================== -->
+<div class="row fade-in-up" *ngIf="activeMode === 'notepad'">
+  <div class="col-12">
+    <div class="card shadow-sm border-0 rounded-xl bg-white overflow-hidden">
+      
+      <!-- Toolbar Superior Notepad -->
+      <div class="notepad-toolbar p-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3 bg-slate-50">
+        
+        <!-- Controles Tipográficos -->
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          
+          <!-- Tipo de Letra -->
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-slate-500 font-size-12 font-weight-bold text-uppercase d-none d-sm-inline">Fuente:</span>
+            <div class="btn-group bg-white p-1 rounded-lg border shadow-xs" role="group">
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool font-sans"
+                [class.active]="notepadFontFamily === 'sans'"
+                (click)="notepadFontFamily = 'sans'">
+                Sans
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool font-mono"
+                [class.active]="notepadFontFamily === 'mono'"
+                (click)="notepadFontFamily = 'mono'">
+                Mono
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool font-serif"
+                [class.active]="notepadFontFamily === 'serif'"
+                (click)="notepadFontFamily = 'serif'">
+                Serif
+              </button>
+            </div>
+          </div>
+
+          <!-- Tamaño de Letra -->
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-slate-500 font-size-12 font-weight-bold text-uppercase d-none d-sm-inline">Tamaño:</span>
+            <div class="btn-group bg-white p-1 rounded-lg border shadow-xs" role="group">
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool"
+                [class.active]="notepadFontSize === 13"
+                (click)="notepadFontSize = 13">
+                13
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool"
+                [class.active]="notepadFontSize === 15"
+                (click)="notepadFontSize = 15">
+                15
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool"
+                [class.active]="notepadFontSize === 18"
+                (click)="notepadFontSize = 18">
+                18
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-tool"
+                [class.active]="notepadFontSize === 22"
+                (click)="notepadFontSize = 22">
+                22
+              </button>
+            </div>
+          </div>
+
+          <!-- Utilidades Rápidas -->
+          <div class="d-flex align-items-center gap-2">
+            <button 
+              type="button" 
+              class="btn btn-white btn-sm border shadow-xs rounded-lg text-slate-700 font-weight-semibold hover-lift"
+              (click)="insertDateTime()"
+              title="Insertar fecha y hora actual">
+              <i class="typcn typcn-time text-blue font-size-16 mr-1"></i> Fecha/Hora
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-white btn-sm border shadow-xs rounded-lg text-slate-700 font-weight-semibold hover-lift"
+              (click)="copyToClipboard()"
+              title="Copiar todo el texto al portapapeles">
+              <i class="typcn typcn-clipboard text-slate-600 font-size-16 mr-1"></i> Copiar
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Acciones: Limpiar y Descargar TXT -->
+        <div class="d-flex align-items-center gap-2">
+          <button 
+            type="button" 
+            class="btn btn-white btn-sm border shadow-xs rounded-lg text-rose font-weight-bold hover-lift"
+            (click)="clearNotepad()"
+            title="Vaciar todo el texto">
+            <i class="typcn typcn-trash font-size-16 mr-1"></i> Limpiar
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-gradient-blue btn-sm font-weight-bold text-white rounded-lg shadow-sm hover-lift px-3"
+            (click)="downloadTxt()"
+            title="Descargar este texto en un archivo .txt plano">
+            <i class="typcn typcn-download font-size-18 mr-1"></i> Descargar .TXT
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Textarea / Editor Notepad -->
+      <div class="notepad-editor-wrapper position-relative">
+        <textarea 
+          #notepadTextarea
+          class="notepad-textarea form-control border-0"
+          [ngClass]="'font-family-' + notepadFontFamily"
+          [style.fontSize.px]="notepadFontSize"
+          placeholder="Escribe o pega tus notas aquí... Se guarda automáticamente como un bloc de notas."
+          [(ngModel)]="notepadText"
+          (ngModelChange)="onTextChange()"
+          rows="18"
+          spellcheck="false">
+        </textarea>
+      </div>
+
+      <!-- Barra de Estado Inferior -->
+      <div class="notepad-status-bar px-4 py-2-5 bg-slate-50 border-top d-flex flex-wrap align-items-center justify-content-between font-size-12 text-slate-500">
+        <div class="d-flex align-items-center gap-3">
+          <span><strong>{{ getWordCount() }}</strong> palabras</span>
+          <span>&bull;</span>
+          <span><strong>{{ getCharCount() }}</strong> caracteres</span>
+          <span>&bull;</span>
+          <span><strong>{{ getLineCount() }}</strong> líneas</span>
+        </div>
+        <div class="d-flex align-items-center text-slate-500 font-size-11">
+          <i class="typcn typcn-cloud-storage text-emerald font-size-14 mr-1"></i>
+          Guardado automáticamente en este dispositivo
+        </div>
       </div>
 
     </div>

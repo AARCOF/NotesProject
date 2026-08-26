@@ -1,0 +1,22 @@
+{
+  "name": "NoteYou - Tu Espacio de Notas",
+  "short_name": "NoteYou",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/dashboard",
+  "icons": [
+    {
+      "src": "assets/images/noteyou-logo-blue.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/noteyou-logo-blue.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

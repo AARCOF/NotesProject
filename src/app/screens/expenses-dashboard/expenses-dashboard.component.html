@@ -733,7 +733,7 @@
 <!-- ========================================== -->
 
 <!-- Modal: Registrar / Editar Gasto Individual -->
-<div class="modal-backdrop-custom" *ngIf="isExpenseModalOpen" (click)="isExpenseModalOpen = false"></div>
+<div class="modal-backdrop-custom" *ngIf="isExpenseModalOpen" (click)="closeExpenseModal()"></div>
 <div class="modal-custom" *ngIf="isExpenseModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
@@ -745,7 +745,7 @@
             {{ expenseToEdit ? 'Editar Gasto' : 'Registrar Nuevo Gasto' }}
           </h5>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="isExpenseModalOpen = false">
+        <button type="button" class="btn-close-custom text-white" (click)="closeExpenseModal()">
           <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
@@ -803,7 +803,7 @@
       </div>
 
       <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
-        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isExpenseModalOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeExpenseModal()">Cancelar</button>
         <button type="button" class="btn btn-gradient-blue text-white px-4 rounded-lg font-weight-bold" 
                 [disabled]="!expenseForm.title || !expenseForm.amount || !expenseForm.subcategoryId"
                 (click)="saveExpense()">
@@ -816,7 +816,7 @@
 </div>
 
 <!-- Modal: Crear / Editar Categoría -->
-<div class="modal-backdrop-custom" *ngIf="isCategoryModalOpen" (click)="isCategoryModalOpen = false"></div>
+<div class="modal-backdrop-custom" *ngIf="isCategoryModalOpen" (click)="closeCategoryModal()"></div>
 <div class="modal-custom" *ngIf="isCategoryModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
@@ -825,7 +825,7 @@
         <h5 class="modal-title font-weight-bold mb-0 font-size-17">
           {{ categoryToEdit ? 'Editar Categoría de Gasto' : 'Nueva Categoría de Gasto' }}
         </h5>
-        <button type="button" class="btn-close-custom text-white" (click)="isCategoryModalOpen = false">
+        <button type="button" class="btn-close-custom text-white" (click)="closeCategoryModal()">
           <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
@@ -872,7 +872,7 @@
           </button>
         </div>
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isCategoryModalOpen = false">Cancelar</button>
+          <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeCategoryModal()">Cancelar</button>
           <button type="button" class="btn btn-primary px-4 rounded-lg font-weight-bold" 
                   [disabled]="!categoryForm.name"
                   (click)="saveCategory()">
@@ -886,7 +886,7 @@
 </div>
 
 <!-- Modal: Crear / Editar Subcategoría -->
-<div class="modal-backdrop-custom" *ngIf="isSubcategoryModalOpen" (click)="isSubcategoryModalOpen = false"></div>
+<div class="modal-backdrop-custom" *ngIf="isSubcategoryModalOpen" (click)="closeSubcategoryModal()"></div>
 <div class="modal-custom" *ngIf="isSubcategoryModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
@@ -895,7 +895,7 @@
         <h5 class="modal-title font-weight-bold mb-0 font-size-17">
           {{ subcategoryToEdit ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
         </h5>
-        <button type="button" class="btn-close-custom text-white" (click)="isSubcategoryModalOpen = false">
+        <button type="button" class="btn-close-custom text-white" (click)="closeSubcategoryModal()">
           <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
@@ -917,7 +917,7 @@
       </div>
 
       <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
-        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isSubcategoryModalOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeSubcategoryModal()">Cancelar</button>
         <button type="button" class="btn btn-primary px-4 rounded-lg font-weight-bold" 
                 [disabled]="!subcategoryForm.name || !subcategoryForm.categoryId"
                 (click)="saveSubcategory()">
@@ -930,7 +930,7 @@
 </div>
 
 <!-- Modal: Modificar Sueldo / Ingreso Mensual Base -->
-<div class="modal-backdrop-custom" *ngIf="isIncomeModalOpen" (click)="isIncomeModalOpen = false"></div>
+<div class="modal-backdrop-custom" *ngIf="isIncomeModalOpen" (click)="closeIncomeModal()"></div>
 <div class="modal-custom" *ngIf="isIncomeModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
@@ -940,7 +940,7 @@
           <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
           <h5 class="modal-title font-weight-bold mb-0 font-size-17">Sueldo / Ingreso Mensual Base</h5>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="isIncomeModalOpen = false">
+        <button type="button" class="btn-close-custom text-white" (click)="closeIncomeModal()">
           <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
@@ -966,7 +966,7 @@
       </div>
 
       <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
-        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isIncomeModalOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeIncomeModal()">Cancelar</button>
         <button type="button" class="btn btn-gradient-blue text-white px-4 rounded-lg font-weight-bold" (click)="saveIncome()">
           Guardar Sueldo
         </button>
@@ -977,7 +977,7 @@
 </div>
 
 <!-- Modal: Registrar / Editar Bono o Ingreso Extra -->
-<div class="modal-backdrop-custom" *ngIf="isExtraIncomeModalOpen" (click)="isExtraIncomeModalOpen = false"></div>
+<div class="modal-backdrop-custom" *ngIf="isExtraIncomeModalOpen" (click)="closeExtraIncomeModal()"></div>
 <div class="modal-custom" *ngIf="isExtraIncomeModalOpen" tabindex="-1" role="dialog">
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
@@ -989,7 +989,7 @@
             {{ extraIncomeToEdit ? 'Editar Bono / Ingreso Extra' : 'Registrar Bono o Ingreso Extra' }}
           </h5>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="isExtraIncomeModalOpen = false">
+        <button type="button" class="btn-close-custom text-white" (click)="closeExtraIncomeModal()">
           <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
@@ -1023,7 +1023,7 @@
       </div>
 
       <div class="modal-footer bg-slate-50 p-3 d-flex justify-content-end gap-2 border-top">
-        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="isExtraIncomeModalOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-secondary px-3-5 rounded-lg font-weight-semibold" (click)="closeExtraIncomeModal()">Cancelar</button>
         <button type="button" class="btn btn-gradient-emerald text-white px-4 rounded-lg font-weight-bold" 
                 [disabled]="!extraIncomeForm.title || !extraIncomeForm.amount"
                 (click)="saveExtraIncome()">

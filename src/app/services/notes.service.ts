@@ -296,12 +296,23 @@ export class NotesService {
           const cloudNotes = res.notes;
           let allNotes = this.getAllStorageNotes();
 
-          // Mantener notas de otras cuentas si las hay y actualizar las del usuario activo con MongoDB
           const otherUsersNotes = allNotes.filter(n => n.userId && n.userId !== this.currentUserId);
-          const mergedAll = [...cloudNotes, ...otherUsersNotes];
+          const localUserNotes = allNotes.filter(n => n.userId === this.currentUserId);
+
+          const map = new Map<string, Note>();
+          cloudNotes.forEach(n => map.set(n.id, n));
+          localUserNotes.forEach(n => {
+            if (!map.has(n.id)) {
+              map.set(n.id, n);
+              this.http.post('/api/notes', n).subscribe({ error: () => {} });
+            }
+          });
+
+          const mergedUserNotes = Array.from(map.values());
+          const mergedAll = [...mergedUserNotes, ...otherUsersNotes];
 
           this.saveAllStorageNotes(mergedAll);
-          this.notesSubject.next(cloudNotes);
+          this.notesSubject.next(mergedUserNotes);
         }
       },
       error: () => {}

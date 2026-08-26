@@ -29,6 +29,9 @@ export class ExpenseService {
   private budgetsSubject = new BehaviorSubject<MonthlyBudget[]>([]);
   public budgets$: Observable<MonthlyBudget[]> = this.budgetsSubject.asObservable();
 
+  private baseMonthlyIncomeSubject = new BehaviorSubject<number>(0);
+  public baseMonthlyIncome$: Observable<number> = this.baseMonthlyIncomeSubject.asObservable();
+
   private openAddModalRequestSubject = new Subject<{ open: boolean; subcategoryId?: string; categoryId?: string }>();
   public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string }> = this.openAddModalRequestSubject.asObservable();
 
@@ -105,6 +108,7 @@ export class ExpenseService {
       this.expensesSubject.next([]);
       this.extraIncomesSubject.next([]);
       this.budgetsSubject.next([]);
+      this.baseMonthlyIncomeSubject.next(0);
       return;
     }
 
@@ -130,6 +134,9 @@ export class ExpenseService {
     const userBudgets = allBudgets.filter(b => b.userId === this.currentUserId);
     this.budgetsSubject.next(userBudgets);
 
+    const baseIncome = this.getBaseMonthlyIncome();
+    this.baseMonthlyIncomeSubject.next(baseIncome);
+
     this.fetchCloudExpenses();
   }
 
@@ -140,13 +147,15 @@ export class ExpenseService {
     const allExtra = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY).filter(i => i.userId === this.currentUserId);
     const allCats = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY).filter(c => c.userId === this.currentUserId);
     const allSubs = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY).filter(s => s.userId === this.currentUserId);
+    const baseIncome = this.getBaseMonthlyIncome();
 
     this.http.post('/api/expenses', {
       expenses: allExpenses,
       budgets: allBudgets,
       extraIncomes: allExtra,
       categories: allCats,
-      subcategories: allSubs
+      subcategories: allSubs,
+      baseMonthlyIncome: baseIncome
     }).subscribe({ error: () => {} });
   }
 
@@ -159,42 +168,84 @@ export class ExpenseService {
       extraIncomes?: ExtraIncomeItem[];
       categories?: ExpenseCategory[];
       subcategories?: ExpenseSubcategory[];
+      baseMonthlyIncome?: number;
     }>('/api/expenses').subscribe({
       next: (res) => {
         if (res && res.success) {
-          if (Array.isArray(res.expenses)) {
-            let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
-            const other = all.filter(e => e.userId !== this.currentUserId);
-            this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...res.expenses, ...other]);
-            this.expensesSubject.next(res.expenses);
+          // Sincronizar sueldo base de forma bidireccional
+          if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
+            const cloudIncome = Number(res.baseMonthlyIncome) || 0;
+            const localIncome = this.getBaseMonthlyIncome();
+            if (cloudIncome > 0) {
+              this.setBaseMonthlyIncome(cloudIncome, false);
+            } else if (localIncome > 0) {
+              this.syncToCloud();
+            }
           }
 
-          if (Array.isArray(res.budgets)) {
-            let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
-            const other = all.filter(b => b.userId !== this.currentUserId);
-            this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...res.budgets, ...other]);
-            this.budgetsSubject.next(res.budgets);
-          }
-
-          if (Array.isArray(res.extraIncomes)) {
-            let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
-            const other = all.filter(i => i.userId !== this.currentUserId);
-            this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...res.extraIncomes, ...other]);
-            this.extraIncomesSubject.next(res.extraIncomes);
-          }
-
+          // Sincronizar y mergear categorías
           if (Array.isArray(res.categories) && res.categories.length > 0) {
             let all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
             const other = all.filter(c => c.userId !== this.currentUserId);
-            this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...res.categories, ...other]);
-            this.categoriesSubject.next(res.categories);
+            const localUser = all.filter(c => c.userId === this.currentUserId);
+            const catMap = new Map<string, ExpenseCategory>();
+            res.categories.forEach(c => catMap.set(c.id, c));
+            localUser.forEach(c => { if (!catMap.has(c.id)) catMap.set(c.id, c); });
+            const mergedCats = Array.from(catMap.values());
+            this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...mergedCats, ...other]);
+            this.categoriesSubject.next(mergedCats);
           }
 
+          // Sincronizar y mergear subcategorías
           if (Array.isArray(res.subcategories) && res.subcategories.length > 0) {
             let all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
             const other = all.filter(s => s.userId !== this.currentUserId);
-            this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...res.subcategories, ...other]);
-            this.subcategoriesSubject.next(res.subcategories);
+            const localUser = all.filter(s => s.userId === this.currentUserId);
+            const subMap = new Map<string, ExpenseSubcategory>();
+            res.subcategories.forEach(s => subMap.set(s.id, s));
+            localUser.forEach(s => { if (!subMap.has(s.id)) subMap.set(s.id, s); });
+            const mergedSubs = Array.from(subMap.values());
+            this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...mergedSubs, ...other]);
+            this.subcategoriesSubject.next(mergedSubs);
+          }
+
+          // Sincronizar y mergear gastos
+          if (Array.isArray(res.expenses)) {
+            let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+            const other = all.filter(e => e.userId !== this.currentUserId);
+            const localUser = all.filter(e => e.userId === this.currentUserId);
+            const expMap = new Map<string, ExpenseItem>();
+            res.expenses.forEach(e => expMap.set(e.id, e));
+            localUser.forEach(e => { if (!expMap.has(e.id)) expMap.set(e.id, e); });
+            const mergedExpenses = Array.from(expMap.values());
+            this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...mergedExpenses, ...other]);
+            this.expensesSubject.next(mergedExpenses);
+          }
+
+          // Sincronizar y mergear presupuestos / ingresos por mes
+          if (Array.isArray(res.budgets)) {
+            let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
+            const other = all.filter(b => b.userId !== this.currentUserId);
+            const localUser = all.filter(b => b.userId === this.currentUserId);
+            const bMap = new Map<string, MonthlyBudget>();
+            res.budgets.forEach(b => bMap.set(b.monthKey, b));
+            localUser.forEach(b => { if (!bMap.has(b.monthKey)) bMap.set(b.monthKey, b); });
+            const mergedBudgets = Array.from(bMap.values());
+            this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...mergedBudgets, ...other]);
+            this.budgetsSubject.next(mergedBudgets);
+          }
+
+          // Sincronizar y mergear bonos / ingresos extras
+          if (Array.isArray(res.extraIncomes)) {
+            let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+            const other = all.filter(i => i.userId !== this.currentUserId);
+            const localUser = all.filter(i => i.userId === this.currentUserId);
+            const incMap = new Map<string, ExtraIncomeItem>();
+            res.extraIncomes.forEach(i => incMap.set(i.id, i));
+            localUser.forEach(i => { if (!incMap.has(i.id)) incMap.set(i.id, i); });
+            const mergedExtra = Array.from(incMap.values());
+            this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...mergedExtra, ...other]);
+            this.extraIncomesSubject.next(mergedExtra);
           }
         }
       },
@@ -266,7 +317,7 @@ export class ExpenseService {
     const newSubcategories: ExpenseSubcategory[] = [];
 
     defaultCategories.forEach((def, index) => {
-      const catId = 'exp_cat_' + this.currentUserId + '_' + Date.now() + '_' + (index + 1);
+      const catId = 'exp_cat_' + this.currentUserId + '_' + (index + 1);
       newCategories.push({
         id: catId,
         userId: this.currentUserId!,
@@ -287,16 +338,17 @@ export class ExpenseService {
       });
     });
 
-    allCategories = [...allCategories, ...newCategories];
-    this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, allCategories);
+    const otherCats = allCategories.filter(c => c.userId !== this.currentUserId);
+    const otherSubs = allSubs.filter(s => s.userId !== this.currentUserId);
 
-    allSubs = [...allSubs, ...newSubcategories];
-    this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, allSubs);
+    this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...newCategories, ...otherCats]);
+    this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...newSubcategories, ...otherSubs]);
 
     localStorage.setItem('noteyou_expense_init_' + this.currentUserId, 'true');
 
     if (triggerRefresh) {
       this.refreshData();
+      this.syncToCloud();
     }
   }
 
@@ -494,11 +546,13 @@ export class ExpenseService {
     return val ? Number(val) || 0 : 0;
   }
 
-  public setBaseMonthlyIncome(income: number): void {
+  public setBaseMonthlyIncome(income: number, triggerSync: boolean = true): void {
     if (!this.currentUserId) return;
     localStorage.setItem(this.getBaseIncomeStorageKey(), String(Number(income) || 0));
-    this.refreshData();
-    this.syncToCloud();
+    if (triggerSync) {
+      this.refreshData();
+      this.syncToCloud();
+    }
   }
 
   public getMonthlyIncome(monthKey: string): number {

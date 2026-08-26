@@ -115,13 +115,28 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    // Admins y superadmins nunca ven el tutorial de bienvenida
+    if (this.currentUser.role === 'superadmin' || this.currentUser.role === 'admin') {
+      this.showTutorial = false;
+      return;
+    }
+
     const userId = this.currentUser.id;
     const email = (this.currentUser.email || '').toLowerCase();
-    const localFlag = localStorage.getItem('noteyou_tutorial_completed_' + userId) || localStorage.getItem('noteyou_tutorial_completed_' + email);
+    const localFlag = localStorage.getItem('noteyou_tutorial_completed_' + userId) || 
+                      localStorage.getItem('noteyou_tutorial_completed_' + email) ||
+                      localStorage.getItem('noteyou_tutorial_completed_global');
 
-    // Si ya completó el tutorial previamente en la nube o en el dispositivo, no mostrarlo nunca más
-    if (localFlag === 'true' || this.currentUser.hasCompletedTutorial === true) {
+    // Si ya completó el tutorial previamente en la nube, en local, o si ya tiene tareas creadas
+    const hasExistingData = this.globalTasks && this.globalTasks.length > 0;
+
+    if (localFlag === 'true' || this.currentUser.hasCompletedTutorial === true || hasExistingData) {
       this.showTutorial = false;
+      if (!localFlag) {
+        localStorage.setItem('noteyou_tutorial_completed_' + userId, 'true');
+        localStorage.setItem('noteyou_tutorial_completed_' + email, 'true');
+        localStorage.setItem('noteyou_tutorial_completed_global', 'true');
+      }
     } else {
       this.showTutorial = true;
     }
@@ -170,6 +185,7 @@ export class AppComponent implements OnInit {
 
   onTutorialCompleted(): void {
     this.showTutorial = false;
+    this.authService.markTutorialAsCompleted();
   }
 }
 

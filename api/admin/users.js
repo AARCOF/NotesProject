@@ -6,9 +6,19 @@ module.exports = async function handler(req, res) {
     return sendJsonResponse(res, 200, { ok: true });
   }
 
+  let body = req.body;
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch (e) {}
+  }
+
   const authUser = verifyAuthToken(req);
-  const isSuper = authUser && authUser.role === 'superadmin';
-  const isSelf = authUser && (authUser.sub === body?.userId || authUser.email === body?.userId);
+  if (!authUser) {
+    return sendJsonResponse(res, 401, { success: false, message: 'No autorizado. Token inválido o ausente.' });
+  }
+
+  const isSuper = authUser.role === 'superadmin';
+  const targetUserId = body?.userId;
+  const isSelf = authUser.sub === targetUserId || authUser.email === targetUserId;
 
   if (req.method === 'GET' && !isSuper) {
     return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Superadministradores.' });
