@@ -33,6 +33,32 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
+
+        <!-- NoteYou Tasks Widget -->
+        <receiver android:name=".TasksWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.noteyou.app.action.REFRESH_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/task_widget_info" />
+        </receiver>
+
+        <!-- Tasks Widget Service -->
+        <service android:name=".TasksWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <!-- NoteYou Expenses Widget -->
+        <receiver android:name=".ExpensesWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.noteyou.app.action.REFRESH_EXPENSES_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/expense_widget_info" />
+        </receiver>
     </application>
 
     <!-- Permissions -->

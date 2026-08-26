@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="4dp"
+    android:gravity="center_vertical">
+
+    <!-- Priority indicator indicator/circle -->
+    <View
+        android:id="@+id/widget_item_priority_indicator"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/widget_priority_circle_low"
+        android:layout_marginRight="10dp" />
+
+    <!-- Task Title -->
+    <TextView
+        android:id="@+id/widget_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Título de la tarea"
+        android:textColor="#e2e8f0"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:ellipsize="end" />
+
+</LinearLayout>

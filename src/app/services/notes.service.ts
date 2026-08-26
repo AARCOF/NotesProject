@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Note, PriorityLevel, NoteStatus, RecurrenceFrequency } from '../models/note.model';
 import { AuthService } from '../core/services/auth.service';
+import { Preferences } from '@capacitor/preferences';
 
 const NOTES_STORAGE_KEY = 'noteyou_notes_v2';
 export const COMPLETED_TASK_AUTO_DELETE_DAYS = 15;
@@ -45,6 +46,10 @@ export class NotesService {
       this.initAutoSync();
     });
 
+    this.notes$.subscribe(notes => {
+      this.updateWidgetTasks(notes);
+    });
+
     if (typeof window !== 'undefined') {
       window.addEventListener('focus', () => this.fetchCloudNotes());
       if (typeof document !== 'undefined') {
@@ -53,6 +58,24 @@ export class NotesService {
         });
       }
     }
+  }
+
+  private updateWidgetTasks(tasks: Note[]): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const widgetTasks = tasks
+        .filter(t => t.status !== 'completada')
+        .slice(0, 8)
+        .map(t => ({ title: t.title, priority: t.priority || 'baja' }));
+
+      localStorage.setItem('widget_tasks_json', JSON.stringify(widgetTasks));
+      localStorage.setItem('CapacitorStorage.widget_tasks_json', JSON.stringify(widgetTasks));
+
+      Preferences.set({
+        key: 'widget_tasks_json',
+        value: JSON.stringify(widgetTasks)
+      }).catch(() => {});
+    } catch (e) {}
   }
 
   private initAutoSync(): void {

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem, MonthlyBudget } from '../models/expense.model';
 import { AuthService } from '../core/services/auth.service';
+import { Preferences } from '@capacitor/preferences';
 
 const EXPENSE_CATEGORIES_STORAGE_KEY = 'noteyou_expense_categories_v1';
 const EXPENSE_SUBCATEGORIES_STORAGE_KEY = 'noteyou_expense_subcategories_v1';
@@ -73,6 +74,15 @@ export class ExpenseService {
       this.initAutoSync();
     });
 
+    combineLatest([
+      this.expenses$,
+      this.extraIncomes$,
+      this.baseMonthlyIncome$,
+      this.currency$
+    ]).subscribe(() => {
+      this.updateWidgetExpenses();
+    });
+
     if (typeof window !== 'undefined') {
       window.addEventListener('focus', () => this.fetchCloudExpenses());
       if (typeof document !== 'undefined') {
@@ -80,6 +90,58 @@ export class ExpenseService {
           if (!document.hidden) this.fetchCloudExpenses();
         });
       }
+    }
+  }
+
+  private updateWidgetExpenses(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const expenses = this.expensesSubject.getValue();
+      const extraIncomes = this.extraIncomesSubject.getValue();
+      const baseIncome = this.baseMonthlyIncomeSubject.getValue();
+      const currency = this.currencySubject.getValue() || 'S/.';
+
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+
+      const currentMonthExpenses = expenses
+        .filter(exp => {
+          if (!exp.date) return false;
+          const d = new Date(exp.date);
+          return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+        })
+        .reduce((sum, exp) => sum + (exp.amount || 0), 0);
+
+      const currentMonthExtra = extraIncomes
+        .filter(inc => {
+          if (!inc.date) return false;
+          const d = new Date(inc.date);
+          return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+        })
+        .reduce((sum, inc) => sum + (inc.amount || 0), 0);
+
+      const totalIncome = baseIncome + currentMonthExtra;
+      const balance = totalIncome - currentMonthExpenses;
+
+      const format = (val: number) => `${currency} ${val.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+      const widgetData = {
+        balance: format(balance),
+        income: format(totalIncome),
+        expenses: format(currentMonthExpenses)
+      };
+
+      localStorage.setItem('widget_expenses_json', JSON.stringify(widgetData));
+      localStorage.setItem('CapacitorStorage.widget_expenses_json', JSON.stringify(widgetData));
+
+      Preferences.set({
+        key: 'widget_expenses_json',
+        value: JSON.stringify(widgetData)
+      }).catch(() => {});
+
+    } catch (e) {
+      console.error('Error updating expenses widget:', e);
     }
   }
 
