@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
     versionCode: 310,
     releasedAt: '2026-08-26',
     appName: 'NoteYou',
-    downloadUrl: 'https://github.com/AARCOF/NotesProject/releases/latest/download/noteyou.apk',
+    downloadUrl: '/assets/downloads/noteyou.apk',
     releaseNotes: [
       'Nuevo logo oficial blanco en alta definición.',
       'Soporte multi-moneda desde el perfil de usuario (PEN, USD, EUR, MXN, COP, etc.).',

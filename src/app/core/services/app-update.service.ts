@@ -38,9 +38,18 @@ export class AppUpdateService {
   }
 
   public downloadAndInstallUpdate(downloadUrl: string): void {
-    if (downloadUrl) {
-      window.open(downloadUrl, '_system');
-    }
+    if (!downloadUrl) return;
+    const finalUrl = downloadUrl.startsWith('http') ? downloadUrl : (window.location.origin + (downloadUrl.startsWith('/') ? downloadUrl : '/' + downloadUrl));
+    
+    const a = document.createElement('a');
+    a.href = finalUrl;
+    a.download = 'NoteYou.apk';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+    }, 500);
   }
 
   public dismissUpdate(): void {
