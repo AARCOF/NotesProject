@@ -1099,22 +1099,29 @@ body.modal-open-locked,
   }
 }
 
-/* Universal Mobile Modal Footer Styling (APK / Phone) */
+/* Universal Mobile Modal Footer Styling (APK / Phone / Mobile) */
 @media (max-width: 991px) {
-  .modal-footer {
+  .modal-footer,
+  .modal-footer-custom {
     padding: 0.75rem 1rem !important;
     padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
     display: flex !important;
     flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
     flex-wrap: nowrap !important;
     gap: 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
 
-    .btn, button {
+    > .btn,
+    > button,
+    > form button,
+    > div > .btn {
       margin: 0 !important;
-      padding: 0.65rem 0.75rem !important;
-      font-size: 0.875rem !important;
+      padding: 0.6rem 0.65rem !important;
+      font-size: 0.8125rem !important;
       font-weight: 700 !important;
       border-radius: 12px !important;
       height: 44px !important;
@@ -1124,17 +1131,50 @@ body.modal-open-locked,
       justify-content: center !important;
       white-space: nowrap !important;
       box-sizing: border-box !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
 
-      &:first-child {
-        flex: 1 1 35% !important;
-        max-width: 40% !important;
-        min-width: 0 !important;
+      i {
+        font-size: 16px !important;
+        margin-right: 4px !important;
       }
+    }
 
-      &:last-child {
-        flex: 2 1 65% !important;
-        min-width: 0 !important;
-      }
+    /* Regla para 2 botones (Cancelar / Guardar) */
+    > .btn:first-child:nth-last-child(2),
+    > button:first-child:nth-last-child(2) {
+      flex: 1 1 35% !important;
+      max-width: 40% !important;
+    }
+
+    > .btn:last-child:nth-child(2),
+    > button:last-child:nth-child(2) {
+      flex: 2 1 65% !important;
+    }
+
+    /* Regla para 3 botones (Eliminar / Cancelar / Guardar) */
+    > .btn:first-child:nth-last-child(3),
+    > button:first-child:nth-last-child(3) {
+      flex: 1 1 28% !important;
+      max-width: 32% !important;
+      padding: 0.6rem 0.35rem !important;
+      font-size: 0.75rem !important;
+    }
+    > .btn:nth-child(2):nth-last-child(2),
+    > button:nth-child(2):nth-last-child(2) {
+      flex: 1 1 28% !important;
+      max-width: 32% !important;
+      padding: 0.6rem 0.35rem !important;
+      font-size: 0.75rem !important;
+    }
+    > .btn:last-child:nth-child(3),
+    > button:last-child:nth-child(3) {
+      flex: 1.5 1 44% !important;
+      padding: 0.6rem 0.5rem !important;
+      font-size: 0.78rem !important;
     }
   }
 }
