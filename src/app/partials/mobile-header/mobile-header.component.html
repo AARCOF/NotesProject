@@ -20,8 +20,8 @@
         <i class="typcn typcn-flash"></i>
       </button>
 
-      <!-- Botón de Nueva Tarea / Nueva Categoría / Nuevo Gasto dinámico según la sección -->
-      <button class="header-btn-new-task shadow-sm" (click)="onCreateActionClick()" [title]="createButtonLabel" [attr.aria-label]="createButtonLabel">
+      <!-- Botón de Nueva Tarea / Nueva Categoría / Nuevo Gasto dinámico según la sección (oculto en pestaña de gráficos) -->
+      <button class="header-btn-new-task shadow-sm" *ngIf="notesViewMode !== 'graficos' && expensesActiveTab !== 'graficas'" (click)="onCreateActionClick()" [title]="createButtonLabel" [attr.aria-label]="createButtonLabel">
         <i class="typcn typcn-plus font-size-16 mr-1"></i>
         <span>{{ createButtonLabel }}</span>
       </button>
