@@ -429,7 +429,7 @@
     <div class="dashboard-cards-container flex-grow-1 pr-2 pb-4">
 
       <!-- Skeleton Loaders de Notas -->
-      <app-skeleton-loader type="card" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
+      <app-skeleton-loader type="card" [count]="4" *ngIf="isLoading && (viewMode === 'kanban' || viewMode === 'grid')"></app-skeleton-loader>
 
     <!-- Listado de Notas (Cards) -->
     <ng-container *ngIf="!isLoading && filteredNotes.length > 0">
@@ -1238,7 +1238,7 @@
     </ng-container>
 
     <!-- Estado Vacío -->
-    <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0">
+    <div class="row fade-in-up" *ngIf="!isLoading && filteredNotes.length === 0 && (viewMode === 'kanban' || viewMode === 'grid')">
       <div class="col-12">
         <div class="card shadow-sm text-center p-5 border-0 rounded-xl bg-white">
           <div class="card-body">
