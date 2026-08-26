@@ -809,13 +809,22 @@
           </div>
         </div>
 
-        <!-- Opción Gasto Recurrente Mensual -->
-        <div class="form-group mb-3">
-          <div class="custom-control custom-checkbox bg-slate-50 border border-slate-200 rounded-xl p-2-5 pl-4">
-            <input type="checkbox" class="custom-control-input" id="isRecurringCheck" [(ngModel)]="expenseForm.isRecurring" name="isRecurring">
-            <label class="custom-control-label font-weight-bold text-slate-800 cursor-pointer font-size-13 d-flex align-items-center" for="isRecurringCheck">
-              <i class="typcn typcn-arrow-sync text-blue mr-1-5 font-size-16"></i> Gasto Recurrente Mensual (se aplicará cada mes automáticamente)
-            </label>
+        <!-- Opción Gasto Recurrente Mensual (Diseño Moderno & Encuadre Perfecto) -->
+        <div class="toggle-interactive-card p-3 rounded-xl d-flex align-items-center justify-content-between cursor-pointer mb-3"
+             (click)="expenseForm.isRecurring = !expenseForm.isRecurring"
+             [class.active-toggle]="expenseForm.isRecurring">
+          <div class="d-flex align-items-center pr-2">
+            <div class="toggle-icon-badge mr-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                 [class.active]="expenseForm.isRecurring">
+              <i class="typcn typcn-arrow-sync font-size-20"></i>
+            </div>
+            <div>
+              <div class="font-weight-bold text-slate-800 font-size-14 line-height-tight">Gasto Recurrente Mensual</div>
+              <small class="text-slate-500 font-size-12 d-block mt-0-5">Se renovará y registrará automáticamente cada mes</small>
+            </div>
+          </div>
+          <div class="custom-switch-capsule flex-shrink-0" [class.active]="expenseForm.isRecurring">
+            <div class="switch-knob"></div>
           </div>
         </div>
 

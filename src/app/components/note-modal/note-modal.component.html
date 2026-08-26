@@ -127,18 +127,20 @@
 
           <div class="row">
             <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14">
+              <label class="font-weight-bold text-slate-700 font-size-13 mb-1">
                 <i class="typcn typcn-calendar text-blue mr-1"></i> Fecha Límite
               </label>
               <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
-              <small class="text-slate-400 font-size-11" *ngIf="recurrence !== 'ninguna'">Base para programar los ciclos.</small>
+              <small class="text-slate-400 font-size-11 d-block mt-0-5" *ngIf="recurrence !== 'ninguna'">Base para programar los ciclos.</small>
             </div>
 
             <div class="col-md-6 form-group mb-3">
-              <label class="font-weight-bold text-slate-700 font-size-14 d-flex align-items-center justify-content-between">
-                <span><i class="typcn typcn-arrow-sync text-amber mr-1"></i> Repetición Periódica</span>
-                <span class="badge badge-warning font-size-10 px-2" *ngIf="recurrence !== 'ninguna'">Activa</span>
-              </label>
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <label class="font-weight-bold text-slate-700 font-size-13 mb-0">
+                  <i class="typcn typcn-arrow-sync text-amber mr-1"></i> Repetición / Recordatorio
+                </label>
+                <span class="badge badge-warning font-size-10 px-2 py-0-5 rounded-pill font-weight-bold" *ngIf="recurrence !== 'ninguna'">Activa</span>
+              </div>
               <select class="form-control input-custom" [(ngModel)]="recurrence" name="recurrence">
                 <option value="ninguna">No repetir (Única vez)</option>
                 <option value="diaria">Cada Día (Diaria)</option>
@@ -146,17 +148,17 @@
                 <option value="mensual">Cada Mes (Mensual)</option>
                 <option value="anual">Cada Año (Anual)</option>
               </select>
-              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'mensual'">
-                Se genera automáticamente 1 semana antes de cada vencimiento.
+              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'mensual'">
+                ✨ Se renovará automáticamente cada mes antes del vencimiento.
               </small>
-              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'semanal'">
-                Se genera automáticamente 3 días antes de cada semana.
+              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'semanal'">
+                ✨ Se renovará automáticamente cada semana.
               </small>
-              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'diaria'">
-                Se genera automáticamente 1 día antes cada jornada.
+              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'diaria'">
+                ✨ Se renovará automáticamente cada día.
               </small>
-              <small class="text-slate-500 font-size-11 mt-1 d-block" *ngIf="recurrence === 'anual'">
-                Se genera automáticamente 2 semanas antes cada año.
+              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'anual'">
+                ✨ Se renovará automáticamente cada año.
               </small>
             </div>
           </div>
@@ -207,13 +209,13 @@
               </button>
             </div>
 
-            <!-- Lista de ítems interactivos -->
+            <!-- Lista de ítems interactivos con alineación perfecta -->
             <div class="checklist-items-container d-flex flex-column gap-2" *ngIf="checklist.length > 0">
               <div 
-                class="checklist-item-row d-flex align-items-center justify-content-between p-2 rounded-lg bg-white border shadow-xs" 
+                class="checklist-item-row d-flex align-items-center justify-content-between p-2-5 rounded-xl bg-white border shadow-xs" 
                 *ngFor="let item of checklist; let i = index">
                 <div class="d-flex align-items-center flex-grow-1 mr-2 cursor-pointer" (click)="toggleChecklistItem(i)">
-                  <div class="custom-check-box mr-2" [class.checked]="item.completed">
+                  <div class="custom-check-box" [class.checked]="item.completed">
                     <i class="typcn typcn-tick font-size-14 text-white" *ngIf="item.completed"></i>
                   </div>
                   <span class="font-size-13 text-slate-800" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed">
@@ -227,18 +229,18 @@
             </div>
           </div>
 
-          <!-- Toggle Fijar Tarea (Diseño Moderno y Alineado) -->
-          <div class="pin-toggle-card p-3 rounded-xl d-flex align-items-center justify-content-between cursor-pointer mb-2" (click)="isPinned = !isPinned" [class.pinned-active]="isPinned">
-            <div class="d-flex align-items-center">
-              <div class="pin-icon-circle mr-3" [class.active]="isPinned">
+          <!-- Toggle Fijar Tarea (Diseño Moderno y Encuadre Perfecto) -->
+          <div class="toggle-interactive-card p-3 rounded-xl d-flex align-items-center justify-content-between cursor-pointer mb-2" (click)="isPinned = !isPinned" [class.active-toggle]="isPinned">
+            <div class="d-flex align-items-center pr-2">
+              <div class="toggle-icon-badge mr-3 d-flex align-items-center justify-content-center flex-shrink-0" [class.active]="isPinned">
                 <i class="typcn typcn-pin font-size-20"></i>
               </div>
               <div>
-                <div class="font-weight-bold text-slate-800 font-size-14">Fijar esta tarea al inicio de la lista</div>
-                <small class="text-slate-500">Mantener esta nota siempre visible en la parte superior</small>
+                <div class="font-weight-bold text-slate-800 font-size-14 line-height-tight">Fijar esta tarea al inicio</div>
+                <small class="text-slate-500 font-size-12 d-block mt-0-5">Mantener esta nota siempre visible en la parte superior</small>
               </div>
             </div>
-            <div class="custom-switch-capsule" [class.active]="isPinned">
+            <div class="custom-switch-capsule flex-shrink-0" [class.active]="isPinned">
               <div class="switch-knob"></div>
             </div>
           </div>
