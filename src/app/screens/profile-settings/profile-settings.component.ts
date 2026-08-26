@@ -5,6 +5,7 @@ import { NotesService } from '../../services/notes.service';
 import { QuickNotesService } from '../../services/quick-notes.service';
 import { CategoriesService } from '../../services/categories.service';
 import { ExpenseService } from '../../services/expense.service';
+import { AppUpdateService, AppVersionInfo } from '../../core/services/app-update.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -18,6 +19,12 @@ export class ProfileSettingsComponent implements OnInit {
   profileName: string = '';
   profileSuccess: string = '';
   profileError: string = '';
+
+  // App Updates
+  currentAppVersion: string = '3.0.0';
+  updateInfo: AppVersionInfo | null = null;
+  isCheckingUpdate: boolean = false;
+  updateCheckMessage: string = '';
 
   // Currency form
   selectedCurrency: string = 'S/.';
@@ -54,8 +61,11 @@ export class ProfileSettingsComponent implements OnInit {
     private quickNotesService: QuickNotesService,
     private categoriesService: CategoriesService,
     private expenseService: ExpenseService,
+    public appUpdateService: AppUpdateService,
     private router: Router
-  ) {}
+  ) {
+    this.currentAppVersion = this.appUpdateService.CURRENT_VERSION;
+  }
 
   logout(): void {
     if (confirm('¿Estás seguro de que deseas cerrar sesión en NoteYou?')) {
@@ -75,6 +85,29 @@ export class ProfileSettingsComponent implements OnInit {
     this.expenseService.currency$.subscribe(curr => {
       this.selectedCurrency = curr || 'S/.';
     });
+
+    this.appUpdateService.updateAvailable$.subscribe(info => {
+      this.updateInfo = info;
+    });
+  }
+
+  checkUpdatesManual(): void {
+    this.isCheckingUpdate = true;
+    this.updateCheckMessage = '';
+    this.appUpdateService.checkForUpdates();
+    setTimeout(() => {
+      this.isCheckingUpdate = false;
+      if (!this.updateInfo) {
+        this.updateCheckMessage = `¡Tienes la versión más reciente de NoteYou (${this.currentAppVersion})!`;
+        setTimeout(() => {
+          this.updateCheckMessage = '';
+        }, 4000);
+      }
+    }, 1200);
+  }
+
+  downloadUpdate(url: string): void {
+    this.appUpdateService.downloadAndInstallUpdate(url);
   }
 
   saveCurrency(symbol: string): void {

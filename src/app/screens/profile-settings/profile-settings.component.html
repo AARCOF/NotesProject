@@ -151,6 +151,60 @@
     </div>
   </div>
 
+  <!-- Actualizaciones y Versión de NoteYou -->
+  <div class="col-12 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+          <div>
+            <h5 class="font-weight-bold text-slate-800 mb-1">
+              <i class="typcn typcn-download text-primary mr-2"></i> Actualizaciones de la Aplicación
+            </h5>
+            <p class="text-slate-500 font-size-14 mb-0">
+              Mantén tu aplicación al día con las últimas mejoras de seguridad, nuevos logos y funciones.
+            </p>
+          </div>
+          <span class="badge badge-pill badge-info font-weight-bold px-3 py-1-5 font-size-13">
+            Versión Instalada: v{{ currentAppVersion }}
+          </span>
+        </div>
+
+        <div class="alert alert-success-custom mb-3" *ngIf="updateCheckMessage">
+          <i class="typcn typcn-tick mr-1"></i> {{ updateCheckMessage }}
+        </div>
+
+        <!-- Banner si hay una actualización disponible -->
+        <div class="p-3-5 rounded-xl border border-primary bg-blue-50 mb-3" *ngIf="updateInfo">
+          <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
+            <div class="mb-3 mb-sm-0">
+              <div class="d-flex align-items-center mb-1">
+                <span class="badge badge-primary font-weight-bold mr-2">¡NUEVA VERSIÓN v{{ updateInfo.version }}!</span>
+                <small class="text-slate-500 font-size-12">Lanzada el {{ updateInfo.releasedAt }}</small>
+              </div>
+              <p class="text-slate-700 font-size-13 font-weight-bold mb-1">Novedades incluidas:</p>
+              <ul class="text-slate-600 font-size-12 mb-0 pl-3">
+                <li *ngFor="let note of updateInfo.releaseNotes">{{ note }}</li>
+              </ul>
+            </div>
+            <button class="btn btn-gradient-blue font-weight-bold text-white px-4 py-2 rounded-lg shadow-sm align-self-sm-center flex-shrink-0" (click)="downloadUpdate(updateInfo.downloadUrl)">
+              <i class="typcn typcn-download mr-1"></i> Actualizar Ahora
+            </button>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="text-slate-500 font-size-13">
+            NoteYou verifica automáticamente las versiones disponibles al iniciar la app.
+          </span>
+          <button class="btn btn-outline-primary font-weight-bold px-3 py-1-5 rounded-lg font-size-13" (click)="checkUpdatesManual()" [disabled]="isCheckingUpdate">
+            <i class="typcn typcn-refresh mr-1" [class.spin-animation]="isCheckingUpdate"></i>
+            {{ isCheckingUpdate ? 'Buscando...' : 'Buscar Actualizaciones' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Copia de Seguridad y Restauración (Local-First) -->
   <div class="col-12 mb-4">
     <div class="card shadow-sm border-0 rounded-xl bg-white">
