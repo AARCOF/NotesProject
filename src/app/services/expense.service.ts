@@ -580,10 +580,15 @@ export class ExpenseService {
   public addExpense(item: Omit<ExpenseItem, 'id' | 'createdAt' | 'userId'>): ExpenseItem | null {
     if (!this.currentUserId) return null;
     const now = new Date().toISOString();
+    const expDate = item.date || now.split('T')[0];
+    const expMonth = expDate.substring(0, 7);
+
     const newExpense: ExpenseItem = {
       ...item,
       id: 'exp_item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId: this.currentUserId,
+      date: expDate,
+      recurringSince: item.isRecurring ? expMonth : undefined,
       createdAt: now,
       updatedAt: now
     };
@@ -600,7 +605,24 @@ export class ExpenseService {
     const all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
     const index = all.findIndex(e => e.id === id && e.userId === this.currentUserId);
     if (index !== -1) {
-      all[index] = { ...all[index], ...changes, updatedAt: new Date().toISOString() };
+      const oldItem = all[index];
+      const now = new Date().toISOString();
+      const updatedDate = changes.date || oldItem.date || now.split('T')[0];
+      const updatedMonth = updatedDate.substring(0, 7);
+
+      // Si se activa la recurrencia o se actualiza la fecha, la recurrencia inicia desde esta fecha en adelante
+      let recurringSince = oldItem.recurringSince;
+      if (changes.isRecurring !== undefined) {
+        recurringSince = changes.isRecurring ? (oldItem.recurringSince || updatedMonth) : undefined;
+      }
+
+      all[index] = {
+        ...oldItem,
+        ...changes,
+        date: updatedDate,
+        recurringSince,
+        updatedAt: now
+      };
       this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
       this.refreshData();
       this.syncToCloud();
@@ -848,12 +870,13 @@ export class ExpenseService {
     for (const exp of expenses) {
       if (!exp.date) continue;
       const expMonth = exp.date.substring(0, 7);
+      const startMonth = exp.recurringSince || expMonth;
 
       if (expMonth === monthKey) {
         result.push(exp);
         seenIds.add(exp.id);
-      } else if (exp.isRecurring && expMonth <= monthKey && !seenIds.has(exp.id)) {
-        // Gasto recurrente: proyectar para el mes actual manteniendo el día de cobro
+      } else if (exp.isRecurring && startMonth <= monthKey && expMonth !== monthKey && !seenIds.has(exp.id)) {
+        // Gasto recurrente: proyectar para el mes actual manteniendo el día de cobro SOLO desde su fecha de creación/activación hacia el futuro
         const day = exp.date.substring(8, 10) || '01';
         const projectedDate = `${monthKey}-${day}`;
         result.push({

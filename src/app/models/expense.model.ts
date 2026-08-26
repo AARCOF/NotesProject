@@ -27,7 +27,8 @@ export interface ExpenseItem {
   amount: number;
   date: string; // Formato YYYY-MM-DD
   notes?: string;
-  isRecurring?: boolean; // Si es true, se repite automáticamente todos los meses
+  isRecurring?: boolean; // Si es true, se repite automáticamente todos los meses a partir de su fecha
+  recurringSince?: string; // Formato YYYY-MM desde el cual se activa la recurrencia hacia el futuro
   createdAt: string;
   updatedAt?: string;
 }
