@@ -219,6 +219,13 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.add(
+      this.expenseService.currency$.subscribe(curr => {
+        this.currencySymbol = curr || 'S/.';
+        this.calculateMetricsAndCharts();
+      })
+    );
+
+    this.subscriptions.add(
       this.expenseService.openAddModalRequest$.subscribe(req => {
         if (req && req.open) {
           this.openAddExpenseModal(req.subcategoryId, req.categoryId);

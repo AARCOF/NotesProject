@@ -32,6 +32,9 @@ export class ExpenseService {
   private baseMonthlyIncomeSubject = new BehaviorSubject<number>(0);
   public baseMonthlyIncome$: Observable<number> = this.baseMonthlyIncomeSubject.asObservable();
 
+  private currencySubject = new BehaviorSubject<string>('S/.');
+  public currency$: Observable<string> = this.currencySubject.asObservable();
+
   private openAddModalRequestSubject = new Subject<{ open: boolean; subcategoryId?: string; categoryId?: string }>();
   public openAddModalRequest$: Observable<{ open: boolean; subcategoryId?: string; categoryId?: string }> = this.openAddModalRequestSubject.asObservable();
 
@@ -144,6 +147,9 @@ export class ExpenseService {
     const baseIncome = this.getBaseMonthlyIncome();
     this.baseMonthlyIncomeSubject.next(baseIncome);
 
+    const currency = this.getCurrency();
+    this.currencySubject.next(currency);
+
     this.fetchCloudExpenses();
   }
 
@@ -155,6 +161,7 @@ export class ExpenseService {
     const allCats = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY).filter(c => c.userId === this.currentUserId);
     const allSubs = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY).filter(s => s.userId === this.currentUserId);
     const baseIncome = this.getBaseMonthlyIncome();
+    const currency = this.getCurrency();
 
     this.http.post('/api/expenses', {
       expenses: allExpenses,
@@ -162,7 +169,8 @@ export class ExpenseService {
       extraIncomes: allExtra,
       categories: allCats,
       subcategories: allSubs,
-      baseMonthlyIncome: baseIncome
+      baseMonthlyIncome: baseIncome,
+      currency: currency
     }).subscribe({
       next: () => {
         // Al sincronizar con éxito, el servidor tiene la última versión
@@ -244,10 +252,19 @@ export class ExpenseService {
       categories?: ExpenseCategory[];
       subcategories?: ExpenseSubcategory[];
       baseMonthlyIncome?: number;
+      currency?: string;
     }>('/api/expenses').subscribe({
       next: (res) => {
         if (res && res.success) {
           let shouldTriggerPush = false;
+
+          // Sincronizar preferencia de moneda
+          if (res.currency && typeof res.currency === 'string') {
+            const localCurrency = this.getCurrency();
+            if (res.currency !== localCurrency) {
+              this.setCurrency(res.currency, false);
+            }
+          }
 
           // Sincronizar sueldo base de forma bidireccional
           if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
@@ -671,6 +688,23 @@ export class ExpenseService {
     localStorage.setItem(this.getBaseIncomeStorageKey(), String(Number(income) || 0));
     if (triggerSync) {
       this.refreshData();
+      this.syncToCloud();
+    }
+  }
+
+  // --- Moneda / Divisa Preferida ---
+
+  public getCurrency(): string {
+    if (!this.currentUserId) return 'S/.';
+    return localStorage.getItem('noteyou_currency_' + this.currentUserId) || 'S/.';
+  }
+
+  public setCurrency(currency: string, triggerSync: boolean = true): void {
+    if (!this.currentUserId) return;
+    const trimmed = currency ? currency.trim() : 'S/.';
+    localStorage.setItem('noteyou_currency_' + this.currentUserId, trimmed);
+    this.currencySubject.next(trimmed);
+    if (triggerSync) {
       this.syncToCloud();
     }
   }

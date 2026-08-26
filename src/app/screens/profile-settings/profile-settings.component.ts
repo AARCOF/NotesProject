@@ -4,6 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotesService } from '../../services/notes.service';
 import { QuickNotesService } from '../../services/quick-notes.service';
 import { CategoriesService } from '../../services/categories.service';
+import { ExpenseService } from '../../services/expense.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -17,6 +18,24 @@ export class ProfileSettingsComponent implements OnInit {
   profileName: string = '';
   profileSuccess: string = '';
   profileError: string = '';
+
+  // Currency form
+  selectedCurrency: string = 'S/.';
+  customCurrency: string = '';
+  currencySuccess: string = '';
+
+  currencyPresets = [
+    { code: 'PEN', symbol: 'S/.', name: 'Sol Peruano (PEN)', flag: '🇵🇪' },
+    { code: 'USD', symbol: '$', name: 'Dólar Estadounidense (USD)', flag: '🇺🇸' },
+    { code: 'EUR', symbol: '€', name: 'Euro (EUR)', flag: '🇪🇺' },
+    { code: 'MXN', symbol: 'Mex$', name: 'Peso Mexicano (MXN)', flag: '🇲🇽' },
+    { code: 'COP', symbol: 'COL$', name: 'Peso Colombiano (COP)', flag: '🇨🇴' },
+    { code: 'CLP', symbol: 'CLP$', name: 'Peso Chileno (CLP)', flag: '🇨🇱' },
+    { code: 'ARS', symbol: 'ARS$', name: 'Peso Argentino (ARS)', flag: '🇦🇷' },
+    { code: 'VES', symbol: 'Bs.', name: 'Bolívar (VES)', flag: '🇻🇪' },
+    { code: 'GBP', symbol: '£', name: 'Libra Esterlina (GBP)', flag: '🇬🇧' },
+    { code: 'BRL', symbol: 'R$', name: 'Real Brasileño (BRL)', flag: '🇧🇷' }
+  ];
 
   // Password form
   currentPass: string = '';
@@ -34,6 +53,7 @@ export class ProfileSettingsComponent implements OnInit {
     private notesService: NotesService,
     private quickNotesService: QuickNotesService,
     private categoriesService: CategoriesService,
+    private expenseService: ExpenseService,
     private router: Router
   ) {}
 
@@ -51,6 +71,25 @@ export class ProfileSettingsComponent implements OnInit {
         this.profileName = user.name;
       }
     });
+
+    this.expenseService.currency$.subscribe(curr => {
+      this.selectedCurrency = curr || 'S/.';
+    });
+  }
+
+  saveCurrency(symbol: string): void {
+    this.selectedCurrency = symbol;
+    this.expenseService.setCurrency(symbol);
+    this.currencySuccess = `Tipo de moneda actualizado a "${symbol}". Se aplicará en todas las pantallas de pagos y presupuestos.`;
+    setTimeout(() => {
+      this.currencySuccess = '';
+    }, 4000);
+  }
+
+  saveCustomCurrency(): void {
+    if (!this.customCurrency.trim()) return;
+    this.saveCurrency(this.customCurrency.trim());
+    this.customCurrency = '';
   }
 
   updateProfile(): void {

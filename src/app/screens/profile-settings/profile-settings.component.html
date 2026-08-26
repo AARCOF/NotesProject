@@ -88,6 +88,69 @@
     </div>
   </div>
 
+  <!-- Preferencia de Moneda & Finanzas -->
+  <div class="col-12 mb-4">
+    <div class="card shadow-sm border-0 rounded-xl bg-white">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+          <div>
+            <h5 class="font-weight-bold text-slate-800 mb-1">
+              <i class="typcn typcn-credit-card text-emerald-600 mr-2"></i> Tipo de Moneda & Finanzas
+            </h5>
+            <p class="text-slate-500 font-size-14 mb-0">
+              Personaliza el símbolo y tipo de divisa que se utiliza para calcular tus sueldos, pagos y gráficos de presupuesto.
+            </p>
+          </div>
+          <span class="badge badge-pill badge-primary font-weight-bold px-3 py-1-5 font-size-13">
+            Actual: {{ selectedCurrency }}
+          </span>
+        </div>
+
+        <div class="alert alert-success-custom mb-3" *ngIf="currencySuccess">
+          <i class="typcn typcn-tick mr-1"></i> {{ currencySuccess }}
+        </div>
+
+        <div class="row">
+          <div class="col-12 mb-3">
+            <label class="font-weight-bold text-slate-700 font-size-14 mb-2">Selecciona tu Moneda Principal</label>
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-2">
+              <div class="col mb-2" *ngFor="let item of currencyPresets">
+                <div class="p-2-5 rounded-xl border d-flex align-items-center justify-content-between cursor-pointer transition-all h-100"
+                     [class.bg-blue-50]="selectedCurrency === item.symbol"
+                     [class.border-blue]="selectedCurrency === item.symbol"
+                     [class.shadow-xs]="selectedCurrency === item.symbol"
+                     [style.borderColor]="selectedCurrency === item.symbol ? '#3b82f6' : '#e2e8f0'"
+                     (click)="saveCurrency(item.symbol)">
+                  <div class="d-flex align-items-center">
+                    <span class="font-size-20 mr-2">{{ item.flag }}</span>
+                    <div>
+                      <strong class="font-size-13 text-slate-800 d-block line-height-tight">{{ item.code }}</strong>
+                      <small class="text-slate-500 font-size-11">{{ item.symbol }}</small>
+                    </div>
+                  </div>
+                  <i class="typcn typcn-tick text-blue font-size-18" *ngIf="selectedCurrency === item.symbol"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mt-2">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">O ingresa un símbolo personalizado:</label>
+            <div class="input-group">
+              <input type="text" class="form-control font-weight-bold" placeholder="Ej. US$, Mex$, Q, ₡, etc." [(ngModel)]="customCurrency" maxlength="8">
+              <div class="input-group-append">
+                <button class="btn btn-gradient-blue text-white px-3 font-weight-bold" type="button" [disabled]="!customCurrency.trim()" (click)="saveCustomCurrency()">
+                  <i class="typcn typcn-tick mr-1"></i> Aplicar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Copia de Seguridad y Restauración (Local-First) -->
   <div class="col-12 mb-4">
     <div class="card shadow-sm border-0 rounded-xl bg-white">
