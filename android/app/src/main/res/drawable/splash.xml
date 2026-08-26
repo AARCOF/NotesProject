@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Solid dark blue background color matching the app theme -->
+    <item>
+        <color android:color="#0f172a" />
+    </item>
+</layer-list>
