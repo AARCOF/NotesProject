@@ -156,7 +156,75 @@ export class ExpenseService {
       categories: allCats,
       subcategories: allSubs,
       baseMonthlyIncome: baseIncome
-    }).subscribe({ error: () => {} });
+    }).subscribe({
+      next: () => {
+        // Al sincronizar con éxito, el servidor tiene la última versión
+      },
+      error: () => {}
+    });
+  }
+
+  // Helper para mezclar entidades respetando updatedAt y eliminaciones
+  private mergeWithCloud<T extends { id: string; createdAt?: string; updatedAt?: string; userId?: string }>(
+    cloudItems: T[],
+    localStorageKey: string,
+    deletedIdsStorageKey: string
+  ): { merged: T[]; needsPush: boolean } {
+    let all = this.getStorageData<T>(localStorageKey);
+    const otherUsers = all.filter(item => item.userId !== this.currentUserId);
+    const localUserItems = all.filter(item => item.userId === this.currentUserId);
+
+    const deletedIds = new Set(this.getStorageData<string>(deletedIdsStorageKey));
+    const localMap = new Map<string, T>();
+    localUserItems.forEach(item => localMap.set(item.id, item));
+
+    const finalMap = new Map<string, T>();
+    let needsPush = false;
+
+    // 1. Procesar items que vienen de la nube
+    cloudItems.forEach(cloudItem => {
+      if (deletedIds.has(cloudItem.id)) {
+        // Se eliminó localmente en este dispositivo pero la nube aún lo tenía
+        needsPush = true;
+        return;
+      }
+
+      const localItem = localMap.get(cloudItem.id);
+      if (!localItem) {
+        // Nuevo item creado en otro dispositivo
+        finalMap.set(cloudItem.id, cloudItem);
+      } else {
+        const cloudTime = new Date(cloudItem.updatedAt || cloudItem.createdAt || 0).getTime();
+        const localTime = new Date(localItem.updatedAt || localItem.createdAt || 0).getTime();
+
+        if (localTime > cloudTime) {
+          // Editado localmente más recientemente que la nube -> conservar local y enviar
+          finalMap.set(localItem.id, localItem);
+          needsPush = true;
+        } else {
+          // La nube tiene la versión más reciente o igual -> adoptar nube
+          finalMap.set(cloudItem.id, cloudItem);
+        }
+      }
+    });
+
+    // 2. Procesar items locales creados recientemente que aún no llegaron a la nube
+    const now = Date.now();
+    localUserItems.forEach(localItem => {
+      if (deletedIds.has(localItem.id)) return;
+      if (!finalMap.has(localItem.id)) {
+        const localTime = new Date(localItem.updatedAt || localItem.createdAt || 0).getTime();
+        // Si se creó hace menos de 60 segundos, conservarlo para no perderlo antes del POST
+        if (now - localTime < 60000) {
+          finalMap.set(localItem.id, localItem);
+          needsPush = true;
+        }
+      }
+    });
+
+    const merged = Array.from(finalMap.values());
+    this.setStorageData(localStorageKey, [...merged, ...otherUsers]);
+    return { merged, needsPush };
   }
 
   public fetchCloudExpenses(): void {
@@ -172,54 +240,50 @@ export class ExpenseService {
     }>('/api/expenses').subscribe({
       next: (res) => {
         if (res && res.success) {
+          let shouldTriggerPush = false;
+
           // Sincronizar sueldo base de forma bidireccional
           if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
             const cloudIncome = Number(res.baseMonthlyIncome) || 0;
             const localIncome = this.getBaseMonthlyIncome();
-            if (cloudIncome > 0) {
+            if (cloudIncome > 0 && cloudIncome !== localIncome) {
               this.setBaseMonthlyIncome(cloudIncome, false);
-            } else if (localIncome > 0) {
-              this.syncToCloud();
+            } else if (localIncome > 0 && cloudIncome === 0) {
+              shouldTriggerPush = true;
             }
           }
 
           // Sincronizar y mergear categorías
-          if (Array.isArray(res.categories) && res.categories.length > 0) {
-            let all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
-            const other = all.filter(c => c.userId !== this.currentUserId);
-            const localUser = all.filter(c => c.userId === this.currentUserId);
-            const catMap = new Map<string, ExpenseCategory>();
-            res.categories.forEach(c => catMap.set(c.id, c));
-            localUser.forEach(c => { if (!catMap.has(c.id)) catMap.set(c.id, c); });
-            const mergedCats = Array.from(catMap.values());
-            this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...mergedCats, ...other]);
-            this.categoriesSubject.next(mergedCats);
+          if (Array.isArray(res.categories)) {
+            const { merged, needsPush } = this.mergeWithCloud<ExpenseCategory>(
+              res.categories,
+              EXPENSE_CATEGORIES_STORAGE_KEY,
+              'noteyou_deleted_expense_cats_' + this.currentUserId
+            );
+            if (needsPush) shouldTriggerPush = true;
+            this.categoriesSubject.next(merged);
           }
 
           // Sincronizar y mergear subcategorías
-          if (Array.isArray(res.subcategories) && res.subcategories.length > 0) {
-            let all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
-            const other = all.filter(s => s.userId !== this.currentUserId);
-            const localUser = all.filter(s => s.userId === this.currentUserId);
-            const subMap = new Map<string, ExpenseSubcategory>();
-            res.subcategories.forEach(s => subMap.set(s.id, s));
-            localUser.forEach(s => { if (!subMap.has(s.id)) subMap.set(s.id, s); });
-            const mergedSubs = Array.from(subMap.values());
-            this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...mergedSubs, ...other]);
-            this.subcategoriesSubject.next(mergedSubs);
+          if (Array.isArray(res.subcategories)) {
+            const { merged, needsPush } = this.mergeWithCloud<ExpenseSubcategory>(
+              res.subcategories,
+              EXPENSE_SUBCATEGORIES_STORAGE_KEY,
+              'noteyou_deleted_expense_subs_' + this.currentUserId
+            );
+            if (needsPush) shouldTriggerPush = true;
+            this.subcategoriesSubject.next(merged);
           }
 
           // Sincronizar y mergear gastos
           if (Array.isArray(res.expenses)) {
-            let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
-            const other = all.filter(e => e.userId !== this.currentUserId);
-            const localUser = all.filter(e => e.userId === this.currentUserId);
-            const expMap = new Map<string, ExpenseItem>();
-            res.expenses.forEach(e => expMap.set(e.id, e));
-            localUser.forEach(e => { if (!expMap.has(e.id)) expMap.set(e.id, e); });
-            const mergedExpenses = Array.from(expMap.values());
-            this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...mergedExpenses, ...other]);
-            this.expensesSubject.next(mergedExpenses);
+            const { merged, needsPush } = this.mergeWithCloud<ExpenseItem>(
+              res.expenses,
+              EXPENSE_ITEMS_STORAGE_KEY,
+              'noteyou_deleted_expense_items_' + this.currentUserId
+            );
+            if (needsPush) shouldTriggerPush = true;
+            this.expensesSubject.next(merged);
           }
 
           // Sincronizar y mergear presupuestos / ingresos por mes
@@ -229,7 +293,20 @@ export class ExpenseService {
             const localUser = all.filter(b => b.userId === this.currentUserId);
             const bMap = new Map<string, MonthlyBudget>();
             res.budgets.forEach(b => bMap.set(b.monthKey, b));
-            localUser.forEach(b => { if (!bMap.has(b.monthKey)) bMap.set(b.monthKey, b); });
+            localUser.forEach(b => {
+              const cloudB = bMap.get(b.monthKey);
+              if (!cloudB) {
+                bMap.set(b.monthKey, b);
+                shouldTriggerPush = true;
+              } else {
+                const cloudTime = new Date(cloudB.updatedAt || 0).getTime();
+                const localTime = new Date(b.updatedAt || 0).getTime();
+                if (localTime > cloudTime) {
+                  bMap.set(b.monthKey, b);
+                  shouldTriggerPush = true;
+                }
+              }
+            });
             const mergedBudgets = Array.from(bMap.values());
             this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...mergedBudgets, ...other]);
             this.budgetsSubject.next(mergedBudgets);
@@ -237,15 +314,17 @@ export class ExpenseService {
 
           // Sincronizar y mergear bonos / ingresos extras
           if (Array.isArray(res.extraIncomes)) {
-            let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
-            const other = all.filter(i => i.userId !== this.currentUserId);
-            const localUser = all.filter(i => i.userId === this.currentUserId);
-            const incMap = new Map<string, ExtraIncomeItem>();
-            res.extraIncomes.forEach(i => incMap.set(i.id, i));
-            localUser.forEach(i => { if (!incMap.has(i.id)) incMap.set(i.id, i); });
-            const mergedExtra = Array.from(incMap.values());
-            this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...mergedExtra, ...other]);
-            this.extraIncomesSubject.next(mergedExtra);
+            const { merged, needsPush } = this.mergeWithCloud<ExtraIncomeItem>(
+              res.extraIncomes,
+              EXTRA_INCOMES_STORAGE_KEY,
+              'noteyou_deleted_extra_incomes_' + this.currentUserId
+            );
+            if (needsPush) shouldTriggerPush = true;
+            this.extraIncomesSubject.next(merged);
+          }
+
+          if (shouldTriggerPush) {
+            this.syncToCloud();
           }
         }
       },
@@ -352,17 +431,28 @@ export class ExpenseService {
     }
   }
 
+  // Helpers para tracking de eliminaciones
+  private trackDeletedId(storageKey: string, id: string): void {
+    const ids = this.getStorageData<string>(storageKey);
+    if (!ids.includes(id)) {
+      ids.push(id);
+      this.setStorageData(storageKey, ids);
+    }
+  }
+
   // --- CRUD Categorías ---
 
   public addCategory(name: string, icon: string, color: string): ExpenseCategory | null {
     if (!this.currentUserId) return null;
+    const now = new Date().toISOString();
     const newCategory: ExpenseCategory = {
       id: 'exp_cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId: this.currentUserId,
       name: name.trim(),
       icon: icon || 'typcn-folder',
       color: color || '#3b82f6',
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     };
 
     const all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
@@ -377,7 +467,7 @@ export class ExpenseService {
     const all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
     const index = all.findIndex(c => c.id === id && c.userId === this.currentUserId);
     if (index !== -1) {
-      all[index] = { ...all[index], ...changes };
+      all[index] = { ...all[index], ...changes, updatedAt: new Date().toISOString() };
       this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, all);
       this.refreshData();
       this.syncToCloud();
@@ -385,16 +475,24 @@ export class ExpenseService {
   }
 
   public deleteCategory(id: string): void {
+    this.trackDeletedId('noteyou_deleted_expense_cats_' + this.currentUserId, id);
+
     let allCats = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
     allCats = allCats.filter(c => !(c.id === id && c.userId === this.currentUserId));
     this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, allCats);
 
     // Eliminar subcategorías y gastos hijos
     let allSubs = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
+    allSubs.filter(s => s.categoryId === id && s.userId === this.currentUserId).forEach(s => {
+      this.trackDeletedId('noteyou_deleted_expense_subs_' + this.currentUserId, s.id);
+    });
     allSubs = allSubs.filter(s => !(s.categoryId === id && s.userId === this.currentUserId));
     this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, allSubs);
 
     let allExpenses = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+    allExpenses.filter(e => e.categoryId === id && e.userId === this.currentUserId).forEach(e => {
+      this.trackDeletedId('noteyou_deleted_expense_items_' + this.currentUserId, e.id);
+    });
     allExpenses = allExpenses.filter(e => !(e.categoryId === id && e.userId === this.currentUserId));
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, allExpenses);
 
@@ -406,12 +504,14 @@ export class ExpenseService {
 
   public addSubcategory(categoryId: string, name: string): ExpenseSubcategory | null {
     if (!this.currentUserId) return null;
+    const now = new Date().toISOString();
     const newSub: ExpenseSubcategory = {
       id: 'exp_sub_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       categoryId,
       userId: this.currentUserId,
       name: name.trim(),
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     };
 
     const all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
@@ -426,7 +526,7 @@ export class ExpenseService {
     const all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
     const index = all.findIndex(s => s.id === id && s.userId === this.currentUserId);
     if (index !== -1) {
-      all[index].name = name.trim();
+      all[index] = { ...all[index], name: name.trim(), updatedAt: new Date().toISOString() };
       this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, all);
       this.refreshData();
       this.syncToCloud();
@@ -434,11 +534,16 @@ export class ExpenseService {
   }
 
   public deleteSubcategory(id: string): void {
+    this.trackDeletedId('noteyou_deleted_expense_subs_' + this.currentUserId, id);
+
     let allSubs = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
     allSubs = allSubs.filter(s => !(s.id === id && s.userId === this.currentUserId));
     this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, allSubs);
 
     let allExpenses = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+    allExpenses.filter(e => e.subcategoryId === id && e.userId === this.currentUserId).forEach(e => {
+      this.trackDeletedId('noteyou_deleted_expense_items_' + this.currentUserId, e.id);
+    });
     allExpenses = allExpenses.filter(e => !(e.subcategoryId === id && e.userId === this.currentUserId));
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, allExpenses);
 
@@ -450,11 +555,13 @@ export class ExpenseService {
 
   public addExpense(item: Omit<ExpenseItem, 'id' | 'createdAt' | 'userId'>): ExpenseItem | null {
     if (!this.currentUserId) return null;
+    const now = new Date().toISOString();
     const newExpense: ExpenseItem = {
       ...item,
       id: 'exp_item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId: this.currentUserId,
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     };
 
     const all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
@@ -469,7 +576,7 @@ export class ExpenseService {
     const all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
     const index = all.findIndex(e => e.id === id && e.userId === this.currentUserId);
     if (index !== -1) {
-      all[index] = { ...all[index], ...changes };
+      all[index] = { ...all[index], ...changes, updatedAt: new Date().toISOString() };
       this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
       this.refreshData();
       this.syncToCloud();
@@ -477,6 +584,8 @@ export class ExpenseService {
   }
 
   public deleteExpense(id: string): void {
+    this.trackDeletedId('noteyou_deleted_expense_items_' + this.currentUserId, id);
+
     let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
     all = all.filter(e => !(e.id === id && e.userId === this.currentUserId));
     this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, all);
@@ -488,11 +597,13 @@ export class ExpenseService {
 
   public addExtraIncome(item: Omit<ExtraIncomeItem, 'id' | 'createdAt' | 'userId'>): ExtraIncomeItem | null {
     if (!this.currentUserId) return null;
+    const now = new Date().toISOString();
     const newIncome: ExtraIncomeItem = {
       ...item,
       id: 'extra_inc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       userId: this.currentUserId,
-      createdAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     };
 
     const all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
@@ -507,7 +618,7 @@ export class ExpenseService {
     const all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
     const index = all.findIndex(i => i.id === id && i.userId === this.currentUserId);
     if (index !== -1) {
-      all[index] = { ...all[index], ...changes };
+      all[index] = { ...all[index], ...changes, updatedAt: new Date().toISOString() };
       this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
       this.refreshData();
       this.syncToCloud();
@@ -515,6 +626,8 @@ export class ExpenseService {
   }
 
   public deleteExtraIncome(id: string): void {
+    this.trackDeletedId('noteyou_deleted_extra_incomes_' + this.currentUserId, id);
+
     let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
     all = all.filter(i => !(i.id === id && i.userId === this.currentUserId));
     this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, all);
@@ -569,6 +682,7 @@ export class ExpenseService {
   public setMonthlyIncome(monthKey: string, income: number, updateBaseIncomeForAllMonths: boolean = true): void {
     if (!this.currentUserId) return;
     const num = Number(income) || 0;
+    const now = new Date().toISOString();
 
     if (updateBaseIncomeForAllMonths) {
       this.setBaseMonthlyIncome(num);
@@ -579,11 +693,13 @@ export class ExpenseService {
 
     if (index !== -1) {
       all[index].monthlyIncome = num;
+      all[index].updatedAt = now;
     } else {
       all.push({
         userId: this.currentUserId,
         monthKey,
-        monthlyIncome: num
+        monthlyIncome: num,
+        updatedAt: now
       });
     }
 

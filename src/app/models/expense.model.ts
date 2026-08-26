@@ -5,6 +5,7 @@ export interface ExpenseCategory {
   icon: string;
   color: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ExpenseSubcategory {
@@ -14,6 +15,7 @@ export interface ExpenseSubcategory {
   name: string;
   budget?: number;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ExpenseItem {
@@ -27,6 +29,7 @@ export interface ExpenseItem {
   notes?: string;
   isRecurring?: boolean; // Si es true, se repite automáticamente todos los meses
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ExtraIncomeItem {
@@ -37,10 +40,12 @@ export interface ExtraIncomeItem {
   date: string; // Formato YYYY-MM-DD
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface MonthlyBudget {
   userId: string;
   monthKey: string; // Formato YYYY-MM
   monthlyIncome: number;
+  updatedAt?: string;
 }
