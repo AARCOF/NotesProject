@@ -46,6 +46,18 @@ module.exports = async function handler(req, res) {
       return sendJsonResponse(res, 200, { success: true, message: 'La cuenta ya estaba verificada.', token, user: userData });
     }
 
+    const createdAtMs = user.createdAt ? new Date(user.createdAt).getTime() : 0;
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    const isExpired = (Date.now() - createdAtMs) > twoHoursMs || (user.unverifiedExpiresAt && new Date(user.unverifiedExpiresAt).getTime() < Date.now());
+
+    if (isExpired) {
+      await usersCollection.deleteOne({ _id: user._id });
+      return sendJsonResponse(res, 400, {
+        success: false,
+        message: 'El plazo de 2 horas para verificar tu cuenta ha expirado y tu registro ha sido eliminado. Por favor regístrate nuevamente.'
+      });
+    }
+
     if (user.verificationKey !== cleanKey) {
       return sendJsonResponse(res, 400, { success: false, message: 'El código de seguridad ingresado es incorrecto.' });
     }
@@ -58,7 +70,7 @@ module.exports = async function handler(req, res) {
       { _id: user._id },
       {
         $set: { isVerified: true },
-        $unset: { verificationKey: '', keyExpiresAt: '' }
+        $unset: { verificationKey: '', keyExpiresAt: '', unverifiedExpiresAt: '' }
       }
     );
 

@@ -122,7 +122,7 @@ export class AuthService {
 
     return {
       success: true,
-      message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${newUser.email} válido por 1 hora.`,
+      message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${newUser.email} válido por 2 horas.`,
       email: newUser.email
     };
   }

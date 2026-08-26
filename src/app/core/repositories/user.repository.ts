@@ -95,7 +95,30 @@ export class UserRepository {
     }
   }
 
+  public cleanExpiredUnverifiedUsers(): void {
+    const data = localStorage.getItem(USERS_STORAGE_KEY);
+    if (!data) return;
+    try {
+      const users: User[] = JSON.parse(data);
+      if (!Array.isArray(users)) return;
+
+      const now = Date.now();
+      const twoHoursMs = 2 * 60 * 60 * 1000;
+      const filtered = users.filter(u => {
+        if (u.isVerified) return true;
+        if (u.role === 'superadmin') return true;
+        const createdTime = u.createdAt ? new Date(u.createdAt).getTime() : 0;
+        return (now - createdTime) <= twoHoursMs;
+      });
+
+      if (filtered.length !== users.length) {
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(filtered));
+      }
+    } catch (e) {}
+  }
+
   public getAllUsers(): User[] {
+    this.cleanExpiredUnverifiedUsers();
     const data = localStorage.getItem(USERS_STORAGE_KEY);
     if (!data) return [];
     try {

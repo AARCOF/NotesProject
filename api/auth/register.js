@@ -29,6 +29,21 @@ module.exports = async function handler(req, res) {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
 
+    // Crear índice TTL automático para eliminar usuarios no verificados tras 2 horas si aún no existe
+    try {
+      await usersCollection.createIndex({ unverifiedExpiresAt: 1 }, { expireAfterSeconds: 0 });
+    } catch (e) {}
+
+    // Limpieza activa: eliminar registros no verificados que hayan superado las 2 horas
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    await usersCollection.deleteMany({
+      isVerified: false,
+      $or: [
+        { createdAt: { $lt: twoHoursAgo } },
+        { unverifiedExpiresAt: { $lt: new Date() } }
+      ]
+    });
+
     const existingUser = await usersCollection.findOne({ email: cleanEmail });
     if (existingUser && existingUser.isVerified) {
       return sendJsonResponse(res, 400, {
@@ -41,7 +56,9 @@ module.exports = async function handler(req, res) {
     const passwordHash = await bcrypt.hash(password, salt);
 
     const securityKey = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 60 * 60 * 1000;
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    const expiresAt = Date.now() + twoHoursMs;
+    const unverifiedExpiresAt = new Date(Date.now() + twoHoursMs);
 
     const assignedRole = cleanEmail === 'superadmin@noteyou.com' ? 'superadmin' : 'user';
     const userId = existingUser ? existingUser.id || existingUser._id.toString() : 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
@@ -56,6 +73,7 @@ module.exports = async function handler(req, res) {
       isActive: true,
       verificationKey: securityKey,
       keyExpiresAt: expiresAt,
+      unverifiedExpiresAt: unverifiedExpiresAt,
       createdAt: new Date().toISOString(),
       hasCompletedTutorial: false
     };
@@ -68,7 +86,7 @@ module.exports = async function handler(req, res) {
 
     return sendJsonResponse(res, 201, {
       success: true,
-      message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${cleanEmail} válido por 1 hora.`,
+      message: `Cuenta creada exitosamente. Se ha enviado un código de acceso a ${cleanEmail} con validez de 2 horas. Si no se verifica en 2 horas, la cuenta será eliminada.`,
       email: cleanEmail
     });
   } catch (err) {

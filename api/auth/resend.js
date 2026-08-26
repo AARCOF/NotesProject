@@ -33,8 +33,21 @@ module.exports = async function handler(req, res) {
       return sendJsonResponse(res, 400, { success: false, message: 'Esta cuenta ya está verificada. Procede al inicio de sesión.' });
     }
 
+    const createdAtMs = user.createdAt ? new Date(user.createdAt).getTime() : 0;
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    const isExpired = (Date.now() - createdAtMs) > twoHoursMs || (user.unverifiedExpiresAt && new Date(user.unverifiedExpiresAt).getTime() < Date.now());
+
+    if (isExpired) {
+      await usersCollection.deleteOne({ _id: user._id });
+      return sendJsonResponse(res, 400, {
+        success: false,
+        message: 'El plazo de 2 horas para verificar tu cuenta ha expirado y tu registro ha sido eliminado. Por favor regístrate nuevamente.'
+      });
+    }
+
     const securityKey = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 60 * 60 * 1000;
+    const remainingTime = Math.max(0, (createdAtMs + twoHoursMs) - Date.now());
+    const expiresAt = Date.now() + Math.min(60 * 60 * 1000, remainingTime);
 
     await usersCollection.updateOne(
       { _id: user._id },
