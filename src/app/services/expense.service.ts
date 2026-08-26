@@ -96,14 +96,15 @@ export class ExpenseService {
   private updateWidgetExpenses(): void {
     if (typeof window === 'undefined') return;
     try {
-      const expenses = this.expensesSubject.getValue();
-      const extraIncomes = this.extraIncomesSubject.getValue();
-      const baseIncome = this.baseMonthlyIncomeSubject.getValue();
-      const currency = this.currencySubject.getValue() || 'S/.';
-
       const now = new Date();
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth();
+      const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+
+      const expenses = this.expensesSubject.getValue();
+      const extraIncomes = this.extraIncomesSubject.getValue();
+      const baseIncome = this.getMonthlyIncome(monthKey);
+      const currency = this.currencySubject.getValue() || 'S/.';
 
       const currentMonthExpenses = expenses
         .filter(exp => {

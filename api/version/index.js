@@ -6,14 +6,14 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.2.0',
-    versionCode: 320,
+    version: '3.2.1',
+    versionCode: 321,
     releasedAt: '2026-08-26',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
     releaseNotes: [
       'Nuevos widgets de escritorio para Android (Lista de tareas y Balance financiero).',
-      'Nueva sección Libreta/Guardado para notas rápidas y marcadores de enlaces favoritos en la versión web.',
+      'Corrección del cálculo de ingresos mensuales (sueldo) en el widget de finanzas.',
       'Descarga optimizada del APK como un único archivo directo y seguro.',
       'Correcciones de contraste de botones, color y tamaño de iconos en el panel.'
     ],

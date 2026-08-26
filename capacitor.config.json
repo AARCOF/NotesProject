@@ -2,9 +2,6 @@
   "appId": "com.noteyou.app",
   "appName": "NoteYou",
   "webDir": "dist",
-  "exclude": [
-    "assets/downloads/*"
-  ],
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https",
