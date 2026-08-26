@@ -3,7 +3,7 @@
   <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-slate-200 pb-3">
     <div>
       <h3 class="font-weight-bold text-slate-900 mb-1 d-flex align-items-center">
-        <i class="typcn typcn-bookmark text-blue mr-2 font-size-26"></i>
+        <i class="typcn typcn-bookmark text-blue mr-2 font-size-28"></i>
         Libreta y Guardado
       </h3>
       <p class="text-slate-600 font-size-13 mb-0">
@@ -15,7 +15,7 @@
       <button 
         class="btn btn-gradient-blue text-white px-3-5 py-2 font-weight-bold rounded-xl shadow-sm d-flex align-items-center font-size-13 hover-lift"
         (click)="openAddLinkModal()">
-        <i class="typcn typcn-plus mr-1-5 font-size-16"></i> Guardar Enlace
+        <i class="typcn typcn-plus mr-1-5 font-size-18"></i> Guardar Enlace
       </button>
     </div>
   </div>
@@ -26,7 +26,7 @@
       <div class="card bg-slate-900 border-bottom-slate rounded-xl p-4 shadow-sm h-100">
         <h5 class="font-weight-bold text-white mb-3 d-flex align-items-center justify-content-between">
           <span class="d-flex align-items-center">
-            <i class="typcn typcn-link text-emerald-400 mr-2 font-size-20"></i>
+            <i class="typcn typcn-link text-emerald-400 mr-2 font-size-24"></i>
             Mis Enlaces Guardados
           </span>
           <span class="badge badge-emerald-light font-weight-bold font-size-11">{{ savedLinks.length }} Guardados</span>
@@ -38,7 +38,7 @@
           <button 
             class="btn btn-outline-emerald rounded-lg px-4 py-2 font-weight-bold font-size-13" 
             (click)="openAddLinkModal()">
-            <i class="typcn typcn-plus mr-1 font-size-15"></i> Guardar mi primer enlace
+            <i class="typcn typcn-plus mr-1 font-size-18"></i> Guardar mi primer enlace
           </button>
         </div>
 
@@ -56,13 +56,13 @@
                   class="btn btn-icon-xs text-slate-400 hover-rose" 
                   (click)="deleteSavedLink(link.id, $event)" 
                   title="Eliminar enlace">
-                  <i class="typcn typcn-trash font-size-14"></i>
+                  <i class="typcn typcn-trash font-size-18"></i>
                 </button>
               </div>
 
               <!-- Contenedor del Icono -->
               <div class="link-icon-wrapper rounded-circle mb-2-5 d-flex align-items-center justify-content-center">
-                <i class="typcn {{ link.icon }} font-size-22 text-emerald-400"></i>
+                <i class="typcn {{ link.icon }} font-size-26 text-emerald-400"></i>
               </div>
 
               <!-- Título -->
@@ -99,11 +99,11 @@
       <!-- Cabecera del Modal -->
       <div class="modal-header-custom bg-slate-950 border-bottom-slate p-3 px-4 d-flex align-items-center justify-content-between">
         <h5 class="modal-title font-weight-bold text-white mb-0 d-flex align-items-center">
-          <i class="typcn typcn-plus text-emerald-400 mr-2 font-size-20"></i>
+          <i class="typcn typcn-plus text-emerald-400 mr-2 font-size-24"></i>
           Guardar Enlace
         </h5>
         <button type="button" class="btn-close-custom text-slate-400 hover-white border-0 bg-transparent p-0" (click)="closeAddLinkModal()">
-          <i class="typcn typcn-times font-size-22"></i>
+          <i class="typcn typcn-times font-size-26"></i>
         </button>
       </div>
 
@@ -155,7 +155,7 @@
                 *ngFor="let ic of availableIcons" 
                 [class.active]="selectedIcon === ic"
                 (click)="selectedIcon = ic">
-                <i class="typcn {{ ic }} font-size-22"></i>
+                <i class="typcn {{ ic }} font-size-26"></i>
               </button>
             </div>
           </div>

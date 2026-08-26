@@ -180,7 +180,7 @@
                   *ngIf="isSuperAdmin" 
                   (click)="toggleActive(u)" 
                   [title]="u.isActive !== false ? 'Desactivar Cuenta' : 'Activar Cuenta'">
-                  <i class="typcn" [class.typcn-user-delete]="u.isActive !== false" [class.typcn-user-add]="u.isActive === false"></i>
+                  <i class="typcn font-size-16 mr-1" [class.typcn-user-delete]="u.isActive !== false" [class.typcn-user-add]="u.isActive === false"></i>
                   {{ u.isActive !== false ? 'Desactivar' : 'Activar' }}
                 </button>
 
@@ -192,7 +192,7 @@
                   [class.btn-outline-primary]="!u.isVerified"
                   (click)="toggleVerification(u)"
                   [title]="u.isVerified ? 'Marcar como pendiente' : 'Verificar manualmente'">
-                  <i class="typcn" [class.typcn-times]="u.isVerified" [class.typcn-tick]="!u.isVerified"></i>
+                  <i class="typcn font-size-16 mr-1" [class.typcn-times]="u.isVerified" [class.typcn-tick]="!u.isVerified"></i>
                   {{ u.isVerified ? 'Desverificar' : 'Verificar' }}
                 </button>
 
