@@ -246,6 +246,7 @@ export class ExpenseService {
     if (!this.currentUserId) return;
     this.http.get<{
       success: boolean;
+      hasCloudData?: boolean;
       expenses?: ExpenseItem[];
       budgets?: MonthlyBudget[];
       extraIncomes?: ExtraIncomeItem[];
@@ -253,102 +254,66 @@ export class ExpenseService {
       subcategories?: ExpenseSubcategory[];
       baseMonthlyIncome?: number;
       currency?: string;
+      updatedAt?: string;
     }>('/api/expenses').subscribe({
       next: (res) => {
         if (res && res.success) {
-          let shouldTriggerPush = false;
-
-          // Sincronizar preferencia de moneda
-          if (res.currency && typeof res.currency === 'string') {
-            const localCurrency = this.getCurrency();
-            if (res.currency !== localCurrency) {
-              this.setCurrency(res.currency, false);
-            }
+          if (!res.hasCloudData) {
+            // Primera vez: enviar datos locales a la nube
+            this.syncToCloud();
+            return;
           }
 
-          // Sincronizar sueldo base de forma bidireccional
+          // 1. Sincronizar preferencia de moneda
+          if (res.currency && typeof res.currency === 'string') {
+            this.setCurrency(res.currency, false);
+          }
+
+          // 2. Sincronizar sueldo base
           if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
             const cloudIncome = Number(res.baseMonthlyIncome) || 0;
-            const localIncome = this.getBaseMonthlyIncome();
-            if (cloudIncome > 0 && cloudIncome !== localIncome) {
-              this.setBaseMonthlyIncome(cloudIncome, false);
-            } else if (localIncome > 0 && cloudIncome === 0) {
-              shouldTriggerPush = true;
-            }
+            this.setBaseMonthlyIncome(cloudIncome, false);
+            this.baseMonthlyIncomeSubject.next(cloudIncome);
           }
 
-          // Sincronizar y mergear categorías
+          // 3. Sincronizar categorías
           if (Array.isArray(res.categories)) {
-            const { merged, needsPush } = this.mergeWithCloud<ExpenseCategory>(
-              res.categories,
-              EXPENSE_CATEGORIES_STORAGE_KEY,
-              'noteyou_deleted_expense_cats_' + this.currentUserId
-            );
-            if (needsPush) shouldTriggerPush = true;
-            this.categoriesSubject.next(merged);
+            let all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
+            const other = all.filter(c => c.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...res.categories, ...other]);
+            this.categoriesSubject.next(res.categories);
           }
 
-          // Sincronizar y mergear subcategorías
+          // 4. Sincronizar subcategorías
           if (Array.isArray(res.subcategories)) {
-            const { merged, needsPush } = this.mergeWithCloud<ExpenseSubcategory>(
-              res.subcategories,
-              EXPENSE_SUBCATEGORIES_STORAGE_KEY,
-              'noteyou_deleted_expense_subs_' + this.currentUserId
-            );
-            if (needsPush) shouldTriggerPush = true;
-            this.subcategoriesSubject.next(merged);
+            let all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
+            const other = all.filter(s => s.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...res.subcategories, ...other]);
+            this.subcategoriesSubject.next(res.subcategories);
           }
 
-          // Sincronizar y mergear gastos
+          // 5. Sincronizar gastos
           if (Array.isArray(res.expenses)) {
-            const { merged, needsPush } = this.mergeWithCloud<ExpenseItem>(
-              res.expenses,
-              EXPENSE_ITEMS_STORAGE_KEY,
-              'noteyou_deleted_expense_items_' + this.currentUserId
-            );
-            if (needsPush) shouldTriggerPush = true;
-            this.expensesSubject.next(merged);
+            let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
+            const other = all.filter(e => e.userId !== this.currentUserId);
+            this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...res.expenses, ...other]);
+            this.expensesSubject.next(res.expenses);
           }
 
-          // Sincronizar y mergear presupuestos / ingresos por mes
+          // 6. Sincronizar presupuestos por mes
           if (Array.isArray(res.budgets)) {
             let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
             const other = all.filter(b => b.userId !== this.currentUserId);
-            const localUser = all.filter(b => b.userId === this.currentUserId);
-            const bMap = new Map<string, MonthlyBudget>();
-            res.budgets.forEach(b => bMap.set(b.monthKey, b));
-            localUser.forEach(b => {
-              const cloudB = bMap.get(b.monthKey);
-              if (!cloudB) {
-                bMap.set(b.monthKey, b);
-                shouldTriggerPush = true;
-              } else {
-                const cloudTime = new Date(cloudB.updatedAt || 0).getTime();
-                const localTime = new Date(b.updatedAt || 0).getTime();
-                if (localTime > cloudTime) {
-                  bMap.set(b.monthKey, b);
-                  shouldTriggerPush = true;
-                }
-              }
-            });
-            const mergedBudgets = Array.from(bMap.values());
-            this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...mergedBudgets, ...other]);
-            this.budgetsSubject.next(mergedBudgets);
+            this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...res.budgets, ...other]);
+            this.budgetsSubject.next(res.budgets);
           }
 
-          // Sincronizar y mergear bonos / ingresos extras
+          // 7. Sincronizar ingresos extras / bonos
           if (Array.isArray(res.extraIncomes)) {
-            const { merged, needsPush } = this.mergeWithCloud<ExtraIncomeItem>(
-              res.extraIncomes,
-              EXTRA_INCOMES_STORAGE_KEY,
-              'noteyou_deleted_extra_incomes_' + this.currentUserId
-            );
-            if (needsPush) shouldTriggerPush = true;
-            this.extraIncomesSubject.next(merged);
-          }
-
-          if (shouldTriggerPush) {
-            this.syncToCloud();
+            let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
+            const other = all.filter(i => i.userId !== this.currentUserId);
+            this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...res.extraIncomes, ...other]);
+            this.extraIncomesSubject.next(res.extraIncomes);
           }
         }
       },

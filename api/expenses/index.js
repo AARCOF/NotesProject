@@ -26,13 +26,15 @@ module.exports = async function handler(req, res) {
         const data = await expensesCollection.findOne({ userId });
         return sendJsonResponse(res, 200, {
           success: true,
+          hasCloudData: !!data,
           expenses: data ? data.expenses || [] : [],
           budgets: data ? data.budgets || [] : [],
           extraIncomes: data ? data.extraIncomes || [] : [],
           categories: data ? data.categories || [] : [],
           subcategories: data ? data.subcategories || [] : [],
           baseMonthlyIncome: data ? data.baseMonthlyIncome || 0 : 0,
-          currency: data ? data.currency || 'S/.' : 'S/.'
+          currency: data ? data.currency || 'S/.' : 'S/.',
+          updatedAt: data ? data.updatedAt : null
         });
       }
 
