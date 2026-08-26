@@ -153,7 +153,9 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Modal Ingreso Mensual Base
   isIncomeModalOpen: boolean = false;
   incomeFormAmount: number | null = null;
-  incomeApplyToAllMonths: boolean = true;
+  incomeScope: 'only_this' | 'from_this_forward' | 'all_months' = 'from_this_forward';
+  isDeleteIncomeModalOpen: boolean = false;
+  deleteIncomeScope: 'only_this' | 'from_this_forward' | 'all_months' = 'from_this_forward';
 
   // Modal Bonus / Ingreso Extra
   isExtraIncomeModalOpen: boolean = false;
@@ -701,7 +703,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   openIncomeModal(): void {
     this.recordScrollPosition();
     this.incomeFormAmount = this.monthlyIncome > 0 ? this.monthlyIncome : null;
-    this.incomeApplyToAllMonths = true;
+    this.incomeScope = 'from_this_forward';
     this.isIncomeModalOpen = true;
   }
 
@@ -712,8 +714,24 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   saveIncome(): void {
     const amount = Number(this.incomeFormAmount) || 0;
-    this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount, this.incomeApplyToAllMonths);
+    this.expenseService.setMonthlyIncome(this.selectedMonthKey, amount, this.incomeScope);
     this.calculateMetricsAndCharts();
+    this.closeIncomeModal();
+  }
+
+  openDeleteIncomeModal(): void {
+    this.deleteIncomeScope = 'from_this_forward';
+    this.isDeleteIncomeModalOpen = true;
+  }
+
+  closeDeleteIncomeModal(): void {
+    this.isDeleteIncomeModalOpen = false;
+  }
+
+  confirmDeleteIncome(): void {
+    this.expenseService.deleteMonthlyIncome(this.selectedMonthKey, this.deleteIncomeScope);
+    this.calculateMetricsAndCharts();
+    this.closeDeleteIncomeModal();
     this.closeIncomeModal();
   }
 

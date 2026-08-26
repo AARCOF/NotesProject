@@ -1099,6 +1099,52 @@ body.modal-open-locked,
   }
 }
 
+/* Universal Scope Selection Cards (For Sequential vs Individual Modal Updates) */
+.scope-select-card {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+
+  &:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+  }
+
+  &.active-scope {
+    background-color: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 3px 10px rgba(59, 130, 246, 0.12) !important;
+  }
+}
+
+.scope-radio-dot {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50%;
+  border: 2px solid #94a3b8;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &.selected {
+    border-color: #2563eb;
+    background-color: #ffffff;
+
+    .inner-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #2563eb;
+    }
+  }
+}
+
 /* Universal Mobile Modal Footer Styling (APK / Phone / Mobile) */
 @media (max-width: 991px) {
   .modal-footer,

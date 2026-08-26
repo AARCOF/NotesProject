@@ -679,23 +679,25 @@ export class ExpenseService {
     if (!this.currentUserId) return 0;
     const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
     const budget = all.find(b => b.userId === this.currentUserId && b.monthKey === monthKey);
-    if (budget && budget.monthlyIncome !== undefined && budget.monthlyIncome !== null && budget.monthlyIncome > 0) {
+    if (budget && budget.monthlyIncome !== undefined && budget.monthlyIncome !== null) {
       return budget.monthlyIncome;
     }
     // Si no tiene registro exclusivo para ese mes, hereda el ingreso mensual base persistente
     return this.getBaseMonthlyIncome();
   }
 
-  public setMonthlyIncome(monthKey: string, income: number, updateBaseIncomeForAllMonths: boolean = true): void {
+  public setMonthlyIncome(
+    monthKey: string, 
+    income: number, 
+    scope: 'only_this' | 'from_this_forward' | 'all_months' = 'from_this_forward'
+  ): void {
     if (!this.currentUserId) return;
     const num = Number(income) || 0;
     const now = new Date().toISOString();
+    let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
 
-    if (updateBaseIncomeForAllMonths) {
+    if (scope === 'all_months') {
       this.setBaseMonthlyIncome(num, false);
-      const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
-      
-      // Actualizar todos los meses existentes del usuario con el nuevo sueldo base
       let foundCurrent = false;
       for (const b of all) {
         if (b.userId === this.currentUserId) {
@@ -706,7 +708,6 @@ export class ExpenseService {
           }
         }
       }
-
       if (!foundCurrent) {
         all.push({
           userId: this.currentUserId,
@@ -715,26 +716,83 @@ export class ExpenseService {
           updatedAt: now
         });
       }
-
-      this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, all);
-      this.refreshData();
-      this.syncToCloud();
-      return;
+    } else if (scope === 'from_this_forward') {
+      // Actualiza la base para futuros meses
+      this.setBaseMonthlyIncome(num, false);
+      let foundCurrent = false;
+      for (const b of all) {
+        if (b.userId === this.currentUserId && b.monthKey >= monthKey) {
+          b.monthlyIncome = num;
+          b.updatedAt = now;
+          if (b.monthKey === monthKey) foundCurrent = true;
+        }
+      }
+      if (!foundCurrent) {
+        all.push({
+          userId: this.currentUserId,
+          monthKey,
+          monthlyIncome: num,
+          updatedAt: now
+        });
+      }
+    } else {
+      // only_this: solo para el mes seleccionado
+      const index = all.findIndex(b => b.userId === this.currentUserId && b.monthKey === monthKey);
+      if (index !== -1) {
+        all[index].monthlyIncome = num;
+        all[index].updatedAt = now;
+      } else {
+        all.push({
+          userId: this.currentUserId,
+          monthKey,
+          monthlyIncome: num,
+          updatedAt: now
+        });
+      }
     }
 
-    const all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
-    const index = all.findIndex(b => b.userId === this.currentUserId && b.monthKey === monthKey);
+    this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, all);
+    this.refreshData();
+    this.syncToCloud();
+  }
 
-    if (index !== -1) {
-      all[index].monthlyIncome = num;
-      all[index].updatedAt = now;
+  public deleteMonthlyIncome(
+    monthKey: string,
+    scope: 'only_this' | 'from_this_forward' | 'all_months' = 'from_this_forward'
+  ): void {
+    if (!this.currentUserId) return;
+    const now = new Date().toISOString();
+    let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
+
+    if (scope === 'all_months') {
+      this.setBaseMonthlyIncome(0, false);
+      for (const b of all) {
+        if (b.userId === this.currentUserId) {
+          b.monthlyIncome = 0;
+          b.updatedAt = now;
+        }
+      }
+    } else if (scope === 'from_this_forward') {
+      this.setBaseMonthlyIncome(0, false);
+      for (const b of all) {
+        if (b.userId === this.currentUserId && b.monthKey >= monthKey) {
+          b.monthlyIncome = 0;
+          b.updatedAt = now;
+        }
+      }
+      const cur = all.find(b => b.userId === this.currentUserId && b.monthKey === monthKey);
+      if (!cur) {
+        all.push({ userId: this.currentUserId, monthKey, monthlyIncome: 0, updatedAt: now });
+      }
     } else {
-      all.push({
-        userId: this.currentUserId,
-        monthKey,
-        monthlyIncome: num,
-        updatedAt: now
-      });
+      // only_this: poner en 0 el mes actual para que no herede el sueldo base
+      const index = all.findIndex(b => b.userId === this.currentUserId && b.monthKey === monthKey);
+      if (index !== -1) {
+        all[index].monthlyIncome = 0;
+        all[index].updatedAt = now;
+      } else {
+        all.push({ userId: this.currentUserId, monthKey, monthlyIncome: 0, updatedAt: now });
+      }
     }
 
     this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, all);
