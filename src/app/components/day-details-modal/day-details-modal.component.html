@@ -4,19 +4,24 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-slate-50">
       
+      <!-- Pull handle para móvil -->
+      <div class="mobile-sheet-drag-handle d-flex d-md-none justify-content-center pt-2 pb-1 bg-gradient-blue">
+        <div class="drag-bar"></div>
+      </div>
+
       <!-- Encabezado con Diseño Premium -->
-      <div class="modal-header-custom" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 1.5rem 2rem;">
+      <div class="modal-header-custom" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
         <div class="d-flex align-items-center">
-          <div class="modal-icon-badge mr-3 bg-white-20 text-white shadow-sm">
-            <i class="typcn typcn-calendar-outline font-size-24"></i>
+          <div class="modal-icon-badge mr-2-5 bg-white-20 text-white shadow-sm">
+            <i class="typcn typcn-calendar font-size-22"></i>
           </div>
           <div>
-            <h5 class="modal-title font-weight-bold mb-0 font-size-18 text-white">Actividades del Día</h5>
-            <small class="text-white-80 font-weight-medium font-size-14">{{ getFormattedDate() }}</small>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">Actividades del Día</h5>
+            <small class="text-white-80 font-weight-medium font-size-13">{{ getFormattedDate() }}</small>
           </div>
         </div>
         <button type="button" class="btn-close-custom text-white hover-opacity" (click)="closeModal()">
-          <i class="typcn typcn-times font-size-22"></i>
+          <i class="typcn typcn-times font-size-20"></i>
         </button>
       </div>
 

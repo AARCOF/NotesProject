@@ -36,17 +36,15 @@ export class AutomatedReminderService implements OnDestroy {
   private async initNotificationPermissions(): Promise<void> {
     try {
       if (Capacitor.isNativePlatform()) {
-        const permStatus = await LocalNotifications.checkPermissions();
-        if (permStatus.display !== 'granted') {
-          await LocalNotifications.requestPermissions();
-        }
+        // Solo consultar estado sin forzar apertura de pantalla del sistema
+        await LocalNotifications.checkPermissions().catch(() => {});
       } else if (typeof window !== 'undefined' && 'Notification' in window) {
         if (Notification.permission === 'default') {
-          await Notification.requestPermission();
+          await Notification.requestPermission().catch(() => {});
         }
       }
     } catch (e) {
-      console.warn('Error al solicitar permisos de notificación:', e);
+      console.warn('Error al verificar permisos de notificación:', e);
     }
   }
 
@@ -59,20 +57,23 @@ export class AutomatedReminderService implements OnDestroy {
 
     try {
       if (Capacitor.isNativePlatform()) {
-        const notifId = Math.floor(Math.random() * 1000000);
-        await LocalNotifications.schedule({
-          notifications: [
-            {
-              title: title,
-              body: body,
-              id: notifId,
-              schedule: { at: new Date(Date.now() + 500) },
-              sound: undefined,
-              actionTypeId: '',
-              extra: null
-            }
-          ]
-        });
+        const permStatus = await LocalNotifications.checkPermissions().catch(() => ({ display: 'denied' }));
+        if (permStatus.display === 'granted') {
+          const notifId = Math.floor(Math.random() * 1000000);
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                title: title,
+                body: body,
+                id: notifId,
+                schedule: { at: new Date(Date.now() + 500) },
+                sound: undefined,
+                actionTypeId: '',
+                extra: null
+              }
+            ]
+          }).catch(() => {});
+        }
       } else if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
           body: body,

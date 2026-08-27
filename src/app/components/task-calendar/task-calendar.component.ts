@@ -6,6 +6,7 @@ export interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
   tasks: Note[];
+  isToday: boolean;
 }
 
 @Component({
@@ -18,6 +19,8 @@ export class TaskCalendarComponent implements OnChanges, OnInit {
   @Output() dayClick = new EventEmitter<Date>();
   
   currentDate: Date = new Date();
+  todayDate: Date = new Date();
+  selectedDate: Date | null = null;
   weeks: CalendarDay[][] = [];
   
   weekDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -35,6 +38,7 @@ export class TaskCalendarComponent implements OnChanges, OnInit {
   }
 
   onDayClick(day: CalendarDay): void {
+    this.selectedDate = day.date;
     this.dayClick.emit(day.date);
   }
 
@@ -83,6 +87,12 @@ export class TaskCalendarComponent implements OnChanges, OnInit {
     // Normalize date to 00:00:00 for accurate comparison
     const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     
+    // Check if is today
+    const now = new Date();
+    const isToday = compareDate.getFullYear() === now.getFullYear() &&
+                    compareDate.getMonth() === now.getMonth() &&
+                    compareDate.getDate() === now.getDate();
+
     // Find tasks that have a dueDate matching this day
     const dayTasks = this.tasks.filter(task => {
       if (!task.dueDate) return false;
@@ -95,7 +105,8 @@ export class TaskCalendarComponent implements OnChanges, OnInit {
     return {
       date,
       isCurrentMonth,
-      tasks: dayTasks
+      tasks: dayTasks,
+      isToday
     };
   }
 
@@ -109,8 +120,22 @@ export class TaskCalendarComponent implements OnChanges, OnInit {
     this.generateCalendar();
   }
 
+  goToToday(): void {
+    this.currentDate = new Date();
+    this.selectedDate = new Date();
+    this.generateCalendar();
+    this.dayClick.emit(this.currentDate);
+  }
+
+  isSelected(date: Date): boolean {
+    if (!this.selectedDate) return false;
+    return this.selectedDate.getFullYear() === date.getFullYear() &&
+           this.selectedDate.getMonth() === date.getMonth() &&
+           this.selectedDate.getDate() === date.getDate();
+  }
+
   getCategoryColor(categoryId: string): string {
     const category = this.categoriesService.getCategoryById(categoryId);
-    return category ? category.color : '#94a3b8';
+    return category ? category.color : '#3b82f6';
   }
 }
