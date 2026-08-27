@@ -27,12 +27,12 @@
     </div>
   </div>
 
-  <div class="card-body p-2 p-sm-3 p-md-4">
+  <div class="card-body p-2 p-sm-3 p-lg-4">
     <!-- Header Días de la Semana -->
-    <div class="calendar-weekdays-row mb-2">
+    <div class="calendar-weekdays-row mb-1-5 mb-lg-2">
       <div class="weekday-col text-center font-weight-bold" *ngFor="let day of weekDays">
-        <span class="d-none d-sm-inline">{{ day }}</span>
-        <span class="d-inline d-sm-none">{{ day.slice(0, 1) }}</span>
+        <span class="d-none d-lg-inline">{{ day }}</span>
+        <span class="d-inline d-lg-none">{{ day.slice(0, 1) }}</span>
       </div>
     </div>
 
@@ -48,17 +48,17 @@
                (click)="onDayClick(day)">
             
             <!-- Cabecera del Día (Número) -->
-            <div class="day-number-header d-flex align-items-center justify-content-between">
+            <div class="day-number-header d-flex align-items-center justify-content-center justify-content-lg-between">
               <span class="day-number" [class.today-pill]="day.isToday">
                 {{ day.date.getDate() }}
               </span>
-              <span class="task-count-pill badge badge-primary-light font-size-10 font-weight-bold px-1-5 py-0 d-none d-md-inline-block" *ngIf="day.tasks.length > 0">
+              <span class="task-count-pill badge badge-primary-light font-size-10 font-weight-bold px-1-5 py-0 d-none d-lg-inline-block" *ngIf="day.tasks.length > 0">
                 {{ day.tasks.length }} {{ day.tasks.length === 1 ? 'tarea' : 'tareas' }}
               </span>
             </div>
             
-            <!-- Vista Desktop (>= 768px): Chips con títulos de tareas -->
-            <div class="desktop-tasks-list d-none d-md-flex flex-column gap-1 mt-1-5 overflow-hidden" *ngIf="day.tasks.length > 0">
+            <!-- Vista Desktop (>= 992px): Chips con títulos de tareas -->
+            <div class="desktop-tasks-list d-none d-lg-flex flex-column gap-1 mt-1-5 overflow-hidden" *ngIf="day.tasks.length > 0">
               <div *ngFor="let task of day.tasks.slice(0, 2)" 
                    class="task-chip-desktop d-flex align-items-center"
                    [style.borderLeftColor]="getCategoryColor(task.categoryId)"
@@ -70,8 +70,8 @@
               </small>
             </div>
 
-            <!-- Vista Móvil (< 768px): Dots compactos centrados -->
-            <div class="task-dots-container d-flex d-md-none flex-wrap align-items-center justify-content-center gap-1 mt-auto">
+            <!-- Vista Móvil (< 992px): Dots compactos centrados -->
+            <div class="task-dots-container d-flex d-lg-none flex-wrap align-items-center justify-content-center gap-1 mt-auto">
               <ng-container *ngIf="day.tasks.length <= 3">
                 <div *ngFor="let task of day.tasks" 
                      class="task-dot rounded-circle shadow-xs" 

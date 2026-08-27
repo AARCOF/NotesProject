@@ -58,18 +58,19 @@
 }
 
 /* ==========================================================================
-   DISEÑO WEB / DESKTOP (>= 768px)
+   ESTRUCTURA BASE (MOBILE-FIRST: CELULARES, APK Y PANTALLAS TÁCTILES < 992px)
    ========================================================================== */
 .calendar-weekdays-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 4px;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 
   .weekday-col {
-    padding: 8px 4px;
-    font-size: 0.75rem;
+    padding: 4px 1px;
+    font-size: 0.6875rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #64748b;
@@ -79,47 +80,51 @@
 .calendar-grid-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
 }
 
 .calendar-week-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 4px;
+  width: 100%;
 }
 
 .calendar-day-cell {
   min-width: 0;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Celda Cuadrada Compacta en Móvil */
 .calendar-day-box {
   width: 100%;
-  min-height: 96px;
-  padding: 8px 10px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-height: 0;
+  padding: 3px 2px;
   background-color: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px !important;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 10px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
   position: relative;
   user-select: none;
   box-sizing: border-box;
 
-  &:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
-  }
-
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.95);
   }
 
   &.other-month {
     background-color: #fafbfc;
-    opacity: 0.4;
+    opacity: 0.35;
     border-color: #f1f5f9;
 
     .day-number {
@@ -136,13 +141,14 @@
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: #ffffff !important;
       font-weight: 700;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+      font-size: 0.6875rem;
     }
   }
 
@@ -158,116 +164,102 @@
 }
 
 .day-number {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #334155;
-}
-
-.desktop-tasks-list {
-  width: 100%;
-}
-
-.task-chip-desktop {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-left-width: 3.5px;
-  border-radius: 6px;
-  padding: 2px 6px;
-  line-height: 1.3;
-  transition: background-color 0.15s ease;
-
-  &:hover {
-    background-color: #f1f5f9;
-  }
+  line-height: 1;
 }
 
 .task-dots-container {
-  min-height: 8px;
+  min-height: 6px;
   width: 100%;
 }
 
 .task-dot {
-  width: 6px;
-  height: 6px;
-  min-width: 6px;
+  width: 4.5px;
+  height: 4.5px;
+  min-width: 4.5px;
   flex-shrink: 0;
 }
 
 .task-more-badge {
   background-color: #e2e8f0;
   color: #475569;
-  border-radius: 6px;
-  padding: 0 2.5px;
-  font-size: 0.5625rem;
+  border-radius: 4px;
+  padding: 0 1.5px;
+  font-size: 0.5rem;
   line-height: 1.1;
+  font-weight: 700;
 }
 
 /* ==========================================================================
-   DISEÑO MÓVIL (< 768px): CUADRADOS COMPACTOS CON ASPECT-RATIO 1:1
+   VISTA ESCRITORIO / DESKTOP (SOLO >= 992px)
    ========================================================================== */
-@media (max-width: 767.98px) {
+@media (min-width: 992px) {
   .calendar-main-card {
-    border-radius: 16px !important;
+    border-radius: 20px !important;
   }
 
   .calendar-weekdays-row {
-    gap: 4px;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 8px;
 
     .weekday-col {
-      padding: 4px 1px;
-      font-size: 0.6875rem;
-      font-weight: 700;
+      padding: 8px 4px;
+      font-size: 0.75rem;
     }
   }
 
   .calendar-grid-wrapper {
-    gap: 4px;
+    gap: 8px;
   }
 
   .calendar-week-row {
-    gap: 4px;
+    gap: 8px;
   }
 
   .calendar-day-box {
-    aspect-ratio: 1 / 1 !important;
-    min-height: unset !important;
-    height: auto !important;
-    padding: 3px 2px !important;
-    border-radius: 10px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    aspect-ratio: auto;
+    min-height: 96px;
+    padding: 8px 10px;
+    border-radius: 14px !important;
+    align-items: stretch;
+    justify-content: flex-start;
 
     &:hover {
-      transform: none;
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
     }
-
-    &.is-today .today-pill {
-      width: 19px;
-      height: 19px;
-      font-size: 0.6875rem;
-    }
-  }
-
-  .day-number-header {
-    justify-content: center !important;
   }
 
   .day-number {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
 
-  .task-dot {
-    width: 4.5px;
-    height: 4.5px;
-    min-width: 4.5px;
+  .today-pill {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.8125rem !important;
   }
 
-  .task-more-badge {
-    font-size: 0.5rem;
-    padding: 0 1.5px;
+  .desktop-tasks-list {
+    width: 100%;
+  }
+
+  .task-chip-desktop {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left-width: 3.5px;
+    border-radius: 6px;
+    padding: 2px 6px;
+    line-height: 1.3;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #f1f5f9;
+    }
   }
 }
 
