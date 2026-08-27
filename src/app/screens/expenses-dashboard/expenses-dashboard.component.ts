@@ -68,6 +68,9 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   public chartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: {
+      duration: 0
+    },
     legend: {
       position: 'bottom',
       labels: {
@@ -99,6 +102,9 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   public subcategoryChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: {
+      duration: 0
+    },
     scales: {
       xAxes: [{
         gridLines: { display: false },
@@ -325,9 +331,19 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.categoryChartLabels = catLabels;
-    this.categoryChartData = catData;
-    this.categoryChartColors = [{ backgroundColor: catColors }];
+    const currentCatLabels = JSON.stringify(this.categoryChartLabels);
+    const currentCatData = JSON.stringify(this.categoryChartData);
+    const currentCatColors = JSON.stringify(this.categoryChartColors[0]?.backgroundColor || []);
+
+    if (
+      currentCatLabels !== JSON.stringify(catLabels) ||
+      currentCatData !== JSON.stringify(catData) ||
+      currentCatColors !== JSON.stringify(catColors)
+    ) {
+      this.categoryChartLabels = catLabels;
+      this.categoryChartData = catData;
+      this.categoryChartColors = [{ backgroundColor: catColors }];
+    }
 
     // 2. Gráfico de Subcategorías (Bar Chart Top)
     const subTotals: { name: string; amount: number }[] = [];
@@ -341,12 +357,23 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     subTotals.sort((a, b) => b.amount - a.amount);
     const topSubs = subTotals.slice(0, 6);
 
-    this.subcategoryChartLabels = topSubs.map(s => s.name);
-    this.subcategoryChartData = [{
-      data: topSubs.map(s => s.amount),
-      label: 'Gasto',
-      backgroundColor: '#3b82f6'
-    }];
+    const newSubLabels = topSubs.map(s => s.name);
+    const newSubData = topSubs.map(s => s.amount);
+
+    const currentSubLabels = JSON.stringify(this.subcategoryChartLabels);
+    const currentSubData = JSON.stringify(this.subcategoryChartData[0]?.data || []);
+
+    if (
+      currentSubLabels !== JSON.stringify(newSubLabels) ||
+      currentSubData !== JSON.stringify(newSubData)
+    ) {
+      this.subcategoryChartLabels = newSubLabels;
+      this.subcategoryChartData = [{
+        data: newSubData,
+        label: 'Gasto',
+        backgroundColor: '#3b82f6'
+      }];
+    }
   }
 
   // --- Getters y Filtros para la Plantilla ---

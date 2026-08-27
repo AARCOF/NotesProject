@@ -336,14 +336,18 @@ export class ExpenseService {
 
           // 1. Sincronizar preferencia de moneda
           if (res.currency && typeof res.currency === 'string') {
-            this.setCurrency(res.currency, false);
+            const currentCurrency = this.currencySubject.getValue();
+            if (currentCurrency !== res.currency) {
+              this.setCurrency(res.currency, false);
+            }
           }
 
           // 2. Sincronizar sueldo base
           if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
             const cloudIncome = Number(res.baseMonthlyIncome) || 0;
-            this.setBaseMonthlyIncome(cloudIncome, false);
-            if (this.baseMonthlyIncomeSubject.getValue() !== cloudIncome) {
+            const currentIncome = this.baseMonthlyIncomeSubject.getValue();
+            if (currentIncome !== cloudIncome) {
+              this.setBaseMonthlyIncome(cloudIncome, false);
               this.baseMonthlyIncomeSubject.next(cloudIncome);
             }
           }
