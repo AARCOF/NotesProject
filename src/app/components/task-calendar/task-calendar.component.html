@@ -41,24 +41,21 @@
       <div class="calendar-week-row" *ngFor="let week of weeks">
         <div class="calendar-day-cell" *ngFor="let day of week">
           
-          <div class="calendar-day-box rounded-xl d-flex flex-column cursor-pointer transition-all" 
+          <div class="calendar-day-box rounded-xl d-flex flex-column align-items-center justify-content-between cursor-pointer transition-all" 
                [class.other-month]="!day.isCurrentMonth"
                [class.is-today]="day.isToday"
                [class.is-selected]="isSelected(day.date)"
                (click)="onDayClick(day)">
             
-            <!-- Cabecera del Día (Número) -->
-            <div class="day-number-row d-flex align-items-center justify-content-between">
+            <!-- Número del Día (Centrado) -->
+            <div class="day-number-wrapper d-flex align-items-center justify-content-center">
               <span class="day-number" [class.today-pill]="day.isToday">
                 {{ day.date.getDate() }}
               </span>
-              <span class="task-count-pill badge badge-primary-light font-size-10 font-weight-bold px-1 py-0 d-none d-md-inline-block" *ngIf="day.tasks.length > 0">
-                {{ day.tasks.length }}
-              </span>
             </div>
             
-            <!-- Indicadores de Tareas (Dots) -->
-            <div class="task-dots-container d-flex flex-wrap align-items-center gap-1 mt-auto">
+            <!-- Indicadores de Tareas (Dots centrados abajo) -->
+            <div class="task-dots-container d-flex flex-wrap align-items-center justify-content-center gap-1">
               <!-- Si hay hasta 3 tareas -->
               <ng-container *ngIf="day.tasks.length <= 3">
                 <div *ngFor="let task of day.tasks" 
