@@ -18,6 +18,7 @@ export interface Note {
   createdAt: string;
   completedAt?: string;
   dueDate?: string;
+  dueTime?: string;
   status: NoteStatus;
   isPinned?: boolean;
   reminderSent?: boolean;

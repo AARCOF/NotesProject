@@ -72,6 +72,9 @@
                       <p class="font-weight-semibold text-slate-700 mb-0 font-size-14 text-truncate" [class.text-decoration-line-through]="task.status === 'completada'">{{ task.title }}</p>
                       <div class="d-flex align-items-center gap-1">
                         <small class="text-slate-500">{{ task.status === 'completada' ? 'Completada' : 'Pendiente' }}</small>
+                        <span class="badge badge-info-light font-size-10 px-1-5 py-0 d-inline-flex align-items-center text-blue" *ngIf="task.dueTime">
+                          <i class="typcn typcn-time mr-0-5"></i> {{ task.dueTime }}
+                        </span>
                         <span class="badge badge-warning font-size-10 px-1-5 py-0 d-inline-flex align-items-center" *ngIf="task.recurrence && task.recurrence !== 'ninguna'">
                           <i class="typcn typcn-arrow-sync mr-1"></i> {{ getRecurrenceLabel(task.recurrence) }}
                         </span>

@@ -22,9 +22,9 @@ export class AutomatedReminderService implements OnDestroy {
   ) {
     this.initNotificationPermissions();
 
-    // Verificar cada 5 minutos
+    // Verificar cada 2 minutos para detectar oportunamente alertas de 4h y 1h
     this.subscription.add(
-      interval(5 * 60 * 1000).subscribe(() => {
+      interval(2 * 60 * 1000).subscribe(() => {
         this.checkAndSendReminders();
       })
     );
@@ -96,40 +96,145 @@ export class AutomatedReminderService implements OnDestroy {
   private checkTaskReminders(user: any): void {
     const sub = this.notesService.notes$.subscribe(notes => {
       const now = new Date();
-      const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
-      
+      const currentYear = now.getFullYear();
+      const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const currentDay = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${currentYear}-${currentMonth}-${currentDay}`;
+
+      const tomorrowDate = new Date(now.getTime() + 24 * 3600 * 1000);
+      const tomYear = tomorrowDate.getFullYear();
+      const tomMonth = String(tomorrowDate.getMonth() + 1).padStart(2, '0');
+      const tomDay = String(tomorrowDate.getDate()).padStart(2, '0');
+      const tomorrowStr = `${tomYear}-${tomMonth}-${tomDay}`;
+
       notes.forEach(note => {
-        if (note.dueDate && note.status !== 'completada') {
-          const dueDate = new Date(`${note.dueDate}T00:00:00`);
-          const timeDiff = dueDate.getTime() - now.getTime();
-          const hoursDiff = timeDiff / (1000 * 3600);
-          
-          // Se activa cuando la tarea está a 1 día (24 horas o menos) de cumplir su fecha de vencimiento
-          const isOneDayBefore = (hoursDiff <= 24 && hoursDiff > 0) || note.dueDate === tomorrowStr;
+        if (!note.dueDate || note.status === 'completada') return;
 
-          if (isOneDayBefore) {
-            // 1. Notificación emergente en el celular / web
-            const notifTitle = `⏰ Recordatorio de Tarea: ${note.title}`;
-            const notifBody = `Tu tarea con prioridad ${note.priority.toUpperCase()} vence mañana (${note.dueDate}). ¡No la olvides!`;
-            this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}`);
+        if (note.dueTime && note.dueTime.trim()) {
+          // =========================================================================
+          // CASO 1: CON HORA DE CUMPLIMIENTO REGISTRADA
+          // 1) 1 día de anticipación (24h) | 2) 4 horas antes | 3) 1 hora antes
+          // =========================================================================
+          const [dYear, dMonth, dDay] = note.dueDate.split('-').map(Number);
+          const [tHour, tMin] = note.dueTime.split(':').map(Number);
+          const targetDateTime = new Date(dYear, dMonth - 1, dDay, tHour || 0, tMin || 0, 0);
 
-            // 2. Notificación vía Gmail (EmailJS)
-            if (!note.reminderSent && user.email) {
-              this.verificationKeyService.sendTaskReminderEmail(
-                user.email,
-                note.title,
-                note.content,
-                note.categoryId,
-                note.priority,
-                note.dueDate
-              ).subscribe(() => {
-                const updatedNote = { reminderSent: true };
-                this.notesService.updateNote(note.id, updatedNote);
-                console.log(`Email de recordatorio enviado para tarea: ${note.title}`);
-              }, err => {
-                console.error('Error al enviar email de recordatorio de tarea', err);
-              });
+          const diffMs = targetDateTime.getTime() - now.getTime();
+          const diffHours = diffMs / (1000 * 3600);
+          const diffMinutes = diffMs / (1000 * 60);
+
+          // 1. Recordatorio 1 día antes (entre 4h y 24h antes)
+          if (diffHours > 4 && diffHours <= 24) {
+            const key = `task_rem_${note.id}_24h_${note.dueDate}`;
+            if (!localStorage.getItem(key)) {
+              localStorage.setItem(key, 'true');
+              const notifTitle = `⏰ Recordatorio (1 día antes): ${note.title}`;
+              const notifBody = `Tu tarea vence mañana ${note.dueDate} a las ${note.dueTime}. ¡Prepárate!`;
+              this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}_24h`);
+
+              if (user.email) {
+                this.verificationKeyService.sendTaskReminderEmail(
+                  user.email,
+                  `[1 Día Antes] ${note.title}`,
+                  note.content,
+                  note.categoryId,
+                  note.priority,
+                  `${note.dueDate} a las ${note.dueTime}`
+                ).subscribe(() => {}, () => {});
+              }
+            }
+          }
+
+          // 2. Recordatorio 4 horas antes (entre 1h y 4h antes)
+          if (diffHours > 1 && diffHours <= 4) {
+            const key = `task_rem_${note.id}_4h_${note.dueDate}`;
+            if (!localStorage.getItem(key)) {
+              localStorage.setItem(key, 'true');
+              const notifTitle = `⏳ Recordatorio (Faltan 4 horas): ${note.title}`;
+              const notifBody = `Tu tarea vence hoy a las ${note.dueTime}. ¡Últimas horas para completarla!`;
+              this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}_4h`);
+
+              if (user.email) {
+                this.verificationKeyService.sendTaskReminderEmail(
+                  user.email,
+                  `[Faltan 4 Horas] ${note.title}`,
+                  note.content,
+                  note.categoryId,
+                  note.priority,
+                  `Hoy a las ${note.dueTime}`
+                ).subscribe(() => {}, () => {});
+              }
+            }
+          }
+
+          // 3. Recordatorio 1 hora antes (entre 0 y 60 minutos antes)
+          if (diffMinutes > 0 && diffMinutes <= 60) {
+            const key = `task_rem_${note.id}_1h_${note.dueDate}`;
+            if (!localStorage.getItem(key)) {
+              localStorage.setItem(key, 'true');
+              const notifTitle = `🚨 ¡Atención! Falta 1 hora: ${note.title}`;
+              const notifBody = `Tu tarea con prioridad ${note.priority.toUpperCase()} vence a las ${note.dueTime}.`;
+              this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}_1h`);
+
+              if (user.email) {
+                this.verificationKeyService.sendTaskReminderEmail(
+                  user.email,
+                  `[Falta 1 Hora] ${note.title}`,
+                  note.content,
+                  note.categoryId,
+                  note.priority,
+                  `Hoy a las ${note.dueTime}`
+                ).subscribe(() => {}, () => {});
+              }
+            }
+          }
+
+        } else {
+          // =========================================================================
+          // CASO 2: SIN HORA DE CUMPLIMIENTO (1 DÍA ANTES Y EL MISMO DÍA)
+          // =========================================================================
+
+          // 1. Un día antes
+          if (note.dueDate === tomorrowStr) {
+            const key = `task_rem_${note.id}_day_before_${note.dueDate}`;
+            if (!localStorage.getItem(key)) {
+              localStorage.setItem(key, 'true');
+              const notifTitle = `⏰ Recordatorio (1 día antes): ${note.title}`;
+              const notifBody = `Tu tarea con prioridad ${note.priority.toUpperCase()} vence mañana (${note.dueDate}). ¡No la olvides!`;
+              this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}_day_before`);
+
+              if (user.email) {
+                this.verificationKeyService.sendTaskReminderEmail(
+                  user.email,
+                  `[1 Día Antes] ${note.title}`,
+                  note.content,
+                  note.categoryId,
+                  note.priority,
+                  note.dueDate
+                ).subscribe(() => {}, () => {});
+              }
+            }
+          }
+
+          // 2. El mismo día de cumplimiento
+          if (note.dueDate === todayStr) {
+            const key = `task_rem_${note.id}_same_day_${note.dueDate}`;
+            if (!localStorage.getItem(key)) {
+              localStorage.setItem(key, 'true');
+              const notifTitle = `📅 Tarea para hoy: ${note.title}`;
+              const notifBody = `Tienes una tarea programada para cumplirse hoy (${note.dueDate}).`;
+              this.triggerDeviceNotification(notifTitle, notifBody, `task_${note.id}_same_day`);
+
+              if (user.email) {
+                this.verificationKeyService.sendTaskReminderEmail(
+                  user.email,
+                  `[Hoy] ${note.title}`,
+                  note.content,
+                  note.categoryId,
+                  note.priority,
+                  `Hoy (${note.dueDate})`
+                ).subscribe(() => {}, () => {});
+              }
             }
           }
         }

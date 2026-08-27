@@ -126,18 +126,29 @@
           </div>
 
           <div class="row">
-            <div class="col-md-6 form-group mb-3">
+            <!-- Fecha de Entrega -->
+            <div class="col-12 col-sm-6 col-md-4 form-group mb-3">
               <label class="font-weight-bold text-slate-700 font-size-13 mb-1">
                 <i class="typcn typcn-calendar text-blue mr-1"></i> Fecha Límite
               </label>
               <input type="date" class="form-control input-custom" [(ngModel)]="dueDate" name="dueDate">
-              <small class="text-slate-400 font-size-11 d-block mt-0-5" *ngIf="recurrence !== 'ninguna'">Base para programar los ciclos.</small>
+              <small class="text-slate-400 font-size-11 d-block mt-0-5" *ngIf="recurrence !== 'ninguna'">Base para los ciclos.</small>
             </div>
 
-            <div class="col-md-6 form-group mb-3">
+            <!-- Hora de Cumplimiento (Opcional) -->
+            <div class="col-12 col-sm-6 col-md-4 form-group mb-3">
+              <label class="font-weight-bold text-slate-700 font-size-13 mb-1">
+                <i class="typcn typcn-time text-emerald mr-1"></i> Hora Límite
+              </label>
+              <input type="time" class="form-control input-custom" [(ngModel)]="dueTime" name="dueTime">
+              <small class="text-slate-400 font-size-11 d-block mt-0-5">Opcional</small>
+            </div>
+
+            <!-- Repetición / Frecuencia -->
+            <div class="col-12 col-md-4 form-group mb-3">
               <div class="d-flex align-items-center justify-content-between mb-1">
                 <label class="font-weight-bold text-slate-700 font-size-13 mb-0">
-                  <i class="typcn typcn-arrow-sync text-amber mr-1"></i> Repetición / Recordatorio
+                  <i class="typcn typcn-arrow-sync text-amber mr-1"></i> Repetición
                 </label>
                 <span class="badge badge-warning font-size-10 px-2 py-0-5 rounded-pill font-weight-bold" *ngIf="recurrence !== 'ninguna'">Activa</span>
               </div>
@@ -148,19 +159,32 @@
                 <option value="mensual">Cada Mes (Mensual)</option>
                 <option value="anual">Cada Año (Anual)</option>
               </select>
-              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'mensual'">
-                ✨ Se renovará automáticamente cada mes antes del vencimiento.
-              </small>
-              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'semanal'">
-                ✨ Se renovará automáticamente cada semana.
-              </small>
-              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'diaria'">
-                ✨ Se renovará automáticamente cada día.
-              </small>
-              <small class="text-indigo font-weight-semibold font-size-11 mt-1 d-block" *ngIf="recurrence === 'anual'">
-                ✨ Se renovará automáticamente cada año.
-              </small>
             </div>
+          </div>
+
+          <!-- Banner Informativo de Recordatorios -->
+          <div class="alert alert-light border border-slate-200 rounded-xl p-2-5 mb-3 bg-slate-50 d-flex align-items-center" *ngIf="dueDate">
+            <i class="typcn typcn-bell text-blue font-size-20 mr-2 flex-shrink-0"></i>
+            <div class="font-size-12 text-slate-600 line-height-sm">
+              <strong class="text-slate-800">Recordatorios automáticos:</strong>
+              <span *ngIf="dueTime"> Se te recordará <strong>1 día antes</strong>, <strong>4 horas antes</strong> y <strong>1 hora antes</strong> (a las {{ dueTime }}).</span>
+              <span *ngIf="!dueTime"> Se te recordará <strong>1 día antes</strong> y el <strong>mismo día</strong> del cumplimiento.</span>
+            </div>
+          </div>
+
+          <div class="mb-2" *ngIf="recurrence !== 'ninguna'">
+            <small class="text-indigo font-weight-semibold font-size-11 d-block" *ngIf="recurrence === 'mensual'">
+              ✨ Se renovará automáticamente cada mes antes del vencimiento.
+            </small>
+            <small class="text-indigo font-weight-semibold font-size-11 d-block" *ngIf="recurrence === 'semanal'">
+              ✨ Se renovará automáticamente cada semana.
+            </small>
+            <small class="text-indigo font-weight-semibold font-size-11 d-block" *ngIf="recurrence === 'diaria'">
+              ✨ Se renovará automáticamente cada día.
+            </small>
+            <small class="text-indigo font-weight-semibold font-size-11 d-block" *ngIf="recurrence === 'anual'">
+              ✨ Se renovará automáticamente cada año.
+            </small>
           </div>
 
           <div class="form-group mb-3">

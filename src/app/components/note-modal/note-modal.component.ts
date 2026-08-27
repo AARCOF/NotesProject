@@ -25,6 +25,7 @@ export class NoteModalComponent implements OnChanges {
   categoryId: string = '';
   status: NoteStatus = 'pendiente';
   dueDate: string = '';
+  dueTime: string = '';
   isPinned: boolean = false;
   recurrence: RecurrenceFrequency = 'ninguna';
 
@@ -41,6 +42,7 @@ export class NoteModalComponent implements OnChanges {
         this.categoryId = this.noteToEdit.categoryId;
         this.status = this.noteToEdit.status;
         this.dueDate = this.noteToEdit.dueDate || '';
+        this.dueTime = this.noteToEdit.dueTime || '';
         this.isPinned = this.noteToEdit.isPinned || false;
         this.recurrence = this.noteToEdit.recurrence || 'ninguna';
         this.checklist = this.noteToEdit.checklist ? JSON.parse(JSON.stringify(this.noteToEdit.checklist)) : [];
@@ -57,6 +59,7 @@ export class NoteModalComponent implements OnChanges {
     this.categoryId = this.categories.length > 0 ? this.categories[0].id : '';
     this.status = this.initialStatus || 'pendiente';
     this.dueDate = this.initialDueDate || '';
+    this.dueTime = '';
     this.isPinned = false;
     this.recurrence = 'ninguna';
     this.checklist = [];
@@ -114,6 +117,7 @@ export class NoteModalComponent implements OnChanges {
           categoryId: this.categoryId,
           status: this.status,
           dueDate: this.dueDate || undefined,
+          dueTime: this.dueTime ? this.dueTime.trim() : undefined,
           isPinned: this.isPinned,
           recurrence: this.recurrence !== 'ninguna' ? this.recurrence : undefined,
           checklist: checklistToSave
@@ -127,6 +131,7 @@ export class NoteModalComponent implements OnChanges {
         categoryId: this.categoryId || (this.categories[0] ? this.categories[0].id : ''),
         status: this.status,
         dueDate: this.dueDate || undefined,
+        dueTime: this.dueTime ? this.dueTime.trim() : undefined,
         isPinned: this.isPinned,
         recurrence: this.recurrence !== 'ninguna' ? this.recurrence : undefined,
         checklist: checklistToSave
