@@ -4,6 +4,9 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Note, PriorityLevel, NoteStatus, RecurrenceFrequency } from '../models/note.model';
 import { AuthService } from '../core/services/auth.service';
 import { Preferences } from '@capacitor/preferences';
+import { registerPlugin } from '@capacitor/core';
+
+const WidgetUpdater = registerPlugin<{ refreshWidgets: () => Promise<void> }>('WidgetUpdater');
 
 const NOTES_STORAGE_KEY = 'noteyou_notes_v2';
 export const COMPLETED_TASK_AUTO_DELETE_DAYS = 15;
@@ -74,6 +77,10 @@ export class NotesService {
       Preferences.set({
         key: 'widget_tasks_json',
         value: JSON.stringify(widgetTasks)
+      }).then(() => {
+        try {
+          WidgetUpdater.refreshWidgets().catch(() => {});
+        } catch (err) {}
       }).catch(() => {});
     } catch (e) {}
   }
@@ -393,7 +400,10 @@ export class NotesService {
           const mergedAll = [...mergedUserNotes, ...otherUsersNotes];
 
           this.saveAllStorageNotes(mergedAll);
-          this.notesSubject.next(mergedUserNotes);
+          const currentNotes = this.notesSubject.getValue();
+          if (JSON.stringify(currentNotes) !== JSON.stringify(mergedUserNotes)) {
+            this.notesSubject.next(mergedUserNotes);
+          }
         }
       },
       error: () => {}

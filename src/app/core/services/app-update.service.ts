@@ -16,8 +16,8 @@ export interface AppVersionInfo {
   providedIn: 'root'
 })
 export class AppUpdateService {
-  public readonly CURRENT_VERSION = '3.2.1';
-  public readonly CURRENT_VERSION_CODE = 321;
+  public readonly CURRENT_VERSION = '3.2.2';
+  public readonly CURRENT_VERSION_CODE = 322;
 
   private updateAvailableSubject = new BehaviorSubject<AppVersionInfo | null>(null);
   public updateAvailable$: Observable<AppVersionInfo | null> = this.updateAvailableSubject.asObservable();

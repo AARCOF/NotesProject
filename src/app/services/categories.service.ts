@@ -164,7 +164,11 @@ export class CategoriesService {
           const mergedAll = [...mergedUserCats, ...other];
           this.saveAllCustomCategories(mergedAll);
 
-          this.categoriesSubject.next([...this.defaultCategories, ...mergedUserCats]);
+          const newCats = [...this.defaultCategories, ...mergedUserCats];
+          const currentCats = this.categoriesSubject.getValue();
+          if (JSON.stringify(currentCats) !== JSON.stringify(newCats)) {
+            this.categoriesSubject.next(newCats);
+          }
         }
       },
       error: () => {}

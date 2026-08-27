@@ -762,16 +762,19 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
       
-      <div class="modal-header-custom bg-gradient-blue text-white p-3 px-4">
-        <div class="d-flex align-items-center">
-          <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
-          <h5 class="modal-title font-weight-bold mb-0 font-size-17">
-            {{ expenseToEdit ? 'Editar Gasto' : 'Registrar Nuevo Gasto' }}
-          </h5>
+      <div class="modal-header-custom bg-gradient-blue text-white p-3 px-4 flex-column align-items-stretch">
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17">
+              {{ expenseToEdit ? 'Editar Gasto' : 'Registrar Nuevo Gasto' }}
+            </h5>
+          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeExpenseModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeExpenseModal()">
-          <i class="typcn typcn-times font-size-20"></i>
-        </button>
       </div>
 
       <div class="modal-body p-4">
@@ -797,14 +800,14 @@
           <div class="col-md-6 form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-13">Categoría *</label>
             <select class="form-control input-custom" [(ngModel)]="expenseForm.categoryId" (change)="onExpenseCategoryChange()">
-              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+              <option *ngFor="let cat of categories; trackBy: trackByCat" [value]="cat.id">{{ cat.name }}</option>
             </select>
           </div>
 
           <div class="col-md-6 form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-13">Subcategoría *</label>
             <select class="form-control input-custom" [(ngModel)]="expenseForm.subcategoryId">
-              <option *ngFor="let sub of getCategorySubcategories(expenseForm.categoryId)" [value]="sub.id">{{ sub.name }}</option>
+              <option *ngFor="let sub of getCategorySubcategories(expenseForm.categoryId); trackBy: trackBySub" [value]="sub.id">{{ sub.name }}</option>
             </select>
           </div>
         </div>
@@ -855,22 +858,25 @@
     <div class="modal-content-custom bg-white shadow-xl rounded-2xl border-0 overflow-hidden">
       
       <!-- Cabecera Dinámica con Color de Categoría -->
-      <div class="modal-header-custom p-3 px-4 text-white d-flex align-items-center justify-content-between transition-all"
+      <div class="modal-header-custom p-3 px-4 text-white d-flex flex-column align-items-stretch transition-all"
            [style.backgroundColor]="categoryForm.color || '#3b82f6'">
-        <div class="d-flex align-items-center">
-          <div class="modal-icon-badge bg-white-20 rounded-xl p-2 mr-2-5 d-flex align-items-center justify-content-center shadow-xs">
-            <i class="typcn {{ categoryForm.icon || 'typcn-folder' }} font-size-22 text-white"></i>
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <div class="modal-icon-badge bg-white-20 rounded-xl p-2 mr-2-5 d-flex align-items-center justify-content-center shadow-xs">
+              <i class="typcn {{ categoryForm.icon || 'typcn-folder' }} font-size-22 text-white"></i>
+            </div>
+            <div>
+              <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
+                {{ categoryToEdit ? 'Editar Categoría de Gasto' : 'Nueva Categoría de Gasto' }}
+              </h5>
+              <small class="text-white-80 font-size-11">Personaliza el nombre, color e icono distintivo</small>
+            </div>
           </div>
-          <div>
-            <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
-              {{ categoryToEdit ? 'Editar Categoría de Gasto' : 'Nueva Categoría de Gasto' }}
-            </h5>
-            <small class="text-white-80 font-size-11">Personaliza el nombre, color e icono distintivo</small>
-          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeCategoryModal()">
+            <i class="typcn typcn-times font-size-22"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeCategoryModal()">
-          <i class="typcn typcn-times font-size-22"></i>
-        </button>
       </div>
 
       <div class="modal-body p-4">
@@ -956,13 +962,16 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
       
-      <div class="modal-header-custom bg-slate-800 text-white p-3 px-4">
-        <h5 class="modal-title font-weight-bold mb-0 font-size-17">
-          {{ subcategoryToEdit ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
-        </h5>
-        <button type="button" class="btn-close-custom text-white" (click)="closeSubcategoryModal()">
-          <i class="typcn typcn-times font-size-20"></i>
-        </button>
+      <div class="modal-header-custom bg-slate-800 text-white p-3 px-4 flex-column align-items-stretch">
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <h5 class="modal-title font-weight-bold mb-0 font-size-17">
+            {{ subcategoryToEdit ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
+          </h5>
+          <button type="button" class="btn-close-custom text-white" (click)="closeSubcategoryModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
+        </div>
       </div>
 
       <div class="modal-body p-4">
@@ -970,7 +979,7 @@
         <div class="form-group mb-3">
           <label class="font-weight-bold text-slate-700 font-size-13">Categoría Padre *</label>
           <select class="form-control input-custom" [(ngModel)]="subcategoryForm.categoryId" [disabled]="!!subcategoryToEdit">
-            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+            <option *ngFor="let cat of categories; trackBy: trackByCat" [value]="cat.id">{{ cat.name }}</option>
           </select>
         </div>
 
@@ -1000,14 +1009,17 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
       
-      <div class="modal-header-custom bg-gradient-blue text-white p-3 px-4">
-        <div class="d-flex align-items-center">
-          <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
-          <h5 class="modal-title font-weight-bold mb-0 font-size-17">Sueldo / Ingreso Mensual Base</h5>
+      <div class="modal-header-custom bg-gradient-blue text-white p-3 px-4 flex-column align-items-stretch">
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <i class="typcn typcn-credit-card font-size-22 mr-2"></i>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17">Sueldo / Ingreso Mensual Base</h5>
+          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeIncomeModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeIncomeModal()">
-          <i class="typcn typcn-times font-size-20"></i>
-        </button>
       </div>
 
       <div class="modal-body p-4">
@@ -1097,14 +1109,17 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
       
-      <div class="modal-header-custom bg-danger text-white p-3 px-4">
-        <div class="d-flex align-items-center">
-          <i class="typcn typcn-trash font-size-22 mr-2"></i>
-          <h5 class="modal-title font-weight-bold mb-0 font-size-17">Borrar Registro de Sueldo</h5>
+      <div class="modal-header-custom bg-danger text-white p-3 px-4 flex-column align-items-stretch">
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <i class="typcn typcn-trash font-size-22 mr-2"></i>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17">Borrar Registro de Sueldo</h5>
+          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeDeleteIncomeModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeDeleteIncomeModal()">
-          <i class="typcn typcn-times font-size-20"></i>
-        </button>
       </div>
 
       <div class="modal-body p-4">
@@ -1177,16 +1192,19 @@
   <div class="modal-dialog-custom" role="document" (click)="$event.stopPropagation()">
     <div class="modal-content-custom bg-white">
       
-      <div class="modal-header-custom bg-gradient-emerald text-white p-3 px-4">
-        <div class="d-flex align-items-center">
-          <i class="typcn typcn-gift font-size-22 mr-2"></i>
-          <h5 class="modal-title font-weight-bold mb-0 font-size-17">
-            {{ extraIncomeToEdit ? 'Editar Bono / Ingreso Extra' : 'Registrar Bono o Ingreso Extra' }}
-          </h5>
+      <div class="modal-header-custom bg-gradient-emerald text-white p-3 px-4 flex-column align-items-stretch">
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <i class="typcn typcn-gift font-size-22 mr-2"></i>
+            <h5 class="modal-title font-weight-bold mb-0 font-size-17">
+              {{ extraIncomeToEdit ? 'Editar Bono / Ingreso Extra' : 'Registrar Bono o Ingreso Extra' }}
+            </h5>
+          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeExtraIncomeModal()">
+            <i class="typcn typcn-times font-size-20"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeExtraIncomeModal()">
-          <i class="typcn typcn-times font-size-20"></i>
-        </button>
       </div>
 
       <div class="modal-body p-4">

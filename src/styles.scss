@@ -1612,4 +1612,116 @@ body.modal-open-locked,
   }
 }
 
+/* ============================================================
+   GLOBAL BOTTOM SHEET & MODAL ANIMATIONS & STYLING
+   ============================================================ */
+@keyframes slideUpSheet {
+  0% {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInModal {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1050;
+  transition: opacity 0.2s ease;
+}
+
+.modal-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1060;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 540px;
+  margin: auto;
+  animation: fadeInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-content-custom {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.3);
+}
+
+.sheet-drag-handle {
+  display: none;
+}
+
+@media (max-width: 991px) {
+  .modal-custom {
+    align-items: flex-end !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .modal-dialog-custom {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-height: 92vh;
+    animation: none !important;
+  }
+
+  .modal-content-custom {
+    border-radius: 28px 28px 0 0 !important;
+    border: none !important;
+    max-height: 92vh;
+    height: auto;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    animation: slideUpSheet 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.35) !important;
+  }
+
+  .sheet-drag-handle {
+    display: block;
+    width: 44px;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.45);
+    border-radius: 100px;
+    margin: 8px auto 4px auto;
+  }
+}
+
+
 

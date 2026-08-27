@@ -4,6 +4,9 @@ import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem, MonthlyBudget } from '../models/expense.model';
 import { AuthService } from '../core/services/auth.service';
 import { Preferences } from '@capacitor/preferences';
+import { registerPlugin } from '@capacitor/core';
+
+const WidgetUpdater = registerPlugin<{ refreshWidgets: () => Promise<void> }>('WidgetUpdater');
 
 const EXPENSE_CATEGORIES_STORAGE_KEY = 'noteyou_expense_categories_v1';
 const EXPENSE_SUBCATEGORIES_STORAGE_KEY = 'noteyou_expense_subcategories_v1';
@@ -139,6 +142,10 @@ export class ExpenseService {
       Preferences.set({
         key: 'widget_expenses_json',
         value: JSON.stringify(widgetData)
+      }).then(() => {
+        try {
+          WidgetUpdater.refreshWidgets().catch(() => {});
+        } catch (err) {}
       }).catch(() => {});
 
     } catch (e) {
@@ -336,7 +343,9 @@ export class ExpenseService {
           if (res.baseMonthlyIncome !== undefined && res.baseMonthlyIncome !== null) {
             const cloudIncome = Number(res.baseMonthlyIncome) || 0;
             this.setBaseMonthlyIncome(cloudIncome, false);
-            this.baseMonthlyIncomeSubject.next(cloudIncome);
+            if (this.baseMonthlyIncomeSubject.getValue() !== cloudIncome) {
+              this.baseMonthlyIncomeSubject.next(cloudIncome);
+            }
           }
 
           // 3. Sincronizar categorías
@@ -344,7 +353,9 @@ export class ExpenseService {
             let all = this.getStorageData<ExpenseCategory>(EXPENSE_CATEGORIES_STORAGE_KEY);
             const other = all.filter(c => c.userId !== this.currentUserId);
             this.setStorageData(EXPENSE_CATEGORIES_STORAGE_KEY, [...res.categories, ...other]);
-            this.categoriesSubject.next(res.categories);
+            if (JSON.stringify(this.categoriesSubject.getValue()) !== JSON.stringify(res.categories)) {
+              this.categoriesSubject.next(res.categories);
+            }
           }
 
           // 4. Sincronizar subcategorías
@@ -352,7 +363,9 @@ export class ExpenseService {
             let all = this.getStorageData<ExpenseSubcategory>(EXPENSE_SUBCATEGORIES_STORAGE_KEY);
             const other = all.filter(s => s.userId !== this.currentUserId);
             this.setStorageData(EXPENSE_SUBCATEGORIES_STORAGE_KEY, [...res.subcategories, ...other]);
-            this.subcategoriesSubject.next(res.subcategories);
+            if (JSON.stringify(this.subcategoriesSubject.getValue()) !== JSON.stringify(res.subcategories)) {
+              this.subcategoriesSubject.next(res.subcategories);
+            }
           }
 
           // 5. Sincronizar gastos
@@ -360,7 +373,9 @@ export class ExpenseService {
             let all = this.getStorageData<ExpenseItem>(EXPENSE_ITEMS_STORAGE_KEY);
             const other = all.filter(e => e.userId !== this.currentUserId);
             this.setStorageData(EXPENSE_ITEMS_STORAGE_KEY, [...res.expenses, ...other]);
-            this.expensesSubject.next(res.expenses);
+            if (JSON.stringify(this.expensesSubject.getValue()) !== JSON.stringify(res.expenses)) {
+              this.expensesSubject.next(res.expenses);
+            }
           }
 
           // 6. Sincronizar presupuestos por mes
@@ -368,7 +383,9 @@ export class ExpenseService {
             let all = this.getStorageData<MonthlyBudget>(MONTHLY_BUDGET_STORAGE_KEY);
             const other = all.filter(b => b.userId !== this.currentUserId);
             this.setStorageData(MONTHLY_BUDGET_STORAGE_KEY, [...res.budgets, ...other]);
-            this.budgetsSubject.next(res.budgets);
+            if (JSON.stringify(this.budgetsSubject.getValue()) !== JSON.stringify(res.budgets)) {
+              this.budgetsSubject.next(res.budgets);
+            }
           }
 
           // 7. Sincronizar ingresos extras / bonos
@@ -376,7 +393,9 @@ export class ExpenseService {
             let all = this.getStorageData<ExtraIncomeItem>(EXTRA_INCOMES_STORAGE_KEY);
             const other = all.filter(i => i.userId !== this.currentUserId);
             this.setStorageData(EXTRA_INCOMES_STORAGE_KEY, [...res.extraIncomes, ...other]);
-            this.extraIncomesSubject.next(res.extraIncomes);
+            if (JSON.stringify(this.extraIncomesSubject.getValue()) !== JSON.stringify(res.extraIncomes)) {
+              this.extraIncomesSubject.next(res.extraIncomes);
+            }
           }
         }
       },

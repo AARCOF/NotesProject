@@ -113,22 +113,25 @@
     <div class="modal-content-custom bg-white shadow-xl rounded-2xl border-0 overflow-hidden">
       
       <!-- Cabecera Dinámica de Categoría -->
-      <div class="modal-header-custom p-3 px-4 text-white d-flex align-items-center justify-content-between transition-all"
+      <div class="modal-header-custom p-3 px-4 text-white d-flex flex-column align-items-stretch transition-all"
            [style.backgroundColor]="color || '#6366f1'">
-        <div class="d-flex align-items-center">
-          <div class="modal-icon-badge mr-2-5 bg-white-20 rounded-xl p-2 d-flex align-items-center justify-content-center shadow-xs">
-            <i class="typcn {{ icon || 'typcn-folder' }} font-size-22 text-white"></i>
+        <div class="sheet-drag-handle"></div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center">
+            <div class="modal-icon-badge mr-2-5 bg-white-20 rounded-xl p-2 d-flex align-items-center justify-content-center shadow-xs">
+              <i class="typcn {{ icon || 'typcn-folder' }} font-size-22 text-white"></i>
+            </div>
+            <div>
+              <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
+                {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
+              </h5>
+              <small class="text-white-80 font-weight-medium font-size-11">Gestión de categorías de notas</small>
+            </div>
           </div>
-          <div>
-            <h5 class="modal-title font-weight-bold mb-0 font-size-17 text-white">
-              {{ categoryToEdit ? 'Editar Categoría' : 'Registrar Nueva Categoría' }}
-            </h5>
-            <small class="text-white-80 font-weight-medium font-size-11">Gestión de categorías de notas</small>
-          </div>
+          <button type="button" class="btn-close-custom text-white" (click)="closeModal()">
+            <i class="typcn typcn-times font-size-22"></i>
+          </button>
         </div>
-        <button type="button" class="btn-close-custom text-white" (click)="closeModal()">
-          <i class="typcn typcn-times font-size-22"></i>
-        </button>
       </div>
 
       <form (ngSubmit)="saveCategory()" autocomplete="off">
