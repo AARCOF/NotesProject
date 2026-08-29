@@ -17,16 +17,18 @@ module.exports = async function handler(req, res) {
   }
 
   const isSuper = authUser.role === 'superadmin';
+  const isAdmin = authUser.role === 'admin';
+  const isAdminOrSuper = isSuper || isAdmin;
   const targetUserId = body?.userId;
   const isSelf = authUser.sub === targetUserId || authUser.email === targetUserId;
 
-  if (req.method === 'GET' && !isSuper) {
-    return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Superadministradores.' });
+  if (req.method === 'GET' && !isAdminOrSuper) {
+    return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Administradores.' });
   }
   if (req.method === 'DELETE' && !isSuper) {
     return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido a Superadministradores.' });
   }
-  if (req.method === 'PUT' && !isSuper && !isSelf) {
+  if (req.method === 'PUT' && !isAdminOrSuper && !isSelf) {
     return sendJsonResponse(res, 403, { success: false, message: 'Acceso restringido.' });
   }
 
@@ -48,10 +50,24 @@ module.exports = async function handler(req, res) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID de usuario requerido.' });
         }
 
+        // Si quien realiza la petición es un administrador (no superadmin), no puede modificar a un superadmin
+        if (!isSuper) {
+          const targetUser = await usersCollection.findOne({
+            $or: [{ id: userId }, { email: userId }]
+          });
+
+          if (targetUser && targetUser.role === 'superadmin') {
+            return sendJsonResponse(res, 403, {
+              success: false,
+              message: 'Los administradores no pueden modificar el estado de un Superadministrador.'
+            });
+          }
+        }
+
         const updateFields = {};
         if (isSuper && role) updateFields.role = role;
         if (isSuper && typeof isActive === 'boolean') updateFields.isActive = isActive;
-        if (isSuper && typeof isVerified === 'boolean') updateFields.isVerified = isVerified;
+        if ((isSuper || isAdmin) && typeof isVerified === 'boolean') updateFields.isVerified = isVerified;
         if (typeof hasCompletedTutorial === 'boolean') updateFields.hasCompletedTutorial = hasCompletedTutorial;
 
         await usersCollection.updateMany(

@@ -81,7 +81,7 @@
               + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
             </h5>
             <small class="text-slate-500 font-size-11 font-weight-medium">
-              {{ extraIncomes.length }} bonos en {{ formattedMonthLabel }}
+              {{ monthExtraIncomes.length }} bonos en {{ formattedMonthLabel }}
             </small>
           </div>
 
@@ -183,7 +183,7 @@
               </div>
               <div>
                 <small class="text-slate-500 font-size-10 d-block text-truncate">
-                  {{ extraIncomes.length }} bonos
+                  {{ monthExtraIncomes.length }} bonos
                 </small>
               </div>
             </div>
@@ -238,7 +238,7 @@
         </div>
 
         <!-- Lista de Bonos e Ingresos Extra del Mes -->
-        <div class="extra-incomes-section mb-3 pt-2 border-top" *ngIf="extraIncomes.length > 0">
+        <div class="extra-incomes-section mb-3 pt-2 border-top" *ngIf="monthExtraIncomes.length > 0">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <small class="text-slate-600 font-weight-bold text-uppercase font-size-11 letter-spacing-05">
               <i class="typcn typcn-gift text-emerald mr-1"></i> Bonos del Mes
@@ -250,7 +250,7 @@
 
           <div class="d-flex flex-column gap-1-5">
             <div class="extra-income-row bg-slate-50 border rounded-lg p-2 d-flex align-items-center justify-content-between font-size-12"
-                 *ngFor="let item of extraIncomes">
+                 *ngFor="let item of monthExtraIncomes; trackBy: trackByIncome">
               <div class="text-truncate pr-1">
                 <span class="font-weight-semibold text-slate-800 d-block text-truncate">{{ item.title }}</span>
                 <small class="text-slate-400 font-size-10">{{ item.date }}</small>

@@ -15,6 +15,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   subcategories: ExpenseSubcategory[] = [];
   expenses: ExpenseItem[] = [];
   extraIncomes: ExtraIncomeItem[] = [];
+  monthExtraIncomes: ExtraIncomeItem[] = [];
   
   selectedMonthKey: string = ''; // YYYY-MM
   formattedMonthLabel: string = '';
@@ -304,6 +305,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   calculateMetricsAndCharts(): void {
     this.monthlyIncome = this.expenseService.getMonthlyIncome(this.selectedMonthKey);
+    this.monthExtraIncomes = this.expenseService.getExtraIncomesForMonth(this.selectedMonthKey);
     this.totalExtraIncome = this.expenseService.getTotalExtraIncomeForMonth(this.selectedMonthKey);
     this.totalIncome = this.monthlyIncome + this.totalExtraIncome;
     this.totalExpenses = this.expenseService.getTotalExpensesForMonth(this.selectedMonthKey);

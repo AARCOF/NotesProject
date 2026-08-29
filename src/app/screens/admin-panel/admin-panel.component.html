@@ -184,17 +184,25 @@
                   {{ u.isActive !== false ? 'Desactivar' : 'Activar' }}
                 </button>
 
-                <!-- Botón de Verificación (Admin y Superadmin) -->
+                <!-- Botón de Verificación (Admin y Superadmin - Solo para usuarios no Superadmin si es Admin) -->
                 <button 
                   type="button" 
                   class="btn btn-sm font-weight-semibold btn-action-pill" 
-                  [class.btn-outline-warning]="u.isVerified"
-                  [class.btn-outline-primary]="!u.isVerified"
-                  (click)="toggleVerification(u)"
+                  [class.btn-outline-warning]="u.isVerified" 
+                  [class.btn-outline-primary]="!u.isVerified" 
+                  *ngIf="isSuperAdmin || u.role !== 'superadmin'" 
+                  (click)="toggleVerification(u)" 
                   [title]="u.isVerified ? 'Marcar como pendiente' : 'Verificar manualmente'">
                   <i class="typcn font-size-16 mr-1" [class.typcn-times]="u.isVerified" [class.typcn-tick]="!u.isVerified"></i>
                   {{ u.isVerified ? 'Desverificar' : 'Verificar' }}
                 </button>
+
+                <!-- Insignia de Protección para Superadmins (visible para Admins) -->
+                <span class="badge badge-light text-slate-400 border font-size-11 px-2-5 py-1-5 rounded-pill font-weight-semibold" 
+                      *ngIf="!isSuperAdmin && u.role === 'superadmin'" 
+                      title="Los administradores no pueden modificar el estado de un Superadministrador">
+                  <i class="typcn typcn-lock-closed mr-1 font-size-12"></i>Protegido
+                </span>
 
               </div>
             </td>

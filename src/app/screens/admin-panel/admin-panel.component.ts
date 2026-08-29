@@ -59,6 +59,11 @@ export class AdminPanelComponent implements OnInit {
       return;
     }
 
+    if (user.role === 'superadmin' && user.id !== this.currentUser?.id && !this.isSuperAdmin) {
+      alert('No puedes modificar el rol de un Superadministrador.');
+      return;
+    }
+
     if (user.id === this.currentUser?.id && newRole !== 'superadmin') {
       alert('No puedes degradar tu propio rol de Superadministrador.');
       return;
@@ -79,11 +84,21 @@ export class AdminPanelComponent implements OnInit {
       return;
     }
 
+    if (user.role === 'superadmin' && user.id !== this.currentUser?.id && !this.isSuperAdmin) {
+      alert('No puedes modificar el estado de un Superadministrador.');
+      return;
+    }
+
     this.userRepository.toggleActiveStatus(user.id);
     this.loadUsers();
   }
 
   toggleVerification(user: User): void {
+    if (user.role === 'superadmin' && !this.isSuperAdmin) {
+      alert('Los administradores no pueden modificar el estado de un Superadministrador.');
+      return;
+    }
+
     this.userRepository.toggleVerification(user.id);
     this.loadUsers();
   }
