@@ -291,7 +291,7 @@
       <!-- Barra Superior de Pestañas & Buscador (Solo Desktop) -->
       <div class="view-switcher-bar bg-white rounded-2xl p-2-5 shadow-sm mb-4 border border-slate-100 d-none d-lg-flex align-items-center justify-content-between gap-3">
         
-        <!-- Pestañas de Vista en Web: 1. Categorías, 2. Gastos, 3. Bonos, 4. Gráficas -->
+        <!-- Pestañas de Vista en Web: 1. Categorías, 2. Gastos, 3. Gráficas -->
         <div class="nav-pills-custom d-flex flex-wrap gap-1">
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'categorias' || (!isMobile && activeTab === 'gestion')" (click)="setActiveTab('categorias')">
             <i class="typcn typcn-folder-open mr-2 font-size-18"></i> Categorías & Subcategorías
@@ -299,10 +299,6 @@
 
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
             <i class="typcn typcn-th-list mr-2 font-size-18"></i> Registro de Gastos ({{ getAllMonthExpenses().length }})
-          </button>
-
-          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'bonos'" (click)="setActiveTab('bonos')">
-            <i class="typcn typcn-gift mr-2 font-size-18 text-emerald"></i> Bonos & Extras ({{ monthExtraIncomes.length }})
           </button>
 
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'graficas'" (click)="setActiveTab('graficas')">
