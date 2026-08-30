@@ -17,14 +17,14 @@
         android:layout_marginRight="8dp"
         android:contentDescription="Prioridad" />
 
-    <!-- Task Title (Slate-900 high contrast) -->
+    <!-- Task Title (Pure White for transparent glass readability) -->
     <TextView
         android:id="@+id/widget_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Título de la tarea"
-        android:textColor="#0F172A"
+        android:textColor="#FFFFFF"
         android:textSize="12sp"
         android:textStyle="bold"
         android:singleLine="true"
