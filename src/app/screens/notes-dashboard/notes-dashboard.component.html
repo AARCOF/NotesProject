@@ -149,8 +149,8 @@
 <!-- Skeleton Loaders de Estadísticas (Solo Escritorio) -->
 <app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
 
-<!-- Tarjetas de Estadísticas Cuadradas Principales (Solo en Kanban / Cuadrícula) -->
-<div class="row stats-row-container fade-in-up mb-3-5" *ngIf="!isLoading && (viewMode === 'kanban' || viewMode === 'grid')">
+<!-- Tarjetas de Estadísticas Cuadradas Principales con Efecto Glassmorphism -->
+<div class="row stats-row-container fade-in-up mb-3-5" *ngIf="!isLoading">
   
   <!-- 1. Total Notas -->
   <div class="col-6 col-lg-3 grid-margin stretch-card mb-3 mb-lg-0 px-2 px-md-3">
