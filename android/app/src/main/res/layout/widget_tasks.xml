@@ -34,8 +34,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pendientes"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
+                android:textColor="#0F172A"
+                android:textSize="13.5sp"
                 android:textStyle="bold"
                 android:singleLine="true"
                 android:ellipsize="end" />
@@ -55,7 +55,7 @@
             android:focusable="true" />
     </RelativeLayout>
 
-    <!-- Task List (Auto-fits 2x2, 3x2, 4x2 etc.) -->
+    <!-- Task List (Fits 2x2, 3x2, 4x2) -->
     <ListView
         android:id="@+id/widget_tasks_list"
         android:layout_width="match_parent"
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¡Estás al día!"
-            android:textColor="#FFFFFF"
+            android:textColor="#0F172A"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sin tareas pendientes"
-            android:textColor="#94A3B8"
+            android:textColor="#64748B"
             android:textSize="10sp" />
     </LinearLayout>
 

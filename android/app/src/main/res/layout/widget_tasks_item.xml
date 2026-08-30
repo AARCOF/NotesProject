@@ -11,21 +11,21 @@
     <!-- Priority dot indicator -->
     <ImageView
         android:id="@+id/widget_item_priority_indicator"
-        android:layout_width="8dp"
-        android:layout_height="8dp"
+        android:layout_width="8.5dp"
+        android:layout_height="8.5dp"
         android:background="@drawable/widget_priority_circle_low"
         android:layout_marginRight="8dp"
         android:contentDescription="Prioridad" />
 
-    <!-- Task Title -->
+    <!-- Task Title (Slate-900 high contrast) -->
     <TextView
         android:id="@+id/widget_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Título de la tarea"
-        android:textColor="#F8FAFC"
-        android:textSize="11.5sp"
+        android:textColor="#0F172A"
+        android:textSize="12sp"
         android:textStyle="bold"
         android:singleLine="true"
         android:ellipsize="end" />

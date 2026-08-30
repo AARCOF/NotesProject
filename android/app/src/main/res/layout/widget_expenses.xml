@@ -33,8 +33,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Finanzas"
-                android:textColor="#FFFFFF"
-                android:textSize="12.5sp"
+                android:textColor="#0F172A"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:singleLine="true"
                 android:ellipsize="end" />
@@ -47,14 +47,14 @@
             android:layout_centerVertical="true"
             android:background="@drawable/widget_badge_bg"
             android:text="MES"
-            android:textColor="#C7D2FE"
+            android:textColor="#4F46E5"
             android:textSize="8.5sp"
             android:textStyle="bold"
             android:paddingHorizontal="5dp"
             android:paddingVertical="1.5dp" />
     </RelativeLayout>
 
-    <!-- Balance KPI Card (Liquid Glass) -->
+    <!-- Balance KPI Card (Rich Liquid Glass) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BALANCE DISPONIBLE"
-            android:textColor="#93C5FD"
+            android:textColor="#E0F2FE"
             android:textSize="8.5sp"
             android:textStyle="bold"
             android:letterSpacing="0.06" />
@@ -88,7 +88,7 @@
             android:layout_marginTop="1dp" />
     </LinearLayout>
 
-    <!-- Sub KPIs: Ingresos y Egresos (Side by Side Liquid Badges) -->
+    <!-- Sub KPIs: Ingresos y Egresos (Side by Side White Glass Badges) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="INGRESOS"
-                    android:textColor="#34D399"
+                    android:textColor="#059669"
                     android:textSize="7.5sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -134,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="S/. 0.00"
-                android:textColor="#F1F5F9"
+                android:textColor="#064E3B"
                 android:textSize="10.5sp"
                 android:textStyle="bold"
                 android:singleLine="true"
@@ -170,7 +170,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="GASTOS"
-                    android:textColor="#FB7185"
+                    android:textColor="#E11D48"
                     android:textSize="7.5sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -180,7 +180,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="S/. 0.00"
-                android:textColor="#F1F5F9"
+                android:textColor="#881337"
                 android:textSize="10.5sp"
                 android:textStyle="bold"
                 android:singleLine="true"

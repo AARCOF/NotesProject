@@ -6,8 +6,8 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.6.0',
-    versionCode: 360,
+    version: '3.7.0',
+    versionCode: 370,
     releasedAt: '2026-08-30',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
