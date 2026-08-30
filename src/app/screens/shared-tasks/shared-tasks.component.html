@@ -56,94 +56,97 @@
     </div>
 
     <!-- Cuerpo de la Ventana del Navegador (Active Space Bar) -->
-    <div class="browser-window-body card shadow-sm border-0 p-3 p-md-3-5 bg-white">
-      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+    <div class="browser-window-body card shadow-sm border-0 p-3 p-md-3-5 bg-white rounded-2xl">
+      <div class="d-flex flex-column gap-3">
         
-        <!-- Título e Identidad del Espacio Activo -->
-        <div class="d-flex align-items-center gap-3">
-          <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs">
-            <i class="typcn typcn-group font-size-24"></i>
-          </div>
-          <div>
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-              <h3 class="font-weight-bold text-slate-900 mb-0 font-size-20 font-size-md-22">
-                {{ activeSpace ? activeSpace.title : 'Tareas Compartidas' }}
-              </h3>
-              <span class="badge badge-primary-light font-weight-bold font-size-11 px-2-5 py-1 rounded-pill" *ngIf="activeSpace">
-                Espacio Activo
-              </span>
+        <!-- Fila 1: Título, Icono, Badge de Activo y Botón Notificaciones -->
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-2-5 flex-grow-1 min-w-0">
+            <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs flex-shrink-0">
+              <i class="typcn typcn-group font-size-22"></i>
             </div>
-            
-            <!-- Participantes en Stack de Avatares -->
-            <div class="d-flex align-items-center gap-2 mt-1" *ngIf="activeSpace">
-              <div class="participants-avatar-stack d-flex align-items-center">
-                <span *ngFor="let u of activeSpaceParticipants.slice(0, 4)" 
-                      class="avatar-circle-sm text-white font-weight-bold" 
-                      [title]="u.name + ' (' + u.email + ')'">
-                  {{ u.name.charAt(0) | uppercase }}
+            <div class="min-w-0 flex-grow-1">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <h3 class="font-weight-bold text-slate-900 mb-0 font-size-18 font-size-md-22 text-truncate">
+                  {{ activeSpace ? activeSpace.title : 'Tareas Compartidas' }}
+                </h3>
+                <span class="badge badge-primary-light font-weight-bold font-size-10 px-2 py-0-5 rounded-pill" *ngIf="activeSpace">
+                  Activo
                 </span>
               </div>
-              <small class="text-slate-500 font-size-12">
-                <strong>{{ activeSpaceParticipants.length }}</strong> colaboradores
-              </small>
             </div>
           </div>
-              <!-- Acciones de Cabecera: Bell, Categoría, Nuevo Espacio, Borrar Espacio, Nueva Entrega -->
-        <div class="d-flex align-items-center flex-wrap gap-2">
-          
-          <!-- Notificaciones de Colaboración -->
+
+          <!-- Notificaciones de Colaboración (Arriba a la derecha) -->
           <button 
             type="button" 
-            class="btn-notifs-bell position-relative" 
+            class="btn-notifs-bell position-relative flex-shrink-0" 
             (click)="toggleNotifs()"
             title="Ver avisos de tareas compartidas">
             <i class="typcn typcn-bell font-size-20"></i>
             <span class="badge-unread-notif" *ngIf="unreadNotifsCount > 0">{{ unreadNotifsCount }}</span>
           </button>
+        </div>
 
-          <!-- Crear Nueva Categoría -->
-          <button 
-            type="button" 
-            class="btn btn-outline-slate rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
-            *ngIf="activeSpace"
-            (click)="openCreateCategoryModal()"
-            title="Añadir categoría al espacio activo">
-            <i class="typcn typcn-tag text-blue font-size-16"></i>
-            <span class="d-none d-sm-inline ml-1">+ Categoría</span>
-          </button>
+        <!-- Fila 2: Colaboradores + Botones de Acción -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top border-slate-100" *ngIf="activeSpace">
+          <!-- Participantes en Stack de Avatares -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="participants-avatar-stack d-flex align-items-center">
+              <span *ngFor="let u of activeSpaceParticipants.slice(0, 4)" 
+                    class="avatar-circle-sm text-white font-weight-bold" 
+                    [title]="u.name + ' (' + u.email + ')'">
+                {{ u.name.charAt(0) | uppercase }}
+              </span>
+            </div>
+            <small class="text-slate-500 font-size-12">
+              <strong>{{ activeSpaceParticipants.length }}</strong> colaboradores
+            </small>
+          </div>
 
-          <!-- Crear Nuevo Espacio Compartido (Solo Admin / SuperAdmin) -->
-          <button 
-            type="button" 
-            class="btn btn-outline-purple rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
-            *ngIf="isAdminOrSuperAdmin"
-            (click)="openCreateSpaceModal()"
-            title="Crear nuevo espacio colaborativo">
-            <i class="typcn typcn-folder-add font-size-16 text-purple"></i>
-            <span class="d-none d-sm-inline ml-1">Nuevo Espacio</span>
-          </button>
+          <!-- Acciones Rápidas del Espacio -->
+          <div class="d-flex align-items-center gap-1-5">
+            <!-- Crear Nueva Categoría -->
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-slate rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
+              (click)="openCreateCategoryModal()"
+              title="Añadir categoría al espacio activo">
+              <i class="typcn typcn-tag text-blue font-size-15"></i>
+              <span class="d-none d-sm-inline ml-1">+ Categoría</span>
+            </button>
 
-          <!-- Eliminar Espacio Activo (Creador o Admin) -->
-          <button 
-            type="button" 
-            class="btn btn-outline-rose rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
-            *ngIf="activeSpace && canDeleteSpace(activeSpace)"
-            (click)="deleteSpace(activeSpace)"
-            title="Eliminar este espacio de trabajo">
-            <i class="typcn typcn-trash font-size-15 text-rose"></i>
-            <span class="d-none d-md-inline ml-1">Eliminar Espacio</span>
-          </button>
+            <!-- Crear Nuevo Espacio Compartido (Solo Admin / SuperAdmin) -->
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-purple rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
+              *ngIf="isAdminOrSuperAdmin"
+              (click)="openCreateSpaceModal()"
+              title="Crear nuevo espacio colaborativo">
+              <i class="typcn typcn-folder-add font-size-15 text-purple"></i>
+              <span class="d-none d-sm-inline ml-1">Nuevo Espacio</span>
+            </button>
 
-          <!-- Crear Nueva Entrega (Solo visible en pantallas grandes para no duplicar en móvil) -->
-          <button 
-            type="button" 
-            class="btn btn-gradient-blue text-white rounded-xl px-3-5 py-2 font-weight-bold font-size-13 d-none d-lg-flex align-items-center shadow-sm hover-lift"
-            *ngIf="activeSpace"
-            (click)="openCreateTaskModal()">
-            <i class="typcn typcn-plus mr-1 font-size-16"></i>
-            <span>Nueva Entrega</span>
-          </button>
+            <!-- Eliminar Espacio Activo (Creador o Admin) -->
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-rose rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
+              *ngIf="canDeleteSpace(activeSpace)"
+              (click)="deleteSpace(activeSpace)"
+              title="Eliminar este espacio de trabajo">
+              <i class="typcn typcn-trash font-size-15 text-rose"></i>
+              <span class="d-none d-md-inline ml-1">Eliminar</span>
+            </button>
 
+            <!-- Crear Nueva Entrega (Desktop) -->
+            <button 
+              type="button" 
+              class="btn btn-sm btn-gradient-blue text-white rounded-xl px-3 py-1-5 font-weight-bold font-size-12 d-none d-lg-flex align-items-center shadow-xs hover-lift"
+              (click)="openCreateTaskModal()">
+              <i class="typcn typcn-plus mr-1 font-size-15"></i>
+              <span>Nueva Entrega</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -404,7 +407,7 @@
              (dragover)="onDragOver($event, 'pendiente')"
              (dragleave)="onDragLeave($event, 'pendiente')"
              (drop)="onDrop($event, 'pendiente')">
-          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-none d-lg-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-time text-slate-500 font-size-18"></i>
               <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Pendientes</h6>
@@ -436,7 +439,7 @@
              (dragover)="onDragOver($event, 'en_progreso')"
              (dragleave)="onDragLeave($event, 'en_progreso')"
              (drop)="onDrop($event, 'en_progreso')">
-          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-none d-lg-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-flash text-amber font-size-18"></i>
               <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">En Progreso</h6>
@@ -464,7 +467,7 @@
              (dragover)="onDragOver($event, 'entregada')"
              (dragleave)="onDragLeave($event, 'entregada')"
              (drop)="onDrop($event, 'entregada')">
-          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-none d-lg-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-upload text-cyan font-size-18"></i>
               <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Entregadas</h6>
@@ -492,7 +495,7 @@
              (dragover)="onDragOver($event, 'devuelta')"
              (dragleave)="onDragLeave($event, 'devuelta')"
              (drop)="onDrop($event, 'devuelta')">
-          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-rose-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-rose-200 shadow-2xs mb-3 d-none d-lg-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-arrow-back text-rose font-size-18"></i>
               <h6 class="font-weight-bold text-rose-800 mb-0 font-size-14">Devueltas</h6>
@@ -520,7 +523,7 @@
              (dragover)="onDragOver($event, 'completada')"
              (dragleave)="onDragLeave($event, 'completada')"
              (drop)="onDrop($event, 'completada')">
-          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-none d-lg-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-tick text-emerald font-size-18"></i>
               <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Aprobadas</h6>
