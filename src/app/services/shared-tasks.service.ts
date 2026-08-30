@@ -107,40 +107,18 @@ export class SharedTasksService {
           const cloudTasks = res.tasks || [];
           const cloudNotifs = res.notifications || [];
 
-          const localSpaces = this.getStoredSpaces();
-          const localTasks = this.getStoredTasks();
-          const localNotifs = this.getStoredNotifications();
+          // Guardamos directamente los datos autoritativos de la nube
+          this.saveSpaces(cloudSpaces);
+          this.saveTasks(cloudTasks);
+          this.saveNotifications(cloudNotifs);
 
-          // Subir a MongoDB cualquier dato creado localmente que no esté aún en la nube
-          const missingSpaces = localSpaces.filter(ls => !cloudSpaces.some(cs => cs.id === ls.id));
-          const missingTasks = localTasks.filter(lt => !cloudTasks.some(ct => ct.id === lt.id));
-          const missingNotifs = localNotifs.filter(ln => !cloudNotifs.some(cn => cn.id === ln.id));
-
-          if (missingSpaces.length > 0 || missingTasks.length > 0 || missingNotifs.length > 0) {
-            this.http.post('/api/shared-tasks', {
-              type: 'bulk_sync',
-              spaces: missingSpaces,
-              tasks: missingTasks,
-              notifications: missingNotifs
-            }).subscribe({ error: () => {} });
-          }
-
-          const mergedSpaces = [...cloudSpaces, ...missingSpaces];
-          const mergedTasks = [...cloudTasks, ...missingTasks];
-          const mergedNotifs = [...cloudNotifs, ...missingNotifs];
-
-          localStorage.setItem(SPACES_KEY, JSON.stringify(mergedSpaces));
-          localStorage.setItem(TASKS_KEY, JSON.stringify(mergedTasks));
-          localStorage.setItem(NOTIFS_KEY, JSON.stringify(mergedNotifs));
-
-          this.spacesSubject.next(mergedSpaces);
-          this.tasksSubject.next(mergedTasks);
-          this.notificationsSubject.next(mergedNotifs);
-
-          if (mergedSpaces.length > 0 && !this.activeSpaceIdSubject.value) {
-            const accessible = this.getAccessibleSpaces(mergedSpaces);
-            if (accessible.length > 0) {
-              this.activeSpaceIdSubject.next(accessible[0].id);
+          if (cloudSpaces.length > 0) {
+            const currentActiveId = this.activeSpaceIdSubject.value;
+            const accessible = this.getAccessibleSpaces(cloudSpaces);
+            if (!currentActiveId || !accessible.some(s => s.id === currentActiveId)) {
+              if (accessible.length > 0) {
+                this.activeSpaceIdSubject.next(accessible[0].id);
+              }
             }
           }
         }
@@ -292,7 +270,14 @@ export class SharedTasksService {
     this.activeSpaceIdSubject.next(remaining.length > 0 ? remaining[0].id : null);
 
     // Sync Delete con MongoDB
-    this.http.delete(`/api/shared-tasks?type=space&id=${spaceId}`).subscribe({ error: () => {} });
+    this.http.delete(`/api/shared-tasks?type=space&id=${spaceId}`).subscribe({
+      next: () => {
+        this.fetchCloudSharedData();
+      },
+      error: (err) => {
+        console.error('Error al eliminar espacio en MongoDB:', err);
+      }
+    });
   }
 
   // --- CRUD SPACES CATEGORIES (Any participant in the space) ---
@@ -637,7 +622,14 @@ export class SharedTasksService {
     this.saveTasks(updated);
 
     // Sync Delete con MongoDB
-    this.http.delete(`/api/shared-tasks?type=task&id=${taskId}`).subscribe({ error: () => {} });
+    this.http.delete(`/api/shared-tasks?type=task&id=${taskId}`).subscribe({
+      next: () => {
+        this.fetchCloudSharedData();
+      },
+      error: (err) => {
+        console.error('Error al eliminar tarea compartida en MongoDB:', err);
+      }
+    });
 
     if (task) {
       const space = this.getStoredSpaces().find(s => s.id === task.spaceId);
