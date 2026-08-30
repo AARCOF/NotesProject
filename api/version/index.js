@@ -6,16 +6,16 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.2.2',
-    versionCode: 322,
-    releasedAt: '2026-08-26',
+    version: '3.3.0',
+    versionCode: 330,
+    releasedAt: '2026-08-30',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
     releaseNotes: [
-      'Actualización instantánea en tiempo real de los widgets nativos de Android (Tareas y Finanzas).',
-      'Corrección definitiva del parpadeo y cierre automático de modales al seleccionar categorías y subcategorías.',
-      'Nuevo diseño estilizado tipo Bottom Sheet para modales en móvil con soporte táctil y animación suave.',
-      'Estabilidad optimizada en la sincronización en segundo plano.'
+      'Espacios de Trabajo Compartidos con pestañas estilo navegador web.',
+      'Contorno animado interactivo Snake LED en tareas, entregables y categorías.',
+      'Sistema de modales interactivos de confirmación y alertas de alta fidelidad.',
+      'Optimización de layout responsive y APK móvil de alto rendimiento.'
     ],
     isMandatory: false
   };

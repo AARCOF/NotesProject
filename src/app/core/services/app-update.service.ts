@@ -41,7 +41,7 @@ export class AppUpdateService {
     if (!downloadUrl) return;
     
     let baseDomain = 'https://notes-project-one-iota.vercel.app';
-    if (typeof window !== 'undefined' && !window.location.origin.includes('localhost') && !window.location.origin.includes('capacitor')) {
+    if (typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost') && !window.location.origin.includes('capacitor')) {
       baseDomain = window.location.origin;
     }
     
@@ -50,8 +50,19 @@ export class AppUpdateService {
       : (baseDomain + (downloadUrl.startsWith('/') ? downloadUrl : '/' + downloadUrl));
     
     if (typeof window !== 'undefined') {
-      // Open in native system browser to let the Android OS handle the file download
-      window.open(finalUrl, '_system');
+      try {
+        const link = document.createElement('a');
+        link.href = finalUrl;
+        link.download = 'NoteYou-v1.0.apk';
+        link.setAttribute('target', '_blank');
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+        }, 300);
+      } catch (e) {
+        window.location.href = finalUrl;
+      }
     }
   }
 

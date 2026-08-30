@@ -8,7 +8,8 @@ import {
   Alert,
   Text,
   TouchableOpacity,
-  SafeAreaView
+  SafeAreaView,
+  Linking
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
@@ -75,6 +76,13 @@ export default function App() {
           domStorageEnabled={true}
           startInLoadingState={true}
           allowsBackForwardNavigationGestures={true}
+          onShouldStartLoadWithRequest={(request) => {
+            if (request.url.endsWith('.apk') || request.url.includes('/assets/downloads/')) {
+              Linking.openURL(request.url).catch(err => console.error('Error abriendo enlace de descarga:', err));
+              return false;
+            }
+            return true;
+          }}
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
           }}
