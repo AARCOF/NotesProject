@@ -163,7 +163,15 @@ export class SavedLinksService {
     // Sync update in MongoDB
     const updatedItem = updated.find(l => l.id === id);
     if (updatedItem) {
-      this.http.put('/api/saved-links', updatedItem).subscribe({ error: () => {} });
+      const { _id, ...cleanItem } = updatedItem as any;
+      this.http.put('/api/saved-links', cleanItem).subscribe({
+        next: () => {
+          this.fetchCloudSavedLinks();
+        },
+        error: (err) => {
+          console.error('Error updating saved link:', err);
+        }
+      });
     }
   }
 

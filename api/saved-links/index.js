@@ -33,12 +33,14 @@ module.exports = async function handler(req, res) {
           return sendJsonResponse(res, 400, { success: false, message: 'El título y el enlace son obligatorios.' });
         }
 
+        const { _id, ...cleanData } = linkData;
         const newLink = {
-          ...linkData,
+          ...cleanData,
           id: linkData.id || 'sl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
           userId,
           createdAt: linkData.createdAt || new Date().toISOString()
         };
+        delete newLink._id;
 
         await savedLinksCollection.updateOne(
           { id: newLink.id, userId },
@@ -50,14 +52,17 @@ module.exports = async function handler(req, res) {
       }
 
       case 'PUT': {
-        const { id, ...updateData } = body || {};
+        const { id, _id, ...updateData } = body || {};
         if (!id) {
           return sendJsonResponse(res, 400, { success: false, message: 'ID es obligatorio.' });
         }
 
+        delete updateData._id;
+
         await savedLinksCollection.updateOne(
-          { id, userId },
-          { $set: updateData }
+          { id: id.toString(), userId },
+          { $set: updateData },
+          { upsert: true }
         );
 
         return sendJsonResponse(res, 200, { success: true, message: 'Enlace guardado actualizado.' });
