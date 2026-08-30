@@ -88,9 +88,7 @@
               </small>
             </div>
           </div>
-        </div>
-
-        <!-- Acciones de Cabecera: Bell, Categoría, Nuevo Espacio, Borrar Espacio, Nueva Entrega -->
+              <!-- Acciones de Cabecera: Bell, Categoría, Nuevo Espacio, Borrar Espacio, Nueva Entrega -->
         <div class="d-flex align-items-center flex-wrap gap-2">
           
           <!-- Notificaciones de Colaboración -->
@@ -106,39 +104,40 @@
           <!-- Crear Nueva Categoría -->
           <button 
             type="button" 
-            class="btn btn-outline-slate rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            class="btn btn-outline-slate rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
             *ngIf="activeSpace"
             (click)="openCreateCategoryModal()"
             title="Añadir categoría al espacio activo">
-            <i class="typcn typcn-tag mr-1 text-blue"></i>
-            <span class="d-none d-sm-inline">+ Categoría</span>
+            <i class="typcn typcn-tag text-blue font-size-16"></i>
+            <span class="d-none d-sm-inline ml-1">+ Categoría</span>
           </button>
 
           <!-- Crear Nuevo Espacio Compartido (Solo Admin / SuperAdmin) -->
           <button 
             type="button" 
-            class="btn btn-outline-purple rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            class="btn btn-outline-purple rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
             *ngIf="isAdminOrSuperAdmin"
-            (click)="openCreateSpaceModal()">
-            <i class="typcn typcn-folder-add mr-1 font-size-16"></i>
-            <span>Nuevo Espacio</span>
+            (click)="openCreateSpaceModal()"
+            title="Crear nuevo espacio colaborativo">
+            <i class="typcn typcn-folder-add font-size-16 text-purple"></i>
+            <span class="d-none d-sm-inline ml-1">Nuevo Espacio</span>
           </button>
 
           <!-- Eliminar Espacio Activo (Creador o Admin) -->
           <button 
             type="button" 
-            class="btn btn-outline-rose rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            class="btn btn-outline-rose rounded-xl px-2-5 px-sm-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
             *ngIf="activeSpace && canDeleteSpace(activeSpace)"
             (click)="deleteSpace(activeSpace)"
             title="Eliminar este espacio de trabajo">
-            <i class="typcn typcn-trash mr-1 font-size-15"></i>
-            <span class="d-none d-md-inline">Eliminar Espacio</span>
+            <i class="typcn typcn-trash font-size-15 text-rose"></i>
+            <span class="d-none d-md-inline ml-1">Eliminar Espacio</span>
           </button>
 
-          <!-- Crear Nueva Entrega / Tarea en el Espacio Activo -->
+          <!-- Crear Nueva Entrega (Solo visible en pantallas grandes para no duplicar en móvil) -->
           <button 
             type="button" 
-            class="btn btn-gradient-blue text-white rounded-xl px-3-5 py-2 font-weight-bold font-size-13 d-flex align-items-center shadow-sm hover-lift"
+            class="btn btn-gradient-blue text-white rounded-xl px-3-5 py-2 font-weight-bold font-size-13 d-none d-lg-flex align-items-center shadow-sm hover-lift"
             *ngIf="activeSpace"
             (click)="openCreateTaskModal()">
             <i class="typcn typcn-plus mr-1 font-size-16"></i>
@@ -181,13 +180,13 @@
       <div class="d-flex flex-column gap-2-5">
         
         <!-- Fila Superior: Selector de Vistas + Filtros de Estado + Buscador -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-2-5">
           
           <div class="d-flex align-items-center flex-wrap gap-2">
             <!-- Selector de Modo de Vista (Kanban / Cuadrícula) -->
             <div class="view-mode-selector-pill d-flex align-items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button 
-                type="button"
+                type="button" 
                 class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
                 [class.active]="viewMode === 'kanban'"
                 (click)="viewMode = 'kanban'"
@@ -196,7 +195,7 @@
                 <span>Kanban</span>
               </button>
               <button 
-                type="button"
+                type="button" 
                 class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
                 [class.active]="viewMode === 'grid'"
                 (click)="viewMode = 'grid'"
@@ -255,11 +254,11 @@
           </div>
 
           <!-- Buscador en Vivo -->
-          <div class="search-input-box position-relative">
+          <div class="search-input-box position-relative flex-grow-1" style="max-width: 100%;">
             <i class="typcn typcn-zoom text-slate-400 position-absolute" style="left: 12px; top: 10px; font-size: 18px;"></i>
             <input 
               type="text" 
-              class="form-control form-control-sm pl-4 pr-3 rounded-xl border-slate-200"
+              class="form-control form-control-sm pl-4 pr-3 rounded-xl border-slate-200 w-100"
               style="padding-left: 36px !important; height: 38px;"
               placeholder="Buscar entregable o colaborador..." 
               [(ngModel)]="searchTerm">
@@ -313,11 +312,93 @@
     <!-- =========================================================================
          3A. VISTA 1: TABLERO KANBAN INTERACTIVO (COLUMNAS DE ESTADO FULL WIDTH)
          ========================================================================= -->
+    <!-- Control Segmentado para Celulares (Solo visible en pantallas móviles) con Zona de Soltado / Drop -->
+    <div class="mobile-kanban-segmented-nav d-block d-lg-none mb-3" *ngIf="viewMode === 'kanban'">
+      <div class="segmented-control-track">
+        <button 
+          type="button"
+          class="segmented-tab" 
+          [class.active]="mobileKanbanTab === 'pendiente'"
+          [class.drag-target-hover]="activeDropZone === 'pendiente'"
+          [attr.data-status]="'pendiente'"
+          (dragover)="onDragOver($event, 'pendiente')"
+          (dragleave)="onDragLeave($event, 'pendiente')"
+          (drop)="onDrop($event, 'pendiente')"
+          (click)="mobileKanbanTab = 'pendiente'">
+          <span class="tab-dot bg-slate-500"></span>
+          <span>Pendientes</span>
+          <span class="tab-badge bg-slate-light text-slate">{{ getTasksByStatus('pendiente').length }}</span>
+        </button>
+        
+        <button 
+          type="button"
+          class="segmented-tab" 
+          [class.active]="mobileKanbanTab === 'en_progreso'"
+          [class.drag-target-hover]="activeDropZone === 'en_progreso'"
+          [attr.data-status]="'en_progreso'"
+          (dragover)="onDragOver($event, 'en_progreso')"
+          (dragleave)="onDragLeave($event, 'en_progreso')"
+          (drop)="onDrop($event, 'en_progreso')"
+          (click)="mobileKanbanTab = 'en_progreso'">
+          <span class="tab-dot bg-amber-500"></span>
+          <span>En Progreso</span>
+          <span class="tab-badge bg-amber-light text-amber">{{ getTasksByStatus('en_progreso').length }}</span>
+        </button>
+
+        <button 
+          type="button"
+          class="segmented-tab" 
+          [class.active]="mobileKanbanTab === 'entregada'"
+          [class.drag-target-hover]="activeDropZone === 'entregada'"
+          [attr.data-status]="'entregada'"
+          (dragover)="onDragOver($event, 'entregada')"
+          (dragleave)="onDragLeave($event, 'entregada')"
+          (drop)="onDrop($event, 'entregada')"
+          (click)="mobileKanbanTab = 'entregada'">
+          <span class="tab-dot bg-cyan-500"></span>
+          <span>Entregadas</span>
+          <span class="tab-badge bg-cyan-light text-cyan">{{ getTasksByStatus('entregada').length }}</span>
+        </button>
+        
+        <button 
+          type="button"
+          class="segmented-tab" 
+          *ngIf="returnedCount > 0 || getTasksByStatus('devuelta').length > 0"
+          [class.active]="mobileKanbanTab === 'devuelta'"
+          [class.drag-target-hover]="activeDropZone === 'devuelta'"
+          [attr.data-status]="'devuelta'"
+          (dragover)="onDragOver($event, 'devuelta')"
+          (dragleave)="onDragLeave($event, 'devuelta')"
+          (drop)="onDrop($event, 'devuelta')"
+          (click)="mobileKanbanTab = 'devuelta'">
+          <span class="tab-dot bg-rose-500"></span>
+          <span>Devueltas</span>
+          <span class="tab-badge bg-rose-light text-rose">{{ getTasksByStatus('devuelta').length }}</span>
+        </button>
+
+        <button 
+          type="button"
+          class="segmented-tab" 
+          [class.active]="mobileKanbanTab === 'completada'"
+          [class.drag-target-hover]="activeDropZone === 'completada'"
+          [attr.data-status]="'completada'"
+          (dragover)="onDragOver($event, 'completada')"
+          (dragleave)="onDragLeave($event, 'completada')"
+          (drop)="onDrop($event, 'completada')"
+          (click)="mobileKanbanTab = 'completada'">
+          <span class="tab-dot bg-emerald-500"></span>
+          <span>Aprobadas</span>
+          <span class="tab-badge bg-emerald-light text-emerald">{{ getTasksByStatus('completada').length }}</span>
+        </button>
+      </div>
+    </div>
+
     <div class="shared-kanban-board mb-4" *ngIf="viewMode === 'kanban'">
-      <div class="kanban-columns-row d-flex gap-3 overflow-x-auto pb-3">
+      <div class="kanban-columns-row d-flex flex-column flex-lg-row gap-3 pb-3">
         
         <!-- COLUMNA 1: PENDIENTES -->
         <div class="kanban-column flex-1"
+             [class.d-none-mobile]="mobileKanbanTab !== 'pendiente'"
              [class.drag-target-hover]="activeDropZone === 'pendiente'"
              [attr.data-status]="'pendiente'"
              (dragover)="onDragOver($event, 'pendiente')"
@@ -349,6 +430,7 @@
 
         <!-- COLUMNA 2: EN PROGRESO -->
         <div class="kanban-column flex-1"
+             [class.d-none-mobile]="mobileKanbanTab !== 'en_progreso'"
              [class.drag-target-hover]="activeDropZone === 'en_progreso'"
              [attr.data-status]="'en_progreso'"
              (dragover)="onDragOver($event, 'en_progreso')"
@@ -376,6 +458,7 @@
 
         <!-- COLUMNA 3: ENTREGADAS (EN REVISIÓN) -->
         <div class="kanban-column flex-1"
+             [class.d-none-mobile]="mobileKanbanTab !== 'entregada'"
              [class.drag-target-hover]="activeDropZone === 'entregada'"
              [attr.data-status]="'entregada'"
              (dragover)="onDragOver($event, 'entregada')"
@@ -403,6 +486,7 @@
 
         <!-- COLUMNA 4: DEVUELTAS (CON CORRECCIÓN) -->
         <div class="kanban-column flex-1" *ngIf="returnedCount > 0 || getTasksByStatus('devuelta').length > 0"
+             [class.d-none-mobile]="mobileKanbanTab !== 'devuelta'"
              [class.drag-target-hover]="activeDropZone === 'devuelta'"
              [attr.data-status]="'devuelta'"
              (dragover)="onDragOver($event, 'devuelta')"
@@ -430,6 +514,7 @@
 
         <!-- COLUMNA 5: APROBADAS & FINALIZADAS -->
         <div class="kanban-column flex-1"
+             [class.d-none-mobile]="mobileKanbanTab !== 'completada'"
              [class.drag-target-hover]="activeDropZone === 'completada'"
              [attr.data-status]="'completada'"
              (dragover)="onDragOver($event, 'completada')"
@@ -452,7 +537,6 @@
               <i class="typcn typcn-tick-outline text-emerald font-size-28 d-block mb-1 opacity-70"></i>
               <small class="text-slate-400 font-weight-medium">Sin tareas completadas</small>
             </div>
-          </div>
         </div>
 
       </div>

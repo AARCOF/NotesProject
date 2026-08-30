@@ -25,6 +25,7 @@ export class SharedTasksComponent implements OnInit, OnDestroy {
   priorityFilter: string = 'all';
   categoryFilter: string = 'all';
   mobileTab: 'entregas' | 'espacios' = 'entregas';
+  mobileKanbanTab: SharedTaskStatus = 'pendiente';
   viewMode: 'kanban' | 'grid' = 'kanban';
 
   // Modals & Panels
