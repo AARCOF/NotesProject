@@ -23,20 +23,23 @@
         android:background="#1e293b"
         android:layout_marginBottom="10dp" />
 
-    <!-- Sueldo Disponible KPI -->
+    <!-- Sueldo Disponible KPI con Glassmorphism -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:background="@drawable/widget_kpi_card_bg"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp"
         android:layout_weight="1"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BALANCE NETO"
-            android:textColor="#64748b"
+            android:text="BALANCE DISPONIBLE"
+            android:textColor="#94a3b8"
             android:textSize="9sp"
             android:textStyle="bold" />
 
