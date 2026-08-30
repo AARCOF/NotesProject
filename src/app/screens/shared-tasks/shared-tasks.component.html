@@ -1,97 +1,54 @@
-<div class="shared-tasks-container p-2 p-md-4 fade-in-up">
+<div class="shared-tasks-container p-2 p-md-3 fade-in-up">
   
   <!-- =========================================================================
-       1. VENTANA DE NAVEGADOR CON PESTAÑAS (BROWSER TABS BAR)
+       1. CABECERA UNIFICADA DE ESPACIO (CHIPS, IDENTIDAD, BUSCADOR Y ACCIONES)
        ========================================================================= -->
-  <div class="browser-window-wrapper fade-in-up mb-3-5" *ngIf="spaces.length > 0">
+  <div class="space-main-header-card card border-0 shadow-sm rounded-3xl bg-white p-3 p-md-3-5 mb-3" *ngIf="spaces.length > 0">
     
-    <!-- Barra Superior de Pestañas de Navegador -->
-    <div class="browser-tabs-strip d-flex align-items-center">
-      <div class="browser-tabs-container d-flex align-items-end overflow-x-auto">
-        
-        <div 
-          *ngFor="let space of spaces"
-          class="browser-tab d-flex align-items-center cursor-pointer transition-all"
-          [class.active]="activeSpace?.id === space.id"
-          (click)="selectSpace(space)"
-          [title]="space.title + ' (' + space.participantIds.length + ' colaboradores)'">
-          
-          <!-- Icono de Pestaña -->
-          <div class="browser-tab-favicon mr-1-5 d-flex align-items-center justify-content-center">
-            <i class="typcn typcn-folder font-size-15" [class.text-blue]="activeSpace?.id === space.id" [class.text-slate-400]="activeSpace?.id !== space.id"></i>
-          </div>
+    <!-- Pestañas Horizontales de Espacios (Sleek Space Chips) -->
+    <div class="spaces-pill-carousel d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-slate-100 overflow-x-auto">
+      <button 
+        *ngFor="let space of spaces"
+        type="button"
+        class="space-chip-btn d-flex align-items-center gap-2 border-0 transition-all cursor-pointer"
+        [class.active]="activeSpace?.id === space.id"
+        (click)="selectSpace(space)">
+        <i class="typcn typcn-folder font-size-15" [class.text-blue]="activeSpace?.id === space.id"></i>
+        <span class="space-chip-title font-weight-bold font-size-13 text-truncate">{{ space.title }}</span>
+        <span class="space-chip-count badge badge-pill">{{ space.participantIds.length }}</span>
+        <span class="space-chip-close" *ngIf="canDeleteSpace(space)" (click)="deleteSpace(space); $event.stopPropagation()" title="Eliminar espacio">
+          <i class="typcn typcn-times font-size-12"></i>
+        </span>
+      </button>
 
-          <!-- Título de Pestaña -->
-          <span class="browser-tab-title font-weight-semibold text-truncate font-size-13 mr-1-5">
-            {{ space.title }}
-          </span>
-
-          <!-- Contador de Colaboradores -->
-          <span class="browser-tab-count badge badge-pill mr-1-5" [class.badge-blue-light]="activeSpace?.id === space.id" [class.badge-slate-light]="activeSpace?.id !== space.id">
-            {{ space.participantIds.length }}
-          </span>
-
-          <!-- Botón Cerrar / Eliminar Pestaña -->
-          <button 
-            type="button" 
-            class="browser-tab-close btn-p-0 border-0 bg-transparent"
-            *ngIf="canDeleteSpace(space)"
-            (click)="deleteSpace(space); $event.stopPropagation()"
-            title="Eliminar este espacio">
-            <i class="typcn typcn-times"></i>
-          </button>
-        </div>
-
-        <!-- Botón + Nueva Pestaña (Nuevo Espacio) -->
-        <button 
-          type="button" 
-          class="btn-browser-new-tab d-flex align-items-center justify-content-center ml-1"
-          *ngIf="isAdminOrSuperAdmin"
-          (click)="openCreateSpaceModal()"
-          title="Crear nuevo espacio compartido">
-          <i class="typcn typcn-plus font-size-18"></i>
-        </button>
-
-      </div>
+      <!-- Botón Nuevo Espacio (Admin) -->
+      <button 
+        type="button" 
+        class="btn-new-space-chip d-flex align-items-center justify-content-center gap-1 border-0"
+        *ngIf="isAdminOrSuperAdmin"
+        (click)="openCreateSpaceModal()"
+        title="Crear nuevo espacio compartido">
+        <i class="typcn typcn-plus font-size-16"></i>
+        <span class="font-size-12 font-weight-bold d-none d-sm-inline">Nuevo</span>
+      </button>
     </div>
 
-    <!-- Cuerpo de la Ventana del Navegador (Active Space Bar) -->
-    <div class="browser-window-body card shadow-sm border-0 p-3 p-md-3-5 bg-white rounded-2xl">
-      <div class="d-flex flex-column gap-3">
-        
-        <!-- Fila 1: Título, Icono, Badge de Activo y Botón Notificaciones -->
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center gap-2-5 flex-grow-1 min-w-0">
-            <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs flex-shrink-0">
-              <i class="typcn typcn-group font-size-22"></i>
-            </div>
-            <div class="min-w-0 flex-grow-1">
-              <div class="d-flex align-items-center gap-2 flex-wrap">
-                <h3 class="font-weight-bold text-slate-900 mb-0 font-size-18 font-size-md-22 text-truncate">
-                  {{ activeSpace ? activeSpace.title : 'Tareas Compartidas' }}
-                </h3>
-                <span class="badge badge-primary-light font-weight-bold font-size-10 px-2 py-0-5 rounded-pill" *ngIf="activeSpace">
-                  Activo
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Notificaciones de Colaboración (Arriba a la derecha) -->
-          <button 
-            type="button" 
-            class="btn-notifs-bell position-relative flex-shrink-0" 
-            (click)="toggleNotifs()"
-            title="Ver avisos de tareas compartidas">
-            <i class="typcn typcn-bell font-size-20"></i>
-            <span class="badge-unread-notif" *ngIf="unreadNotifsCount > 0">{{ unreadNotifsCount }}</span>
-          </button>
+    <!-- Fila del Espacio Activo: Nombre, Colaboradores y Acciones -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2-5" *ngIf="activeSpace">
+      
+      <!-- Lado Izquierdo: Identidad del Espacio -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="header-icon-badge bg-gradient-blue text-white rounded-2xl d-flex align-items-center justify-content-center shadow-xs flex-shrink-0">
+          <i class="typcn typcn-group font-size-22"></i>
         </div>
-
-        <!-- Fila 2: Colaboradores + Botones de Acción -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top border-slate-100" *ngIf="activeSpace">
+        <div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h3 class="font-weight-bold text-slate-900 mb-0 font-size-18 font-size-md-20 text-truncate">
+              {{ activeSpace.title }}
+            </h3>
+          </div>
           <!-- Participantes en Stack de Avatares -->
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-2 mt-1">
             <div class="participants-avatar-stack d-flex align-items-center">
               <span *ngFor="let u of activeSpaceParticipants.slice(0, 4)" 
                     class="avatar-circle-sm text-white font-weight-bold" 
@@ -103,59 +60,130 @@
               <strong>{{ activeSpaceParticipants.length }}</strong> colaboradores
             </small>
           </div>
-
-          <!-- Acciones Rápidas del Espacio -->
-          <div class="d-flex align-items-center gap-1-5">
-            <!-- Crear Nueva Categoría -->
-            <button 
-              type="button" 
-              class="btn btn-sm btn-outline-slate rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
-              (click)="openCreateCategoryModal()"
-              title="Añadir categoría al espacio activo">
-              <i class="typcn typcn-tag text-blue font-size-15"></i>
-              <span class="d-none d-sm-inline ml-1">+ Categoría</span>
-            </button>
-
-            <!-- Crear Nuevo Espacio Compartido (Solo Admin / SuperAdmin) -->
-            <button 
-              type="button" 
-              class="btn btn-sm btn-outline-purple rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
-              *ngIf="isAdminOrSuperAdmin"
-              (click)="openCreateSpaceModal()"
-              title="Crear nuevo espacio colaborativo">
-              <i class="typcn typcn-folder-add font-size-15 text-purple"></i>
-              <span class="d-none d-sm-inline ml-1">Nuevo Espacio</span>
-            </button>
-
-            <!-- Eliminar Espacio Activo (Creador o Admin) -->
-            <button 
-              type="button" 
-              class="btn btn-sm btn-outline-rose rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
-              *ngIf="canDeleteSpace(activeSpace)"
-              (click)="deleteSpace(activeSpace)"
-              title="Eliminar este espacio de trabajo">
-              <i class="typcn typcn-trash font-size-15 text-rose"></i>
-              <span class="d-none d-md-inline ml-1">Eliminar</span>
-            </button>
-
-            <!-- Crear Nueva Entrega (Desktop) -->
-            <button 
-              type="button" 
-              class="btn btn-sm btn-gradient-blue text-white rounded-xl px-3 py-1-5 font-weight-bold font-size-12 d-none d-lg-flex align-items-center shadow-xs hover-lift"
-              (click)="openCreateTaskModal()">
-              <i class="typcn typcn-plus mr-1 font-size-15"></i>
-              <span>Nueva Entrega</span>
-            </button>
-          </div>
         </div>
+      </div>
 
+      <!-- Lado Derecho: Acciones Rápidas -->
+      <div class="d-flex align-items-center gap-2 justify-content-end">
+        <!-- Notificaciones -->
+        <button 
+          type="button" 
+          class="btn-notifs-bell position-relative" 
+          (click)="toggleNotifs()"
+          title="Ver avisos de tareas compartidas">
+          <i class="typcn typcn-bell font-size-20"></i>
+          <span class="badge-unread-notif" *ngIf="unreadNotifsCount > 0">{{ unreadNotifsCount }}</span>
+        </button>
+
+        <!-- Añadir Categoría -->
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline-slate rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
+          (click)="openCreateCategoryModal()"
+          title="Añadir categoría">
+          <i class="typcn typcn-tag text-blue font-size-15"></i>
+          <span class="d-none d-sm-inline ml-1">+ Categoría</span>
+        </button>
+
+        <!-- Eliminar Espacio Activo -->
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline-rose rounded-xl px-2-5 py-1-5 font-weight-bold font-size-12 d-flex align-items-center hover-lift"
+          *ngIf="canDeleteSpace(activeSpace)"
+          (click)="deleteSpace(activeSpace)"
+          title="Eliminar este espacio">
+          <i class="typcn typcn-trash font-size-15 text-rose"></i>
+        </button>
+
+        <!-- Crear Nueva Entrega (Desktop) -->
+        <button 
+          type="button" 
+          class="btn btn-sm btn-gradient-blue text-white rounded-xl px-3 py-1-5 font-weight-bold font-size-12 d-none d-lg-flex align-items-center shadow-xs hover-lift"
+          (click)="openCreateTaskModal()">
+          <i class="typcn typcn-plus mr-1 font-size-15"></i>
+          <span>Nueva Entrega</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Fila de Búsqueda & Vistas (Integrada en la misma tarjeta) -->
+    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 mt-3 pt-2-5 border-top border-slate-100" *ngIf="activeSpace">
+      <!-- Buscador -->
+      <div class="search-input-box position-relative flex-grow-1">
+        <i class="typcn typcn-zoom text-slate-400 position-absolute" style="left: 12px; top: 9px; font-size: 18px;"></i>
+        <input 
+          type="text" 
+          class="form-control form-control-sm pl-4 pr-3 rounded-xl border-slate-200 w-100"
+          style="padding-left: 36px !important; height: 38px;"
+          placeholder="Buscar entregable o colaborador..." 
+          [(ngModel)]="searchTerm">
+        <button 
+          type="button" 
+          class="btn-clear-search position-absolute border-0 bg-transparent text-slate-400"
+          *ngIf="searchTerm"
+          (click)="searchTerm = ''"
+          style="right: 8px; top: 7px;">
+          <i class="typcn typcn-times font-size-14"></i>
+        </button>
+      </div>
+
+      <!-- Selector de Modo de Vista -->
+      <div class="view-mode-selector-pill d-flex align-items-center bg-slate-100 p-1 rounded-xl border border-slate-200 flex-shrink-0">
+        <button 
+          type="button" 
+          class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center justify-content-center"
+          [class.active]="viewMode === 'kanban'"
+          (click)="viewMode = 'kanban'"
+          title="Vista Kanban">
+          <i class="typcn typcn-th-small font-size-17 mr-1"></i>
+          <span>Kanban</span>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center justify-content-center"
+          [class.active]="viewMode === 'grid'"
+          (click)="viewMode = 'grid'"
+          title="Vista Cuadrícula">
+          <i class="typcn typcn-th-large font-size-17 mr-1"></i>
+          <span>Cuadrícula</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtro de Categorías -->
+    <div class="d-flex align-items-center flex-wrap gap-1-5 mt-2-5" *ngIf="activeSpace?.categories && activeSpace.categories.length > 0">
+      <small class="font-weight-bold text-slate-500 mr-1 font-size-11">Categorías:</small>
+      <button 
+        type="button" 
+        class="btn-category-filter-pill"
+        [class.active]="categoryFilter === 'all'"
+        (click)="categoryFilter = 'all'">
+        Todas
+      </button>
+      <div class="category-pill-wrapper d-inline-flex align-items-center" *ngFor="let cat of activeSpace.categories">
+        <button 
+          type="button" 
+          class="btn-category-filter-pill d-inline-flex align-items-center"
+          [class.active]="categoryFilter === cat.name"
+          [style.--cat-color]="cat.color"
+          (click)="categoryFilter = cat.name">
+          <span class="cat-dot mr-1" [style.background-color]="cat.color"></span>
+          {{ cat.name }}
+        </button>
+        <button 
+          type="button" 
+          class="btn-delete-cat-pill"
+          (click)="deleteCategory(cat, $event)">
+          <i class="typcn typcn-times"></i>
+        </button>
       </div>
     </div>
 
   </div>
 
   <!-- Estado Sin Espacios -->
-  <div class="card rounded-2xl shadow-sm bg-white border border-slate-100 p-5 text-center my-4" *ngIf="spaces.length === 0">
+  <div class="card rounded-3xl shadow-sm bg-white border-0 p-5 text-center my-4" *ngIf="spaces.length === 0">
     <div class="icon-avatar-lg bg-blue-50 text-blue mx-auto mb-3 d-flex align-items-center justify-content-center rounded-2xl" style="width: 64px; height: 64px;">
       <i class="typcn typcn-group font-size-36"></i>
     </div>
@@ -177,143 +205,7 @@
   <div *ngIf="activeSpace" [class.d-none-mobile]="mobileTab === 'espacios'">
     
     <!-- =========================================================================
-         2. BARRA DE HERRAMIENTAS INTERACTIVA: VISTAS (KANBAN / GRID), FILTROS & BUSCADOR
-         ========================================================================= -->
-    <div class="card shadow-sm border-0 rounded-2xl bg-white mb-3-5 p-3">
-      <div class="d-flex flex-column gap-2-5">
-        
-        <!-- Fila Superior: Selector de Vistas + Filtros de Estado + Buscador -->
-        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-2-5">
-          
-          <div class="d-flex align-items-center flex-wrap gap-2">
-            <!-- Selector de Modo de Vista (Kanban / Cuadrícula) -->
-            <div class="view-mode-selector-pill d-flex align-items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button 
-                type="button" 
-                class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
-                [class.active]="viewMode === 'kanban'"
-                (click)="viewMode = 'kanban'"
-                title="Vista de Tablero Kanban">
-                <i class="typcn typcn-th-small font-size-18 mr-1"></i>
-                <span>Kanban</span>
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
-                [class.active]="viewMode === 'grid'"
-                (click)="viewMode = 'grid'"
-                title="Vista de Cuadrícula">
-                <i class="typcn typcn-th-large font-size-18 mr-1"></i>
-                <span>Cuadrícula</span>
-              </button>
-            </div>
-
-            <!-- Filtro Rápido por Estado (solo en Grid) -->
-            <div class="d-flex align-items-center flex-wrap gap-1" *ngIf="viewMode === 'grid'">
-              <button 
-                type="button" 
-                class="btn-filter-pill" 
-                [class.active]="statusFilter === 'all'"
-                (click)="statusFilter = 'all'">
-                Todas ({{ totalCount }})
-              </button>
-              <button 
-                type="button" 
-                class="btn-filter-pill" 
-                [class.active]="statusFilter === 'pendiente'"
-                (click)="statusFilter = 'pendiente'">
-                Pendientes ({{ pendingCount }})
-              </button>
-              <button 
-                type="button" 
-                class="btn-filter-pill" 
-                [class.active]="statusFilter === 'en_progreso'"
-                (click)="statusFilter = 'en_progreso'">
-                En Progreso ({{ inProgressCount }})
-              </button>
-              <button 
-                type="button" 
-                class="btn-filter-pill btn-filter-delivered" 
-                [class.active]="statusFilter === 'entregada'"
-                (click)="statusFilter = 'entregada'">
-                Entregadas ({{ deliveredCount }})
-              </button>
-              <button 
-                type="button" 
-                class="btn-filter-pill btn-filter-returned" 
-                *ngIf="returnedCount > 0"
-                [class.active]="statusFilter === 'devuelta'"
-                (click)="statusFilter = 'devuelta'">
-                ⚠️ Devueltas ({{ returnedCount }})
-              </button>
-              <button 
-                type="button" 
-                class="btn-filter-pill btn-filter-completed" 
-                [class.active]="statusFilter === 'completada'"
-                (click)="statusFilter = 'completada'">
-                Aprobadas ({{ completedCount }})
-              </button>
-            </div>
-          </div>
-
-          <!-- Buscador en Vivo -->
-          <div class="search-input-box position-relative flex-grow-1" style="max-width: 100%;">
-            <i class="typcn typcn-zoom text-slate-400 position-absolute" style="left: 12px; top: 10px; font-size: 18px;"></i>
-            <input 
-              type="text" 
-              class="form-control form-control-sm pl-4 pr-3 rounded-xl border-slate-200 w-100"
-              style="padding-left: 36px !important; height: 38px;"
-              placeholder="Buscar entregable o colaborador..." 
-              [(ngModel)]="searchTerm">
-            <button 
-              type="button" 
-              class="btn-clear-search position-absolute border-0 bg-transparent text-slate-400"
-              *ngIf="searchTerm"
-              (click)="searchTerm = ''"
-              style="right: 8px; top: 8px;">
-              <i class="typcn typcn-times font-size-14"></i>
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Fila Inferior: Filtros de Categorías del Espacio -->
-        <div class="d-flex align-items-center flex-wrap gap-1-5 pt-2 border-top border-slate-100" *ngIf="activeSpace.categories && activeSpace.categories.length > 0">
-          <small class="font-weight-bold text-slate-500 mr-1 font-size-12">
-            <i class="typcn typcn-tag mr-0.5"></i> Categorías:
-          </small>
-          <button 
-            type="button" 
-            class="btn-category-filter-pill"
-            [class.active]="categoryFilter === 'all'"
-            (click)="categoryFilter = 'all'">
-            Todas
-          </button>
-          <div class="category-pill-wrapper d-inline-flex align-items-center" *ngFor="let cat of activeSpace.categories">
-            <button 
-              type="button" 
-              class="btn-category-filter-pill d-inline-flex align-items-center"
-              [class.active]="categoryFilter === cat.name"
-              [style.--cat-color]="cat.color"
-              (click)="categoryFilter = cat.name">
-              <span class="cat-dot mr-1" [style.background-color]="cat.color"></span>
-              {{ cat.name }}
-            </button>
-            <button 
-              type="button" 
-              class="btn-delete-cat-pill"
-              (click)="deleteCategory(cat, $event)"
-              title="Eliminar categoría {{ cat.name }}">
-              <i class="typcn typcn-times"></i>
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- =========================================================================
-         3A. VISTA 1: TABLERO KANBAN INTERACTIVO (COLUMNAS DE ESTADO FULL WIDTH)
+         2. TABLERO KANBAN INTERACTIVO
          ========================================================================= -->
     <!-- Control Segmentado para Celulares (Solo visible en pantallas móviles) con Zona de Soltado / Drop -->
     <div class="mobile-kanban-segmented-nav d-block d-lg-none mb-3" *ngIf="viewMode === 'kanban'">

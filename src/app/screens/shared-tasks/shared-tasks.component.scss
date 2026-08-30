@@ -101,156 +101,80 @@
 }
 
 /* ==========================================================================
-   1. BROWSER WINDOW & TABS BAR (ESTILO PESTAÑAS DE NAVEGADOR)
+   1. CABECERA UNIFICADA & SELECTOR DE ESPACIOS (SLEEK CHIPS)
    ========================================================================== */
-.browser-window-wrapper {
-  width: 100%;
+.space-main-header-card {
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
+  border-radius: 22px !important;
 }
 
-.browser-tabs-strip {
-  background: #e2e8f0;
-  padding: 8px 12px 0 12px;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  border: 1.5px solid #cbd5e1;
-  border-bottom: none;
-}
-
-.browser-tabs-container {
-  gap: 4px;
-  width: 100%;
-  padding-bottom: 0;
-  padding-left: 6px;
-
+.spaces-pill-carousel {
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    height: 3px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    display: none;
   }
 }
 
-.browser-tab {
-  height: 38px;
-  padding: 0 16px;
-  background: transparent;
-  color: #64748b;
-  border: none;
-  max-width: 225px;
-  min-width: 135px;
-  position: relative;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  user-select: none;
-  display: flex;
-  align-items: center;
-  margin-right: 2px;
+.space-chip-btn {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 6px 12px;
+  border-radius: 12px;
+  max-width: 200px;
+  white-space: nowrap;
+  flex-shrink: 0;
 
-  /* Fondo romboide / trapecio inclinado con puntas superiores redondeadas */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 4px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
-    background: rgba(255, 255, 255, 0.45);
-    transform: perspective(12px) rotateX(1.8deg) skewX(-10deg);
-    transform-origin: bottom;
-    border: 1px solid rgba(203, 213, 225, 0.7);
-    border-bottom: none;
-    transition: all 0.2s ease;
-    z-index: 1;
+  .space-chip-count {
+    background: #e2e8f0;
+    color: #64748b;
+    font-size: 11px;
+    padding: 2px 6px;
   }
 
-  /* Contenido interno alineado horizontalmente sobre el fondo romboide */
-  > * {
-    position: relative;
-    z-index: 2;
-  }
-
-  .browser-tab-title {
-    color: #475569;
-  }
-
-  .browser-tab-close {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .space-chip-close {
     color: #94a3b8;
-    font-size: 12px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: all 0.15s ease;
+    margin-left: 2px;
+    padding: 2px;
+    border-radius: 4px;
 
     &:hover {
-      background: #ffe4e6;
-      color: #e11d48;
-      opacity: 1;
+      background: #fee2e2;
+      color: #ef4444;
     }
   }
 
-  &:hover:not(.active) {
-    color: #1e293b;
-
-    &::before {
-      background: rgba(255, 255, 255, 0.78);
-      border-color: #cbd5e1;
-    }
-
-    .browser-tab-title {
-      color: #1e293b;
-    }
-    .browser-tab-close {
-      opacity: 0.8;
-    }
+  &:hover {
+    background: #e2e8f0;
+    color: #0f172a;
   }
 
   &.active {
-    color: #0f172a !important;
-    margin-bottom: -1px;
-    z-index: 5;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
 
-    &::before {
-      background: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      border-bottom: none !important;
-      box-shadow: 0 -3px 10px rgba(15, 23, 42, 0.05);
-    }
-
-    .browser-tab-title {
-      color: #0f172a !important;
-      font-weight: 700;
-    }
-
-    .browser-tab-favicon i {
-      color: #0284c7 !important;
-    }
-
-    .browser-tab-close {
-      opacity: 0.7;
+    .space-chip-count {
+      background: #2563eb;
+      color: #ffffff;
     }
   }
 }
 
-.btn-browser-new-tab {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: transparent;
-  border: 1px solid transparent;
-  color: #64748b;
+.btn-new-space-chip {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 1px dashed #c4b5fd !important;
+  padding: 6px 12px;
+  border-radius: 12px;
+  flex-shrink: 0;
   cursor: pointer;
-  margin-bottom: 5px;
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.85);
-    color: #0284c7;
-    border-color: #cbd5e1;
-    transform: scale(1.08);
+    background: #ede9fe;
+    border-color: #a78bfa !important;
+    color: #6d28d9;
   }
 }
 
@@ -1334,44 +1258,9 @@
     padding: 6px 4px !important;
   }
 
-  .browser-window-wrapper {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  .browser-tabs-strip {
-    background: transparent !important;
-    padding: 0 0 8px 0 !important;
-    border-bottom: none !important;
-  }
-
-  .browser-tab {
-    min-width: 130px;
-    max-width: 180px;
-    padding: 6px 10px !important;
-    border-radius: 12px !important;
-    background: #e2e8f0;
-    border: none !important;
-    margin-right: 6px;
-
-    &.active {
-      background: #ffffff !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-    }
-  }
-
-  .btn-browser-new-tab {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: #e2e8f0;
-    border: none;
-  }
-
-  .browser-window-body {
+  .space-main-header-card {
     padding: 14px 12px !important;
-    border-radius: 18px !important;
+    border-radius: 20px !important;
   }
 
   .header-icon-badge {
