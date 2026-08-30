@@ -146,11 +146,11 @@
 
 </div>
 
-<!-- Skeleton Loaders de Estadísticas (Solo Escritorio) -->
-<app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading"></app-skeleton-loader>
+<!-- Skeleton Loaders de Estadísticas -->
+<app-skeleton-loader type="stat" [count]="4" *ngIf="isLoading" [ngClass]="{'d-none d-lg-flex': viewMode !== 'graficos'}"></app-skeleton-loader>
 
-<!-- Tarjetas de Estadísticas Cuadradas Principales con Efecto Glassmorphism -->
-<div class="row stats-row-container fade-in-up mb-3-5" *ngIf="!isLoading">
+<!-- Tarjetas de Estadísticas Cuadradas Principales con Efecto Glassmorphism (En móvil solo en Gráficos) -->
+<div class="row stats-row-container fade-in-up mb-3-5" [ngClass]="{'d-none d-lg-flex': viewMode !== 'graficos'}" *ngIf="!isLoading && viewMode !== 'categorias'">
   
   <!-- 1. Total Notas -->
   <div class="col-6 col-lg-3 grid-margin stretch-card mb-3 mb-lg-0 px-2 px-md-3">
