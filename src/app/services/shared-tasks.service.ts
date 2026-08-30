@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SharedSpace, SharedTask, SharedNotification, SharedTaskStatus, SharedChecklistItem, SharedSpaceCategory } from '../models/shared-task.model';
 import { AuthService } from '../core/services/auth.service';
@@ -33,18 +34,40 @@ export class SharedTasksService {
   }
 
   private currentUser: User | null = null;
+  private autoSyncTimer: any = null;
 
   constructor(
     private authService: AuthService,
-    private reminderService: AutomatedReminderService
+    private reminderService: AutomatedReminderService,
+    private http: HttpClient
   ) {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.loadInitialData();
+      this.initAutoSync();
     });
 
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', () => this.loadInitialData());
+      window.addEventListener('focus', () => this.fetchCloudSharedData());
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) this.fetchCloudSharedData();
+        });
+      }
+    }
+  }
+
+  private initAutoSync(): void {
+    if (this.autoSyncTimer) {
+      clearInterval(this.autoSyncTimer);
+      this.autoSyncTimer = null;
+    }
+    if (this.currentUser) {
+      this.fetchCloudSharedData();
+      this.autoSyncTimer = setInterval(() => {
+        this.fetchCloudSharedData();
+      }, 4000);
     }
   }
 
@@ -63,6 +86,67 @@ export class SharedTasksService {
         this.activeSpaceIdSubject.next(userSpaces[0].id);
       }
     }
+
+    if (this.currentUser) {
+      this.fetchCloudSharedData();
+    }
+  }
+
+  public fetchCloudSharedData(): void {
+    if (!this.currentUser) return;
+
+    this.http.get<{
+      success: boolean;
+      spaces: SharedSpace[];
+      tasks: SharedTask[];
+      notifications: SharedNotification[];
+    }>('/api/shared-tasks').subscribe({
+      next: (res) => {
+        if (res && res.success) {
+          const cloudSpaces = res.spaces || [];
+          const cloudTasks = res.tasks || [];
+          const cloudNotifs = res.notifications || [];
+
+          const localSpaces = this.getStoredSpaces();
+          const localTasks = this.getStoredTasks();
+          const localNotifs = this.getStoredNotifications();
+
+          // Subir a MongoDB cualquier dato creado localmente que no esté aún en la nube
+          const missingSpaces = localSpaces.filter(ls => !cloudSpaces.some(cs => cs.id === ls.id));
+          const missingTasks = localTasks.filter(lt => !cloudTasks.some(ct => ct.id === lt.id));
+          const missingNotifs = localNotifs.filter(ln => !cloudNotifs.some(cn => cn.id === ln.id));
+
+          if (missingSpaces.length > 0 || missingTasks.length > 0 || missingNotifs.length > 0) {
+            this.http.post('/api/shared-tasks', {
+              type: 'bulk_sync',
+              spaces: missingSpaces,
+              tasks: missingTasks,
+              notifications: missingNotifs
+            }).subscribe({ error: () => {} });
+          }
+
+          const mergedSpaces = [...cloudSpaces, ...missingSpaces];
+          const mergedTasks = [...cloudTasks, ...missingTasks];
+          const mergedNotifs = [...cloudNotifs, ...missingNotifs];
+
+          localStorage.setItem(SPACES_KEY, JSON.stringify(mergedSpaces));
+          localStorage.setItem(TASKS_KEY, JSON.stringify(mergedTasks));
+          localStorage.setItem(NOTIFS_KEY, JSON.stringify(mergedNotifs));
+
+          this.spacesSubject.next(mergedSpaces);
+          this.tasksSubject.next(mergedTasks);
+          this.notificationsSubject.next(mergedNotifs);
+
+          if (mergedSpaces.length > 0 && !this.activeSpaceIdSubject.value) {
+            const accessible = this.getAccessibleSpaces(mergedSpaces);
+            if (accessible.length > 0) {
+              this.activeSpaceIdSubject.next(accessible[0].id);
+            }
+          }
+        }
+      },
+      error: () => {}
+    });
   }
 
   // --- GETTERS & FILTERING ---
@@ -136,6 +220,9 @@ export class SharedTasksService {
     this.saveSpaces(updated);
     this.activeSpaceIdSubject.next(newSpace.id);
 
+    // Sync con MongoDB
+    this.http.post('/api/shared-tasks', { type: 'space', data: newSpace }).subscribe({ error: () => {} });
+
     // Enviar notificación a los participantes añadidos
     participantIds.forEach(pId => {
       if (pId !== this.currentUser?.id) {
@@ -150,7 +237,6 @@ export class SharedTasksService {
           type: 'created'
         });
 
-        // Notificación en dispositivo móvil / web
         this.reminderService.triggerDeviceNotification(
           `👥 Nuevo Espacio: ${newSpace.title}`,
           notifMsg,
@@ -180,6 +266,9 @@ export class SharedTasksService {
 
     const remaining = this.getAccessibleSpaces(updatedSpaces);
     this.activeSpaceIdSubject.next(remaining.length > 0 ? remaining[0].id : null);
+
+    // Sync Delete con MongoDB
+    this.http.delete(`/api/shared-tasks?type=space&id=${spaceId}`).subscribe({ error: () => {} });
   }
 
   // --- CRUD SPACES CATEGORIES (Any participant in the space) ---
@@ -191,7 +280,6 @@ export class SharedTasksService {
     const space = currentSpaces[idx];
     const categories = space.categories || [];
     
-    // Evitar duplicados por nombre
     const cleanName = categoryName.trim();
     if (categories.some(c => c.name.toLowerCase() === cleanName.toLowerCase())) {
       return space;
@@ -213,7 +301,9 @@ export class SharedTasksService {
     currentSpaces[idx] = updatedSpace;
     this.saveSpaces(currentSpaces);
 
-    // Notificar a los otros colaboradores del espacio
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'space', data: updatedSpace }).subscribe({ error: () => {} });
+
     this.notifyOtherParticipants(
       updatedSpace,
       '',
@@ -242,6 +332,9 @@ export class SharedTasksService {
 
     currentSpaces[idx] = updatedSpace;
     this.saveSpaces(currentSpaces);
+
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'space', data: updatedSpace }).subscribe({ error: () => {} });
 
     if (catToDelete) {
       this.notifyOtherParticipants(
@@ -307,7 +400,9 @@ export class SharedTasksService {
     const updated = [newTask, ...currentTasks];
     this.saveTasks(updated);
 
-    // Notificar a todos los demás participantes
+    // Sync con MongoDB
+    this.http.post('/api/shared-tasks', { type: 'task', data: newTask }).subscribe({ error: () => {} });
+
     this.notifyOtherParticipants(
       space,
       newTask.id,
@@ -338,6 +433,9 @@ export class SharedTasksService {
 
     currentTasks[idx] = updatedTask;
     this.saveTasks(currentTasks);
+
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'task', data: updatedTask }).subscribe({ error: () => {} });
 
     if (space) {
       this.notifyOtherParticipants(
@@ -375,6 +473,9 @@ export class SharedTasksService {
 
     currentTasks[idx] = updatedTask;
     this.saveTasks(currentTasks);
+
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'task', data: updatedTask }).subscribe({ error: () => {} });
 
     if (space) {
       const commentSnippet = returnNotes.trim() ? `: "${returnNotes.trim()}"` : '';
@@ -431,6 +532,9 @@ export class SharedTasksService {
     currentTasks[idx] = updatedTask;
     this.saveTasks(currentTasks);
 
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'task', data: updatedTask }).subscribe({ error: () => {} });
+
     if (space) {
       const actionVerb = newStatus === 'entregada' ? 'marcó como entregada la tarea' :
                          newStatus === 'completada' ? 'completó y aprobó la entrega' :
@@ -486,6 +590,9 @@ export class SharedTasksService {
     currentTasks[idx] = updatedTask;
     this.saveTasks(currentTasks);
 
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'task', data: updatedTask }).subscribe({ error: () => {} });
+
     if (space && changedItemText) {
       this.notifyOtherParticipants(
         space,
@@ -504,6 +611,9 @@ export class SharedTasksService {
     const task = currentTasks.find(t => t.id === taskId);
     const updated = currentTasks.filter(t => t.id !== taskId);
     this.saveTasks(updated);
+
+    // Sync Delete con MongoDB
+    this.http.delete(`/api/shared-tasks?type=task&id=${taskId}`).subscribe({ error: () => {} });
 
     if (task) {
       const space = this.getStoredSpaces().find(s => s.id === task.spaceId);
@@ -544,7 +654,6 @@ export class SharedTasksService {
       });
     });
 
-    // Notificación en dispositivo si está en la misma sesión o dispositivo
     this.reminderService.triggerDeviceNotification(
       `👥 Tarea Compartida: ${space.title}`,
       message,
@@ -563,6 +672,9 @@ export class SharedTasksService {
 
     const updated = [newNotif, ...notifs];
     this.saveNotifications(updated);
+
+    // Sync Notif con MongoDB
+    this.http.post('/api/shared-tasks', { type: 'notification', data: newNotif }).subscribe({ error: () => {} });
   }
 
   public markNotificationAsRead(notifId: string): void {
@@ -571,6 +683,9 @@ export class SharedTasksService {
       return n;
     });
     this.saveNotifications(notifs);
+
+    // Sync con MongoDB
+    this.http.put('/api/shared-tasks', { type: 'notification', data: { id: notifId, read: true } }).subscribe({ error: () => {} });
   }
 
   public markAllNotificationsAsRead(): void {
@@ -581,6 +696,11 @@ export class SharedTasksService {
       return n;
     });
     this.saveNotifications(notifs);
+
+    const userNotifs = notifs.filter(n => n.recipientId === currentUserId);
+    for (const un of userNotifs) {
+      this.http.put('/api/shared-tasks', { type: 'notification', data: { id: un.id, read: true } }).subscribe({ error: () => {} });
+    }
   }
 
   // --- STORAGE HELPERS ---
