@@ -1871,24 +1871,30 @@
   <div class="modal-dialog-custom modal-dialog-lg" (click)="$event.stopPropagation()">
     <div class="modal-content-custom">
       
-      <!-- Cabecera con Color de la Categoría -->
-      <div class="modal-header-custom" [style.backgroundColor]="getCategoryColor(selectedViewNote.categoryId)">
+      <!-- Cabecera Elegante y Moderna con Acento de Categoría -->
+      <div class="modal-header-custom">
         <div class="d-flex align-items-center">
-          <div class="modal-icon-badge mr-3">
-            <i class="typcn {{ getCategoryIcon(selectedViewNote.categoryId) }} font-size-26 text-white"></i>
+          <div class="modal-icon-badge mr-3" [style.backgroundColor]="getCategoryColor(selectedViewNote.categoryId)">
+            <i class="typcn {{ getCategoryIcon(selectedViewNote.categoryId) }} font-size-24 text-white"></i>
           </div>
           <div>
-            <span class="badge badge-pill bg-white text-dark font-size-11 font-weight-bold px-2-5 py-1 mb-1 d-inline-block">
-              {{ getCategoryName(selectedViewNote.categoryId) }}
-            </span>
-            <h4 class="modal-title font-weight-bold text-white mb-0 line-height-tight">
+            <div class="d-flex align-items-center gap-1-5 mb-1">
+              <span class="badge badge-pill font-size-11 font-weight-bold px-2-5 py-0-5" 
+                    [style.backgroundColor]="getCategoryColor(selectedViewNote.categoryId) + '25'"
+                    [style.color]="getCategoryColor(selectedViewNote.categoryId)"
+                    [style.borderColor]="getCategoryColor(selectedViewNote.categoryId) + '50'"
+                    style="border: 1px solid;">
+                {{ getCategoryName(selectedViewNote.categoryId) }}
+              </span>
+            </div>
+            <h4 class="modal-title font-weight-bold text-white mb-0 font-size-18 line-height-tight">
               Detalles de la Tarea
             </h4>
           </div>
         </div>
 
-        <button type="button" class="btn-close-custom text-white" (click)="closeViewModal()" title="Cerrar">
-          <i class="typcn typcn-times font-size-24"></i>
+        <button type="button" class="btn-close-custom" (click)="closeViewModal()" title="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
         </button>
       </div>
 
@@ -2009,8 +2015,8 @@
             
             <button 
               type="button" 
-              class="btn btn-sm px-3 py-2 rounded-xl font-weight-bold d-flex align-items-center font-size-13 shadow-xs"
-              [ngClass]="selectedViewNote.status === 'completada' ? 'btn-white border text-slate-700' : 'btn-gradient-emerald text-white'"
+              class="btn px-3 py-2 rounded-xl font-weight-bold d-flex align-items-center font-size-13"
+              [ngClass]="selectedViewNote.status === 'completada' ? 'btn-modal-cancel' : 'btn-gradient-emerald text-white'"
               (click)="toggleStatusFromViewModal()">
               <i class="typcn mr-1 font-size-16" [ngClass]="selectedViewNote.status === 'completada' ? 'typcn-arrow-left text-amber' : 'typcn-tick text-white'"></i>
               {{ selectedViewNote.status === 'completada' ? 'Reabrir Tarea' : 'Completar Tarea' }}
@@ -2021,7 +2027,7 @@
               class="btn btn-action-blue rounded-xl p-2" 
               (click)="editFromViewModal()" 
               title="Editar Tarea">
-              <i class="typcn typcn-edit font-size-20 text-blue"></i>
+              <i class="typcn typcn-edit font-size-18"></i>
             </button>
 
             <button 
@@ -2029,12 +2035,12 @@
               class="btn btn-action-rose rounded-xl p-2" 
               (click)="deleteFromViewModal()" 
               title="Eliminar Tarea">
-              <i class="typcn typcn-trash font-size-20 text-rose"></i>
+              <i class="typcn typcn-trash font-size-18"></i>
             </button>
 
             <button 
               type="button" 
-              class="btn btn-secondary font-weight-bold px-3 py-2 rounded-xl font-size-13" 
+              class="btn btn-modal-cancel px-3 py-2 rounded-xl font-size-13 font-weight-bold" 
               (click)="closeViewModal()">
               Cerrar
             </button>
