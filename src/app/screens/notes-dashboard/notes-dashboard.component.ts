@@ -415,7 +415,13 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.notesService.updateNote(note.id, { status: newStatus });
   }
 
-  // --- Drag and Drop Handlers for Kanban ---
+  // --- Drag and Drop Handlers for Kanban (Desktop & Mobile Touch) ---
+  touchDraggedNote: Note | null = null;
+  touchStartPos: { x: number; y: number } | null = null;
+  touchElement: HTMLElement | null = null;
+  touchGhostEl: HTMLElement | null = null;
+  touchHoldTimer: any = null;
+  isTouchDragging: boolean = false;
 
   onDragStart(event: DragEvent, note: Note): void {
     this.draggedNote = note;
@@ -463,6 +469,107 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   onDragEnd(): void {
     this.draggedNote = null;
     this.activeDropZone = null;
+  }
+
+  onTouchStart(event: TouchEvent, note: Note): void {
+    if (event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    this.touchStartPos = { x: touch.clientX, y: touch.clientY };
+    this.touchDraggedNote = note;
+    const targetEl = (event.currentTarget || event.target) as HTMLElement;
+    this.touchElement = targetEl;
+
+    this.touchHoldTimer = setTimeout(() => {
+      this.isTouchDragging = true;
+      this.draggedNote = note;
+      if (typeof navigator !== 'undefined' && (navigator as any).vibrate) {
+        try { (navigator as any).vibrate(40); } catch (e) {}
+      }
+      this.createTouchGhost(touch.clientX, touch.clientY, targetEl);
+    }, 180);
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.touchStartPos) return;
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - this.touchStartPos.x);
+    const dy = Math.abs(touch.clientY - this.touchStartPos.y);
+
+    if (!this.isTouchDragging) {
+      if (dx > 12 || dy > 12) {
+        clearTimeout(this.touchHoldTimer);
+        this.touchHoldTimer = null;
+        this.touchStartPos = null;
+        this.touchDraggedNote = null;
+      }
+      return;
+    }
+
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+    if (this.touchGhostEl) {
+      this.touchGhostEl.style.left = `${touch.clientX - 60}px`;
+      this.touchGhostEl.style.top = `${touch.clientY - 30}px`;
+    }
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (el) {
+      const dropZoneEl = el.closest('[data-status]');
+      if (dropZoneEl) {
+        const status = dropZoneEl.getAttribute('data-status') as NoteStatus;
+        this.activeDropZone = status;
+      } else {
+        this.activeDropZone = null;
+      }
+    }
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    clearTimeout(this.touchHoldTimer);
+    this.touchHoldTimer = null;
+
+    if (this.isTouchDragging && this.touchDraggedNote) {
+      if (this.activeDropZone && this.touchDraggedNote.status !== this.activeDropZone) {
+        this.changeTaskStatus(this.touchDraggedNote, this.activeDropZone);
+        this.mobileKanbanTab = this.activeDropZone;
+      }
+    }
+
+    this.removeTouchGhost();
+    this.isTouchDragging = false;
+    this.touchDraggedNote = null;
+    this.draggedNote = null;
+    this.touchStartPos = null;
+    this.touchElement = null;
+    this.activeDropZone = null;
+  }
+
+  private createTouchGhost(x: number, y: number, sourceEl: HTMLElement): void {
+    this.removeTouchGhost();
+    const ghost = sourceEl.cloneNode(true) as HTMLElement;
+    ghost.classList.add('mobile-touch-drag-ghost');
+    ghost.style.position = 'fixed';
+    ghost.style.left = `${x - 60}px`;
+    ghost.style.top = `${y - 30}px`;
+    ghost.style.width = `${Math.min(sourceEl.offsetWidth, 260)}px`;
+    ghost.style.opacity = '0.92';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.zIndex = '999999';
+    ghost.style.transform = 'scale(1.05) rotate(2deg)';
+    ghost.style.boxShadow = '0 16px 32px rgba(15, 23, 42, 0.3)';
+    ghost.style.transition = 'none';
+    document.body.appendChild(ghost);
+    this.touchGhostEl = ghost;
+  }
+
+  private removeTouchGhost(): void {
+    if (this.touchGhostEl) {
+      if (this.touchGhostEl.parentNode) {
+        this.touchGhostEl.parentNode.removeChild(this.touchGhostEl);
+      }
+      this.touchGhostEl = null;
+    }
   }
 
   openViewModal(note: Note, event?: Event): void {

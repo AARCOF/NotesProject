@@ -317,7 +317,12 @@
       <div class="kanban-columns-row d-flex gap-3 overflow-x-auto pb-3">
         
         <!-- COLUMNA 1: PENDIENTES -->
-        <div class="kanban-column flex-1">
+        <div class="kanban-column flex-1"
+             [class.drag-target-hover]="activeDropZone === 'pendiente'"
+             [attr.data-status]="'pendiente'"
+             (dragover)="onDragOver($event, 'pendiente')"
+             (dragleave)="onDragLeave($event, 'pendiente')"
+             (drop)="onDrop($event, 'pendiente')">
           <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-time text-slate-500 font-size-18"></i>
@@ -329,7 +334,7 @@
             </button>
           </div>
 
-          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5" [attr.data-status]="'pendiente'">
             <div *ngFor="let task of getTasksByStatus('pendiente')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
               <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
             </div>
@@ -343,7 +348,12 @@
         </div>
 
         <!-- COLUMNA 2: EN PROGRESO -->
-        <div class="kanban-column flex-1">
+        <div class="kanban-column flex-1"
+             [class.drag-target-hover]="activeDropZone === 'en_progreso'"
+             [attr.data-status]="'en_progreso'"
+             (dragover)="onDragOver($event, 'en_progreso')"
+             (dragleave)="onDragLeave($event, 'en_progreso')"
+             (drop)="onDrop($event, 'en_progreso')">
           <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-flash text-amber font-size-18"></i>
@@ -352,7 +362,7 @@
             </div>
           </div>
 
-          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5" [attr.data-status]="'en_progreso'">
             <div *ngFor="let task of getTasksByStatus('en_progreso')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
               <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
             </div>
@@ -365,7 +375,12 @@
         </div>
 
         <!-- COLUMNA 3: ENTREGADAS (EN REVISIÓN) -->
-        <div class="kanban-column flex-1">
+        <div class="kanban-column flex-1"
+             [class.drag-target-hover]="activeDropZone === 'entregada'"
+             [attr.data-status]="'entregada'"
+             (dragover)="onDragOver($event, 'entregada')"
+             (dragleave)="onDragLeave($event, 'entregada')"
+             (drop)="onDrop($event, 'entregada')">
           <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-upload text-cyan font-size-18"></i>
@@ -374,7 +389,7 @@
             </div>
           </div>
 
-          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5" [attr.data-status]="'entregada'">
             <div *ngFor="let task of getTasksByStatus('entregada')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
               <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
             </div>
@@ -387,7 +402,12 @@
         </div>
 
         <!-- COLUMNA 4: DEVUELTAS (CON CORRECCIÓN) -->
-        <div class="kanban-column flex-1" *ngIf="returnedCount > 0 || getTasksByStatus('devuelta').length > 0">
+        <div class="kanban-column flex-1" *ngIf="returnedCount > 0 || getTasksByStatus('devuelta').length > 0"
+             [class.drag-target-hover]="activeDropZone === 'devuelta'"
+             [attr.data-status]="'devuelta'"
+             (dragover)="onDragOver($event, 'devuelta')"
+             (dragleave)="onDragLeave($event, 'devuelta')"
+             (drop)="onDrop($event, 'devuelta')">
           <div class="kanban-col-header p-3 rounded-2xl bg-white border border-rose-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-arrow-back text-rose font-size-18"></i>
@@ -396,7 +416,7 @@
             </div>
           </div>
 
-          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5" [attr.data-status]="'devuelta'">
             <div *ngFor="let task of getTasksByStatus('devuelta')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
               <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
             </div>
@@ -409,7 +429,12 @@
         </div>
 
         <!-- COLUMNA 5: APROBADAS & FINALIZADAS -->
-        <div class="kanban-column flex-1">
+        <div class="kanban-column flex-1"
+             [class.drag-target-hover]="activeDropZone === 'completada'"
+             [attr.data-status]="'completada'"
+             (dragover)="onDragOver($event, 'completada')"
+             (dragleave)="onDragLeave($event, 'completada')"
+             (drop)="onDrop($event, 'completada')">
           <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2">
               <i class="typcn typcn-tick text-emerald font-size-18"></i>
@@ -418,7 +443,7 @@
             </div>
           </div>
 
-          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5" [attr.data-status]="'completada'">
             <div *ngFor="let task of getTasksByStatus('completada')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
               <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
             </div>
@@ -472,7 +497,15 @@
      PLANTILLA REUTILIZABLE DE TARJETA DE ENTREGABLE (CARD TEMPLATE)
      ========================================================================= -->
 <ng-template #deliverableCardTpl let-task="task">
-  <div class="deliverable-card card h-100 rounded-2xl transition-all position-relative overflow-hidden"
+  <div class="deliverable-card card h-100 rounded-2xl transition-all position-relative overflow-hidden cursor-pointer"
+       [draggable]="true"
+       [class.dragging-card]="draggedTask?.id === task.id"
+       (dragstart)="onDragStart($event, task)"
+       (dragend)="onDragEnd()"
+       (touchstart)="onTouchStart($event, task)"
+       (touchmove)="onTouchMove($event)"
+       (touchend)="onTouchEnd($event)"
+       (touchcancel)="onTouchEnd($event)"
        [ngClass]="{
          'priority-card-alta': task.priority === 'alta',
          'priority-card-media': task.priority === 'media',

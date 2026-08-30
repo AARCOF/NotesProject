@@ -599,6 +599,162 @@ export class SharedTasksComponent implements OnInit, OnDestroy {
     return `${space.participantIds.length} colaboradores`;
   }
 
+  // --- Drag and Drop Handlers for Shared Tasks Kanban (Desktop & Mobile Touch) ---
+  draggedTask: SharedTask | null = null;
+  activeDropZone: string | null = null;
+  touchDraggedTask: SharedTask | null = null;
+  touchStartPos: { x: number; y: number } | null = null;
+  touchElement: HTMLElement | null = null;
+  touchGhostEl: HTMLElement | null = null;
+  touchHoldTimer: any = null;
+  isTouchDragging: boolean = false;
+
+  onDragStart(event: DragEvent, task: SharedTask): void {
+    this.draggedTask = task;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', task.id);
+    }
+  }
+
+  onDragOver(event: DragEvent, status: SharedTaskStatus): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+    this.activeDropZone = status;
+  }
+
+  onDragLeave(event: DragEvent, status: SharedTaskStatus): void {
+    if (this.activeDropZone === status) {
+      this.activeDropZone = null;
+    }
+  }
+
+  onDrop(event: DragEvent, targetStatus: SharedTaskStatus): void {
+    event.preventDefault();
+    if (this.draggedTask && this.draggedTask.status !== targetStatus) {
+      this.changeSharedTaskStatus(this.draggedTask, targetStatus);
+    }
+    this.draggedTask = null;
+    this.activeDropZone = null;
+  }
+
+  onDragEnd(): void {
+    this.draggedTask = null;
+    this.activeDropZone = null;
+  }
+
+  changeSharedTaskStatus(task: SharedTask, newStatus: SharedTaskStatus): void {
+    if (newStatus === 'entregada') {
+      this.openDeliverModal(task);
+    } else if (newStatus === 'devuelta') {
+      this.openReturnModal(task);
+    } else {
+      this.sharedTasksService.updateTaskStatus(task.id, newStatus);
+    }
+  }
+
+  onTouchStart(event: TouchEvent, task: SharedTask): void {
+    if (event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    this.touchStartPos = { x: touch.clientX, y: touch.clientY };
+    this.touchDraggedTask = task;
+    const targetEl = (event.currentTarget || event.target) as HTMLElement;
+    this.touchElement = targetEl;
+
+    this.touchHoldTimer = setTimeout(() => {
+      this.isTouchDragging = true;
+      this.draggedTask = task;
+      if (typeof navigator !== 'undefined' && (navigator as any).vibrate) {
+        try { (navigator as any).vibrate(40); } catch (e) {}
+      }
+      this.createTouchGhost(touch.clientX, touch.clientY, targetEl);
+    }, 180);
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.touchStartPos) return;
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - this.touchStartPos.x);
+    const dy = Math.abs(touch.clientY - this.touchStartPos.y);
+
+    if (!this.isTouchDragging) {
+      if (dx > 12 || dy > 12) {
+        clearTimeout(this.touchHoldTimer);
+        this.touchHoldTimer = null;
+        this.touchStartPos = null;
+        this.touchDraggedTask = null;
+      }
+      return;
+    }
+
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+    if (this.touchGhostEl) {
+      this.touchGhostEl.style.left = `${touch.clientX - 60}px`;
+      this.touchGhostEl.style.top = `${touch.clientY - 30}px`;
+    }
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (el) {
+      const dropZoneEl = el.closest('[data-status]');
+      if (dropZoneEl) {
+        const status = dropZoneEl.getAttribute('data-status') as SharedTaskStatus;
+        this.activeDropZone = status;
+      } else {
+        this.activeDropZone = null;
+      }
+    }
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    clearTimeout(this.touchHoldTimer);
+    this.touchHoldTimer = null;
+
+    if (this.isTouchDragging && this.touchDraggedTask) {
+      if (this.activeDropZone && this.touchDraggedTask.status !== this.activeDropZone) {
+        this.changeSharedTaskStatus(this.touchDraggedTask, this.activeDropZone as SharedTaskStatus);
+      }
+    }
+
+    this.removeTouchGhost();
+    this.isTouchDragging = false;
+    this.touchDraggedTask = null;
+    this.draggedTask = null;
+    this.touchStartPos = null;
+    this.touchElement = null;
+    this.activeDropZone = null;
+  }
+
+  private createTouchGhost(x: number, y: number, sourceEl: HTMLElement): void {
+    this.removeTouchGhost();
+    const ghost = sourceEl.cloneNode(true) as HTMLElement;
+    ghost.classList.add('mobile-touch-drag-ghost');
+    ghost.style.position = 'fixed';
+    ghost.style.left = `${x - 60}px`;
+    ghost.style.top = `${y - 30}px`;
+    ghost.style.width = `${Math.min(sourceEl.offsetWidth, 260)}px`;
+    ghost.style.opacity = '0.92';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.zIndex = '999999';
+    ghost.style.transform = 'scale(1.05) rotate(2deg)';
+    ghost.style.boxShadow = '0 16px 32px rgba(15, 23, 42, 0.3)';
+    ghost.style.transition = 'none';
+    document.body.appendChild(ghost);
+    this.touchGhostEl = ghost;
+  }
+
+  private removeTouchGhost(): void {
+    if (this.touchGhostEl) {
+      if (this.touchGhostEl.parentNode) {
+        this.touchGhostEl.parentNode.removeChild(this.touchGhostEl);
+      }
+      this.touchGhostEl = null;
+    }
+  }
+
   trackByFn(index: number, item: any): any {
     return index;
   }
