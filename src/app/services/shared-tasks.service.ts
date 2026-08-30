@@ -152,10 +152,27 @@ export class SharedTasksService {
   // --- GETTERS & FILTERING ---
   public getAccessibleSpaces(allSpaces: SharedSpace[] = this.spacesSubject.value): SharedSpace[] {
     if (!this.currentUser) return [];
-    if (this.currentUser.role === 'admin' || this.currentUser.role === 'superadmin') {
+    if (
+      this.currentUser.role === 'admin' || 
+      this.currentUser.role === 'superadmin' || 
+      this.authService.isAdminOrSuperAdmin()
+    ) {
       return allSpaces;
     }
-    return allSpaces.filter(s => s.participantIds.includes(this.currentUser!.id));
+
+    const currentId = (this.currentUser.id || '').toString();
+    const currentEmail = (this.currentUser.email || '').toLowerCase().trim();
+
+    return allSpaces.filter(s => {
+      if (!s) return false;
+      if (s.createdBy && s.createdBy.toString() === currentId) return true;
+      if (Array.isArray(s.participantIds) && s.participantIds.some(pid => pid && pid.toString() === currentId)) return true;
+      if (s.participantEmails) {
+        const emails = Object.values(s.participantEmails).map(e => (e || '').toLowerCase().trim());
+        if (emails.includes(currentEmail)) return true;
+      }
+      return false;
+    });
   }
 
   public getTasksForSpace(spaceId: string): SharedTask[] {
@@ -192,12 +209,19 @@ export class SharedTasksService {
     const names: { [id: string]: string } = {};
     const emails: { [id: string]: string } = {};
 
-    participantIds.forEach(id => {
+    const currentUserId = this.currentUser?.id || 'admin';
+    const allParticipantIds = Array.from(new Set([...participantIds, currentUserId]));
+
+    allParticipantIds.forEach(id => {
       if (participantDetails[id]) {
         names[id] = participantDetails[id].name;
         emails[id] = participantDetails[id].email;
       }
     });
+    if (this.currentUser) {
+      names[currentUserId] = this.currentUser.name;
+      emails[currentUserId] = this.currentUser.email;
+    }
 
     const colors = ['#0284c7', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#6366f1'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -206,9 +230,9 @@ export class SharedTasksService {
       id: 'space_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
       title: title.trim(),
       description: description.trim(),
-      createdBy: this.currentUser?.id || 'admin',
+      createdBy: currentUserId,
       createdByName: this.currentUser?.name || 'Administrador',
-      participantIds: Array.from(new Set(participantIds)),
+      participantIds: allParticipantIds,
       participantNames: names,
       participantEmails: emails,
       createdAt: new Date().toISOString(),

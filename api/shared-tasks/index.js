@@ -27,8 +27,16 @@ module.exports = async function handler(req, res) {
 
     switch (req.method) {
       case 'GET': {
-        // Obtenemos los espacios a los que el usuario tiene acceso
-        const spaceQuery = isAdmin ? {} : { participantIds: userId };
+        const userEmail = (authUser.email || '').toLowerCase().trim();
+        const spaceQuery = isAdmin ? {} : {
+          $or: [
+            { createdBy: userId },
+            { participantIds: userId },
+            { participantIds: { $in: [userId] } },
+            { participantEmails: userEmail },
+            { [`participantEmails.${userId}`]: { $exists: true } }
+          ]
+        };
         const spaces = await spacesCollection.find(spaceQuery).sort({ createdAt: -1 }).toArray();
         const spaceIds = spaces.map(s => s.id);
 
@@ -39,7 +47,12 @@ module.exports = async function handler(req, res) {
           : [];
 
         // Obtenemos las notificaciones del usuario
-        const notifs = await notifsCollection.find({ recipientId: userId }).sort({ createdAt: -1 }).toArray();
+        const notifs = await notifsCollection.find({
+          $or: [
+            { recipientId: userId },
+            { senderId: userId }
+          ]
+        }).sort({ createdAt: -1 }).toArray();
 
         return sendJsonResponse(res, 200, {
           success: true,

@@ -78,6 +78,7 @@ export class SharedTasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.sharedTasksService.fetchCloudSharedData();
 
     // Cargar usuarios del sistema para selección en espacios y tareas
     this.userRepository.getCloudUsers().subscribe(users => {
