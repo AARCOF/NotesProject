@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
-    android:padding="14dp">
+    android:padding="10dp">
 
-    <!-- Header Row with Glassmorphism -->
+    <!-- Header Row (Icon + Title + Refresh Button) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="8dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -20,23 +20,25 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:background="@drawable/widget_icon_badge"
-                android:text="📝"
-                android:gravity="center"
-                android:textSize="12sp"
+                android:src="@drawable/ic_widget_task"
+                android:padding="4dp"
+                android:contentDescription="Tareas"
                 android:layout_marginRight="8dp" />
 
             <TextView
                 android:id="@+id/widget_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NoteYou · Pendientes"
+                android:text="Pendientes"
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:ellipsize="end" />
         </LinearLayout>
 
         <ImageView
@@ -46,57 +48,56 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/widget_item_bg"
-            android:padding="4dp"
-            android:src="@android:drawable/stat_notify_sync"
-            android:tint="#38BDF8"
+            android:src="@drawable/ic_widget_sync"
+            android:padding="5dp"
             android:contentDescription="Sincronizar"
             android:clickable="true"
             android:focusable="true" />
     </RelativeLayout>
 
-    <!-- List View of Tasks -->
+    <!-- Task List (Auto-fits 2x2, 3x2, 4x2 etc.) -->
     <ListView
         android:id="@+id/widget_tasks_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@android:color/transparent"
-        android:dividerHeight="6dp"
+        android:dividerHeight="4dp"
         android:nestedScrollingEnabled="true" />
 
     <!-- Empty State View with Frosted Glass -->
     <LinearLayout
         android:id="@+id/widget_tasks_empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@drawable/widget_item_bg"
         android:orientation="vertical"
         android:gravity="center"
-        android:padding="16dp"
+        android:padding="8dp"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="✨"
-            android:textSize="24sp"
-            android:layout_marginBottom="4dp" />
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_widget_check_sparkle"
+            android:layout_marginBottom="4dp"
+            android:contentDescription="Al día" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¡Estás al día!"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No tienes tareas pendientes"
+            android:text="Sin tareas pendientes"
             android:textColor="#94A3B8"
-            android:textSize="11sp"
-            android:layout_marginTop="2dp" />
+            android:textSize="10sp" />
     </LinearLayout>
 
 </LinearLayout>

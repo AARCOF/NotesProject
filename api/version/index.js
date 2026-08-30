@@ -6,16 +6,16 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.5.0',
-    versionCode: 350,
+    version: '3.6.0',
+    versionCode: 360,
     releasedAt: '2026-08-30',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
     releaseNotes: [
-      'Widgets nativos para la pantalla de inicio de Android con diseño Glassmorphism (Tareas y Finanzas).',
-      'Edición rápida de Enlaces Guardados y marcadores favoritos.',
-      'Mejoras en paneles de categorías y gráficas estadísticas.',
-      'Optimizaciones visuales de alto contraste y correcciones de rendimiento.'
+      'Widgets de pantalla de inicio con diseño premium Liquid Glass y orbes ambientales translúcidos.',
+      'Íconos vectoriales nativos en widgets en lugar de emojis.',
+      'Optimización de escalado responsivo para cuadrículas 2x2 y 4x2.',
+      'Actualización directa in-place sin necesidad de desinstalar la app.'
     ],
     isMandatory: false
   };
