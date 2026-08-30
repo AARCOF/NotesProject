@@ -9,7 +9,7 @@
       <span class="tab-label">Notas</span>
     </a>
 
-    <!-- 2. Finanzas -->
+    <!-- 2. Finanzas / Gastos -->
     <a routerLink="/expenses" class="nav-tab-item" [class.active]="isActive('/expenses')">
       <div class="icon-wrapper">
         <i class="typcn typcn-credit-card"></i>
@@ -19,25 +19,25 @@
 
     <!-- 3. Botón Central FAB (Crear) -->
     <div class="fab-center-wrapper">
-      <button class="fab-center-btn" (click)="onCreateClick()" title="Crear Tarea o Gasto" aria-label="Crear">
+      <button class="fab-center-btn" (click)="onCreateClick()" title="Crear Tarea, Gasto o Enlace" aria-label="Crear">
         <i class="typcn typcn-plus"></i>
       </button>
     </div>
 
-    <!-- 4. Calendario / Agenda -->
-    <a routerLink="/calendar" class="nav-tab-item" [class.active]="isActive('/calendar')">
+    <!-- 4. Tareas Compartidas -->
+    <a routerLink="/shared-tasks" class="nav-tab-item" [class.active]="isActive('/shared-tasks')">
       <div class="icon-wrapper">
-        <i class="typcn typcn-calendar"></i>
+        <i class="typcn typcn-group"></i>
       </div>
-      <span class="tab-label">Agenda</span>
+      <span class="tab-label">Compartidas</span>
     </a>
 
-    <!-- 5. Perfil -->
-    <a routerLink="/profile" class="nav-tab-item" [class.active]="isActive('/profile')">
+    <!-- 5. Guardado / Libreta de Enlaces -->
+    <a routerLink="/saved-links" class="nav-tab-item" [class.active]="isActive('/saved-links')">
       <div class="icon-wrapper">
-        <i class="typcn typcn-user"></i>
+        <i class="typcn typcn-bookmark"></i>
       </div>
-      <span class="tab-label">Perfil</span>
+      <span class="tab-label">Guardado</span>
     </a>
 
   </div>

@@ -45,14 +45,14 @@ export class ExpenseService {
   private openAddCategoryModalRequestSubject = new Subject<void>();
   public openAddCategoryModalRequest$: Observable<void> = this.openAddCategoryModalRequestSubject.asObservable();
 
-  private activeTabSubject = new BehaviorSubject<'gestion' | 'movimientos' | 'categorias' | 'graficas'>('gestion');
-  public activeTab$: Observable<'gestion' | 'movimientos' | 'categorias' | 'graficas'> = this.activeTabSubject.asObservable();
+  private activeTabSubject = new BehaviorSubject<'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos'>('gestion');
+  public activeTab$: Observable<'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos'> = this.activeTabSubject.asObservable();
 
-  public setActiveTab(tab: 'gestion' | 'movimientos' | 'categorias' | 'graficas'): void {
+  public setActiveTab(tab: 'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos'): void {
     this.activeTabSubject.next(tab);
   }
 
-  public getActiveTab(): 'gestion' | 'movimientos' | 'categorias' | 'graficas' {
+  public getActiveTab(): 'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos' {
     return this.activeTabSubject.getValue();
   }
 

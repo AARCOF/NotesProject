@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User, UserRole } from '../models/user.model';
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepository, formatUserName } from '../repositories/user.repository';
 import { JwtService } from './jwt.service';
 import { VerificationKeyService } from './verification-key.service';
 import { RecaptchaService } from './recaptcha.service';
@@ -68,11 +68,12 @@ export class AuthService {
     }
 
     const cleanEmail = email.trim().toLowerCase();
+    const formattedName = formatUserName(name);
 
     // 1. Intentar registrar en MongoDB Atlas a través de la API
     try {
       const response: any = await this.http.post('/api/auth/register', {
-        name: name.trim(),
+        name: formattedName,
         email: cleanEmail,
         password
       }).toPromise();
@@ -84,7 +85,7 @@ export class AuthService {
         const assignedRole: UserRole = cleanEmail === 'superadmin@noteyou.com' ? 'superadmin' : 'user';
         const localUser: User = {
           id: response.userId || 'usr_' + Date.now(),
-          name: name.trim(),
+          name: formattedName,
           email: cleanEmail,
           passwordHash: btoa(password),
           role: assignedRole,
@@ -326,7 +327,7 @@ export class AuthService {
     if (!user) {
       return { success: false, message: 'No hay sesión activa.' };
     }
-    user.name = newName;
+    user.name = formatUserName(newName);
     this.userRepository.updateUser(user);
     
     // Update token to reflect new name

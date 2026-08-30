@@ -150,6 +150,11 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  setViewMode(mode: 'kanban' | 'grid' | 'categorias' | 'graficos'): void {
+    this.viewMode = mode;
+    this.notesService.setViewMode(mode);
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -573,6 +578,36 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     return cat ? cat.color : '#059669';
   }
 
+  getCategoryBorderColor(cat: any): string {
+    if (!cat || !cat.color) return 'rgba(16, 185, 129, 0.55)';
+    const c = String(cat.color).trim();
+    // Convert hex to rgba for Angular 9 compatibility
+    if (c.startsWith('#') && (c.length === 7 || c.length === 4)) {
+      let r: number, g: number, b: number;
+      if (c.length === 7) {
+        r = parseInt(c.slice(1, 3), 16);
+        g = parseInt(c.slice(3, 5), 16);
+        b = parseInt(c.slice(5, 7), 16);
+      } else {
+        r = parseInt(c[1] + c[1], 16);
+        g = parseInt(c[2] + c[2], 16);
+        b = parseInt(c[3] + c[3], 16);
+      }
+      return `rgba(${r}, ${g}, ${b}, 0.55)`;
+    }
+    return c;
+  }
+
+  getNoteBubbleColor(note: any): string {
+    if (note.status === 'completada') return '#10b981';
+    switch (note.priority) {
+      case 'alta': return '#ef4444';
+      case 'media': return '#f59e0b';
+      case 'baja': return '#10b981';
+      default: return '#94a3b8';
+    }
+  }
+
   getCategoryIcon(categoryId: string): string {
     const cat = this.getCategory(categoryId);
     return cat ? cat.icon : 'typcn-folder';
@@ -634,9 +669,31 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   }
 
   getChecklistProgressPercent(note: Note): number {
-    if (!note.checklist || note.checklist.length === 0) return 0;
+    if (!note || !note.checklist || note.checklist.length === 0) return 0;
     const completed = this.getCompletedChecklistCount(note);
     return Math.round((completed / note.checklist.length) * 100);
+  }
+
+  getChecklistProgressColor(note: Note): string {
+    if (!note) return '#10b981';
+    if (note.status === 'completada') return '#10b981';
+    switch (note.priority) {
+      case 'alta': return '#ef4444';
+      case 'media': return '#f59e0b';
+      case 'baja': return '#10b981';
+      default: return '#10b981';
+    }
+  }
+
+  getChecklistProgressBarClass(note: Note): string {
+    if (!note) return 'bg-emerald-500';
+    if (note.status === 'completada') return 'bg-emerald-500';
+    switch (note.priority) {
+      case 'alta': return 'bg-rose-500';
+      case 'media': return 'bg-amber-500';
+      case 'baja': return 'bg-emerald-500';
+      default: return 'bg-emerald-500';
+    }
   }
 
   getCompletedDaysRemaining(note: Note): number {

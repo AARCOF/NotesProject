@@ -12,7 +12,6 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 })
 export class AutomatedReminderService implements OnDestroy {
   private subscription: Subscription = new Subscription();
-  private sentDeviceReminders = new Set<string>();
 
   constructor(
     private notesService: NotesService,
@@ -22,21 +21,20 @@ export class AutomatedReminderService implements OnDestroy {
   ) {
     this.initNotificationPermissions();
 
-    // Verificar cada 2 minutos para detectar oportunamente alertas de 4h y 1h
+    // Verificar periódicamente cada 5 minutos
     this.subscription.add(
-      interval(2 * 60 * 1000).subscribe(() => {
+      interval(5 * 60 * 1000).subscribe(() => {
         this.checkAndSendReminders();
       })
     );
     
-    // Verificación inicial 3 segundos después de que inicie la app
-    setTimeout(() => this.checkAndSendReminders(), 3000);
+    // Verificación inicial diferida para no saturar el arranque
+    setTimeout(() => this.checkAndSendReminders(), 4000);
   }
 
   private async initNotificationPermissions(): Promise<void> {
     try {
       if (Capacitor.isNativePlatform()) {
-        // Solo consultar estado sin forzar apertura de pantalla del sistema
         await LocalNotifications.checkPermissions().catch(() => {});
       } else if (typeof window !== 'undefined' && 'Notification' in window) {
         if (Notification.permission === 'default') {
@@ -49,11 +47,14 @@ export class AutomatedReminderService implements OnDestroy {
   }
 
   public async triggerDeviceNotification(title: string, body: string, idSuffix: string = ''): Promise<void> {
-    const notifKey = `${title}_${body}_${new Date().toDateString()}`;
-    if (this.sentDeviceReminders.has(notifKey)) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const trackingKey = `noteyou_device_notif_${idSuffix || (title + '_' + body)}_${todayStr}`;
+    
+    // Anti-Spam: Si ya se emitió hoy esta notificación exacta, no repetirla
+    if (localStorage.getItem(trackingKey)) {
       return;
     }
-    this.sentDeviceReminders.add(notifKey);
+    localStorage.setItem(trackingKey, 'true');
 
     try {
       if (Capacitor.isNativePlatform()) {
@@ -66,7 +67,7 @@ export class AutomatedReminderService implements OnDestroy {
                 title: title,
                 body: body,
                 id: notifId,
-                schedule: { at: new Date(Date.now() + 500) },
+                schedule: { at: new Date(Date.now() + 600) },
                 sound: undefined,
                 actionTypeId: '',
                 extra: null
@@ -304,13 +305,21 @@ export class AutomatedReminderService implements OnDestroy {
         const budgetLimit = s.budget || 0;
         const usagePercent = Math.round((totalSpent / budgetLimit) * 100);
         if (usagePercent >= 100) {
-          const notifTitle = `⚠️ Presupuesto Excedido: ${s.name}`;
-          const notifBody = `Has superado el presupuesto en ${s.name} ($${totalSpent.toLocaleString()} / $${budgetLimit.toLocaleString()}).`;
-          this.triggerDeviceNotification(notifTitle, notifBody, `sub_budget_${s.id}_100`);
+          const key = `sub_budget_${s.id}_${currentMonthKey}_100`;
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, 'true');
+            const notifTitle = `⚠️ Presupuesto Excedido: ${s.name}`;
+            const notifBody = `Has superado el presupuesto en ${s.name} ($${totalSpent.toLocaleString()} / $${budgetLimit.toLocaleString()}).`;
+            this.triggerDeviceNotification(notifTitle, notifBody, key);
+          }
         } else if (usagePercent >= 85) {
-          const notifTitle = `🔔 Alerta de Presupuesto: ${s.name}`;
-          const notifBody = `Has alcanzado el ${usagePercent}% de tu presupuesto en ${s.name}.`;
-          this.triggerDeviceNotification(notifTitle, notifBody, `sub_budget_${s.id}_85`);
+          const key = `sub_budget_${s.id}_${currentMonthKey}_85`;
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, 'true');
+            const notifTitle = `🔔 Alerta de Presupuesto: ${s.name}`;
+            const notifBody = `Has alcanzado el ${usagePercent}% de tu presupuesto en ${s.name}.`;
+            this.triggerDeviceNotification(notifTitle, notifBody, key);
+          }
         }
       });
 
@@ -323,9 +332,13 @@ export class AutomatedReminderService implements OnDestroy {
 
         const incomeRatio = Math.round((totalMonthExpenses / monthlyBudget.monthlyIncome) * 100);
         if (incomeRatio >= 90) {
-          const notifTitle = `⚠️ Alerta de Gastos Mensuales`;
-          const notifBody = `Tus gastos del mes ($${totalMonthExpenses.toLocaleString()}) representan el ${incomeRatio}% de tus ingresos estimados.`;
-          this.triggerDeviceNotification(notifTitle, notifBody, `monthly_income_alert_90`);
+          const key = `monthly_income_alert_${currentMonthKey}_90`;
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, 'true');
+            const notifTitle = `⚠️ Alerta de Gastos Mensuales`;
+            const notifBody = `Tus gastos del mes ($${totalMonthExpenses.toLocaleString()}) representan el ${incomeRatio}% de tus ingresos estimados.`;
+            this.triggerDeviceNotification(notifTitle, notifBody, key);
+          }
         }
       }
     });

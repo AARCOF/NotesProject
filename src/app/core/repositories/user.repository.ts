@@ -6,6 +6,15 @@ import { User, UserRole } from '../models/user.model';
 
 const USERS_STORAGE_KEY = 'noteyou_users_v2';
 
+export function formatUserName(name: string): string {
+  if (!name) return '';
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(word => word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : '')
+    .join(' ');
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,6 +22,29 @@ export class UserRepository {
   constructor(private http: HttpClient) {
     this.initDefaultUsers();
     this.ensureSuperadminRoles();
+    this.normalizeAllUserNames();
+  }
+
+  private normalizeAllUserNames(): void {
+    const raw = localStorage.getItem(USERS_STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const users: User[] = JSON.parse(raw);
+      if (Array.isArray(users)) {
+        let changed = false;
+        const normalized = users.map(u => {
+          const formatted = formatUserName(u.name);
+          if (formatted !== u.name) {
+            changed = true;
+            return { ...u, name: formatted };
+          }
+          return u;
+        });
+        if (changed) {
+          localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(normalized));
+        }
+      }
+    } catch {}
   }
 
   public getCloudUsers(): Observable<User[]> {
@@ -21,7 +53,7 @@ export class UserRepository {
         if (res && res.success && Array.isArray(res.users) && res.users.length > 0) {
           const cleanUsers: User[] = res.users.map(u => ({
             id: u.id || (u as any)._id?.toString() || 'usr_' + Math.random().toString(36).substr(2, 6),
-            name: u.name,
+            name: formatUserName(u.name),
             email: u.email,
             passwordHash: u.passwordHash || '',
             role: u.role || 'user',
@@ -138,6 +170,9 @@ export class UserRepository {
   }
 
   public saveUser(user: User): void {
+    if (user && user.name) {
+      user.name = formatUserName(user.name);
+    }
     const users = this.getAllUsers();
     const index = users.findIndex(u => u.id === user.id);
     if (index !== -1) {

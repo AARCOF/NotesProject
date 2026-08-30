@@ -1,5 +1,23 @@
 <div class="landing-wrapper min-vh-100" style="scroll-behavior: smooth;">
   
+  <!-- Global Animated Geometric Shapes Layer (Floating & Spawning Bubbles with Varied Line Thickness) -->
+  <div class="global-floating-geometry-viewport" [class.dark-section-active]="isOverDarkSection" aria-hidden="true">
+    <div class="geo-bubble bubble-1 shape-orange geo-ring-lg stroke-thin"></div>
+    <div class="geo-bubble bubble-2 shape-lilac geo-concentric stroke-bold-concentric"></div>
+    <div class="geo-bubble bubble-3 shape-green geo-ring-md stroke-thick"></div>
+    <div class="geo-bubble bubble-4 shape-orange geo-dot-md"></div>
+    <div class="geo-bubble bubble-5 shape-lilac geo-ring-xl stroke-dashed-fine"></div>
+    <div class="geo-bubble bubble-6 shape-green geo-dot-sm"></div>
+    <div class="geo-bubble bubble-7 shape-orange geo-ring-sm stroke-extrabold"></div>
+    <div class="geo-bubble bubble-8 shape-lilac geo-ring-md stroke-hairline"></div>
+    <div class="geo-bubble bubble-9 shape-green geo-concentric stroke-fine-concentric"></div>
+    <div class="geo-bubble bubble-10 shape-orange geo-ring-md stroke-semibold"></div>
+    <div class="geo-bubble bubble-11 shape-lilac geo-dot-sm"></div>
+    <div class="geo-bubble bubble-12 shape-green geo-ring-lg stroke-thick"></div>
+    <div class="geo-bubble bubble-13 shape-orange geo-ring-md stroke-thin"></div>
+    <div class="geo-bubble bubble-14 shape-lilac geo-ring-sm stroke-medium"></div>
+  </div>
+  
   <!-- Navbar de la Landing -->
   <header class="landing-header sticky-top shadow-sm">
     <div class="container-fluid px-4 px-lg-5 d-flex align-items-center justify-content-between py-3">
@@ -42,14 +60,15 @@
     <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
       <div class="row align-items-center">
         
-        <!-- Texto del Hero -->
+        <!-- Hero Texto Principal -->
         <div class="col-lg-6 mb-5 mb-lg-0 text-left animate-up">
 
-          <h1 class="display-custom text-white mb-4">
-            Pensamientos que <span class="text-gradient-blue-teal">Brillan.</span><br>
+          <h1 class="display-custom text-slate-900 font-weight-bold mb-4">
+            Tus Ideas Claras,<br>
+            <span class="text-gradient-spatial">Productividad Real,</span><br>
             Organización sin Límites.
           </h1>
-          <p class="lead text-slate-300 mb-5 pr-lg-5" style="font-size: 1.15rem; line-height: 1.8;">
+          <p class="lead text-slate-600 mb-5 pr-lg-5" style="font-size: 1.15rem; line-height: 1.8;">
             Experimenta la fluidez de un diseño moderno y dinámico. NoteYou es tu espacio premium para capturar ideas, organizar tareas y dominar tu tiempo con total claridad.
           </p>
 
@@ -62,7 +81,7 @@
               <a routerLink="/register" class="btn btn-glass-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-2 mb-2">
                 <i class="typcn typcn-user-add-outline mr-2 font-size-22 text-blue"></i> Crear Cuenta
               </a>
-              <a routerLink="/login" class="btn btn-outline-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
+              <a routerLink="/login" class="btn btn-outline-dark btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
                 Iniciar Sesión
               </a>
             </ng-container>
@@ -71,7 +90,7 @@
               <a routerLink="/dashboard" class="btn btn-glass-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mr-2 mb-2">
                 <i class="typcn typcn-home-outline mr-2 font-size-22 text-blue"></i> Ir al Dashboard
               </a>
-              <a routerLink="/calendar" class="btn btn-outline-light btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
+              <a routerLink="/calendar" class="btn btn-outline-dark btn-lg font-weight-bold px-4 py-3 d-flex align-items-center mb-2">
                 <i class="typcn typcn-calendar-outline mr-2 font-size-20"></i> Ver Calendario
               </a>
             </ng-container>
@@ -208,14 +227,14 @@
     </div>
   </section>
 
-  <!-- Features Section (Luminosa, Limpia y con Alto Contraste) -->
-  <section id="herramientas" class="features-section py-5 bg-slate-50 reveal" style="background-color: #f8fafc;">
-    <div class="container-fluid px-4 px-lg-5 py-5">
+  <!-- Features Section (Spatial Ambient Canvas with Liquid Glass Cards) -->
+  <section id="herramientas" class="features-section py-5 reveal">
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
       
       <div class="text-center mb-5 pb-3">
-        <h6 class="text-gradient-orange font-weight-bold text-uppercase letter-spacing-1 mb-2">Herramientas</h6>
-        <h2 class="display-custom font-size-36 text-slate-900">Todo lo que necesitas, y más.</h2>
-        <p class="text-slate-600 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
+        <h6 class="text-gradient-spatial font-weight-bold text-uppercase letter-spacing-1 mb-2">Herramientas</h6>
+        <h2 class="display-custom font-size-36 text-white">Todo lo que necesitas, y más.</h2>
+        <p class="text-slate-300 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
           Herramientas diseñadas para maximizar tu enfoque con una experiencia ágil y elegante.
         </p>
       </div>
@@ -279,9 +298,9 @@
               <!-- Cards Dinámicas -->
               <div 
                 *ngFor="let task of filteredPhoneTasks" 
-                class="card border-0 shadow-xs rounded-xl text-left bg-slate-50 hover-lift phone-demo-card transition-all cursor-pointer"
+                class="card border shadow-xs rounded-xl text-left bg-slate-50 hover-lift phone-demo-card transition-all cursor-pointer"
                 [ngClass]="[
-                  task.completed ? 'opacity-60 border-left-4 border-slate-300' : 'border-left-4 ' + (task.categoryBg === 'bg-blue' ? 'border-blue' : task.categoryBg === 'bg-emerald' ? 'border-emerald' : task.categoryBg === 'bg-amber' ? 'border-amber' : task.categoryBg === 'bg-purple' ? 'border-purple' : 'border-teal'),
+                  task.completed ? 'opacity-60 border-slate-300' : 'border-slate-200',
                   justAddedTaskId === task.id ? 'just-added-glow' : ''
                 ]"
                 (click)="togglePhoneTask(task)">
@@ -364,15 +383,15 @@
                 <p class="text-slate-500 font-size-11 mb-2">Sincroniza automáticamente tus tareas con fechas de entrega y alertas por correo.</p>
                 
                 <div class="d-flex flex-column gap-1-5">
-                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-blue font-size-11">
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border font-size-11">
                     <span>📝 Entrega de Proyecto UI</span>
                     <span class="text-blue font-weight-bold">Hoy, 4:00 PM</span>
                   </div>
-                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-emerald font-size-11">
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border font-size-11">
                     <span>🛒 Compras Semanales</span>
                     <span class="text-emerald font-weight-bold">Viernes</span>
                   </div>
-                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border-left-4 border-amber font-size-11">
+                  <div class="d-flex align-items-center justify-content-between bg-white p-2 rounded border font-size-11">
                     <span>💡 Limpieza 15 Días</span>
                     <span class="text-amber-700 font-weight-bold">Automática</span>
                   </div>
@@ -430,8 +449,8 @@
                   <div class="feature-list-icon blue mb-3">
                     <i class="typcn typcn-cloud-storage"></i>
                   </div>
-                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Sincronización Total</h5>
-                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Tus notas están disponibles en la nube instantáneamente, accesibles desde cualquier dispositivo sin perder un segundo.</p>
+                  <h5 class="font-weight-bold text-white mb-2 font-size-18">Sincronización Total</h5>
+                  <p class="text-slate-300 font-size-14 mb-3 line-height-relaxed">Tus notas están disponibles en la nube instantáneamente, accesibles desde cualquier dispositivo sin perder un segundo.</p>
                 </div>
                 <div class="text-blue font-weight-semibold font-size-13 d-flex align-items-center">
                   <i class="typcn typcn-tick mr-1"></i> Rápido y Seguro
@@ -445,10 +464,10 @@
                   <div class="feature-list-icon orange mb-3">
                     <i class="typcn typcn-calendar-outline"></i>
                   </div>
-                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Calendario Interactivo</h5>
-                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Un calendario visual donde puedes revisar tus pendientes agrupados por categoría. Haz clic y descubre lo que te toca hoy.</p>
+                  <h5 class="font-weight-bold text-white mb-2 font-size-18">Calendario Interactivo</h5>
+                  <p class="text-slate-300 font-size-14 mb-3 line-height-relaxed">Un calendario visual donde puedes revisar tus pendientes agrupados por categoría. Haz clic y descubre lo que te toca hoy.</p>
                 </div>
-                <div class="text-orange font-weight-semibold font-size-13 d-flex align-items-center" style="color: #ea580c !important;">
+                <div class="text-orange font-weight-semibold font-size-13 d-flex align-items-center" style="color: #fb923c !important;">
                   <i class="typcn typcn-tick mr-1"></i> Planificación Mensual
                 </div>
               </div>
@@ -460,10 +479,10 @@
                   <div class="feature-list-icon green mb-3">
                     <i class="typcn typcn-chart-pie-outline"></i>
                   </div>
-                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Estadísticas en Tiempo Real</h5>
-                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Mide tu productividad con hermosos histogramas y métricas diseñadas para mantenerte enfocado y motivado.</p>
+                  <h5 class="font-weight-bold text-white mb-2 font-size-18">Estadísticas en Tiempo Real</h5>
+                  <p class="text-slate-300 font-size-14 mb-3 line-height-relaxed">Mide tu productividad con hermosos histogramas y métricas diseñadas para mantenerte enfocado y motivado.</p>
                 </div>
-                <div class="text-emerald font-weight-semibold font-size-13 d-flex align-items-center" style="color: #059669 !important;">
+                <div class="text-emerald font-weight-semibold font-size-13 d-flex align-items-center" style="color: #34d399 !important;">
                   <i class="typcn typcn-tick mr-1"></i> Métricas Claras
                 </div>
               </div>
@@ -475,10 +494,10 @@
                   <div class="feature-list-icon purple mb-3">
                     <i class="typcn typcn-folder"></i>
                   </div>
-                  <h5 class="font-weight-bold text-slate-900 mb-2 font-size-18">Gestión de Categorías</h5>
-                  <p class="text-slate-600 font-size-14 mb-3 line-height-relaxed">Organiza tu vida. Define tus propias categorías, asigna colores vivos e iconos para reconocer tu flujo de un vistazo.</p>
+                  <h5 class="font-weight-bold text-white mb-2 font-size-18">Gestión de Categorías</h5>
+                  <p class="text-slate-300 font-size-14 mb-3 line-height-relaxed">Organiza tu vida. Define tus propias categorías, asigna colores vivos e iconos para reconocer tu flujo de un vistazo.</p>
                 </div>
-                <div class="font-weight-semibold font-size-13 d-flex align-items-center" style="color: #9333ea !important;">
+                <div class="font-weight-semibold font-size-13 d-flex align-items-center" style="color: #c084fc !important;">
                   <i class="typcn typcn-tick mr-1"></i> Personalización Total
                 </div>
               </div>
@@ -492,12 +511,12 @@
   </section>
 
   <!-- How It Works Section (Fondo Oscuro con Tarjetas Dark-Glass Elegantes y Vívidas) -->
-  <section id="como-funciona" class="how-it-works-section py-5 reveal">
-    <div class="container-fluid px-4 px-lg-5 py-5">
+  <section id="como-funciona" class="how-it-works-section py-5 position-relative overflow-hidden reveal">
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
       <div class="text-center mb-5 pb-3">
-        <h6 class="text-gradient-blue-teal font-weight-bold text-uppercase letter-spacing-1 mb-2">Flujo de Trabajo</h6>
-        <h2 class="display-custom font-size-36 text-white">Organízate en 3 simples pasos.</h2>
-        <p class="text-slate-300 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
+        <h6 class="text-gradient-spatial font-weight-bold text-uppercase letter-spacing-1 mb-2">Simplicidad Pura</h6>
+        <h2 class="display-custom font-size-36 text-slate-900">¿Cómo Funciona NoteYou?</h2>
+        <p class="text-slate-600 font-size-16 max-w-2xl mx-auto" style="max-width: 600px;">
           Un proceso ágil diseñado para que nunca pierdas una idea importante.
         </p>
       </div>
@@ -510,8 +529,8 @@
             <div class="step-icon-wrapper step-icon-blue mx-auto mb-3">
               <i class="typcn typcn-user-add-outline"></i>
             </div>
-            <h5 class="font-weight-bold text-white font-size-19 mb-2">Crea tu Cuenta</h5>
-            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Regístrate de forma segura y obtén acceso instantáneo a tu espacio de trabajo en la nube.</p>
+            <h5 class="font-weight-bold text-slate-900 font-size-19 mb-2">Crea tu Cuenta</h5>
+            <p class="text-slate-600 mb-0 font-size-14 line-height-relaxed">Regístrate de forma segura y obtén acceso instantáneo a tu espacio de trabajo en la nube.</p>
           </div>
         </div>
 
@@ -521,8 +540,8 @@
             <div class="step-icon-wrapper step-icon-amber mx-auto mb-3">
               <i class="typcn typcn-edit"></i>
             </div>
-            <h5 class="font-weight-bold text-white font-size-19 mb-2">Escribe tus Ideas</h5>
-            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Anota todo. Tareas pendientes, recordatorios, proyectos o simplemente una lista de compras rápida.</p>
+            <h5 class="font-weight-bold text-slate-900 font-size-19 mb-2">Escribe tus Ideas</h5>
+            <p class="text-slate-600 mb-0 font-size-14 line-height-relaxed">Anota todo. Tareas pendientes, recordatorios, proyectos o simplemente una lista de compras rápida.</p>
           </div>
         </div>
 
@@ -532,8 +551,8 @@
             <div class="step-icon-wrapper step-icon-emerald mx-auto mb-3">
               <i class="typcn typcn-chart-pie-outline"></i>
             </div>
-            <h5 class="font-weight-bold text-white font-size-19 mb-2">Domina tu Tiempo</h5>
-            <p class="text-slate-300 mb-0 font-size-14 line-height-relaxed">Agrupa en categorías, mira el calendario y revisa tus gráficos de productividad. ¡Todo bajo control!</p>
+            <h5 class="font-weight-bold text-slate-900 font-size-19 mb-2">Domina tu Tiempo</h5>
+            <p class="text-slate-600 mb-0 font-size-14 line-height-relaxed">Agrupa en categorías, mira el calendario y revisa tus gráficos de productividad. ¡Todo bajo control!</p>
           </div>
         </div>
 
@@ -541,32 +560,39 @@
     </div>
   </section>
 
-  <!-- CTA Section (Transición Armoniosa Sin Cortes de Color) -->
+  <!-- CTA Section: Tarjeta Flotante Luminosa con Degradado Espacial Suave -->
   <section class="cta-section py-5 position-relative overflow-hidden reveal">
-    <div class="container-fluid px-4 px-lg-5 py-5 text-center text-white position-relative" style="z-index: 1;">
-      <h2 class="display-custom font-size-42 text-white mb-4">¿Listo para transformar tu día?</h2>
-      <p class="lead text-white-80 mb-5 max-w-2xl mx-auto" style="max-width: 620px; font-size: 1.15rem; line-height: 1.8;">
-        Únete a NoteYou hoy y descubre la diferencia de una aplicación de notas verdaderamente moderna, rápida y bella. Gratis para siempre.
-      </p>
-      
-      <div class="d-flex flex-wrap justify-content-center gap-3">
-        <ng-container *ngIf="!isAuthenticated">
-          <a routerLink="/register" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mr-2 mb-2">
-            Comenzar Ahora Gratis
-          </a>
-          <a routerLink="/login" class="btn btn-glass-light btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mb-2">
-            Iniciar Sesión
-          </a>
-        </ng-container>
+    <div class="container-fluid px-4 px-lg-5 py-4">
+      <div class="cta-card-banner text-center p-4 p-md-5 mx-auto">
+        <div class="mb-3">
+          <span class="section-badge"><i class="typcn typcn-flash mr-1"></i> Comienza hoy mismo</span>
+        </div>
+        <h2 class="display-custom font-size-36 font-size-md-44 text-slate-900 mb-3 font-weight-bold">
+          ¿Listo para <span class="text-gradient-orange">transformar tu día</span>?
+        </h2>
+        <p class="lead text-slate-600 mb-4 max-w-2xl mx-auto font-size-16 font-size-md-18" style="max-width: 640px; line-height: 1.7;">
+          Únete a <strong>NoteYou</strong> hoy y descubre la diferencia de una aplicación de notas verdaderamente moderna, rápida y bella. <span class="text-slate-900 font-weight-bold">Gratis para siempre.</span>
+        </p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <ng-container *ngIf="!isAuthenticated">
+            <a routerLink="/register" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-md hover-lift mr-sm-2 mb-2">
+              Comenzar Ahora Gratis <i class="typcn typcn-arrow-right ml-1 font-size-18"></i>
+            </a>
+            <a routerLink="/login" class="btn btn-outline-slate btn-lg font-weight-bold px-5 py-3 shadow-2xs hover-lift mb-2">
+              Iniciar Sesión
+            </a>
+          </ng-container>
 
-        <ng-container *ngIf="isAuthenticated">
-          <a routerLink="/dashboard" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mr-2 mb-2">
-            Ir a Mi Dashboard
-          </a>
-          <a routerLink="/productivity" class="btn btn-glass-light btn-lg font-weight-bold px-5 py-3 shadow-lg hover-scale mb-2">
-            Ver Mi Productividad
-          </a>
-        </ng-container>
+          <ng-container *ngIf="isAuthenticated">
+            <a routerLink="/dashboard" class="btn btn-orange-gradient btn-lg font-weight-bold px-5 py-3 shadow-md hover-lift mr-sm-2 mb-2">
+              Ir a Mi Dashboard <i class="typcn typcn-arrow-right ml-1 font-size-18"></i>
+            </a>
+            <a routerLink="/productivity" class="btn btn-outline-slate btn-lg font-weight-bold px-5 py-3 shadow-2xs hover-lift mb-2">
+              Ver Mi Productividad
+            </a>
+          </ng-container>
+        </div>
       </div>
     </div>
   </section>
@@ -575,7 +601,7 @@
        SECCIÓN: Cómo Instalar la App (Android / iPhone)
        ============================================================ -->
   <section id="instalar" class="install-section py-5 reveal">
-    <div class="container-fluid px-4 px-lg-5 py-4">
+    <div class="container-fluid px-4 px-lg-5 py-4 position-relative" style="z-index: 1;">
 
       <!-- Encabezado -->
       <div class="text-center mb-5">
@@ -583,7 +609,7 @@
         <h2 class="display-section-title text-slate-900 mb-3">
           Instala <span class="text-gradient-blue-teal">NoteYou</span> en tu dispositivo
         </h2>
-        <p class="text-slate-500 font-size-16 mx-auto" style="max-width: 520px; line-height: 1.7;">
+        <p class="text-slate-600 font-size-16 mx-auto" style="max-width: 520px; line-height: 1.7;">
           Elige tu dispositivo y sigue los pasos para tener la app en segundos.
         </p>
       </div>
@@ -754,8 +780,8 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer-section py-5">
-    <div class="container-fluid px-4 px-lg-5">
+  <footer class="footer-section py-5 position-relative overflow-hidden">
+    <div class="container-fluid px-4 px-lg-5 position-relative" style="z-index: 1;">
       <div class="row">
         <div class="col-lg-4 mb-4 mb-lg-0">
           <div class="d-flex align-items-center mb-3 cursor-pointer" style="gap: 10px;" (click)="scrollTo('inicio')">

@@ -42,7 +42,8 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   // Vista Activa (Pestañas)
   // En Móvil: 'gestion' predeterminada. En Web/Desktop: 'categorias' predeterminada
   isMobile: boolean = false;
-  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' = 'gestion';
+  activeTab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' | 'bonos' = 'gestion';
+  movementTypeFilter: 'all' | 'expenses' | 'incomes' = 'all';
   private isTabInitialized: boolean = false;
 
   @HostListener('window:resize')
@@ -60,7 +61,7 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion'): void {
+  setActiveTab(tab: 'categorias' | 'graficas' | 'movimientos' | 'gestion' | 'bonos'): void {
     this.activeTab = tab;
     this.expenseService.setActiveTab(tab);
   }
@@ -301,6 +302,17 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
     this.calculateMetricsAndCharts();
   }
 
+  getFilteredMonthBonos(): ExtraIncomeItem[] {
+    if (!this.searchTerm.trim()) {
+      return this.monthExtraIncomes;
+    }
+    const term = this.searchTerm.toLowerCase();
+    return this.monthExtraIncomes.filter(b =>
+      b.title.toLowerCase().includes(term) ||
+      (b.notes && b.notes.toLowerCase().includes(term))
+    );
+  }
+
   // --- Cálculos y Gráficas ---
 
   calculateMetricsAndCharts(): void {
@@ -505,6 +517,26 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   trackByCat(index: number, cat: ExpenseCategory): string {
     return cat ? `${cat.id}_${cat.name}_${cat.color}_${cat.icon}_${cat.updatedAt || ''}` : String(index);
+  }
+
+  getCategoryBorderColor(cat: any): string {
+    if (!cat || !cat.color) return 'rgba(59, 130, 246, 0.55)';
+    const c = String(cat.color).trim();
+    // Convert hex to rgba for Angular 9 compatibility
+    if (c.startsWith('#') && (c.length === 7 || c.length === 4)) {
+      let r: number, g: number, b: number;
+      if (c.length === 7) {
+        r = parseInt(c.slice(1, 3), 16);
+        g = parseInt(c.slice(3, 5), 16);
+        b = parseInt(c.slice(5, 7), 16);
+      } else {
+        r = parseInt(c[1] + c[1], 16);
+        g = parseInt(c[2] + c[2], 16);
+        b = parseInt(c[3] + c[3], 16);
+      }
+      return `rgba(${r}, ${g}, ${b}, 0.55)`;
+    }
+    return c;
   }
 
   trackBySub(index: number, sub: ExpenseSubcategory): string {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { SavedLink } from '../models/saved-link.model';
 import { AuthService } from '../core/services/auth.service';
 
@@ -12,8 +12,16 @@ const SAVED_LINKS_STORAGE_KEY = 'noteyou_saved_links_v1';
 export class SavedLinksService {
   private savedLinksSubject = new BehaviorSubject<SavedLink[]>([]);
   public savedLinks$: Observable<SavedLink[]> = this.savedLinksSubject.asObservable();
+  
+  private openAddLinkModalRequestSubject = new Subject<void>();
+  public openAddLinkModalRequest$: Observable<void> = this.openAddLinkModalRequestSubject.asObservable();
+
   private currentUserId: string | null = null;
   private syncTimerSubscription: any = null;
+
+  public requestOpenAddLinkModal(): void {
+    this.openAddLinkModalRequestSubject.next();
+  }
 
   constructor(
     private authService: AuthService,

@@ -335,6 +335,8 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
+  isOverDarkSection: boolean = false;
+
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     const sections = ['inicio', 'herramientas', 'como-funciona', 'instalar'];
@@ -351,6 +353,24 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
       }
     }
     
+    // Check if floating viewport circles are currently crossing dark background sections
+    const darkSectionElements = [
+      document.getElementById('herramientas'),
+      document.querySelector('.footer-section')
+    ];
+    let isDark = false;
+    const vHeight = window.innerHeight || 800;
+    for (const el of darkSectionElements) {
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= vHeight * 0.75 && rect.bottom >= vHeight * 0.25) {
+          isDark = true;
+          break;
+        }
+      }
+    }
+    this.isOverDarkSection = isDark;
+
     // Scroll reveal logic
     const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-up');
     for (let i = 0; i < reveals.length; i++) {

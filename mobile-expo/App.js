@@ -49,7 +49,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="#0f172a" />
+      <StatusBar style="dark" backgroundColor="#f8fafc" />
 
       {hasError ? (
         <View style={styles.errorContainer}>
@@ -86,7 +86,7 @@ export default function App() {
           }}
           renderLoading={() => (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#3b82f6" />
+              <ActivityIndicator size="large" color="#10b981" />
               <Text style={styles.loadingText}>Cargando NoteYou...</Text>
             </View>
           )}
@@ -99,11 +99,11 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f8fafc',
   },
   webview: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f8fafc',
   },
   loadingContainer: {
     position: 'absolute',
@@ -113,11 +113,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f8fafc',
   },
   loadingText: {
     marginTop: 14,
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 15,
     fontWeight: '600',
   },
@@ -126,48 +126,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f8fafc',
   },
   errorTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#f43f5e',
+    color: '#e11d48',
     marginBottom: 12,
     textAlign: 'center',
   },
   errorText: {
     fontSize: 14,
-    color: '#cbd5e1',
+    color: '#475569',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 16,
   },
   codeBox: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#cbd5e1',
     marginBottom: 16,
   },
   codeText: {
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    color: '#38bdf8',
+    color: '#ea580c',
     fontSize: 14,
     fontWeight: 'bold',
   },
   urlText: {
     fontSize: 12,
-    color: '#64748b',
+    color: '#94a3b8',
     marginBottom: 24,
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: '#10b981',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 12,
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   retryButtonText: {
     color: '#ffffff',

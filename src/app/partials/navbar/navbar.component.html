@@ -19,11 +19,11 @@
     </button>
     
     <div class="navbar-nav ml-3 d-none d-md-flex align-items-center gap-2">
-      <span class="badge badge-blue-light px-3 py-2 border-0 font-weight-bold">
+      <span class="navbar-role-pill">
         <i class="typcn typcn-user-outline mr-1"></i> {{ getRoleLabel(currentUser?.role || 'user') }}
       </span>
 
-      <a routerLink="/admin-panel" class="btn btn-outline-blue btn-sm font-weight-bold px-3 py-1" *ngIf="isAdminOrSuperAdmin">
+      <a routerLink="/admin-panel" class="navbar-admin-btn" *ngIf="isAdminOrSuperAdmin">
         <i class="typcn typcn-cog mr-1"></i> Administración
       </a>
     </div>

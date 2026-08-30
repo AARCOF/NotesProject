@@ -185,4 +185,24 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
       this.categoriesService.deleteCategory(category.id);
     }
   }
+
+  getCategoryBorderColor(cat: any): string {
+    if (!cat || !cat.color) return 'rgba(16, 185, 129, 0.55)';
+    const c = String(cat.color).trim();
+    // Convert hex to rgba for Angular 9 compatibility
+    if (c.startsWith('#') && (c.length === 7 || c.length === 4)) {
+      let r: number, g: number, b: number;
+      if (c.length === 7) {
+        r = parseInt(c.slice(1, 3), 16);
+        g = parseInt(c.slice(3, 5), 16);
+        b = parseInt(c.slice(5, 7), 16);
+      } else {
+        r = parseInt(c[1] + c[1], 16);
+        g = parseInt(c[2] + c[2], 16);
+        b = parseInt(c[3] + c[3], 16);
+      }
+      return `rgba(${r}, ${g}, ${b}, 0.55)`;
+    }
+    return c;
+  }
 }

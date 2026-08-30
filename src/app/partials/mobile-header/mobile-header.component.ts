@@ -4,6 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../core/models/user.model';
 import { NotesService } from '../../services/notes.service';
 import { ExpenseService } from '../../services/expense.service';
+import { SharedTasksService } from '../../services/shared-tasks.service';
 
 @Component({
   selector: 'app-mobile-header',
@@ -28,11 +29,12 @@ export class MobileHeaderComponent implements OnInit {
     private authService: AuthService,
     private notesService: NotesService,
     private expenseService: ExpenseService,
+    private sharedTasksService: SharedTasksService,
     public router: Router
   ) {}
 
   notesViewMode: 'kanban' | 'grid' | 'categorias' | 'graficos' = 'kanban';
-  expensesActiveTab: 'gestion' | 'movimientos' | 'categorias' | 'graficas' = 'gestion';
+  expensesActiveTab: 'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos' = 'gestion';
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
@@ -66,7 +68,7 @@ export class MobileHeaderComponent implements OnInit {
     }
   }
 
-  setExpensesTab(tab: 'gestion' | 'movimientos' | 'categorias' | 'graficas'): void {
+  setExpensesTab(tab: 'gestion' | 'movimientos' | 'categorias' | 'graficas' | 'bonos'): void {
     if (!this.isExpensesRoute) {
       this.router.navigate(['/expenses']).then(() => {
         this.expenseService.setActiveTab(tab);
@@ -100,7 +102,14 @@ export class MobileHeaderComponent implements OnInit {
     this.openQuickNotes.emit();
   }
 
+  get isSharedTasksRoute(): boolean {
+    return this.router.url.includes('/shared-tasks');
+  }
+
   get createButtonLabel(): string {
+    if (this.isSharedTasksRoute) {
+      return 'Nueva Entrega';
+    }
     if (this.isExpensesRoute) {
       return this.expensesActiveTab === 'categorias' ? 'Nueva Categoría' : 'Nuevo Gasto';
     }
@@ -108,7 +117,9 @@ export class MobileHeaderComponent implements OnInit {
   }
 
   onCreateActionClick(): void {
-    if (this.isExpensesRoute) {
+    if (this.isSharedTasksRoute) {
+      this.sharedTasksService.requestOpenCreateTaskModal();
+    } else if (this.isExpensesRoute) {
       const currentTab = this.expenseService.getActiveTab();
       if (currentTab === 'categorias' || this.expensesActiveTab === 'categorias') {
         if (this.router.url !== '/expenses') {

@@ -43,10 +43,10 @@
             class="form-control" 
             placeholder="Tu nombre completo" 
             [(ngModel)]="name" 
+            (input)="onNameInput($event)"
             name="name" 
             autocomplete="off"
             autocorrect="off"
-            autocapitalize="off"
             spellcheck="false"
             required>
         </div>

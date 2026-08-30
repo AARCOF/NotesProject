@@ -14,6 +14,7 @@ import { ProfileSettingsComponent } from "./screens/profile-settings/profile-set
 import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
 import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expenses-dashboard.component";
 import { NotebookSavedComponent } from "./screens/notebook-saved/notebook-saved.component";
+import { SharedTasksComponent } from "./screens/shared-tasks/shared-tasks.component";
 
 import { AuthGuard } from "./core/guards/auth.guard";
 
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: "", redirectTo: "/landing", pathMatch: "full" },
   { path: "landing", component: LandingPageComponent },
   { path: "dashboard", component: NotesDashboardComponent, canActivate: [AuthGuard] },
+  { path: "shared-tasks", component: SharedTasksComponent, canActivate: [AuthGuard] },
   { path: "expenses", component: ExpensesDashboardComponent, canActivate: [AuthGuard] },
   { path: "calendar", component: CalendarScreenComponent, canActivate: [AuthGuard] },
   { path: "productivity", component: ProductivityDashboardComponent, canActivate: [AuthGuard] },

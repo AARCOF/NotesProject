@@ -51,6 +51,8 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
     private savedLinksService: SavedLinksService
   ) {}
 
+  private modalReqSub!: Subscription;
+
   ngOnInit(): void {
     // Suscribirse a Notas Rápidas
     this.quickNotesSub = this.quickNotesService.quickNotes$.subscribe(notes => {
@@ -61,11 +63,17 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
     this.savedLinksSub = this.savedLinksService.savedLinks$.subscribe(links => {
       this.savedLinks = links;
     });
+
+    // Escuchar peticiones externas de abrir modal (ej. desde FAB móvil)
+    this.modalReqSub = this.savedLinksService.openAddLinkModalRequest$.subscribe(() => {
+      this.openAddLinkModal();
+    });
   }
 
   ngOnDestroy(): void {
     if (this.quickNotesSub) this.quickNotesSub.unsubscribe();
     if (this.savedLinksSub) this.savedLinksSub.unsubscribe();
+    if (this.modalReqSub) this.modalReqSub.unsubscribe();
   }
 
   // --- ACCIONES DE NOTAS RÁPIDAS ---
@@ -130,16 +138,28 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
   }
 
   getDomainName(url: string): string {
-    if (!url) return '';
     try {
-      let absoluteUrl = url.trim();
-      if (!/^https?:\/\//i.test(absoluteUrl)) {
-        absoluteUrl = 'https://' + absoluteUrl;
+      let formattedUrl = url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        formattedUrl = 'https://' + url;
       }
-      const parsed = new URL(absoluteUrl);
+      const parsed = new URL(formattedUrl);
       return parsed.hostname.replace('www.', '');
     } catch {
       return url;
     }
+  }
+
+  getLinkColor(index: number): string {
+    const colors = ['#0284c7', '#059669', '#8b5cf6', '#d97706', '#e11d48', '#06b6d4'];
+    return colors[index % colors.length];
+  }
+
+  getLinkBorderColor(index: number): string {
+    const hex = this.getLinkColor(index);
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.35)`;
   }
 }

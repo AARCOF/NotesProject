@@ -13,56 +13,89 @@
 
 <div class="row fade-in-up" *ngIf="!isLoading && notes.length > 0">
   
-  <!-- Tarjetas de Filtro Rápido -->
+  <!-- 4 Tarjetas de Estadísticas Cuadradas Principales -->
   <div class="col-12 mb-4">
     <div class="row">
       
-      <!-- Total -->
-      <div class="col-md-4 mb-3 mb-md-0">
-        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
-             [ngClass]="selectedStatusFilter === 'all' ? 'bg-gradient-blue text-white' : 'bg-white'"
+      <!-- 1. Total Notas -->
+      <div class="col-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="card card-stat-gradient bg-stat-blue text-white shadow-sm h-100 cursor-pointer" 
              (click)="filterByStatus('all')">
-          <div class="card-body p-3 d-flex align-items-center justify-content-between">
-            <div>
-              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'all' ? 'text-white-80' : 'text-slate-500'">Todas las Tareas</p>
-              <h3 class="font-weight-bold mb-0 font-size-24">{{ notes.length }}</h3>
+          <div class="card-body p-3 p-md-3-5 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <p class="mb-0 text-white-80 font-weight-bold font-size-11 text-uppercase letter-spacing-1 text-truncate">
+                Total Notas
+              </p>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-document-text font-size-22"></i>
+              </div>
             </div>
-            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'all' ? 'bg-white-20 text-white' : 'bg-blue-50 text-blue'">
-              <i class="typcn typcn-document-text font-size-22"></i>
+            <div class="d-flex align-items-baseline justify-content-between mt-auto">
+              <h2 class="font-weight-bold mb-0 font-size-28">{{ totalCount }}</h2>
+              <small class="text-white-70 font-weight-medium">Todas</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Pendientes -->
-      <div class="col-md-4 mb-3 mb-md-0">
-        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
-             [ngClass]="selectedStatusFilter === 'pendiente' ? 'bg-gradient-amber text-white' : 'bg-white'"
+      <!-- 2. Alta Prioridad -->
+      <div class="col-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="card card-stat-gradient bg-stat-rose text-white shadow-sm h-100 cursor-pointer" 
+             (click)="filterByStatus('all')">
+          <div class="card-body p-3 p-md-3-5 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <p class="mb-0 text-white-80 font-weight-bold font-size-11 text-uppercase letter-spacing-1 text-truncate">
+                Alta Prioridad
+              </p>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-warning font-size-22"></i>
+              </div>
+            </div>
+            <div class="d-flex align-items-baseline justify-content-between mt-auto">
+              <h2 class="font-weight-bold mb-0 font-size-28">{{ highPriorityCount }}</h2>
+              <small class="text-white-70 font-weight-medium">Urgentes</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Pendientes -->
+      <div class="col-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="card card-stat-gradient bg-stat-amber text-white shadow-sm h-100 cursor-pointer" 
              (click)="filterByStatus('pendiente')">
-          <div class="card-body p-3 d-flex align-items-center justify-content-between">
-            <div>
-              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'pendiente' ? 'text-white-80' : 'text-slate-500'">Pendientes</p>
-              <h3 class="font-weight-bold mb-0 font-size-24">{{ statusChartData[1] }}</h3>
+          <div class="card-body p-3 p-md-3-5 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <p class="mb-0 text-white-80 font-weight-bold font-size-11 text-uppercase letter-spacing-1 text-truncate">
+                Pendientes
+              </p>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-time font-size-22"></i>
+              </div>
             </div>
-            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'pendiente' ? 'bg-white-20 text-white' : 'bg-amber-50 text-amber'">
-              <i class="typcn typcn-time font-size-22"></i>
+            <div class="d-flex align-items-baseline justify-content-between mt-auto">
+              <h2 class="font-weight-bold mb-0 font-size-28">{{ pendingCount }}</h2>
+              <small class="text-white-70 font-weight-medium">Por hacer</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Completadas -->
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0 rounded-xl cursor-pointer transition-all" 
-             [ngClass]="selectedStatusFilter === 'completada' ? 'bg-gradient-emerald text-white' : 'bg-white'"
+      <!-- 4. Completadas -->
+      <div class="col-6 col-lg-3">
+        <div class="card card-stat-gradient bg-stat-emerald text-white shadow-sm h-100 cursor-pointer" 
              (click)="filterByStatus('completada')">
-          <div class="card-body p-3 d-flex align-items-center justify-content-between">
-            <div>
-              <p class="mb-1 font-weight-semibold font-size-12 text-uppercase letter-spacing-1" [ngClass]="selectedStatusFilter === 'completada' ? 'text-white-80' : 'text-slate-500'">Completadas</p>
-              <h3 class="font-weight-bold mb-0 font-size-24">{{ statusChartData[0] }}</h3>
+          <div class="card-body p-3 p-md-3-5 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <p class="mb-0 text-white-80 font-weight-bold font-size-11 text-uppercase letter-spacing-1 text-truncate">
+                Completadas
+              </p>
+              <div class="stat-icon-circle bg-white-20 text-white">
+                <i class="typcn typcn-tick font-size-22"></i>
+              </div>
             </div>
-            <div class="stat-icon-circle shadow-xs" [ngClass]="selectedStatusFilter === 'completada' ? 'bg-white-20 text-white' : 'bg-emerald-50 text-emerald'">
-              <i class="typcn typcn-tick font-size-22"></i>
+            <div class="d-flex align-items-baseline justify-content-between mt-auto">
+              <h2 class="font-weight-bold mb-0 font-size-28">{{ completedCount }}</h2>
+              <small class="text-white-70 font-weight-medium">Hechas</small>
             </div>
           </div>
         </div>

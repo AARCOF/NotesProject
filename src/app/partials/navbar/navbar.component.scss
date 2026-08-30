@@ -230,3 +230,58 @@
     margin-top: 0.5rem;
   }
 }
+
+/* ==========================================================================
+   NAVBAR ROLE PILL & ADMIN BUTTON (HIGH CONTRAST & LIQUID GLASS)
+   ========================================================================== */
+.navbar-role-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 6px 14px !important;
+  background: rgba(16, 185, 129, 0.16) !important;
+  border: 1px solid rgba(52, 211, 153, 0.5) !important;
+  color: #34d399 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  letter-spacing: 0.2px !important;
+  backdrop-filter: blur(8px) !important;
+
+  i {
+    color: #34d399 !important;
+  }
+}
+
+.navbar-admin-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 6px 14px !important;
+  background: rgba(14, 165, 233, 0.16) !important;
+  border: 1px solid rgba(56, 189, 248, 0.55) !important;
+  color: #38bdf8 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  text-decoration: none !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  backdrop-filter: blur(8px) !important;
+
+  i {
+    color: #38bdf8 !important;
+    transition: transform 0.25s ease !important;
+  }
+
+  &:hover {
+    background: #0284c7 !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
+
+    i {
+      color: #ffffff !important;
+      transform: rotate(30deg) !important;
+    }
+  }
+}

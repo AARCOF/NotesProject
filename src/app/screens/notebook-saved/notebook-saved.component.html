@@ -21,62 +21,106 @@
   </div>
 
   <div class="row">
-    <!-- COLUMNA: ENLACES GUARDADOS (Ancho Completo - Notas rápidas quitadas como card oscura ya que están en la barra lateral) -->
+    <!-- COLUMNA: ENLACES GUARDADOS (Liquid Glass & Square Geometric Aesthetics) -->
     <div class="col-12 mb-4">
-      <div class="card bg-slate-900 border-bottom-slate rounded-xl p-4 shadow-sm h-100">
-        <h5 class="font-weight-bold text-white mb-3 d-flex align-items-center justify-content-between">
+      <div class="card rounded-2xl shadow-sm bg-white border border-slate-100 p-4 h-100">
+        <h5 class="font-weight-bold text-slate-800 mb-3-5 d-flex align-items-center justify-content-between">
           <span class="d-flex align-items-center">
-            <i class="typcn typcn-link text-emerald-400 mr-2 font-size-24"></i>
+            <i class="typcn typcn-bookmark text-blue mr-2 font-size-24"></i>
             Mis Enlaces Guardados
           </span>
-          <span class="badge badge-emerald-light font-weight-bold font-size-11">{{ savedLinks.length }} Guardados</span>
+          <span class="badge badge-pill badge-primary-light font-weight-bold px-3 py-1-5 font-size-12">{{ savedLinks.length }} Guardados</span>
         </h5>
 
-        <div *ngIf="savedLinks.length === 0" class="text-center py-5 my-5 text-slate-500">
-          <i class="typcn typcn-link-outline font-size-48 d-block mb-3 text-slate-600"></i>
-          <p class="font-size-14 mb-3 text-slate-400">Guarda links importantes de referencia rápida aquí.</p>
+        <div *ngIf="savedLinks.length === 0" class="text-center py-5 my-5 text-slate-400">
+          <div class="icon-avatar-md bg-blue-50 text-blue mx-auto mb-3 d-flex align-items-center justify-content-center rounded-xl" style="width: 56px; height: 56px;">
+            <i class="typcn typcn-link-outline font-size-32"></i>
+          </div>
+          <h5 class="font-weight-bold text-slate-700 mb-1">Sin enlaces guardados</h5>
+          <p class="font-size-13 mb-3 text-slate-400">Guarda links importantes de referencia rápida aquí.</p>
           <button 
-            class="btn btn-outline-emerald rounded-lg px-4 py-2 font-weight-bold font-size-13" 
+            class="btn btn-gradient-blue text-white rounded-xl px-4 py-2 font-weight-bold font-size-13 shadow-sm" 
             (click)="openAddLinkModal()">
             <i class="typcn typcn-plus mr-1 font-size-18"></i> Guardar mi primer enlace
           </button>
         </div>
 
-        <!-- Grid de tarjetas cuadradas de enlaces (row-cols ajustado para ancho completo) -->
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 pt-2" *ngIf="savedLinks.length > 0">
-          <div *ngFor="let link of savedLinks" class="col mb-3">
-            <div class="link-square-card bg-slate-950 border-slate rounded-xl p-3 d-flex flex-column align-items-center text-center position-relative transition-all cursor-pointer h-100 shadow-sm"
+        <!-- Grid de tarjetas cuadradas de enlaces con Liquid Glass y Watermarks de Cuadrados -->
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 pt-1" *ngIf="savedLinks.length > 0">
+          <div *ngFor="let link of savedLinks; let i = index" class="col mb-3">
+            <div class="link-square-card rounded-2xl p-3 d-flex flex-column align-items-center text-center position-relative transition-all cursor-pointer h-100 shadow-sm overflow-hidden"
+                 [style.borderLeftColor]="getLinkColor(i)"
+                 [style.borderTopColor]="getLinkBorderColor(i)"
+                 [style.borderRightColor]="getLinkBorderColor(i)"
+                 [style.borderBottomColor]="getLinkBorderColor(i)"
                  (click)="openLink(link.url)"
                  [title]="link.description || link.title">
               
-              <!-- Acciones Flotantes de la Tarjeta -->
+              <!-- Square Geometric Watermark in Bottom-Right Corner -->
+              <div class="card-watermark-corner" [style.color]="getLinkColor(i)">
+                <!-- Variant 0: Nested Concentric Squares + Corner Nodes -->
+                <svg *ngIf="i % 4 === 0" viewBox="0 0 120 120" fill="none">
+                  <rect x="52" y="52" width="68" height="68" rx="6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.3" fill="none" />
+                  <rect x="74" y="74" width="46" height="46" rx="4" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.1" fill="none" />
+                  <rect x="94" y="94" width="26" height="26" rx="3" stroke="currentColor" stroke-opacity="0.28" stroke-width="1.0" fill="none" />
+                  <rect x="42" y="78" width="14" height="14" rx="2.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.0" fill="none" />
+                  <rect x="78" y="42" width="6" height="6" rx="1.5" fill="currentColor" fill-opacity="0.32" />
+                </svg>
+                <!-- Variant 1: Rotated Diamond / Isometric Squares -->
+                <svg *ngIf="i % 4 === 1" viewBox="0 0 120 120" fill="none">
+                  <rect x="68" y="24" width="56" height="56" rx="5" transform="rotate(45 68 24)" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.2" stroke-dasharray="4 3" fill="none" />
+                  <rect x="78" y="54" width="34" height="34" rx="3.5" transform="rotate(45 78 54)" stroke="currentColor" stroke-opacity="0.24" stroke-width="1.1" fill="none" />
+                  <rect x="44" y="58" width="16" height="16" rx="2" transform="rotate(45 44 58)" stroke="currentColor" stroke-opacity="0.2" stroke-width="0.9" fill="none" />
+                  <rect x="88" y="40" width="5" height="5" rx="1" transform="rotate(45 88 40)" fill="currentColor" fill-opacity="0.35" />
+                </svg>
+                <!-- Variant 2: Overlapping Grid Blocks / Orthogonal Matrix -->
+                <svg *ngIf="i % 4 === 2" viewBox="0 0 120 120" fill="none">
+                  <rect x="58" y="58" width="58" height="58" rx="8" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.2" fill="none" />
+                  <rect x="36" y="36" width="52" height="52" rx="6" stroke="currentColor" stroke-opacity="0.14" stroke-width="1.0" stroke-dasharray="3 3" fill="none" />
+                  <rect x="82" y="82" width="34" height="34" rx="5" stroke="currentColor" stroke-opacity="0.26" stroke-width="1.1" fill="none" />
+                  <rect x="52" y="82" width="10" height="10" rx="2" fill="currentColor" fill-opacity="0.25" />
+                </svg>
+                <!-- Variant 3: Cascade Modular Window Tiles -->
+                <svg *ngIf="i % 4 === 3" viewBox="0 0 120 120" fill="none">
+                  <rect x="62" y="62" width="54" height="54" rx="7" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.2" fill="none" />
+                  <rect x="42" y="74" width="32" height="32" rx="4" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" stroke-dasharray="3 3" fill="none" />
+                  <rect x="74" y="42" width="32" height="32" rx="4" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" stroke-dasharray="3 3" fill="none" />
+                  <rect x="86" y="86" width="22" height="22" rx="3" stroke="currentColor" stroke-opacity="0.28" stroke-width="1.1" fill="none" />
+                  <rect x="56" y="56" width="7" height="7" rx="1.5" fill="currentColor" fill-opacity="0.32" />
+                </svg>
+              </div>
+
+              <!-- Acciones Flotantes de la Tarjeta (Delete button) -->
               <div class="card-floating-actions">
                 <button 
                   type="button" 
-                  class="btn btn-icon-xs text-slate-400 hover-rose" 
+                  class="btn btn-action-icon-sm btn-action-rose rounded-lg shadow-xs" 
                   (click)="deleteSavedLink(link.id, $event)" 
                   title="Eliminar enlace">
-                  <i class="typcn typcn-trash font-size-18"></i>
+                  <i class="typcn typcn-trash font-size-16 text-rose"></i>
                 </button>
               </div>
 
               <!-- Contenedor del Icono -->
-              <div class="link-icon-wrapper rounded-circle mb-2-5 d-flex align-items-center justify-content-center">
-                <i class="typcn {{ link.icon }} font-size-26 text-emerald-400"></i>
+              <div class="link-icon-wrapper rounded-xl mb-2 d-flex align-items-center justify-content-center shadow-2xs position-relative"
+                   [style.backgroundColor]="getLinkBorderColor(i)"
+                   [style.color]="getLinkColor(i)"
+                   style="z-index: 2;">
+                <i class="typcn {{ link.icon }} font-size-24"></i>
               </div>
 
               <!-- Título -->
-              <h6 class="link-card-title text-white font-weight-bold mb-1 text-truncate w-100 font-size-12-5">
+              <h6 class="link-card-title text-slate-800 font-weight-bold mb-1 text-truncate w-100 font-size-13 position-relative" style="z-index: 2;">
                 {{ link.title }}
               </h6>
 
               <!-- Hostname resumido -->
-              <span class="link-card-domain text-slate-500 font-size-10 text-truncate w-100">
+              <span class="link-card-domain text-slate-500 font-size-11 text-truncate w-100 position-relative" style="z-index: 2;">
                 {{ getDomainName(link.url) }}
               </span>
 
               <!-- Descripción Breve (si existe) -->
-              <p *ngIf="link.description" class="link-card-desc text-slate-400 font-size-10-5 line-height-tight mt-1-5 mb-0 text-truncate-2 w-100">
+              <p *ngIf="link.description" class="link-card-desc text-slate-400 font-size-11 line-height-tight mt-1 mb-0 text-truncate-2 w-100 position-relative" style="z-index: 2;">
                 {{ link.description }}
               </p>
             </div>
@@ -94,79 +138,79 @@
 <div class="modal-backdrop-custom fade-in" *ngIf="isAddModalOpen" (click)="closeAddLinkModal()"></div>
 <div class="modal-custom" *ngIf="isAddModalOpen" (click)="closeAddLinkModal()">
   <div class="modal-dialog-custom modal-dialog-sm" (click)="$event.stopPropagation()">
-    <div class="modal-content-custom bg-slate-900 border-slate text-white shadow-lg rounded-xl">
+    <div class="modal-content-custom bg-white border-0 text-slate-800 shadow-xl rounded-2xl overflow-hidden">
       
       <!-- Cabecera del Modal -->
-      <div class="modal-header-custom bg-slate-950 border-bottom-slate p-3 px-4 d-flex align-items-center justify-content-between">
+      <div class="modal-header-custom p-3-5 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);">
         <h5 class="modal-title font-weight-bold text-white mb-0 d-flex align-items-center">
-          <i class="typcn typcn-plus text-emerald-400 mr-2 font-size-24"></i>
+          <i class="typcn typcn-plus text-cyan-200 mr-2 font-size-22"></i>
           Guardar Enlace
         </h5>
-        <button type="button" class="btn-close-custom text-slate-400 hover-white border-0 bg-transparent p-0" (click)="closeAddLinkModal()">
-          <i class="typcn typcn-times font-size-26"></i>
+        <button type="button" class="btn-close-custom text-white border-0 p-0" (click)="closeAddLinkModal()">
+          <i class="typcn typcn-times font-size-22"></i>
         </button>
       </div>
 
       <form (submit)="saveLink($event)">
         <!-- Cuerpo del Modal -->
-        <div class="p-4">
+        <div class="p-4 bg-white">
           <!-- Campo URL -->
           <div class="form-group mb-3">
-            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Enlace / URL *</label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Enlace / URL *</label>
             <input 
               type="text" 
               [(ngModel)]="linkUrl" 
               name="linkUrl"
-              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              class="form-control input-custom" 
               placeholder="ej: www.google.com o https://github.com"
               required>
           </div>
 
           <!-- Campo Título -->
           <div class="form-group mb-3">
-            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Nombre para Visualización *</label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Nombre para Visualización *</label>
             <input 
               type="text" 
               [(ngModel)]="linkTitle" 
               name="linkTitle"
-              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              class="form-control input-custom" 
               placeholder="ej: Mi Repositorio GitHub"
               required>
           </div>
 
           <!-- Campo Descripción (Opcional) -->
-          <div class="form-group mb-3.5">
-            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1">Descripción Breve (Opcional)</label>
+          <div class="form-group mb-3-5">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1">Descripción Breve (Opcional)</label>
             <textarea 
               [(ngModel)]="linkDescription" 
               name="linkDescription"
-              class="form-control bg-slate-950 text-white border-slate rounded-lg font-size-13" 
+              class="form-control input-custom" 
               placeholder="ej: Enlace de referencia para diseño..."
               rows="2"></textarea>
           </div>
 
           <!-- Selector de Icono -->
           <div class="form-group mb-0">
-            <label class="font-weight-semibold text-slate-300 font-size-13 mb-1-5 d-block">Selecciona un Icono</label>
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-1-5 d-block">Selecciona un Icono</label>
             <div class="icon-picker-grid d-flex flex-wrap gap-2 pt-1">
               <button 
                 type="button" 
-                class="icon-select-btn rounded-lg d-flex align-items-center justify-content-center transition-all"
+                class="icon-select-btn rounded-xl d-flex align-items-center justify-content-center transition-all"
                 *ngFor="let ic of availableIcons" 
                 [class.active]="selectedIcon === ic"
                 (click)="selectedIcon = ic">
-                <i class="typcn {{ ic }} font-size-26"></i>
+                <i class="typcn {{ ic }} font-size-22"></i>
               </button>
             </div>
           </div>
         </div>
 
         <!-- Pie de Modal -->
-        <div class="modal-footer bg-slate-950 border-top-slate p-3 px-4 d-flex justify-content-end align-items-center gap-2">
-          <button type="button" class="btn btn-secondary px-3.5 rounded-lg font-weight-semibold font-size-12-5" (click)="closeAddLinkModal()">
+        <div class="modal-footer bg-slate-50 border-top p-3 px-4 d-flex justify-content-end align-items-center gap-2">
+          <button type="button" class="btn btn-outline-secondary px-3-5 py-2 rounded-xl font-weight-semibold font-size-13" (click)="closeAddLinkModal()">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-gradient-blue text-white px-4 rounded-lg font-weight-bold font-size-12-5 shadow-sm"
+          <button type="submit" class="btn btn-gradient-blue text-white px-4 py-2 rounded-xl font-weight-bold font-size-13 shadow-sm"
                   [disabled]="!linkUrl.trim() || !linkTitle.trim()">
             Guardar Enlace
           </button>

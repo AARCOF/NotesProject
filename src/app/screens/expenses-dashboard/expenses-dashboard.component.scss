@@ -105,28 +105,37 @@
 
 /* Vertical KPI Cards (Web / Desktop) */
 .kpi-vertical-card {
-  background-color: #f8fafc;
-  transition: all 0.2s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.55) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.05), inset 0 1.5px 1px rgba(255, 255, 255, 0.95) !important;
+  border-radius: 16px !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease !important;
 
   &:hover {
-    border-color: #cbd5e1 !important;
-    background-color: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.09), inset 0 1.5px 1px rgba(255, 255, 255, 1) !important;
   }
 
   &.bg-emerald-50-30 {
-    background-color: #f0fdf4;
-    border-color: #bbf7d0 !important;
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.88) 0%, rgba(220, 252, 231, 0.55) 100%) !important;
+    border-color: rgba(167, 243, 208, 0.8) !important;
+    box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.12), inset 0 1.5px 1px rgba(255, 255, 255, 0.9) !important;
   }
 
   &.bg-rose-50-30 {
-    background-color: #fff1f2;
-    border-color: #fecdd3 !important;
+    background: linear-gradient(135deg, rgba(255, 241, 242, 0.88) 0%, rgba(254, 226, 226, 0.55) 100%) !important;
+    border-color: rgba(254, 202, 202, 0.8) !important;
+    box-shadow: 0 8px 20px -4px rgba(244, 63, 94, 0.12), inset 0 1.5px 1px rgba(255, 255, 255, 0.9) !important;
   }
 
   .kpi-icon-badge-xs {
     width: 32px;
     height: 32px;
     min-width: 32px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6);
 
     i {
       font-size: 18px !important;
@@ -139,6 +148,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0.5px rgba(255, 255, 255, 0.9);
 
     i {
       font-size: 15px !important;
@@ -158,33 +169,35 @@
 }
 
 .kpi-square-card {
-  background-color: #f8fafc;
-  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 250, 252, 0.6) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: 16px !important;
   min-height: 88px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.04), inset 0 1.5px 1px rgba(255, 255, 255, 0.95) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 
   &:hover {
-    border-color: #cbd5e1 !important;
-    background-color: #f1f5f9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 20px -3px rgba(15, 23, 42, 0.08), inset 0 1.5px 1px rgba(255, 255, 255, 1) !important;
   }
 
   &.bg-emerald-50-30 {
-    background-color: #f0fdf4;
-    border-color: #bbf7d0 !important;
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(220, 252, 231, 0.6) 100%) !important;
+    border-color: rgba(167, 243, 208, 0.8) !important;
   }
 
   &.bg-rose-50-30 {
-    background-color: #fff1f2;
-    border-color: #fecdd3 !important;
+    background: linear-gradient(135deg, rgba(255, 241, 242, 0.9) 0%, rgba(254, 226, 226, 0.6) 100%) !important;
+    border-color: rgba(254, 202, 202, 0.8) !important;
   }
 
   .kpi-icon-badge-xs {
-    width: 26px;
-    height: 26px;
-    min-width: 26px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 8px;
 
     i {
       font-size: 16px !important;
@@ -192,11 +205,13 @@
   }
 
   .btn-icon-xs {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0.5px rgba(255, 255, 255, 0.9);
 
     i {
       font-size: 14px !important;
@@ -419,23 +434,22 @@
 
 /* Category Expense Cards */
 .category-expense-card {
-  border: 1px solid #e2e8f0 !important;
   border-radius: 18px !important;
   box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background-color: #ffffff;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
 
   &:hover {
-    box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.08);
-  }
-
-  .category-top-bar {
-    height: 4px;
-    width: 100%;
+    box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.12);
   }
 
   .card-body {
+    position: relative;
+    z-index: 2;
     padding: 18px 20px !important;
+    background: transparent !important;
   }
 
   .category-icon-avatar {
@@ -996,6 +1010,89 @@
 
   .form-control, .form-select {
     font-size: 16px !important; // Previene auto-zoom en iOS
+  }
+}
+
+/* ==========================================================================
+   DESKTOP ZERO-SCROLL WORKSPACE VIEWPORT FIT (GESTION DE GASTOS)
+   ========================================================================== */
+@media (min-width: 992px) {
+  :host {
+    height: calc(100vh - 76px) !important;
+    max-height: calc(100vh - 76px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .expenses-dashboard-wrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+
+    > .row {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+  }
+
+  .sidebar-column {
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow-y: auto !important;
+    padding-right: 6px !important;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  }
+
+  .expenses-sidebar-card {
+    max-height: calc(100vh - 90px) !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+  }
+
+  .col-lg-8, .col-xl-9 {
+    height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+
+    > div:not(.view-switcher-bar) {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding-right: 4px !important;
+
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 5px;
+      }
+    }
+  }
+
+  .view-switcher-bar {
+    flex-shrink: 0 !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .table-responsive {
+    max-height: calc(100vh - 275px) !important;
+    overflow-y: auto !important;
   }
 }
 

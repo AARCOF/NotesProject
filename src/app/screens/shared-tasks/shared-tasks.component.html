@@ -1,0 +1,1413 @@
+<div class="shared-tasks-container p-2 p-md-4 fade-in-up">
+  
+  <!-- =========================================================================
+       1. VENTANA DE NAVEGADOR CON PESTAÑAS (BROWSER TABS BAR)
+       ========================================================================= -->
+  <div class="browser-window-wrapper fade-in-up mb-3-5" *ngIf="spaces.length > 0">
+    
+    <!-- Barra Superior de Pestañas de Navegador -->
+    <div class="browser-tabs-strip d-flex align-items-center">
+      <div class="browser-tabs-container d-flex align-items-end overflow-x-auto">
+        
+        <div 
+          *ngFor="let space of spaces"
+          class="browser-tab d-flex align-items-center cursor-pointer transition-all"
+          [class.active]="activeSpace?.id === space.id"
+          (click)="selectSpace(space)"
+          [title]="space.title + ' (' + space.participantIds.length + ' colaboradores)'">
+          
+          <!-- Icono de Pestaña -->
+          <div class="browser-tab-favicon mr-1-5 d-flex align-items-center justify-content-center">
+            <i class="typcn typcn-folder font-size-15" [class.text-blue]="activeSpace?.id === space.id" [class.text-slate-400]="activeSpace?.id !== space.id"></i>
+          </div>
+
+          <!-- Título de Pestaña -->
+          <span class="browser-tab-title font-weight-semibold text-truncate font-size-13 mr-1-5">
+            {{ space.title }}
+          </span>
+
+          <!-- Contador de Colaboradores -->
+          <span class="browser-tab-count badge badge-pill mr-1-5" [class.badge-blue-light]="activeSpace?.id === space.id" [class.badge-slate-light]="activeSpace?.id !== space.id">
+            {{ space.participantIds.length }}
+          </span>
+
+          <!-- Botón Cerrar / Eliminar Pestaña -->
+          <button 
+            type="button" 
+            class="browser-tab-close btn-p-0 border-0 bg-transparent"
+            *ngIf="canDeleteSpace(space)"
+            (click)="deleteSpace(space); $event.stopPropagation()"
+            title="Eliminar este espacio">
+            <i class="typcn typcn-times"></i>
+          </button>
+        </div>
+
+        <!-- Botón + Nueva Pestaña (Nuevo Espacio) -->
+        <button 
+          type="button" 
+          class="btn-browser-new-tab d-flex align-items-center justify-content-center ml-1"
+          *ngIf="isAdminOrSuperAdmin"
+          (click)="openCreateSpaceModal()"
+          title="Crear nuevo espacio compartido">
+          <i class="typcn typcn-plus font-size-18"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Cuerpo de la Ventana del Navegador (Active Space Bar) -->
+    <div class="browser-window-body card shadow-sm border-0 p-3 p-md-3-5 bg-white">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+        
+        <!-- Título e Identidad del Espacio Activo -->
+        <div class="d-flex align-items-center gap-3">
+          <div class="header-icon-badge bg-gradient-blue text-white rounded-xl d-flex align-items-center justify-content-center shadow-xs">
+            <i class="typcn typcn-group font-size-24"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <h3 class="font-weight-bold text-slate-900 mb-0 font-size-20 font-size-md-22">
+                {{ activeSpace ? activeSpace.title : 'Tareas Compartidas' }}
+              </h3>
+              <span class="badge badge-primary-light font-weight-bold font-size-11 px-2-5 py-1 rounded-pill" *ngIf="activeSpace">
+                Espacio Activo
+              </span>
+            </div>
+            
+            <!-- Participantes en Stack de Avatares -->
+            <div class="d-flex align-items-center gap-2 mt-1" *ngIf="activeSpace">
+              <div class="participants-avatar-stack d-flex align-items-center">
+                <span *ngFor="let u of activeSpaceParticipants.slice(0, 4)" 
+                      class="avatar-circle-sm text-white font-weight-bold" 
+                      [title]="u.name + ' (' + u.email + ')'">
+                  {{ u.name.charAt(0) | uppercase }}
+                </span>
+              </div>
+              <small class="text-slate-500 font-size-12">
+                <strong>{{ activeSpaceParticipants.length }}</strong> colaboradores
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones de Cabecera: Bell, Categoría, Nuevo Espacio, Borrar Espacio, Nueva Entrega -->
+        <div class="d-flex align-items-center flex-wrap gap-2">
+          
+          <!-- Notificaciones de Colaboración -->
+          <button 
+            type="button" 
+            class="btn-notifs-bell position-relative" 
+            (click)="toggleNotifs()"
+            title="Ver avisos de tareas compartidas">
+            <i class="typcn typcn-bell font-size-20"></i>
+            <span class="badge-unread-notif" *ngIf="unreadNotifsCount > 0">{{ unreadNotifsCount }}</span>
+          </button>
+
+          <!-- Crear Nueva Categoría -->
+          <button 
+            type="button" 
+            class="btn btn-outline-slate rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            *ngIf="activeSpace"
+            (click)="openCreateCategoryModal()"
+            title="Añadir categoría al espacio activo">
+            <i class="typcn typcn-tag mr-1 text-blue"></i>
+            <span class="d-none d-sm-inline">+ Categoría</span>
+          </button>
+
+          <!-- Crear Nuevo Espacio Compartido (Solo Admin / SuperAdmin) -->
+          <button 
+            type="button" 
+            class="btn btn-outline-purple rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            *ngIf="isAdminOrSuperAdmin"
+            (click)="openCreateSpaceModal()">
+            <i class="typcn typcn-folder-add mr-1 font-size-16"></i>
+            <span>Nuevo Espacio</span>
+          </button>
+
+          <!-- Eliminar Espacio Activo (Creador o Admin) -->
+          <button 
+            type="button" 
+            class="btn btn-outline-rose rounded-xl px-3 py-2 font-weight-bold font-size-13 d-flex align-items-center hover-lift"
+            *ngIf="activeSpace && canDeleteSpace(activeSpace)"
+            (click)="deleteSpace(activeSpace)"
+            title="Eliminar este espacio de trabajo">
+            <i class="typcn typcn-trash mr-1 font-size-15"></i>
+            <span class="d-none d-md-inline">Eliminar Espacio</span>
+          </button>
+
+          <!-- Crear Nueva Entrega / Tarea en el Espacio Activo -->
+          <button 
+            type="button" 
+            class="btn btn-gradient-blue text-white rounded-xl px-3-5 py-2 font-weight-bold font-size-13 d-flex align-items-center shadow-sm hover-lift"
+            *ngIf="activeSpace"
+            (click)="openCreateTaskModal()">
+            <i class="typcn typcn-plus mr-1 font-size-16"></i>
+            <span>Nueva Entrega</span>
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Estado Sin Espacios -->
+  <div class="card rounded-2xl shadow-sm bg-white border border-slate-100 p-5 text-center my-4" *ngIf="spaces.length === 0">
+    <div class="icon-avatar-lg bg-blue-50 text-blue mx-auto mb-3 d-flex align-items-center justify-content-center rounded-2xl" style="width: 64px; height: 64px;">
+      <i class="typcn typcn-group font-size-36"></i>
+    </div>
+    <h4 class="font-weight-bold text-slate-800 mb-1">Aún no tienes espacios de tareas compartidas</h4>
+    <p class="text-slate-500 font-size-14 mb-4 max-w-md mx-auto">
+      {{ isAdminOrSuperAdmin ? 'Crea un espacio compartido seleccionando dos o más usuarios para colaborar en entregables.' : 'Un administrador debe añadirte a un espacio de tareas compartidas para que puedas colaborar.' }}
+    </p>
+    <div *ngIf="isAdminOrSuperAdmin">
+      <button 
+        type="button" 
+        class="btn btn-gradient-purple text-white rounded-xl px-4 py-2-5 font-weight-bold font-size-14 shadow-sm"
+        (click)="openCreateSpaceModal()">
+        <i class="typcn typcn-folder-add mr-1"></i> Crear Primer Espacio Compartido
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido del Espacio Activo -->
+  <div *ngIf="activeSpace" [class.d-none-mobile]="mobileTab === 'espacios'">
+    
+    <!-- =========================================================================
+         2. BARRA DE HERRAMIENTAS INTERACTIVA: VISTAS (KANBAN / GRID), FILTROS & BUSCADOR
+         ========================================================================= -->
+    <div class="card shadow-sm border-0 rounded-2xl bg-white mb-3-5 p-3">
+      <div class="d-flex flex-column gap-2-5">
+        
+        <!-- Fila Superior: Selector de Vistas + Filtros de Estado + Buscador -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <!-- Selector de Modo de Vista (Kanban / Cuadrícula) -->
+            <div class="view-mode-selector-pill d-flex align-items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <button 
+                type="button"
+                class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
+                [class.active]="viewMode === 'kanban'"
+                (click)="viewMode = 'kanban'"
+                title="Vista de Tablero Kanban">
+                <i class="typcn typcn-th-small font-size-18 mr-1"></i>
+                <span>Kanban</span>
+              </button>
+              <button 
+                type="button"
+                class="btn btn-sm view-switch-btn font-weight-bold px-3 py-1 d-flex align-items-center"
+                [class.active]="viewMode === 'grid'"
+                (click)="viewMode = 'grid'"
+                title="Vista de Cuadrícula">
+                <i class="typcn typcn-th-large font-size-18 mr-1"></i>
+                <span>Cuadrícula</span>
+              </button>
+            </div>
+
+            <!-- Filtro Rápido por Estado (solo en Grid) -->
+            <div class="d-flex align-items-center flex-wrap gap-1" *ngIf="viewMode === 'grid'">
+              <button 
+                type="button" 
+                class="btn-filter-pill" 
+                [class.active]="statusFilter === 'all'"
+                (click)="statusFilter = 'all'">
+                Todas ({{ totalCount }})
+              </button>
+              <button 
+                type="button" 
+                class="btn-filter-pill" 
+                [class.active]="statusFilter === 'pendiente'"
+                (click)="statusFilter = 'pendiente'">
+                Pendientes ({{ pendingCount }})
+              </button>
+              <button 
+                type="button" 
+                class="btn-filter-pill" 
+                [class.active]="statusFilter === 'en_progreso'"
+                (click)="statusFilter = 'en_progreso'">
+                En Progreso ({{ inProgressCount }})
+              </button>
+              <button 
+                type="button" 
+                class="btn-filter-pill btn-filter-delivered" 
+                [class.active]="statusFilter === 'entregada'"
+                (click)="statusFilter = 'entregada'">
+                Entregadas ({{ deliveredCount }})
+              </button>
+              <button 
+                type="button" 
+                class="btn-filter-pill btn-filter-returned" 
+                *ngIf="returnedCount > 0"
+                [class.active]="statusFilter === 'devuelta'"
+                (click)="statusFilter = 'devuelta'">
+                ⚠️ Devueltas ({{ returnedCount }})
+              </button>
+              <button 
+                type="button" 
+                class="btn-filter-pill btn-filter-completed" 
+                [class.active]="statusFilter === 'completada'"
+                (click)="statusFilter = 'completada'">
+                Aprobadas ({{ completedCount }})
+              </button>
+            </div>
+          </div>
+
+          <!-- Buscador en Vivo -->
+          <div class="search-input-box position-relative">
+            <i class="typcn typcn-zoom text-slate-400 position-absolute" style="left: 12px; top: 10px; font-size: 18px;"></i>
+            <input 
+              type="text" 
+              class="form-control form-control-sm pl-4 pr-3 rounded-xl border-slate-200"
+              style="padding-left: 36px !important; height: 38px;"
+              placeholder="Buscar entregable o colaborador..." 
+              [(ngModel)]="searchTerm">
+            <button 
+              type="button" 
+              class="btn-clear-search position-absolute border-0 bg-transparent text-slate-400"
+              *ngIf="searchTerm"
+              (click)="searchTerm = ''"
+              style="right: 8px; top: 8px;">
+              <i class="typcn typcn-times font-size-14"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Fila Inferior: Filtros de Categorías del Espacio -->
+        <div class="d-flex align-items-center flex-wrap gap-1-5 pt-2 border-top border-slate-100" *ngIf="activeSpace.categories && activeSpace.categories.length > 0">
+          <small class="font-weight-bold text-slate-500 mr-1 font-size-12">
+            <i class="typcn typcn-tag mr-0.5"></i> Categorías:
+          </small>
+          <button 
+            type="button" 
+            class="btn-category-filter-pill"
+            [class.active]="categoryFilter === 'all'"
+            (click)="categoryFilter = 'all'">
+            Todas
+          </button>
+          <div class="category-pill-wrapper d-inline-flex align-items-center" *ngFor="let cat of activeSpace.categories">
+            <button 
+              type="button" 
+              class="btn-category-filter-pill d-inline-flex align-items-center"
+              [class.active]="categoryFilter === cat.name"
+              [style.--cat-color]="cat.color"
+              (click)="categoryFilter = cat.name">
+              <span class="cat-dot mr-1" [style.background-color]="cat.color"></span>
+              {{ cat.name }}
+            </button>
+            <button 
+              type="button" 
+              class="btn-delete-cat-pill"
+              (click)="deleteCategory(cat, $event)"
+              title="Eliminar categoría {{ cat.name }}">
+              <i class="typcn typcn-times"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         3A. VISTA 1: TABLERO KANBAN INTERACTIVO (COLUMNAS DE ESTADO FULL WIDTH)
+         ========================================================================= -->
+    <div class="shared-kanban-board mb-4" *ngIf="viewMode === 'kanban'">
+      <div class="kanban-columns-row d-flex gap-3 overflow-x-auto pb-3">
+        
+        <!-- COLUMNA 1: PENDIENTES -->
+        <div class="kanban-column flex-1">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="typcn typcn-time text-slate-500 font-size-18"></i>
+              <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Pendientes</h6>
+              <span class="badge badge-slate-pill">{{ getTasksByStatus('pendiente').length }}</span>
+            </div>
+            <button type="button" class="btn-col-add text-blue border-0 bg-transparent p-0" (click)="openCreateTaskModal()" title="Nueva entrega">
+              <i class="typcn typcn-plus font-size-18"></i>
+            </button>
+          </div>
+
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+            <div *ngFor="let task of getTasksByStatus('pendiente')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
+              <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+            </div>
+
+            <!-- Placeholder Vacío -->
+            <div class="kanban-empty-drop p-4 text-center rounded-xl border-dashed-slate" *ngIf="getTasksByStatus('pendiente').length === 0">
+              <i class="typcn typcn-coffee text-slate-400 font-size-28 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-400 font-weight-medium">Sin entregas pendientes</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 2: EN PROGRESO -->
+        <div class="kanban-column flex-1">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="typcn typcn-flash text-amber font-size-18"></i>
+              <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">En Progreso</h6>
+              <span class="badge badge-amber-pill">{{ getTasksByStatus('en_progreso').length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+            <div *ngFor="let task of getTasksByStatus('en_progreso')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
+              <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+            </div>
+
+            <div class="kanban-empty-drop p-4 text-center rounded-xl border-dashed-slate" *ngIf="getTasksByStatus('en_progreso').length === 0">
+              <i class="typcn typcn-flash-outline text-amber font-size-28 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-400 font-weight-medium">Sin tareas en progreso</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 3: ENTREGADAS (EN REVISIÓN) -->
+        <div class="kanban-column flex-1">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="typcn typcn-upload text-cyan font-size-18"></i>
+              <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Entregadas</h6>
+              <span class="badge badge-cyan-pill">{{ getTasksByStatus('entregada').length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+            <div *ngFor="let task of getTasksByStatus('entregada')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
+              <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+            </div>
+
+            <div class="kanban-empty-drop p-4 text-center rounded-xl border-dashed-slate" *ngIf="getTasksByStatus('entregada').length === 0">
+              <i class="typcn typcn-folder-open text-cyan font-size-28 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-400 font-weight-medium">Sin entregas por revisar</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 4: DEVUELTAS (CON CORRECCIÓN) -->
+        <div class="kanban-column flex-1" *ngIf="returnedCount > 0 || getTasksByStatus('devuelta').length > 0">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-rose-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="typcn typcn-arrow-back text-rose font-size-18"></i>
+              <h6 class="font-weight-bold text-rose-800 mb-0 font-size-14">Devueltas</h6>
+              <span class="badge badge-rose-pill">{{ getTasksByStatus('devuelta').length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+            <div *ngFor="let task of getTasksByStatus('devuelta')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
+              <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+            </div>
+
+            <div class="kanban-empty-drop p-4 text-center rounded-xl border-dashed-slate" *ngIf="getTasksByStatus('devuelta').length === 0">
+              <i class="typcn typcn-arrow-back-outline text-rose font-size-28 d-block mb-1 opacity-70"></i>
+              <small class="text-rose-400 font-weight-medium">Sin tareas devueltas</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 5: APROBADAS & FINALIZADAS -->
+        <div class="kanban-column flex-1">
+          <div class="kanban-col-header p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="typcn typcn-tick text-emerald font-size-18"></i>
+              <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14">Aprobadas</h6>
+              <span class="badge badge-emerald-pill">{{ getTasksByStatus('completada').length }}</span>
+            </div>
+          </div>
+
+          <div class="kanban-cards-stack d-flex flex-column gap-2-5">
+            <div *ngFor="let task of getTasksByStatus('completada')" class="kanban-task-card-wrapper" (click)="openViewDetailsModal(task, $event)">
+              <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+            </div>
+
+            <div class="kanban-empty-drop p-4 text-center rounded-xl border-dashed-slate" *ngIf="getTasksByStatus('completada').length === 0">
+              <i class="typcn typcn-tick-outline text-emerald font-size-28 d-block mb-1 opacity-70"></i>
+              <small class="text-slate-400 font-weight-medium">Sin tareas completadas</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         3B. VISTA 2: CUADRÍCULA RESPONSIVA (GRID)
+         ========================================================================= -->
+    <div class="deliverables-grid-wrapper mb-4" *ngIf="viewMode === 'grid'">
+      
+      <!-- Estado Vacío -->
+      <div class="card rounded-2xl shadow-sm bg-white border border-slate-100 p-5 text-center my-3" *ngIf="filteredTasks.length === 0">
+        <div class="icon-avatar-md bg-blue-50 text-blue mx-auto mb-2 d-flex align-items-center justify-content-center rounded-xl" style="width: 52px; height: 52px;">
+          <i class="typcn typcn-document-add font-size-28"></i>
+        </div>
+        <h5 class="font-weight-bold text-slate-700 mb-1">Sin entregables en este filtro</h5>
+        <p class="font-size-13 text-slate-400 mb-3">Registra una entrega para que ambos colaboradores puedan trabajar en ella.</p>
+        <button 
+          type="button" 
+          class="btn btn-gradient-blue text-white rounded-xl px-4 py-2 font-weight-bold font-size-13 shadow-sm"
+          (click)="openCreateTaskModal()">
+          <i class="typcn typcn-plus mr-1"></i> Registrar Nueva Entrega
+        </button>
+      </div>
+
+      <!-- Cuadrícula Responsiva de Tarjetas -->
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3" *ngIf="filteredTasks.length > 0">
+        <div class="col mb-3" *ngFor="let task of filteredTasks">
+          <div class="h-100 cursor-pointer" (click)="openViewDetailsModal(task, $event)">
+            <ng-container *ngTemplateOutlet="deliverableCardTpl; context: { task: task }"></ng-container>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================================================================
+     PLANTILLA REUTILIZABLE DE TARJETA DE ENTREGABLE (CARD TEMPLATE)
+     ========================================================================= -->
+<ng-template #deliverableCardTpl let-task="task">
+  <div class="deliverable-card card h-100 rounded-2xl transition-all position-relative overflow-hidden"
+       [ngClass]="{
+         'priority-card-alta': task.priority === 'alta',
+         'priority-card-media': task.priority === 'media',
+         'priority-card-baja': task.priority === 'baja',
+         'status-card-devuelta': task.status === 'devuelta'
+       }">
+    
+    <!-- Watermark Geométrico de Rombos en Fondo (Estilo Notas) -->
+    <div class="card-watermark-corner" [style.color]="getTaskWatermarkColor(task)">
+      <svg viewBox="0 0 120 120" fill="none">
+        <polygon points="110,50 155,95 110,140 65,95" stroke="currentColor" stroke-opacity="0.14" stroke-width="1.3" fill="none" />
+        <polygon points="110,72 133,95 110,118 87,95" stroke="currentColor" stroke-opacity="0.20" stroke-width="1.1" fill="none" />
+        <polygon points="110,87 118,95 110,103 102,95" stroke="currentColor" stroke-opacity="0.25" stroke-width="0.9" fill="none" />
+        <polygon points="76,68 86,78 76,88 66,78" stroke="currentColor" stroke-opacity="0.13" stroke-width="0.9" fill="none" />
+        <polygon points="90,46 97,53 90,60 83,53" stroke="currentColor" stroke-opacity="0.16" stroke-width="0.8" fill="none" />
+        <polygon points="62,102 66,106 62,110 58,106" fill="currentColor" fill-opacity="0.14" />
+        <polygon points="98,40 101,43 98,46 95,43" fill="currentColor" fill-opacity="0.18" />
+      </svg>
+    </div>
+
+    <div class="card-body p-3-5 d-flex flex-column justify-content-between position-relative" style="z-index: 2;">
+      
+      <!-- Cabecera de Tarjeta: Prioridad, Categoría, Estado y Acciones -->
+      <div>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center gap-1.5 flex-wrap">
+            
+            <!-- Píldora de Prioridad -->
+            <span class="badge-prio-pill" [ngClass]="{
+              'prio-alta': task.priority === 'alta',
+              'prio-media': task.priority === 'media',
+              'prio-baja': task.priority === 'baja'
+            }">
+              <i class="typcn mr-0.5" [ngClass]="{
+                'typcn-warning': task.priority === 'alta',
+                'typcn-flash': task.priority === 'media',
+                'typcn-leaf': task.priority === 'baja'
+              }"></i>
+              {{ task.priority | uppercase }}
+            </span>
+
+            <!-- Píldora de Categoría -->
+            <span class="badge-category-pill" *ngIf="task.category" [style.background-color]="(task.categoryColor || '#0284c7') + '18'" [style.color]="task.categoryColor || '#0284c7'" [style.border-color]="(task.categoryColor || '#0284c7') + '40'">
+              <i class="typcn typcn-tag mr-0.5"></i>
+              {{ task.category }}
+            </span>
+
+            <!-- Píldora de Estado -->
+            <span class="badge-status-pill" [ngClass]="{
+              'status-pendiente': task.status === 'pendiente',
+              'status-progreso': task.status === 'en_progreso',
+              'status-entregada': task.status === 'entregada',
+              'status-devuelta': task.status === 'devuelta',
+              'status-completada': task.status === 'completada'
+            }">
+              {{ task.status === 'pendiente' ? 'Pendiente' : 
+                 task.status === 'en_progreso' ? 'En Progreso' : 
+                 task.status === 'entregada' ? 'Entregada' : 
+                 task.status === 'devuelta' ? 'Devuelta' : 'Aprobada' }}
+            </span>
+
+          </div>
+
+          <!-- Botones de Edición / Borrado -->
+          <div class="d-flex align-items-center gap-1" (click)="$event.stopPropagation()">
+            <button 
+              type="button" 
+              class="btn-icon-xs btn-edit" 
+              (click)="openEditTaskModal(task, $event)"
+              title="Editar entrega">
+              <i class="typcn typcn-edit"></i>
+            </button>
+            <button 
+              type="button" 
+              class="btn-icon-xs btn-delete" 
+              (click)="deleteTask(task, $event)"
+              title="Eliminar entrega">
+              <i class="typcn typcn-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Título y Descripción -->
+        <h5 class="deliverable-title font-weight-bold text-slate-800 mb-1-5">
+          {{ task.title }}
+        </h5>
+        <p class="deliverable-desc text-slate-500 font-size-13 mb-2-5 text-truncate-2" *ngIf="task.description">
+          {{ task.description }}
+        </p>
+
+        <!-- Banner de Devolución / Correcciones Solicitadas -->
+        <div class="return-feedback-box mb-2-5 p-2-5 rounded-xl bg-rose-50-60 border border-rose-200 shadow-2xs" *ngIf="task.status === 'devuelta' || task.returnNotes" (click)="$event.stopPropagation()">
+          <div class="d-flex align-items-center justify-content-between mb-1-5 flex-wrap gap-1">
+            <div class="d-flex align-items-center gap-1-5">
+              <div class="feedback-icon-badge bg-rose-500 text-white rounded-lg shadow-2xs d-flex align-items-center justify-content-center">
+                <i class="typcn typcn-arrow-back font-size-14"></i>
+              </div>
+              <span class="font-size-11 font-weight-bold text-rose-800 text-uppercase letter-spacing-05">
+                Correcciones Solicitadas
+              </span>
+            </div>
+            <span class="badge-reviewer-pill" *ngIf="task.returnedByName">
+              <i class="typcn typcn-user mr-0.5"></i> {{ task.returnedByName }}
+            </span>
+          </div>
+
+          <div class="feedback-quote-bubble p-2 rounded-lg bg-white border border-rose-100 shadow-2xs">
+            <p class="font-size-12 text-slate-800 mb-0 font-weight-medium line-height-tight">
+              "{{ task.returnNotes || 'Por favor revisar los criterios de entrega.' }}"
+            </p>
+          </div>
+        </div>
+
+        <!-- Barra de Progreso de Sub-Entregables -->
+        <div class="progress-container mb-2-5">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <small class="text-slate-600 font-weight-bold font-size-11">
+              <i class="typcn typcn-th-list mr-1 text-blue"></i>
+              Sub-entregables
+              <span *ngIf="task.checklist && task.checklist.length > 0">
+                ({{ getCompletedChecklistCount(task) }}/{{ task.checklist.length }})
+              </span>
+            </small>
+            <small class="font-weight-bold font-size-11" [ngClass]="{
+              'text-emerald': getTaskProgress(task) === 100,
+              'text-blue': getTaskProgress(task) > 0 && getTaskProgress(task) < 100,
+              'text-slate-400': getTaskProgress(task) === 0
+            }">
+              {{ getTaskProgress(task) }}%
+            </small>
+          </div>
+          <div class="progress" style="height: 6px; border-radius: 4px; background: #e2e8f0;">
+            <div class="progress-bar transition-all" 
+                 [style.width.%]="getTaskProgress(task)"
+                 [ngClass]="{
+                   'bg-emerald-500': getTaskProgress(task) === 100,
+                   'bg-blue-500': getTaskProgress(task) > 0 && getTaskProgress(task) < 100
+                 }">
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Sub-Entregables con Checkbox Colaborativo -->
+        <div class="checklist-items-box mb-2-5 p-2 rounded-xl bg-white-70 border border-slate-100" *ngIf="task.checklist && task.checklist.length > 0" (click)="$event.stopPropagation()">
+          <div *ngFor="let item of task.checklist.slice(0, 3)" class="d-flex align-items-center justify-content-between py-1 border-bottom-light">
+            <label class="custom-control custom-checkbox mb-0 cursor-pointer d-flex align-items-center">
+              <input 
+                type="checkbox" 
+                class="custom-control-input"
+                [checked]="item.completed"
+                (change)="toggleChecklist(task, item.id, $event)">
+              <span class="custom-control-label font-size-12" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed" [class.text-slate-700]="!item.completed">
+                {{ item.text }}
+              </span>
+            </label>
+            <small class="text-slate-400 font-size-10 ml-2" *ngIf="item.completed && item.completedByName">
+              {{ item.completedByName }}
+            </small>
+          </div>
+          <small class="text-slate-400 font-size-10 font-weight-bold d-block text-center mt-1" *ngIf="task.checklist.length > 3">
+            + {{ task.checklist.length - 3 }} más...
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Pie de Tarjeta: Asignado, Fecha y Acciones Directas -->
+      <div class="card-footer-action pt-2-5 border-top border-slate-100 mt-2" (click)="$event.stopPropagation()">
+        
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center gap-1.5 text-slate-500 font-size-11">
+            <i class="typcn typcn-user text-slate-400 font-size-14"></i>
+            <span>{{ task.assignedToName ? task.assignedToName : task.creatorName }}</span>
+          </div>
+
+          <div class="d-flex align-items-center gap-1 text-slate-500 font-size-11" *ngIf="task.dueDate">
+            <i class="typcn typcn-calendar text-amber font-size-14"></i>
+            <span>{{ task.dueDate }}</span>
+          </div>
+        </div>
+
+        <!-- Botones de Acción según el Estado -->
+        <div class="d-flex align-items-center gap-1-5">
+          
+          <!-- Pendiente: Iniciar o Entregar -->
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline-blue flex-1 font-weight-semibold rounded-lg py-1-5 font-size-12 d-flex align-items-center justify-content-center"
+            *ngIf="task.status === 'pendiente'"
+            (click)="markAsInProgress(task, $event)">
+            <i class="typcn typcn-flash mr-1"></i> Iniciar
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-sm btn-gradient-blue text-white flex-1 font-weight-bold rounded-lg py-1-5 font-size-12 d-flex align-items-center justify-content-center shadow-xs"
+            *ngIf="task.status === 'pendiente' || task.status === 'en_progreso'"
+            (click)="openDeliverModal(task, $event)">
+            <i class="typcn typcn-upload mr-1"></i> Entregar
+          </button>
+
+          <!-- Devuelta: Re-Entregar -->
+          <button 
+            type="button" 
+            class="btn btn-sm btn-gradient-blue text-white w-100 font-weight-bold rounded-lg py-1-5 font-size-12 d-flex align-items-center justify-content-center shadow-xs hover-lift"
+            *ngIf="task.status === 'devuelta'"
+            (click)="openDeliverModal(task, $event)">
+            <i class="typcn typcn-upload mr-1"></i> Re-Entregar Tarea
+          </button>
+
+          <!-- Entregada: Aprobar o Devolver -->
+          <div class="d-flex align-items-center gap-1-5 w-100" *ngIf="task.status === 'entregada'">
+            <button 
+              type="button" 
+              class="btn btn-sm btn-gradient-emerald text-white flex-1 font-weight-bold rounded-lg py-1-5 font-size-12 d-flex align-items-center justify-content-center shadow-xs"
+              (click)="approveAndComplete(task, $event)">
+              <i class="typcn typcn-tick mr-1 font-size-15"></i> Aprobar
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-amber flex-1 font-weight-bold rounded-lg py-1-5 font-size-12 d-flex align-items-center justify-content-center"
+              (click)="openReturnModal(task, $event)">
+              <i class="typcn typcn-arrow-back mr-1"></i> Devolver
+            </button>
+          </div>
+
+          <!-- Completada: Aprobada -->
+          <div class="w-100 py-1 text-center text-emerald font-weight-bold font-size-12 bg-emerald-50 rounded-lg" *ngIf="task.status === 'completada'">
+            <i class="typcn typcn-tick mr-1"></i> Aprobada y Finalizada
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</ng-template>
+
+<!-- =========================================================================
+     MODAL 0: DETALLES DE LA ENTREGA (VISTA COMPLETA INTERACTIVA)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isViewModalOpen" (click)="isViewModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isViewModalOpen" (click)="isViewModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0" *ngIf="selectedTaskForView">
+      
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-blue-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="typcn typcn-clipboard font-size-22"></i>
+          </div>
+          <div>
+            <span class="badge badge-primary-light font-weight-bold font-size-10 px-2 py-0.5 rounded-pill mb-1">
+              {{ selectedTaskForView.priority | uppercase }}
+            </span>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18 line-height-tight">
+              {{ selectedTaskForView.title }}
+            </h5>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isViewModalOpen = false">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-white">
+        
+        <!-- Descripción -->
+        <div class="mb-3" *ngIf="selectedTaskForView.description">
+          <label class="font-weight-bold text-slate-700 font-size-12 text-uppercase letter-spacing-05">Descripción</label>
+          <p class="font-size-13 text-slate-700 bg-slate-50 p-2-5 rounded-xl border border-slate-200 mb-0">
+            {{ selectedTaskForView.description }}
+          </p>
+        </div>
+
+        <!-- Feedback de Devolución si existe -->
+        <div class="return-feedback-box mb-3 p-3 rounded-xl bg-rose-50-60 border border-rose-200" *ngIf="selectedTaskForView.returnNotes">
+          <div class="d-flex align-items-center justify-content-between mb-1-5">
+            <span class="font-size-11 font-weight-bold text-rose-800 text-uppercase">
+              <i class="typcn typcn-arrow-back mr-1"></i> Correcciones Requeridas
+            </span>
+            <span class="badge-reviewer-pill" *ngIf="selectedTaskForView.returnedByName">
+              Por {{ selectedTaskForView.returnedByName }}
+            </span>
+          </div>
+          <p class="font-size-12-5 text-slate-800 mb-0 font-weight-medium">
+            "{{ selectedTaskForView.returnNotes }}"
+          </p>
+        </div>
+
+        <!-- Checklist Completo -->
+        <div class="mb-3" *ngIf="selectedTaskForView.checklist && selectedTaskForView.checklist.length > 0">
+          <label class="font-weight-bold text-slate-700 font-size-12 text-uppercase letter-spacing-05 mb-2 d-flex align-items-center justify-content-between">
+            <span>Sub-entregables ({{ getCompletedChecklistCount(selectedTaskForView) }}/{{ selectedTaskForView.checklist.length }})</span>
+            <span class="text-blue">{{ getTaskProgress(selectedTaskForView) }}%</span>
+          </label>
+          <div class="checklist-items-box p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <div *ngFor="let item of selectedTaskForView.checklist" class="d-flex align-items-center justify-content-between py-1-5 border-bottom-light">
+              <label class="custom-control custom-checkbox mb-0 cursor-pointer d-flex align-items-center">
+                <input 
+                  type="checkbox" 
+                  class="custom-control-input"
+                  [checked]="item.completed"
+                  (change)="toggleChecklist(selectedTaskForView, item.id, $event)">
+                <span class="custom-control-label font-size-13 font-weight-medium" [class.text-decoration-line-through]="item.completed" [class.text-slate-400]="item.completed" [class.text-slate-800]="!item.completed">
+                  {{ item.text }}
+                </span>
+              </label>
+              <small class="text-slate-400 font-size-11" *ngIf="item.completed && item.completedByName">
+                Por {{ item.completedByName }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metadata de Entrega -->
+        <div class="p-2-5 rounded-xl bg-slate-50 border border-slate-200 d-flex flex-wrap align-items-center justify-content-between gap-2 text-slate-600 font-size-12">
+          <div><i class="typcn typcn-user mr-1 text-slate-400"></i> Asignado: <strong>{{ selectedTaskForView.assignedToName || 'Cualquier colaborador' }}</strong></div>
+          <div *ngIf="selectedTaskForView.dueDate"><i class="typcn typcn-calendar mr-1 text-amber"></i> Fecha: <strong>{{ selectedTaskForView.dueDate }}</strong></div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-between gap-2">
+        <button type="button" class="btn btn-outline-slate px-3 py-2 font-weight-bold rounded-xl font-size-13" (click)="openEditTaskModal(selectedTaskForView); isViewModalOpen = false">
+          <i class="typcn typcn-edit mr-1"></i> Editar Entrega
+        </button>
+
+        <div class="d-flex align-items-center gap-1-5">
+          <button type="button" class="btn btn-outline-slate px-3 py-2 font-weight-bold rounded-xl font-size-13" (click)="isViewModalOpen = false">
+            Cerrar
+          </button>
+          <button type="button" class="btn btn-gradient-blue text-white px-3-5 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm" *ngIf="selectedTaskForView.status === 'pendiente' || selectedTaskForView.status === 'en_progreso' || selectedTaskForView.status === 'devuelta'" (click)="openDeliverModal(selectedTaskForView); isViewModalOpen = false">
+            <i class="typcn typcn-upload mr-1"></i> Entregar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 1: CREAR ESPACIO COMPARTIDO (ADMIN / SUPERADMIN)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isSpaceModalOpen" (click)="isSpaceModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isSpaceModalOpen" (click)="isSpaceModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0">
+      
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-indigo-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="typcn typcn-folder-add font-size-22"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+              Crear Espacio Compartido
+            </h5>
+            <small class="text-white-80 font-weight-medium">Espacio de colaboración entre dos o más usuarios</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isSpaceModalOpen = false" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-white">
+        
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">
+            Título del Espacio <span class="text-rose">*</span>
+          </label>
+          <input 
+            type="text" 
+            class="form-control input-custom" 
+            [(ngModel)]="newSpaceTitle"
+            placeholder="Ej: Proyecto Final IA, Campaña Q4, Auditoría...">
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">Descripción / Objetivo</label>
+          <textarea 
+            class="form-control input-custom" 
+            rows="2" 
+            [(ngModel)]="newSpaceDesc"
+            placeholder="Breve resumen del propósito del espacio de trabajo..."></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+          <div class="d-flex align-items-center justify-content-between mb-1.5">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-0">
+              Seleccionar Colaboradores <span class="text-rose">* (Mínimo 2)</span>
+            </label>
+            <small class="text-slate-400 font-size-11">{{ selectedUserIds.length }} seleccionados</small>
+          </div>
+
+          <div class="users-selection-list border border-slate-200 rounded-xl p-2" style="max-height: 180px; overflow-y: auto;">
+            <div *ngFor="let u of allUsers" 
+                 class="user-select-row d-flex align-items-center justify-content-between p-2 rounded-lg cursor-pointer mb-1"
+                 [class.selected-user]="isUserSelected(u.id)"
+                 (click)="toggleUserSelection(u.id)">
+              <div class="d-flex align-items-center gap-2">
+                <div class="user-avatar-sm rounded-circle text-white font-weight-bold d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #64748b;">
+                  {{ u.name.charAt(0) | uppercase }}
+                </div>
+                <div>
+                  <h6 class="mb-0 font-size-13 font-weight-bold text-slate-800">{{ u.name | titlecase }}</h6>
+                  <small class="text-slate-400 font-size-11">{{ u.email }}</small>
+                </div>
+              </div>
+              <i class="typcn font-size-20" [ngClass]="isUserSelected(u.id) ? 'typcn-tick text-emerald font-weight-bold' : 'typcn-plus text-slate-300'"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl" (click)="isSpaceModalOpen = false">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-gradient-purple text-white px-4 py-2 font-weight-bold rounded-xl shadow-sm" (click)="saveSpace()">
+          <i class="typcn typcn-folder-add mr-1"></i> Crear Espacio
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 2: CREAR / EDITAR ENTREGABLE (ESTÉTICA PREMIUM SIMILAR A NOTE-MODAL)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isTaskModalOpen" (click)="isTaskModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isTaskModalOpen" (click)="isTaskModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0">
+      
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-blue-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="typcn typcn-document-add font-size-22" *ngIf="!editingTask"></i>
+            <i class="typcn typcn-edit font-size-22" *ngIf="editingTask"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+              {{ editingTask ? 'Editar Entrega Compartida' : 'Registrar Nuevo Entregable' }}
+            </h5>
+            <small class="text-white-80 font-weight-medium">Espacio: {{ activeSpace?.title }}</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isTaskModalOpen = false" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-white">
+        
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">
+            Título del Entregable <span class="text-rose">*</span>
+          </label>
+          <input 
+            type="text" 
+            class="form-control input-custom" 
+            [(ngModel)]="taskFormTitle"
+            placeholder="Ej: Diagrama de Base de Datos, Módulo de Autenticación...">
+        </div>
+
+        <!-- Selector Visual de Categorías del Espacio -->
+        <div class="form-group mb-3" *ngIf="activeSpace?.categories && activeSpace!.categories!.length > 0">
+          <div class="d-flex align-items-center justify-content-between mb-1.5">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-0">Categoría</label>
+            <button type="button" class="btn btn-xs btn-link text-blue p-0 font-weight-bold" (click)="openCreateCategoryModal()">
+              + Nueva Categoría
+            </button>
+          </div>
+          <div class="d-flex flex-wrap gap-1-5">
+            <div class="cat-chip-container d-inline-flex align-items-center" *ngFor="let cat of activeSpace!.categories">
+              <button 
+                type="button" 
+                class="btn-cat-chip"
+                [class.active]="taskFormCategory === cat.name"
+                [style.--chip-color]="cat.color"
+                (click)="selectCategoryInForm(cat)">
+                <span class="cat-chip-dot" [style.background-color]="cat.color"></span>
+                <span>{{ cat.name }}</span>
+                <i class="typcn typcn-tick ml-1" *ngIf="taskFormCategory === cat.name"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn-chip-delete"
+                (click)="deleteCategory(cat, $event)"
+                title="Eliminar categoría {{ cat.name }}">
+                <i class="typcn typcn-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nivel de Prioridad Segmentado (Alta / Media / Baja) -->
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">Nivel de Prioridad <span class="text-rose">*</span></label>
+          <div class="d-flex align-items-center segmented-prio-box p-1 rounded-xl bg-slate-100 border border-slate-200">
+            <button 
+              type="button" 
+              class="btn btn-sm seg-prio-btn flex-grow-1 font-weight-bold py-2"
+              [class.active-high]="taskFormPriority === 'alta'"
+              (click)="taskFormPriority = 'alta'">
+              <i class="typcn typcn-warning mr-1 text-rose"></i> Alta
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm seg-prio-btn flex-grow-1 font-weight-bold py-2"
+              [class.active-med]="taskFormPriority === 'media'"
+              (click)="taskFormPriority = 'media'">
+              <i class="typcn typcn-flash mr-1 text-amber"></i> Media
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm seg-prio-btn flex-grow-1 font-weight-bold py-2"
+              [class.active-low]="taskFormPriority === 'baja'"
+              (click)="taskFormPriority = 'baja'">
+              <i class="typcn typcn-leaf mr-1 text-emerald"></i> Baja
+            </button>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">Descripción y Criterios</label>
+          <textarea 
+            class="form-control input-custom" 
+            rows="2" 
+            [(ngModel)]="taskFormDesc"
+            placeholder="Detalles sobre lo que se debe entregar o validar..."></textarea>
+        </div>
+
+        <!-- Asignación y Fechas -->
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-6">
+            <label class="font-weight-bold text-slate-700 font-size-13">Asignar a</label>
+            <select class="form-control input-custom" [(ngModel)]="taskFormAssignedTo">
+              <option value="">(Ambos / Cualquier colaborador)</option>
+              <option *ngFor="let u of activeSpaceParticipants" [value]="u.id">{{ u.name | titlecase }}</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="font-weight-bold text-slate-700 font-size-13">Fecha Límite</label>
+            <input type="date" class="form-control input-custom" [(ngModel)]="taskFormDueDate">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="font-weight-bold text-slate-700 font-size-13">Hora</label>
+            <input type="time" class="form-control input-custom" [(ngModel)]="taskFormDueTime">
+          </div>
+        </div>
+
+        <!-- Sub-entregables / Checklist Builder -->
+        <div class="form-group mb-2" *ngIf="!editingTask">
+          <div class="d-flex align-items-center justify-content-between mb-1.5">
+            <label class="font-weight-bold text-slate-700 font-size-13 mb-0">Sub-entregables (Checklist)</label>
+            <button type="button" class="btn btn-xs btn-outline-blue font-weight-bold rounded-lg px-2 py-1" (click)="addChecklistField()">
+              <i class="typcn typcn-plus mr-0.5"></i> Añadir Ítem
+            </button>
+          </div>
+
+          <div *ngFor="let item of checklistInputs; let idx = index; trackBy: trackByFn" class="d-flex align-items-center gap-1.5 mb-1.5">
+            <input 
+              type="text" 
+              class="form-control input-custom flex-1" 
+              placeholder="Requisito o entrega parcial..."
+              [(ngModel)]="checklistInputs[idx]">
+            <button type="button" class="btn btn-sm btn-icon-xs text-rose-500 border-0 bg-transparent" (click)="removeChecklistField(idx)">
+              <i class="typcn typcn-times font-size-16"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl" (click)="isTaskModalOpen = false">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-gradient-blue text-white px-4 py-2 font-weight-bold rounded-xl shadow-sm" (click)="saveTask()">
+          <i class="typcn typcn-tick mr-1"></i> Guardar Entrega
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 3: ENTREGAR TAREA (CONFIRMACIÓN & NOTAS)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isDeliverModalOpen" (click)="isDeliverModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isDeliverModalOpen" (click)="isDeliverModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0">
+      
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">
+        <h5 class="modal-title font-weight-bold text-white mb-0 d-flex align-items-center font-size-18">
+          <i class="typcn typcn-upload mr-2 font-size-22"></i>
+          Marcar como Entregado
+        </h5>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isDeliverModalOpen = false" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-white">
+        <h6 class="font-weight-bold text-slate-800 mb-2 font-size-15">{{ deliveringTask?.title }}</h6>
+        <p class="text-slate-500 font-size-13 mb-3">
+          Al entregar la tarea, el otro colaborador recibirá una notificación inmediata para revisar y aprobar la entrega o solicitar correcciones.
+        </p>
+
+        <div class="form-group mb-2">
+          <label class="font-weight-bold text-slate-700 font-size-13">Notas de entrega o Enlace de referencia (Opcional)</label>
+          <textarea 
+            class="form-control input-custom" 
+            rows="3" 
+            [(ngModel)]="deliveryNotesInput"
+            placeholder="Ej: Archivos subidos en el repositorio, entrega lista para revisión..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl" (click)="isDeliverModalOpen = false">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-gradient-blue text-white px-4 py-2 font-weight-bold rounded-xl shadow-sm" (click)="confirmDeliver()">
+          <i class="typcn typcn-upload mr-1"></i> Confirmar Entrega
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 4: DEVOLVER ENTREGA / SOLICITAR CORRECCIONES (ESTILO NOTEYOU)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isReturnModalOpen" (click)="isReturnModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isReturnModalOpen" (click)="isReturnModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0">
+      
+      <div class="modal-header-custom p-3-5 p-md-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-amber-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="typcn typcn-arrow-back font-size-22"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+              Devolver Entrega
+            </h5>
+            <small class="text-white-90 font-weight-medium">Solicitar correcciones o ajustes al colaborador</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isReturnModalOpen = false" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-3-5 p-md-4 bg-white">
+        <div class="task-preview-callout p-3 rounded-xl bg-slate-50 border border-slate-200 mb-3 d-flex align-items-start gap-2-5">
+          <div class="task-avatar-badge bg-white text-slate-700 rounded-lg p-2 shadow-2xs d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+            <i class="typcn typcn-document-text font-size-20 text-blue"></i>
+          </div>
+          <div class="flex-1">
+            <span class="text-slate-400 font-size-10 font-weight-bold text-uppercase letter-spacing-05 d-block">Entregable a Revisar</span>
+            <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 line-height-tight">{{ returningTask?.title }}</h6>
+            <small class="text-slate-500 font-size-11" *ngIf="returningTask?.assignedToName">
+              <i class="typcn typcn-user-outline mr-0.5"></i> Responsable: <strong>{{ returningTask?.assignedToName }}</strong>
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group mb-2">
+          <label class="font-weight-bold text-slate-700 font-size-13 mb-1 d-flex align-items-center gap-1">
+            <i class="typcn typcn-edit text-amber font-size-15"></i>
+            Comentario u Observaciones de Corrección
+          </label>
+          <textarea 
+            class="form-control input-custom" 
+            rows="3" 
+            [(ngModel)]="returnFeedbackInput"
+            placeholder="Ej: Falta adjuntar la documentación de pruebas, corregir el apartado 2 de la entrega..."></textarea>
+          <small class="text-slate-400 font-size-11 mt-1 d-block">
+            <i class="typcn typcn-info-large-outline mr-0.5"></i> El colaborador recibirá este comentario en su tarjeta y una notificación directa.
+          </small>
+        </div>
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl font-size-13" (click)="isReturnModalOpen = false">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-gradient-amber text-white px-4 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm hover-lift" (click)="confirmReturn()">
+          <i class="typcn typcn-arrow-back mr-1"></i> Devolver y Notificar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 5: NUEVA CATEGORÍA DE ESPACIO (CUALQUIER MIEMBRO)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="isCategoryModalOpen" (click)="isCategoryModalOpen = false"></div>
+<div class="modal-custom" *ngIf="isCategoryModalOpen" (click)="isCategoryModalOpen = false">
+  <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom overflow-hidden border-0">
+      
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-blue-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+            <i class="typcn typcn-tag font-size-22"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+              Nueva Categoría de Espacio
+            </h5>
+            <small class="text-white-80 font-weight-medium">Espacio: {{ activeSpace?.title }}</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="isCategoryModalOpen = false" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 bg-white">
+        
+        <div class="form-group mb-3">
+          <label class="font-weight-bold text-slate-700 font-size-13">
+            Nombre de la Categoría <span class="text-rose">*</span>
+          </label>
+          <input 
+            type="text" 
+            class="form-control input-custom" 
+            [(ngModel)]="newCategoryName"
+            placeholder="Ej: Frontend, Backend, Documentación, Diseño...">
+        </div>
+
+        <div class="form-group mb-2">
+          <label class="font-weight-bold text-slate-700 font-size-13 mb-2">Color Distintivo</label>
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <button 
+              type="button" 
+              *ngFor="let color of categoryColorPalette"
+              class="color-swatch-btn rounded-circle border-0 cursor-pointer shadow-xs"
+              [style.background-color]="color"
+              [class.active-swatch]="newCategoryColor === color"
+              (click)="newCategoryColor = color">
+              <i class="typcn typcn-tick text-white font-size-16" *ngIf="newCategoryColor === color"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl" (click)="isCategoryModalOpen = false">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-gradient-blue text-white px-4 py-2 font-weight-bold rounded-xl shadow-sm" (click)="saveCategory()">
+          <i class="typcn typcn-tag mr-1"></i> Guardar Categoría
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     DRAWER / PANEL DE NOTIFICACIONES COLABORATIVAS
+     ========================================================================= -->
+<div class="notifs-backdrop" *ngIf="isNotifsOpen" (click)="isNotifsOpen = false">
+  <div class="notifs-drawer shadow-2xl p-4" (click)="$event.stopPropagation()">
+    
+    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+      <div class="d-flex align-items-center gap-2">
+        <i class="typcn typcn-bell text-amber font-size-22"></i>
+        <h5 class="font-weight-bold text-slate-800 mb-0 font-size-16">Avisos de Tareas</h5>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-xs btn-link text-blue font-weight-semibold p-0" (click)="markAllNotifsRead()" *ngIf="notifications.length > 0">
+          Marcar leídas
+        </button>
+        <button type="button" class="btn-close-notifs border-0 bg-transparent" (click)="isNotifsOpen = false">
+          <i class="typcn typcn-times font-size-18"></i>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="notifications.length === 0" class="text-center py-5 text-slate-400">
+      <i class="typcn typcn-tick-outline font-size-36 d-block mb-1 text-slate-300"></i>
+      <p class="font-size-13 mb-0">No tienes notificaciones pendientes.</p>
+    </div>
+
+    <div class="notifs-list" *ngIf="notifications.length > 0">
+      <div *ngFor="let n of notifications" 
+           class="notif-item p-2-5 mb-2 rounded-xl transition-all cursor-pointer"
+           [class.unread]="!n.read"
+           (click)="markNotifRead(n)">
+        <div class="d-flex align-items-start gap-2">
+          <div class="notif-icon-circle rounded-circle d-flex align-items-center justify-content-center" [ngClass]="{
+            'bg-blue-100 text-blue-600': n.type === 'created',
+            'bg-amber-100 text-amber-600': n.type === 'updated',
+            'bg-cyan-100 text-cyan-600': n.type === 'delivered',
+            'bg-rose-100 text-rose-600': n.type === 'returned',
+            'bg-emerald-100 text-emerald-600': n.type === 'completed',
+            'bg-purple-100 text-purple-600': n.type === 'category' || n.type === 'checklist'
+          }">
+            <i class="typcn font-size-16" [ngClass]="{
+              'typcn-plus': n.type === 'created',
+              'typcn-edit': n.type === 'updated',
+              'typcn-upload': n.type === 'delivered',
+              'typcn-arrow-back': n.type === 'returned',
+              'typcn-tick': n.type === 'completed',
+              'typcn-tag': n.type === 'category',
+              'typcn-th-list': n.type === 'checklist'
+            }"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-size-13 text-slate-800 font-weight-medium mb-0.5 line-height-tight">
+              {{ n.message }}
+            </p>
+            <small class="text-slate-400 font-size-11">
+              {{ n.createdAt | date:'short' }}
+            </small>
+          </div>
+          <span class="unread-dot" *ngIf="!n.read"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL DE CONFIRMACIÓN ELEGANTE (REEMPLAZA EL CONFIRM NATIVO)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()">
+  <div class="modal-custom d-flex align-items-center justify-content-center p-3">
+    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
+      
+      <div class="modal-body p-4 p-md-4-5 text-center">
+        <!-- Ícono Destacado Circular con Borde y Sombra Suave -->
+        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
+             [ngClass]="{
+               'icon-box-danger': confirmDialog.variant === 'danger',
+               'icon-box-warning': confirmDialog.variant === 'warning',
+               'icon-box-info': confirmDialog.variant === 'info'
+             }">
+          <i class="typcn" [ngClass]="confirmDialog.icon"></i>
+        </div>
+
+        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
+          {{ confirmDialog.title }}
+        </h4>
+        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
+          {{ confirmDialog.message }}
+        </p>
+
+        <!-- Botones de Acción Estilizados y de Alto Contraste -->
+        <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1">
+          <button 
+            type="button" 
+            class="btn-modal-cancel flex-1" 
+            (click)="closeConfirm()">
+            {{ confirmDialog.cancelText }}
+          </button>
+          
+          <button 
+            type="button" 
+            class="flex-1"
+            [ngClass]="{
+              'btn-modal-danger': confirmDialog.variant === 'danger',
+              'btn-modal-warning': confirmDialog.variant === 'warning',
+              'btn-modal-primary': confirmDialog.variant === 'info'
+            }"
+            (click)="executeConfirm()">
+            {{ confirmDialog.confirmText }}
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL DE ALERTA / VALIDACIÓN (REEMPLAZA EL ALERT NATIVO)
+     ========================================================================= -->
+<div class="modal-backdrop-custom" *ngIf="alertDialog.isOpen" (click)="closeAlert()">
+  <div class="modal-custom d-flex align-items-center justify-content-center p-3">
+    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 420px; width: 100%;">
+      
+      <div class="modal-body p-4 p-md-4-5 text-center">
+        <!-- Ícono Destacado -->
+        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
+             [ngClass]="{
+               'icon-box-warning': alertDialog.type === 'warning',
+               'icon-box-danger': alertDialog.type === 'error',
+               'icon-box-info': alertDialog.type === 'info'
+             }">
+          <i class="typcn" [ngClass]="{
+            'typcn-warning': alertDialog.type === 'warning',
+            'typcn-times-outline': alertDialog.type === 'error',
+            'typcn-info': alertDialog.type === 'info'
+          }"></i>
+        </div>
+
+        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-18">
+          {{ alertDialog.title }}
+        </h4>
+        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
+          {{ alertDialog.message }}
+        </p>
+
+        <button 
+          type="button" 
+          class="btn-modal-primary w-100" 
+          (click)="closeAlert()">
+          Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

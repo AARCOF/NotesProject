@@ -171,9 +171,20 @@ export class ProductivityDashboardComponent implements OnInit, OnDestroy {
     }];
   }
 
-  filterByStatus(status: string): void {
-    this.selectedStatusFilter = status;
-    this.generateCharts();
+  get totalCount(): number {
+    return this.notes.length;
+  }
+
+  get highPriorityCount(): number {
+    return this.notes.filter(n => n.priority === 'alta' && n.status !== 'completada').length;
+  }
+
+  get pendingCount(): number {
+    return this.notes.filter(n => n.status !== 'completada').length;
+  }
+
+  get completedCount(): number {
+    return this.notes.filter(n => n.status === 'completada').length;
   }
 
   ngOnDestroy(): void {

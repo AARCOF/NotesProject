@@ -9,6 +9,8 @@ import { NotesService } from './services/notes.service';
 import { ExpenseService } from './services/expense.service';
 import { Note } from './models/note.model';
 import { QuickNotesService } from './services/quick-notes.service';
+import { SavedLinksService } from './services/saved-links.service';
+import { SharedTasksService } from './services/shared-tasks.service';
 import { Capacitor } from '@capacitor/core';
 
 @Component({
@@ -37,7 +39,9 @@ export class AppComponent implements OnInit {
     private automatedReminderService: AutomatedReminderService,
     private notesService: NotesService,
     private expenseService: ExpenseService,
-    private quickNotesService: QuickNotesService
+    private quickNotesService: QuickNotesService,
+    private savedLinksService: SavedLinksService,
+    private sharedTasksService: SharedTasksService
   ) {
     this.checkScreenSize();
   }
@@ -96,6 +100,10 @@ export class AppComponent implements OnInit {
       } else {
         this.expenseService.requestOpenAddExpenseModal();
       }
+    } else if (this.router.url.includes('/saved-links')) {
+      this.savedLinksService.requestOpenAddLinkModal();
+    } else if (this.router.url.includes('/shared-tasks')) {
+      this.sharedTasksService.requestOpenCreateTaskModal();
     } else {
       if (this.notesService.getViewMode() === 'categorias') {
         if (this.router.url !== '/dashboard') {

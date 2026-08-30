@@ -29,7 +29,7 @@
         <form (ngSubmit)="updateProfile()" autocomplete="off">
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Nombre Completo</label>
-            <input type="text" class="form-control" [(ngModel)]="profileName" name="profileName" placeholder="Tu nombre" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+            <input type="text" class="form-control" [(ngModel)]="profileName" (input)="onNameInput($event)" name="profileName" placeholder="Tu nombre" autocomplete="off" autocorrect="off" spellcheck="false" required>
           </div>
 
           <div class="form-group mb-4">

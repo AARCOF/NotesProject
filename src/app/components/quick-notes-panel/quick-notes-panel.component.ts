@@ -165,4 +165,18 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
     if (diffHrs < 24) return `Hace ${diffHrs} h`;
     return new Date(dateStr).toLocaleDateString();
   }
+
+  getQuickNoteColor(note: QuickNote, index: number): string {
+    if (note.isPermanent) return '#f59e0b';
+    const colors = ['#06b6d4', '#6366f1', '#10b981', '#ec4899', '#8b5cf6'];
+    return colors[index % colors.length];
+  }
+
+  getQuickNoteBorderColor(note: QuickNote, index: number): string {
+    const hex = this.getQuickNoteColor(note, index);
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.35)`;
+  }
 }

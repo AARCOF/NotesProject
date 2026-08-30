@@ -39,6 +39,7 @@ import { ProfileSettingsComponent } from "./screens/profile-settings/profile-set
 import { CanvasBoardComponent } from "./screens/canvas-board/canvas-board.component";
 import { ExpensesDashboardComponent } from "./screens/expenses-dashboard/expenses-dashboard.component";
 import { NotebookSavedComponent } from "./screens/notebook-saved/notebook-saved.component";
+import { SharedTasksComponent } from "./screens/shared-tasks/shared-tasks.component";
 
 // Interceptors & Guards
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
@@ -70,6 +71,7 @@ import { AuthGuard } from "./core/guards/auth.guard";
     CanvasBoardComponent,
     ExpensesDashboardComponent,
     NotebookSavedComponent,
+    SharedTasksComponent,
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent

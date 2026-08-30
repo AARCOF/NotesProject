@@ -3,72 +3,65 @@
 
 
   <!-- New Note Button -->
-  <div class="px-4 mb-4 mt-2">
+  <div class="px-4 my-3 d-flex align-items-center justify-content-center">
     <!-- Redirige al Dashboard donde está el Modal o puede abrir un modal global, por ahora enviamos al dashboard -->
-    <a routerLink="/dashboard" class="btn btn-white btn-block rounded-lg font-weight-bold text-blue-800 shadow-sm d-flex justify-content-center align-items-center py-2 hover-lift">
-      <i class="typcn typcn-plus font-size-18 mr-1"></i> Nueva Tarea
+    <a routerLink="/dashboard" class="btn btn-white btn-block rounded-xl font-weight-bold text-white d-flex justify-content-center align-items-center py-2-5">
+      <i class="typcn typcn-plus font-size-18 mr-1-5"></i> Nueva Tarea
     </a>
   </div>
 
   <!-- Navigation Links -->
   <ul class="nav flex-column flex-grow-1 px-4">
     
-    <li class="nav-category-header font-weight-bold px-3 py-2 text-uppercase font-size-11 letter-spacing-1 mt-2 mb-2">
+    <li class="nav-category-header font-weight-bold px-3 py-1 text-uppercase font-size-11 letter-spacing-1 mb-2">
       Principal
     </li>
 
     <li class="nav-item mb-1">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/dashboard" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-document-text text-cyan-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-document-text text-cyan-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Mis Notas</span>
       </a>
     </li>
 
     <li class="nav-item mb-1">
-      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/categories" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-folder-open text-purple-400 font-size-22 mr-3"></i>
-        <span class="menu-title font-weight-semibold font-size-14">Categorías</span>
+      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/shared-tasks" routerLinkActive="active-nav-link">
+        <i class="menu-icon typcn typcn-group-outline text-amber-400 font-size-22"></i>
+        <span class="menu-title font-weight-semibold font-size-14">Compartidas</span>
       </a>
     </li>
 
     <li class="nav-item mb-1">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/expenses" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-credit-card text-emerald-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-credit-card text-emerald-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Gastos</span>
       </a>
     </li>
 
     <li class="nav-item mb-1">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/calendar" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-calendar-outline text-amber-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-calendar-outline text-amber-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Calendario</span>
       </a>
     </li>
 
     <li class="nav-item mb-1">
-      <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/productivity" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-chart-pie-outline text-emerald-400 font-size-22 mr-3"></i>
-        <span class="menu-title font-weight-semibold font-size-14">Productividad</span>
-      </a>
-    </li>
-
-    <li class="nav-item mb-1">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/canvas" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-brush text-pink-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-brush text-pink-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Canva / Texto</span>
       </a>
     </li>
 
     <li class="nav-item mb-1">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/saved-links" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-bookmark text-cyan-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-bookmark text-cyan-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Libreta/Guardado</span>
       </a>
     </li>
 
     <li class="nav-item mb-1" *ngIf="isAdminOrSuperAdmin">
       <a class="nav-link py-2 px-3 rounded-lg custom-nav-link" routerLink="/admin-panel" routerLinkActive="active-nav-link">
-        <i class="menu-icon typcn typcn-cog text-sky-400 font-size-22 mr-3"></i>
+        <i class="menu-icon typcn typcn-cog text-sky-400 font-size-22"></i>
         <span class="menu-title font-weight-semibold font-size-14">Administración</span>
       </a>
     </li>
@@ -81,13 +74,13 @@
       <!-- Mantenemos el log out en lugar de settings/help estáticos para que sea funcional -->
       <li class="nav-item mb-1">
         <a class="nav-link py-2 px-3 rounded-lg custom-nav-link text-slate-300 hover-rose cursor-pointer" routerLink="/profile" routerLinkActive="active-nav-link">
-          <i class="menu-icon typcn typcn-user-outline text-indigo-400 font-size-22 mr-3"></i>
+          <i class="menu-icon typcn typcn-user-outline text-indigo-400 font-size-22"></i>
           <span class="menu-title font-weight-semibold font-size-14">Mi Perfil</span>
         </a>
       </li>
       <li class="nav-item mb-1" *ngIf="currentUser">
         <a class="nav-link py-2 px-3 rounded-lg custom-nav-link text-slate-300 hover-rose cursor-pointer" (click)="logout()">
-          <i class="menu-icon typcn typcn-power-outline text-rose-400 font-size-22 mr-3"></i>
+          <i class="menu-icon typcn typcn-power-outline text-rose-400 font-size-22"></i>
           <span class="menu-title font-weight-semibold font-size-14">Cerrar Sesión</span>
         </a>
       </li>

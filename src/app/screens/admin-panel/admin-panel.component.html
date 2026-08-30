@@ -10,59 +10,67 @@
   </div>
 </div>
 
-<!-- Tarjetas de Estadísticas de Usuarios -->
-<div class="row mb-4">
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-custom bg-stat-blue text-white shadow-sm">
-      <div class="card-body p-4 d-flex align-items-center justify-content-between">
-        <div>
-          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Usuarios Totales</p>
-          <h2 class="font-weight-bold mb-0 font-size-28">{{ totalUsers }}</h2>
+<!-- Tarjetas de Estadísticas de Usuarios (Square Glassmorphism Cards) -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3 mb-3">
+    <div class="card card-stat-gradient bg-stat-blue text-white shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="font-size-11 font-weight-bold text-uppercase letter-spacing-1 text-white-90">Usuarios Totales</span>
+          <div class="stat-icon-circle">
+            <i class="typcn typcn-group text-white font-size-22"></i>
+          </div>
         </div>
-        <div class="stat-icon-badge bg-white-20 text-white">
-          <i class="typcn typcn-group font-size-24"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-custom bg-stat-purple text-white shadow-sm">
-      <div class="card-body p-4 d-flex align-items-center justify-content-between">
-        <div>
-          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Superadministradores</p>
-          <h2 class="font-weight-bold mb-0 font-size-28">{{ superAdminCount }}</h2>
-        </div>
-        <div class="stat-icon-badge bg-white-20 text-white">
-          <i class="typcn typcn-key font-size-24"></i>
+        <div class="d-flex align-items-baseline">
+          <h2 class="font-weight-bold mb-0 font-size-32 text-white">{{ totalUsers }}</h2>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-custom bg-stat-celeste text-white shadow-sm">
-      <div class="card-body p-4 d-flex align-items-center justify-content-between">
-        <div>
-          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Administradores</p>
-          <h2 class="font-weight-bold mb-0 font-size-28">{{ adminCount }}</h2>
+  <div class="col-6 col-lg-3 mb-3">
+    <div class="card card-stat-gradient bg-stat-purple text-white shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="font-size-11 font-weight-bold text-uppercase letter-spacing-1 text-white-90">Superadmins</span>
+          <div class="stat-icon-circle">
+            <i class="typcn typcn-key text-white font-size-22"></i>
+          </div>
         </div>
-        <div class="stat-icon-badge bg-white-20 text-white">
-          <i class="typcn typcn-user-outline font-size-24"></i>
+        <div class="d-flex align-items-baseline">
+          <h2 class="font-weight-bold mb-0 font-size-32 text-white">{{ superAdminCount }}</h2>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-md-3 grid-margin stretch-card">
-    <div class="card card-stat-custom bg-stat-emerald text-white shadow-sm">
-      <div class="card-body p-4 d-flex align-items-center justify-content-between">
-        <div>
-          <p class="mb-1 text-white-80 font-weight-semibold font-size-12 text-uppercase letter-spacing-1">Cuentas Verificadas</p>
-          <h2 class="font-weight-bold mb-0 font-size-28">{{ verifiedCount }}</h2>
+  <div class="col-6 col-lg-3 mb-3">
+    <div class="card card-stat-gradient bg-stat-celeste text-white shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="font-size-11 font-weight-bold text-uppercase letter-spacing-1 text-white-90">Administradores</span>
+          <div class="stat-icon-circle">
+            <i class="typcn typcn-user-outline text-white font-size-22"></i>
+          </div>
         </div>
-        <div class="stat-icon-badge bg-white-20 text-white">
-          <i class="typcn typcn-tick font-size-24"></i>
+        <div class="d-flex align-items-baseline">
+          <h2 class="font-weight-bold mb-0 font-size-32 text-white">{{ adminCount }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3 mb-3">
+    <div class="card card-stat-gradient bg-stat-emerald text-white shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="font-size-11 font-weight-bold text-uppercase letter-spacing-1 text-white-90">Verificados</span>
+          <div class="stat-icon-circle">
+            <i class="typcn typcn-tick text-white font-size-22"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-baseline">
+          <h2 class="font-weight-bold mb-0 font-size-32 text-white">{{ verifiedCount }}</h2>
         </div>
       </div>
     </div>
@@ -123,10 +131,10 @@
             <td class="px-4 py-3">
               <div class="d-flex align-items-center">
                 <div class="avatar-circle-sm bg-gradient-blue text-white font-weight-bold mr-3">
-                  {{ u.name.charAt(0).toUpperCase() }}
+                  {{ (u.name | titlecase).charAt(0) }}
                 </div>
                 <div>
-                  <h6 class="mb-0 font-weight-bold text-slate-800 font-size-14">{{ u.name }}</h6>
+                  <h6 class="mb-0 font-weight-bold text-slate-800 font-size-14">{{ u.name | titlecase }}</h6>
                   <small class="text-slate-400 font-size-11">Registrado {{ u.createdAt | date:'mediumDate' }}</small>
                 </div>
               </div>

@@ -24,6 +24,24 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  onNameInput(event: any): void {
+    const input = event.target as HTMLInputElement;
+    if (!input) return;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    
+    const val = input.value;
+    const formatted = val.replace(/(^|\s)(\S)(\S*)/g, (match, prefix, firstChar, rest) => {
+      return prefix + firstChar.toUpperCase() + rest.toLowerCase();
+    });
+
+    this.name = formatted;
+    input.value = formatted;
+    if (start !== null && end !== null) {
+      input.setSelectionRange(start, end);
+    }
+  }
+
   async onRegister(): Promise<void> {
     if (!this.name.trim() || !this.email.trim() || !this.password) {
       this.errorMessage = 'Por favor completa todos los campos obligatorios.';

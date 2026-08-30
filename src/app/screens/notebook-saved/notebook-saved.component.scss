@@ -1,68 +1,40 @@
-.bg-slate-950 {
-  background-color: #020617 !important;
-}
-
-.border-slate {
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
 /* ==========================================================================
-   QUICK NOTES CUSTOM STYLING
-   ========================================================================== */
-.quick-notes-scroll-container {
-  /* Ocultar barra de scroll pero mantener funcionalidad */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-  }
-}
-
-.quick-note-card {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    transform: translateY(-2px);
-    border-color: rgba(2, 132, 199, 0.3) !important;
-    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
-  }
-}
-
-/* ==========================================================================
-   SAVED LINKS SQUARE CARDS
+   SAVED LINKS SQUARE CARDS (LIQUID GLASS & MODERN STYLING)
    ========================================================================== */
 .link-square-card {
   width: 100%;
   aspect-ratio: 1 / 1; /* Forzar proporción cuadrada */
   justify-content: center;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 250, 252, 0.78) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-style: solid !important;
+  border-top-width: 1.5px !important;
+  border-right-width: 1.5px !important;
+  border-bottom-width: 1.5px !important;
+  border-left-width: 5px !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06), inset 0 1.5px 1px rgba(255, 255, 255, 0.95) !important;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
 
   /* Estilos del wrapper del icono */
   .link-icon-wrapper {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
-    background-color: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    width: 46px;
+    height: 46px;
+    min-height: 46px;
+    border-radius: 14px;
     transition: all 0.25s ease;
+    backdrop-filter: blur(8px);
 
     i {
-      font-size: 22px;
+      font-size: 24px;
       line-height: 1;
     }
   }
 
-  /* Acciones flotantes */
+  /* Acciones flotantes (Botón eliminar) */
   .card-floating-actions {
     position: absolute;
     top: 8px;
@@ -75,37 +47,31 @@
 
   /* Título y Dominio */
   .link-card-title {
-    font-size: 0.825rem;
+    font-size: 0.85rem;
+    font-weight: 700;
     line-height: 1.3;
     padding: 0 4px;
+    color: #0f172a !important;
   }
 
   .link-card-domain {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     letter-spacing: 0.2px;
+    color: #64748b !important;
   }
 
   .link-card-desc {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     line-height: 1.25;
-    margin-top: 6px;
-    opacity: 0.85;
+    margin-top: 4px;
+    color: #475569 !important;
   }
 
-  /* Efectos hover */
+  /* Efectos hover LED */
   &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(16, 185, 129, 0.35) !important;
-    box-shadow: 0 12px 20px -8px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
-    .link-icon-wrapper {
-      background-color: #10b981;
-      border-color: #10b981;
-
-      i {
-        color: #ffffff !important;
-      }
-    }
+    transform: translateY(-2px);
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 1.5px #38bdf8, 0 0 16px rgba(56, 189, 248, 0.5), inset 0 0 6px rgba(56, 189, 248, 0.15) !important;
 
     .card-floating-actions {
       opacity: 1;
@@ -115,43 +81,186 @@
 }
 
 /* ==========================================================================
-   ICON SELECTOR
+   ICON SELECTOR (LIQUID GLASS & CRISP CONTRAST)
    ========================================================================== */
 .icon-picker-grid {
   display: grid !important;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 8px !important;
 
   .icon-select-btn {
-    aspect-ratio: 1;
-    padding: 0;
-    background-color: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
-    cursor: pointer;
+    aspect-ratio: 1 !important;
+    padding: 0 !important;
+    background-color: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease !important;
+
+    i {
+      color: #475569 !important;
+    }
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.03);
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.2);
+      background-color: #f1f5f9 !important;
+      color: #0284c7 !important;
+      border-color: #93c5fd !important;
+      transform: scale(1.08) !important;
+
+      i {
+        color: #0284c7 !important;
+      }
     }
 
     &.active {
-      background-color: rgba(14, 165, 233, 0.1);
-      border-color: #0ea5e9;
-      color: #0ea5e9;
-      box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+      background-color: #e0f2fe !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+      transform: scale(1.08) !important;
+
+      i {
+        color: #0284c7 !important;
+      }
     }
   }
 }
 
 /* ==========================================================================
-   TEXT TRUNCATE 2 LINES
+   INPUTS & MODAL CUSTOM (WHITE & HIGH CONTRAST)
    ========================================================================== */
+.input-custom {
+  border-radius: 12px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  padding: 10px 14px !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+
+  &::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  &:focus {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14) !important;
+    outline: none !important;
+  }
+}
+
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1050;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1060;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog-custom {
+  width: 100%;
+  max-width: 520px;
+  margin: 1.75rem auto;
+  padding: 0 1rem;
+}
+
+.modal-content-custom {
+  background-color: #ffffff !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .text-truncate-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   MOBILE SCREEN OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 991.98px) {
+  .container-fluid {
+    padding-bottom: 95px !important;
+  }
+
+  .link-square-card {
+    border-radius: 16px !important;
+    padding: 0.85rem !important;
+
+    .card-floating-actions {
+      opacity: 1 !important;
+      transform: none !important;
+      top: 6px !important;
+      right: 6px !important;
+
+      .btn-action-icon-sm {
+        width: 26px !important;
+        height: 26px !important;
+        min-width: 26px !important;
+
+        i {
+          font-size: 13px !important;
+        }
+      }
+    }
+
+    .link-icon-wrapper {
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+
+      i {
+        font-size: 20px !important;
+      }
+    }
+
+    .link-card-title {
+      font-size: 0.8rem !important;
+    }
+
+    .link-card-domain {
+      font-size: 0.65rem !important;
+    }
+  }
+
+  .icon-picker-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
 }

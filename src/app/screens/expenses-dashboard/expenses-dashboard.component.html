@@ -291,7 +291,7 @@
       <!-- Barra Superior de Pestañas & Buscador (Solo Desktop) -->
       <div class="view-switcher-bar bg-white rounded-2xl p-2-5 shadow-sm mb-4 border border-slate-100 d-none d-lg-flex align-items-center justify-content-between gap-3">
         
-        <!-- Pestañas de Vista en Web: 1. Categorías primero, luego 2. Gastos, 3. Gráficas -->
+        <!-- Pestañas de Vista en Web: 1. Categorías, 2. Gastos, 3. Bonos, 4. Gráficas -->
         <div class="nav-pills-custom d-flex flex-wrap gap-1">
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'categorias' || (!isMobile && activeTab === 'gestion')" (click)="setActiveTab('categorias')">
             <i class="typcn typcn-folder-open mr-2 font-size-18"></i> Categorías & Subcategorías
@@ -299,6 +299,10 @@
 
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'movimientos'" (click)="setActiveTab('movimientos')">
             <i class="typcn typcn-th-list mr-2 font-size-18"></i> Registro de Gastos ({{ getAllMonthExpenses().length }})
+          </button>
+
+          <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'bonos'" (click)="setActiveTab('bonos')">
+            <i class="typcn typcn-gift mr-2 font-size-18 text-emerald"></i> Bonos & Extras ({{ monthExtraIncomes.length }})
           </button>
 
           <button class="btn btn-pill-tab d-inline-flex align-items-center" [class.active]="activeTab === 'graficas'" (click)="setActiveTab('graficas')">
@@ -462,11 +466,56 @@
         <!-- Grid de Categorías -->
         <div class="row" *ngIf="categories.length > 0">
           
-          <div class="col-12 col-xl-6 mb-4" *ngFor="let cat of categories; trackBy: trackByCat">
-            <div class="card category-expense-card border-0 rounded-2xl shadow-sm bg-white h-100 overflow-hidden">
-              
-              <!-- Franja de Color de Categoría -->
-              <div class="category-top-bar" [style.backgroundColor]="cat.color"></div>
+          <div class="col-12 col-xl-6 mb-4" *ngFor="let cat of categories; trackBy: trackByCat; let i = index">
+            <div class="card category-expense-card rounded-2xl shadow-sm h-100 overflow-hidden position-relative"
+                 [style.borderTopColor]="getCategoryBorderColor(cat)"
+                 [style.borderRightColor]="getCategoryBorderColor(cat)"
+                 [style.borderBottomColor]="getCategoryBorderColor(cat)"
+                 [style.borderLeftColor]="cat.color || '#3b82f6'">
+
+              <!-- Decorative Bubbles in Bottom-Right Corner (Category Color) -->
+              <div class="card-watermark-corner" [style.color]="cat.color || '#3b82f6'">
+                <!-- Variant 0 -->
+                <svg *ngIf="i % 4 === 0" viewBox="0 0 120 120" fill="none">
+                  <circle cx="110" cy="110" r="52" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.3" fill="none" />
+                  <circle cx="110" cy="110" r="30" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.1" fill="none" />
+                  <circle cx="110" cy="110" r="12" stroke="currentColor" stroke-opacity="0.26" stroke-width="1.0" fill="none" />
+                  <circle cx="72" cy="88" r="14" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" fill="none" />
+                  <circle cx="88" cy="62" r="8" stroke="currentColor" stroke-opacity="0.18" stroke-width="0.9" fill="none" />
+                  <circle cx="62" cy="108" r="5" fill="currentColor" fill-opacity="0.16" />
+                  <circle cx="96" cy="56" r="3" fill="currentColor" fill-opacity="0.22" />
+                </svg>
+                <!-- Variant 1 -->
+                <svg *ngIf="i % 4 === 1" viewBox="0 0 120 120" fill="none">
+                  <circle cx="105" cy="105" r="46" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.2" stroke-dasharray="4 3" fill="none" />
+                  <circle cx="105" cy="105" r="22" stroke="currentColor" stroke-opacity="0.24" stroke-width="1.0" fill="none" />
+                  <circle cx="76" cy="98" r="16" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" fill="none" />
+                  <circle cx="94" cy="68" r="10" stroke="currentColor" stroke-opacity="0.18" stroke-width="0.9" fill="none" />
+                  <circle cx="68" cy="80" r="6" stroke="currentColor" stroke-opacity="0.20" stroke-width="0.8" fill="none" />
+                  <circle cx="58" cy="110" r="4" fill="currentColor" fill-opacity="0.18" />
+                  <circle cx="84" cy="54" r="3" fill="currentColor" fill-opacity="0.22" />
+                </svg>
+                <!-- Variant 2 -->
+                <svg *ngIf="i % 4 === 2" viewBox="0 0 120 120" fill="none">
+                  <circle cx="108" cy="108" r="48" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.2" fill="none" />
+                  <circle cx="108" cy="108" r="26" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.1" fill="none" />
+                  <circle cx="82" cy="92" r="18" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" fill="none" />
+                  <circle cx="66" cy="106" r="10" stroke="currentColor" stroke-opacity="0.18" stroke-width="0.9" fill="none" />
+                  <circle cx="96" cy="60" r="12" stroke="currentColor" stroke-opacity="0.16" stroke-width="0.9" fill="none" />
+                  <circle cx="74" cy="72" r="4" fill="currentColor" fill-opacity="0.18" />
+                  <circle cx="56" cy="96" r="3" fill="currentColor" fill-opacity="0.22" />
+                </svg>
+                <!-- Variant 3 -->
+                <svg *ngIf="i % 4 === 3" viewBox="0 0 120 120" fill="none">
+                  <circle cx="112" cy="112" r="44" stroke="currentColor" stroke-opacity="0.18" stroke-width="1.3" fill="none" />
+                  <circle cx="112" cy="112" r="20" stroke="currentColor" stroke-opacity="0.24" stroke-width="1.0" fill="none" />
+                  <circle cx="80" cy="100" r="16" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.0" fill="none" />
+                  <circle cx="70" cy="82" r="8" stroke="currentColor" stroke-opacity="0.20" stroke-width="0.9" fill="none" />
+                  <circle cx="92" cy="64" r="10" stroke="currentColor" stroke-opacity="0.16" stroke-width="0.9" fill="none" />
+                  <circle cx="60" cy="112" r="5" fill="currentColor" fill-opacity="0.16" />
+                  <circle cx="100" cy="52" r="3" fill="currentColor" fill-opacity="0.22" />
+                </svg>
+              </div>
 
               <div class="card-body p-3-5">
                 
@@ -738,7 +787,95 @@
                 (click)="nextHistoryPage($event)">
                 Siguiente <i class="typcn typcn-chevron-right ml-1"></i>
               </button>
+        </div>
+
+      </div>
+
+      <!-- VISTA 4: BONOS E INGRESOS EXTRA -->
+      <div *ngIf="activeTab === 'bonos'">
+        
+        <div class="card border-0 rounded-2xl shadow-sm bg-white p-4">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2-5">
+            <div>
+              <h4 class="font-weight-bold text-slate-800 mb-0 font-size-18 d-flex align-items-center">
+                <i class="typcn typcn-gift text-emerald mr-2 font-size-22"></i> Bonos e Ingresos Extra - {{ formattedMonthLabel }}
+              </h4>
+              <small class="text-slate-400 font-size-13">Ingresos adicionales, gratificaciones y bonos registrados en este periodo</small>
             </div>
+
+            <button class="btn btn-gradient-emerald text-white rounded-xl font-weight-bold px-3 py-1-5 font-size-13 d-flex align-items-center shadow-sm hover-lift" (click)="openAddExtraIncomeModal()">
+              <i class="typcn typcn-plus font-size-16 mr-1-5"></i> + Nuevo Bono
+            </button>
+          </div>
+
+          <!-- Estado Vacío -->
+          <div *ngIf="getFilteredMonthBonos().length === 0" class="text-center py-5 text-slate-400">
+            <div class="icon-avatar-md bg-emerald-50 text-emerald mx-auto mb-2 d-flex align-items-center justify-content-center rounded-2xl" style="width: 52px; height: 52px;">
+              <i class="typcn typcn-gift font-size-28"></i>
+            </div>
+            <p class="font-weight-semibold font-size-15 mb-1 text-slate-700">No hay bonos registrados para este mes</p>
+            <p class="font-size-13 text-slate-400 mb-3">Registra gratificaciones o ingresos freelance para sumarlos a tu balance disponible.</p>
+            <button class="btn btn-gradient-emerald text-white rounded-xl font-weight-bold px-4 py-2 font-size-13 shadow-sm" (click)="openAddExtraIncomeModal()">
+              <i class="typcn typcn-plus mr-1"></i> Registrar Bono
+            </button>
+          </div>
+
+          <!-- Tabla de Bonos Registrados -->
+          <div class="table-responsive" *ngIf="getFilteredMonthBonos().length > 0">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-slate-50 text-slate-500 font-size-12 text-uppercase">
+                <tr>
+                  <th class="border-0 px-3 py-2-5">Fecha</th>
+                  <th class="border-0 px-3 py-2-5">Concepto</th>
+                  <th class="border-0 px-3 py-2-5">Notas</th>
+                  <th class="border-0 px-3 py-2-5 text-right">Monto Extra</th>
+                  <th class="border-0 px-3 py-2-5 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of getFilteredMonthBonos(); trackBy: trackByIncome">
+                  <td class="px-3 py-3 text-slate-600 font-size-13 font-weight-medium">
+                    <i class="typcn typcn-calendar text-slate-400 mr-1 font-size-14"></i> {{ item.date }}
+                  </td>
+                  <td class="px-3 py-3 font-weight-semibold text-slate-800 font-size-14">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="icon-avatar-xs bg-emerald-100 text-emerald-700 rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                        <i class="typcn typcn-gift font-size-16"></i>
+                      </div>
+                      <span>{{ item.title }}</span>
+                    </div>
+                  </td>
+                  <td class="px-3 py-3 text-slate-500 font-size-13">
+                    {{ item.notes || '-' }}
+                  </td>
+                  <td class="px-3 py-3 text-right">
+                    <span class="font-weight-bold text-emerald-600 font-size-15">
+                      + {{ currencySymbol }} {{ item.amount | number:'1.2-2' }}
+                    </span>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-1">
+                      <button class="btn btn-action-icon-sm btn-action-edit" (click)="openEditExtraIncomeModal(item, $event)" title="Editar Bono">
+                        <i class="typcn typcn-edit"></i>
+                      </button>
+                      <button class="btn btn-action-icon-sm btn-action-delete" (click)="deleteExtraIncome(item, $event)" title="Eliminar Bono">
+                        <i class="typcn typcn-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totalizador de Bonos del Mes -->
+          <div class="card-footer bg-slate-50 border-top p-3 d-flex align-items-center justify-content-between rounded-bottom-2xl" *ngIf="getFilteredMonthBonos().length > 0">
+            <span class="text-slate-600 font-weight-semibold font-size-13">
+              Total Bonos e Ingresos Extra en {{ formattedMonthLabel }}:
+            </span>
+            <span class="font-weight-bold text-emerald-600 font-size-16">
+              + {{ currencySymbol }} {{ totalExtraIncome | number:'1.2-2' }}
+            </span>
           </div>
 
         </div>

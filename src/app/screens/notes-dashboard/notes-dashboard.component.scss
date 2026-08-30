@@ -33,45 +33,62 @@
 }
 
 .card-stat-gradient {
-  border-radius: 16px;
+  border-radius: 20px !important;
   overflow: hidden;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.12), inset 0 2px 1.5px rgba(255, 255, 255, 0.5) !important;
   will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+  }
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px -5px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 24px 48px -8px rgba(15, 23, 42, 0.18), inset 0 2px 1.5px rgba(255, 255, 255, 0.7) !important;
   }
 }
 
 .bg-stat-blue {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.95) 0%, rgba(4, 120, 87, 0.98) 100%) !important;
 }
 
 .bg-stat-rose {
-  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.95) 0%, rgba(225, 29, 72, 0.98) 100%) !important;
 }
 
 .bg-stat-amber {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95) 0%, rgba(217, 119, 6, 0.98) 100%) !important;
 }
 
 .bg-stat-emerald {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.98) 100%) !important;
 }
 
 .stat-icon-circle {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(12px);
 }
 
 .bg-white-20 {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
 }
 
 /* ==========================================================================
@@ -95,24 +112,311 @@
   }
 }
 
-.card-note-modern {
-  background: #ffffff;
-  border-radius: 16px !important;
+.card-note-modern,
+.kanban-card {
+  border-radius: 18px !important;
   will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
   overflow: hidden;
-  border: 1px solid #e2e8f0 !important;
+  position: relative !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    opacity: 0.95;
+  }
+
+  .card-body,
+  > * {
+    position: relative;
+    z-index: 2;
+    background: transparent !important;
+  }
+
+  /* 1. ALTA PRIORIDAD (RED / CORAL - Concentrated in Bottom-Right Corner) */
+  &.prio-alta {
+    border: 1.5px solid rgba(239, 68, 68, 0.45) !important;
+    border-left: 6px solid #ef4444 !important;
+
+    &::before {
+      background-image:
+        radial-gradient(circle at 96% 96%, transparent 42px, rgba(239, 68, 68, 0.24) 42.5px, rgba(239, 68, 68, 0.24) 43.8px, transparent 44.3px),
+        radial-gradient(circle at 96% 96%, transparent 18px, rgba(239, 68, 68, 0.28) 18.5px, rgba(239, 68, 68, 0.28) 19.8px, transparent 20.3px),
+        radial-gradient(circle at 82% 84%, transparent 12px, rgba(239, 68, 68, 0.22) 12.5px, rgba(239, 68, 68, 0.22) 13.8px, transparent 14.3px),
+        radial-gradient(circle at 74% 90%, rgba(239, 68, 68, 0.35) 0, rgba(239, 68, 68, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 88% 72%, rgba(239, 68, 68, 0.28) 0, rgba(239, 68, 68, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+2)::before {
+      background-image:
+        radial-gradient(circle at 100% 100%, transparent 54px, rgba(239, 68, 68, 0.22) 54.5px, rgba(239, 68, 68, 0.22) 55.8px, transparent 56.3px),
+        radial-gradient(circle at 86% 88%, transparent 26px, rgba(239, 68, 68, 0.26) 26.5px, rgba(239, 68, 68, 0.26) 27.8px, transparent 28.3px),
+        radial-gradient(circle at 76% 80%, transparent 8px, rgba(239, 68, 68, 0.22) 8.5px, rgba(239, 68, 68, 0.22) 9.7px, transparent 10.2px),
+        radial-gradient(circle at 92% 70%, rgba(239, 68, 68, 0.35) 0, rgba(239, 68, 68, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 78% 94%, rgba(239, 68, 68, 0.28) 0, rgba(239, 68, 68, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+3)::before {
+      background-image:
+        radial-gradient(circle at 92% 92%, transparent 32px, rgba(239, 68, 68, 0.24) 32.5px, rgba(239, 68, 68, 0.24) 33.8px, transparent 34.3px),
+        radial-gradient(circle at 92% 92%, transparent 14px, rgba(239, 68, 68, 0.28) 14.5px, rgba(239, 68, 68, 0.28) 15.7px, transparent 16.2px),
+        radial-gradient(circle at 78% 86%, transparent 16px, rgba(239, 68, 68, 0.22) 16.5px, rgba(239, 68, 68, 0.22) 17.8px, transparent 18.3px),
+        radial-gradient(circle at 86% 74%, rgba(239, 68, 68, 0.35) 0, rgba(239, 68, 68, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 70% 88%, rgba(239, 68, 68, 0.28) 0, rgba(239, 68, 68, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n)::before {
+      background-image:
+        radial-gradient(circle at 94% 94%, transparent 46px, rgba(239, 68, 68, 0.22) 46.5px, rgba(239, 68, 68, 0.22) 47.8px, transparent 48.3px),
+        radial-gradient(circle at 80% 80%, transparent 20px, rgba(239, 68, 68, 0.26) 20.5px, rgba(239, 68, 68, 0.26) 21.8px, transparent 22.3px),
+        radial-gradient(circle at 90% 66%, transparent 10px, rgba(239, 68, 68, 0.22) 10.5px, rgba(239, 68, 68, 0.22) 11.7px, transparent 12.2px),
+        radial-gradient(circle at 72% 88%, rgba(239, 68, 68, 0.35) 0, rgba(239, 68, 68, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 84% 96%, rgba(239, 68, 68, 0.28) 0, rgba(239, 68, 68, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:hover {
+      border-color: rgba(239, 68, 68, 0.75) !important;
+      border-left-color: #dc2626 !important;
+      box-shadow: 0 16px 36px -6px rgba(239, 68, 68, 0.2) !important;
+    }
+
+    .card-checklist-container {
+      .progress-bar {
+        background-color: #ef4444 !important;
+        background-image: none !important;
+      }
+      .custom-card-checkbox.checked {
+        background-color: #ef4444 !important;
+        border-color: #ef4444 !important;
+      }
+      .checklist-priority-color,
+      .text-checklist-priority {
+        color: #ef4444 !important;
+      }
+    }
+  }
+
+  /* 2. MEDIA PRIORIDAD (ORANGE / AMBER - Concentrated in Bottom-Right Corner) */
+  &.prio-media {
+    border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+    border-left: 6px solid #f59e0b !important;
+
+    &::before {
+      background-image:
+        radial-gradient(circle at 96% 96%, transparent 42px, rgba(245, 158, 11, 0.24) 42.5px, rgba(245, 158, 11, 0.24) 43.8px, transparent 44.3px),
+        radial-gradient(circle at 96% 96%, transparent 18px, rgba(245, 158, 11, 0.28) 18.5px, rgba(245, 158, 11, 0.28) 19.8px, transparent 20.3px),
+        radial-gradient(circle at 82% 84%, transparent 12px, rgba(245, 158, 11, 0.22) 12.5px, rgba(245, 158, 11, 0.22) 13.8px, transparent 14.3px),
+        radial-gradient(circle at 74% 90%, rgba(245, 158, 11, 0.35) 0, rgba(245, 158, 11, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 88% 72%, rgba(245, 158, 11, 0.28) 0, rgba(245, 158, 11, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+2)::before {
+      background-image:
+        radial-gradient(circle at 100% 100%, transparent 54px, rgba(245, 158, 11, 0.22) 54.5px, rgba(245, 158, 11, 0.22) 55.8px, transparent 56.3px),
+        radial-gradient(circle at 86% 88%, transparent 26px, rgba(245, 158, 11, 0.26) 26.5px, rgba(245, 158, 11, 0.26) 27.8px, transparent 28.3px),
+        radial-gradient(circle at 76% 80%, transparent 8px, rgba(245, 158, 11, 0.22) 8.5px, rgba(245, 158, 11, 0.22) 9.7px, transparent 10.2px),
+        radial-gradient(circle at 92% 70%, rgba(245, 158, 11, 0.35) 0, rgba(245, 158, 11, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 78% 94%, rgba(245, 158, 11, 0.28) 0, rgba(245, 158, 11, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+3)::before {
+      background-image:
+        radial-gradient(circle at 92% 92%, transparent 32px, rgba(245, 158, 11, 0.24) 32.5px, rgba(245, 158, 11, 0.24) 33.8px, transparent 34.3px),
+        radial-gradient(circle at 92% 92%, transparent 14px, rgba(245, 158, 11, 0.28) 14.5px, rgba(245, 158, 11, 0.28) 15.7px, transparent 16.2px),
+        radial-gradient(circle at 78% 86%, transparent 16px, rgba(245, 158, 11, 0.22) 16.5px, rgba(245, 158, 11, 0.22) 17.8px, transparent 18.3px),
+        radial-gradient(circle at 86% 74%, rgba(245, 158, 11, 0.35) 0, rgba(245, 158, 11, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 70% 88%, rgba(245, 158, 11, 0.28) 0, rgba(245, 158, 11, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n)::before {
+      background-image:
+        radial-gradient(circle at 94% 94%, transparent 46px, rgba(245, 158, 11, 0.22) 46.5px, rgba(245, 158, 11, 0.22) 47.8px, transparent 48.3px),
+        radial-gradient(circle at 80% 80%, transparent 20px, rgba(245, 158, 11, 0.26) 20.5px, rgba(245, 158, 11, 0.26) 21.8px, transparent 22.3px),
+        radial-gradient(circle at 90% 66%, transparent 10px, rgba(245, 158, 11, 0.22) 10.5px, rgba(245, 158, 11, 0.22) 11.7px, transparent 12.2px),
+        radial-gradient(circle at 72% 88%, rgba(245, 158, 11, 0.35) 0, rgba(245, 158, 11, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 84% 96%, rgba(245, 158, 11, 0.28) 0, rgba(245, 158, 11, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:hover {
+      border-color: rgba(245, 158, 11, 0.75) !important;
+      border-left-color: #d97706 !important;
+      box-shadow: 0 16px 36px -6px rgba(245, 158, 11, 0.2) !important;
+    }
+
+    .card-checklist-container {
+      .progress-bar {
+        background-color: #f59e0b !important;
+        background-image: none !important;
+      }
+      .custom-card-checkbox.checked {
+        background-color: #f59e0b !important;
+        border-color: #f59e0b !important;
+      }
+      .checklist-priority-color,
+      .text-checklist-priority {
+        color: #f59e0b !important;
+      }
+    }
+  }
+
+  /* 3. BAJA PRIORIDAD (GREEN / EMERALD - Concentrated in Bottom-Right Corner) */
+  &.prio-baja {
+    border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+    border-left: 6px solid #10b981 !important;
+
+    &::before {
+      background-image:
+        radial-gradient(circle at 96% 96%, transparent 42px, rgba(16, 185, 129, 0.24) 42.5px, rgba(16, 185, 129, 0.24) 43.8px, transparent 44.3px),
+        radial-gradient(circle at 96% 96%, transparent 18px, rgba(16, 185, 129, 0.28) 18.5px, rgba(16, 185, 129, 0.28) 19.8px, transparent 20.3px),
+        radial-gradient(circle at 82% 84%, transparent 12px, rgba(16, 185, 129, 0.22) 12.5px, rgba(16, 185, 129, 0.22) 13.8px, transparent 14.3px),
+        radial-gradient(circle at 74% 90%, rgba(16, 185, 129, 0.35) 0, rgba(16, 185, 129, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 88% 72%, rgba(16, 185, 129, 0.28) 0, rgba(16, 185, 129, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+2)::before {
+      background-image:
+        radial-gradient(circle at 100% 100%, transparent 54px, rgba(16, 185, 129, 0.22) 54.5px, rgba(16, 185, 129, 0.22) 55.8px, transparent 56.3px),
+        radial-gradient(circle at 86% 88%, transparent 26px, rgba(16, 185, 129, 0.26) 26.5px, rgba(16, 185, 129, 0.26) 27.8px, transparent 28.3px),
+        radial-gradient(circle at 76% 80%, transparent 8px, rgba(16, 185, 129, 0.22) 8.5px, rgba(16, 185, 129, 0.22) 9.7px, transparent 10.2px),
+        radial-gradient(circle at 92% 70%, rgba(16, 185, 129, 0.35) 0, rgba(16, 185, 129, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 78% 94%, rgba(16, 185, 129, 0.28) 0, rgba(16, 185, 129, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+3)::before {
+      background-image:
+        radial-gradient(circle at 92% 92%, transparent 32px, rgba(16, 185, 129, 0.24) 32.5px, rgba(16, 185, 129, 0.24) 33.8px, transparent 34.3px),
+        radial-gradient(circle at 92% 92%, transparent 14px, rgba(16, 185, 129, 0.28) 14.5px, rgba(16, 185, 129, 0.28) 15.7px, transparent 16.2px),
+        radial-gradient(circle at 78% 86%, transparent 16px, rgba(16, 185, 129, 0.22) 16.5px, rgba(16, 185, 129, 0.22) 17.8px, transparent 18.3px),
+        radial-gradient(circle at 86% 74%, rgba(16, 185, 129, 0.35) 0, rgba(16, 185, 129, 0.35) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 70% 88%, rgba(16, 185, 129, 0.28) 0, rgba(16, 185, 129, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n)::before {
+      background-image:
+        radial-gradient(circle at 94% 94%, transparent 46px, rgba(16, 185, 129, 0.22) 46.5px, rgba(16, 185, 129, 0.22) 47.8px, transparent 48.3px),
+        radial-gradient(circle at 80% 80%, transparent 20px, rgba(16, 185, 129, 0.26) 20.5px, rgba(16, 185, 129, 0.26) 21.8px, transparent 22.3px),
+        radial-gradient(circle at 90% 66%, transparent 10px, rgba(16, 185, 129, 0.22) 10.5px, rgba(16, 185, 129, 0.22) 11.7px, transparent 12.2px),
+        radial-gradient(circle at 72% 88%, rgba(16, 185, 129, 0.35) 0, rgba(16, 185, 129, 0.35) 3px, transparent 4px),
+        radial-gradient(circle at 84% 96%, rgba(16, 185, 129, 0.28) 0, rgba(16, 185, 129, 0.28) 2px, transparent 3px) !important;
+    }
+
+    &:hover {
+      border-color: rgba(16, 185, 129, 0.75) !important;
+      border-left-color: #059669 !important;
+      box-shadow: 0 16px 36px -6px rgba(16, 185, 129, 0.2) !important;
+    }
+
+    .card-checklist-container {
+      .progress-bar {
+        background-color: #10b981 !important;
+        background-image: none !important;
+      }
+      .custom-card-checkbox.checked {
+        background-color: #10b981 !important;
+        border-color: #10b981 !important;
+      }
+      .checklist-priority-color,
+      .text-checklist-priority {
+        color: #10b981 !important;
+      }
+    }
+  }
+
+  /* 4. TAREA FINALIZADA / COMPLETADA (GREEN OVERRIDE - Concentrated in Bottom-Right Corner) */
+  &.status-completada {
+    border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+    border-left: 6px solid #10b981 !important;
+    background-color: #ffffff !important;
+
+    &::before {
+      background-image:
+        radial-gradient(circle at 96% 96%, transparent 42px, rgba(16, 185, 129, 0.28) 42.5px, rgba(16, 185, 129, 0.28) 43.8px, transparent 44.3px),
+        radial-gradient(circle at 96% 96%, transparent 18px, rgba(16, 185, 129, 0.32) 18.5px, rgba(16, 185, 129, 0.32) 19.8px, transparent 20.3px),
+        radial-gradient(circle at 82% 84%, transparent 12px, rgba(16, 185, 129, 0.24) 12.5px, rgba(16, 185, 129, 0.24) 13.8px, transparent 14.3px),
+        radial-gradient(circle at 74% 90%, rgba(16, 185, 129, 0.38) 0, rgba(16, 185, 129, 0.38) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 88% 72%, rgba(16, 185, 129, 0.3) 0, rgba(16, 185, 129, 0.3) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+2)::before {
+      background-image:
+        radial-gradient(circle at 100% 100%, transparent 54px, rgba(16, 185, 129, 0.26) 54.5px, rgba(16, 185, 129, 0.26) 55.8px, transparent 56.3px),
+        radial-gradient(circle at 86% 88%, transparent 26px, rgba(16, 185, 129, 0.3) 26.5px, rgba(16, 185, 129, 0.3) 27.8px, transparent 28.3px),
+        radial-gradient(circle at 76% 80%, transparent 8px, rgba(16, 185, 129, 0.24) 8.5px, rgba(16, 185, 129, 0.24) 9.7px, transparent 10.2px),
+        radial-gradient(circle at 92% 70%, rgba(16, 185, 129, 0.38) 0, rgba(16, 185, 129, 0.38) 3px, transparent 4px),
+        radial-gradient(circle at 78% 94%, rgba(16, 185, 129, 0.3) 0, rgba(16, 185, 129, 0.3) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n+3)::before {
+      background-image:
+        radial-gradient(circle at 92% 92%, transparent 32px, rgba(16, 185, 129, 0.28) 32.5px, rgba(16, 185, 129, 0.28) 33.8px, transparent 34.3px),
+        radial-gradient(circle at 92% 92%, transparent 14px, rgba(16, 185, 129, 0.32) 14.5px, rgba(16, 185, 129, 0.32) 15.7px, transparent 16.2px),
+        radial-gradient(circle at 78% 86%, transparent 16px, rgba(16, 185, 129, 0.24) 16.5px, rgba(16, 185, 129, 0.24) 17.8px, transparent 18.3px),
+        radial-gradient(circle at 86% 74%, rgba(16, 185, 129, 0.38) 0, rgba(16, 185, 129, 0.38) 2.5px, transparent 3.5px),
+        radial-gradient(circle at 70% 88%, rgba(16, 185, 129, 0.3) 0, rgba(16, 185, 129, 0.3) 2px, transparent 3px) !important;
+    }
+
+    &:nth-child(4n)::before {
+      background-image:
+        radial-gradient(circle at 94% 94%, transparent 46px, rgba(16, 185, 129, 0.26) 46.5px, rgba(16, 185, 129, 0.26) 47.8px, transparent 48.3px),
+        radial-gradient(circle at 80% 80%, transparent 20px, rgba(16, 185, 129, 0.3) 20.5px, rgba(16, 185, 129, 0.3) 21.8px, transparent 22.3px),
+        radial-gradient(circle at 90% 66%, transparent 10px, rgba(16, 185, 129, 0.24) 10.5px, rgba(16, 185, 129, 0.24) 11.7px, transparent 12.2px),
+        radial-gradient(circle at 72% 88%, rgba(16, 185, 129, 0.38) 0, rgba(16, 185, 129, 0.38) 3px, transparent 4px),
+        radial-gradient(circle at 84% 96%, rgba(16, 185, 129, 0.3) 0, rgba(16, 185, 129, 0.3) 2px, transparent 3px) !important;
+    }
+
+    &:hover {
+      border-color: rgba(16, 185, 129, 0.85) !important;
+      border-left-color: #059669 !important;
+      box-shadow: 0 16px 36px -6px rgba(16, 185, 129, 0.25) !important;
+    }
+
+    .card-checklist-container {
+      .progress-bar {
+        background-color: #10b981 !important;
+        background-image: none !important;
+      }
+      .custom-card-checkbox.checked {
+        background-color: #10b981 !important;
+        border-color: #10b981 !important;
+      }
+      .checklist-priority-color,
+      .text-checklist-priority {
+        color: #10b981 !important;
+      }
+    }
+  }
+
+  /* Default */
+  &:not(.prio-alta):not(.prio-media):not(.prio-baja):not(.status-completada) {
+    border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+    border-left: 6px solid #10b981 !important;
+
+    &::before {
+      background-image:
+        radial-gradient(circle at 96% 96%, transparent 42px, rgba(16, 185, 129, 0.24) 42.5px, rgba(16, 185, 129, 0.24) 43.8px, transparent 44.3px),
+        radial-gradient(circle at 96% 96%, transparent 18px, rgba(16, 185, 129, 0.28) 18.5px, rgba(16, 185, 129, 0.28) 19.8px, transparent 20.3px),
+        radial-gradient(circle at 82% 84%, transparent 12px, rgba(16, 185, 129, 0.22) 12.5px, rgba(16, 185, 129, 0.22) 13.8px, transparent 14.3px),
+        radial-gradient(circle at 74% 90%, rgba(16, 185, 129, 0.35) 0, rgba(16, 185, 129, 0.35) 2.5px, transparent 3.5px) !important;
+    }
+  }
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.12) !important;
-    border-color: #cbd5e1 !important;
   }
 }
 
 .text-truncate-multiline-compact {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -255,22 +559,22 @@
 }
 
 .kanban-card {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid #e2e8f0 !important;
   border-radius: 14px !important;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  box-shadow: none !important;
   cursor: pointer;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.12) !important;
+    box-shadow: none !important;
     border-color: #cbd5e1 !important;
   }
 
   &.pinned-kanban {
     border-color: #f59e0b !important;
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.16) !important;
+    box-shadow: none !important;
   }
 
   .card-body {
@@ -317,6 +621,7 @@
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -349,8 +654,69 @@
 }
 
 /* ==========================================================================
-   VIEW SWITCHER PROMINENT BUTTONS
+   VIEW SWITCHER PROMINENT BUTTONS & DEDICATED NAV TABS
    ========================================================================== */
+.notes-main-nav-tabs {
+  .btn-notes-nav-tab {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border-color: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+
+      i {
+        color: #ffffff !important;
+      }
+
+      .badge-tab-count {
+        background: rgba(255, 255, 255, 0.28);
+        color: #ffffff;
+      }
+    }
+
+    &.btn-tab-purple.active {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+      border-color: #8b5cf6 !important;
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.28) !important;
+    }
+
+    &.btn-tab-emerald.active {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
+    }
+
+    .badge-tab-count {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+  }
+}
+
 .view-mode-selector-pill {
   background-color: #ffffff;
   border: 1.5px solid #e2e8f0 !important;
@@ -980,9 +1346,10 @@
   // 3. Remove nested inner scrolling height limits so the cards flow smoothly in the page
   .kanban-column {
     min-height: auto !important;
-    background-color: transparent !important;
-    border: none !important;
-    padding: 0 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 12px 14px !important;
   }
 
   .kanban-cards-list {
@@ -990,16 +1357,16 @@
     min-height: auto !important;
     overflow-y: visible !important;
     overflow-x: visible !important;
-    padding-right: 0 !important;
-    gap: 0.65rem !important;
+    padding: 4px 2px !important;
+    gap: 12px !important;
   }
 
   // 4. Compact Card Sizing in Mobile / APK (Kanban & Grid)
   .kanban-card {
-    border-radius: 12px !important;
+    border-radius: 14px !important;
     border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
-    margin-bottom: 0.5rem !important;
+    box-shadow: none !important;
+    margin-bottom: 0.75rem !important;
 
     .card-body {
       padding: 0.7rem 0.8rem !important;
@@ -1064,5 +1431,148 @@
     .card-text {
       font-size: 0.775rem !important;
     }
+  }
+}
+
+/* ==========================================================================
+   DESKTOP ZERO-SCROLL WORKSPACE VIEWPORT FIT (NO WINDOW/PAGE SCROLL)
+   ========================================================================== */
+@media (min-width: 992px) {
+  :host {
+    height: calc(100vh - 80px) !important;
+    max-height: calc(100vh - 80px) !important;
+    overflow: hidden !important;
+  }
+
+  .notes-dashboard-wrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .stats-row-container {
+    margin-bottom: 0.5rem !important;
+    flex-shrink: 0 !important;
+
+    .card-stat-gradient {
+      min-height: 86px !important;
+
+      .card-body {
+        padding: 0.65rem 0.9rem !important;
+      }
+
+      .stat-icon-circle {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 10px !important;
+
+        i {
+          font-size: 18px !important;
+        }
+      }
+
+      h2 {
+        font-size: 22px !important;
+      }
+    }
+  }
+
+  .sticky-dashboard-toolbar {
+    margin-bottom: 0.4rem !important;
+    flex-shrink: 0 !important;
+    position: static !important;
+    top: auto !important;
+
+    .card-body {
+      padding: 0.4rem 0.85rem !important;
+    }
+  }
+
+  .kanban-board-wrapper {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: calc(100vh - 250px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .kanban-col-responsive {
+    height: 100% !important;
+    max-height: 100% !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .kanban-column {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 8px 10px 6px 10px !important;
+    margin-bottom: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .kanban-column-header {
+    flex-shrink: 0 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .kanban-cards-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 4px !important;
+  }
+
+  .kanban-column-footer {
+    flex-shrink: 0 !important;
+    padding-top: 4px !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE OPTIMIZATIONS (MIS NOTAS)
+   ========================================================================== */
+@media (max-width: 991px) {
+  .notes-dashboard-wrapper {
+    padding-bottom: 95px !important;
+  }
+
+  .kanban-board-wrapper {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .kanban-col-responsive {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    padding: 0 4px !important;
+  }
+
+  .kanban-column {
+    border-radius: 16px !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+
+  .filter-search-toolbar {
+    border-radius: 18px !important;
+    padding: 10px !important;
   }
 }

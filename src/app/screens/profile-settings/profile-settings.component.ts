@@ -125,6 +125,24 @@ export class ProfileSettingsComponent implements OnInit {
     this.customCurrency = '';
   }
 
+  onNameInput(event: any): void {
+    const input = event.target as HTMLInputElement;
+    if (!input) return;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    
+    const val = input.value;
+    const formatted = val.replace(/(^|\s)(\S)(\S*)/g, (match, prefix, firstChar, rest) => {
+      return prefix + firstChar.toUpperCase() + rest.toLowerCase();
+    });
+
+    this.profileName = formatted;
+    input.value = formatted;
+    if (start !== null && end !== null) {
+      input.setSelectionRange(start, end);
+    }
+  }
+
   updateProfile(): void {
     this.profileError = '';
     this.profileSuccess = '';
