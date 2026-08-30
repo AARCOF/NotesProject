@@ -5,6 +5,7 @@ import { User } from '../../core/models/user.model';
 import { NotesService } from '../../services/notes.service';
 import { ExpenseService } from '../../services/expense.service';
 import { SharedTasksService } from '../../services/shared-tasks.service';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-mobile-header',
@@ -30,6 +31,7 @@ export class MobileHeaderComponent implements OnInit {
     private notesService: NotesService,
     private expenseService: ExpenseService,
     private sharedTasksService: SharedTasksService,
+    private dialogService: ModalDialogService,
     public router: Router
   ) {}
 
@@ -161,9 +163,16 @@ export class MobileHeaderComponent implements OnInit {
   }
 
   onLogout(): void {
-    if (confirm('¿Deseas cerrar sesión en NoteYou?')) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-    }
+    this.dialogService.confirm({
+      title: '¿Cerrar sesión?',
+      message: '¿Deseas cerrar sesión en NoteYou?',
+      confirmText: 'Cerrar sesión',
+      variant: 'danger',
+      icon: 'typcn-power',
+      onConfirm: () => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

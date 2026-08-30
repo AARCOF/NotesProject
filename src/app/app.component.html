@@ -99,3 +99,71 @@
   [isOpen]="showCollaborationModal"
   (close)="onCollaborationModalClose()">
 </app-collaboration-modal>
+
+<!-- =========================================================================
+     MODAL GLOBAL DE CONFIRMACIÓN Y ALERTA (REEMPLAZA CONFIRM / ALERT NATIVOS)
+     ========================================================================= -->
+<ng-container *ngIf="dialogService.dialogState$ | async as dialog">
+  <div class="modal-backdrop-custom" *ngIf="dialog.isOpen" (click)="dialogService.close()"></div>
+  <div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="dialog.isOpen" (click)="dialogService.close()">
+    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
+      
+      <div class="modal-body p-4 p-md-4-5 text-center">
+        <!-- Ícono Destacado Circular -->
+        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
+             [ngClass]="{
+               'icon-box-danger': dialog.variant === 'danger',
+               'icon-box-warning': dialog.variant === 'warning',
+               'icon-box-info': dialog.variant === 'info',
+               'icon-box-success': dialog.variant === 'success'
+             }">
+          <i class="typcn" [ngClass]="dialog.icon"></i>
+        </div>
+
+        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
+          {{ dialog.title }}
+        </h4>
+        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
+          {{ dialog.message }}
+        </p>
+
+        <!-- Botones de Acción (Confirmación con 2 botones o Alerta con 1 botón) -->
+        <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1" *ngIf="dialog.isConfirm">
+          <button 
+            type="button" 
+            class="btn-modal-cancel flex-1" 
+            (click)="dialog.onCancel ? dialog.onCancel() : dialogService.close()">
+            {{ dialog.cancelText }}
+          </button>
+          
+          <button 
+            type="button" 
+            class="flex-1"
+            [ngClass]="{
+              'btn-modal-danger': dialog.variant === 'danger',
+              'btn-modal-warning': dialog.variant === 'warning',
+              'btn-modal-primary': dialog.variant === 'info' || dialog.variant === 'success'
+            }"
+            (click)="dialog.onConfirm ? dialog.onConfirm() : dialogService.close()">
+            {{ dialog.confirmText }}
+          </button>
+        </div>
+
+        <div class="pt-1" *ngIf="!dialog.isConfirm">
+          <button 
+            type="button" 
+            class="btn-modal-primary w-100"
+            [ngClass]="{
+              'btn-modal-danger': dialog.variant === 'danger',
+              'btn-modal-warning': dialog.variant === 'warning'
+            }"
+            (click)="dialog.onConfirm ? dialog.onConfirm() : dialogService.close()">
+            {{ dialog.confirmText }}
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</ng-container>

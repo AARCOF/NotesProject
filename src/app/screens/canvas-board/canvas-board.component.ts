@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 type DrawingTool = 'brush' | 'highlighter' | 'eraser';
 
@@ -60,7 +61,10 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
   statusMessage: string = '';
   private currentUserId: string = 'guest';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private dialogService: ModalDialogService
+  ) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -354,11 +358,18 @@ export class CanvasBoardComponent implements OnInit, AfterViewInit {
 
   clearNotepad(): void {
     if (!this.notepadText.trim()) return;
-    if (confirm('¿Estás seguro de que deseas vaciar todo el texto del bloc de notas?')) {
-      this.notepadText = '';
-      this.onTextChange();
-      this.showToast('Bloc de notas vaciado');
-    }
+    this.dialogService.confirm({
+      title: '¿Vaciar bloc de notas?',
+      message: '¿Estás seguro de que deseas vaciar todo el texto del bloc de notas?',
+      confirmText: 'Sí, vaciar',
+      variant: 'warning',
+      icon: 'typcn-trash',
+      onConfirm: () => {
+        this.notepadText = '';
+        this.onTextChange();
+        this.showToast('Bloc de notas vaciado');
+      }
+    });
   }
 
   // --- LocalStorage Persistence ---

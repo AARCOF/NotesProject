@@ -7,6 +7,7 @@ import { CategoriesService } from '../../services/categories.service';
 import { ExpenseService } from '../../services/expense.service';
 import { AppUpdateService, AppVersionInfo } from '../../core/services/app-update.service';
 import { User } from '../../core/models/user.model';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -62,16 +63,24 @@ export class ProfileSettingsComponent implements OnInit {
     private categoriesService: CategoriesService,
     private expenseService: ExpenseService,
     public appUpdateService: AppUpdateService,
-    private router: Router
+    private router: Router,
+    private dialogService: ModalDialogService
   ) {
     this.currentAppVersion = this.appUpdateService.CURRENT_VERSION;
   }
 
   logout(): void {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión en NoteYou?')) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-    }
+    this.dialogService.confirm({
+      title: '¿Cerrar sesión?',
+      message: '¿Estás seguro de que deseas cerrar sesión en NoteYou?',
+      confirmText: 'Cerrar sesión',
+      variant: 'danger',
+      icon: 'typcn-power',
+      onConfirm: () => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   ngOnInit(): void {

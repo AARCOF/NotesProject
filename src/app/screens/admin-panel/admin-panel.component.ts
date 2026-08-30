@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UserRepository } from '../../core/repositories/user.repository';
 import { AuthService } from '../../core/services/auth.service';
 import { User, UserRole } from '../../core/models/user.model';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -18,7 +19,8 @@ export class AdminPanelComponent implements OnInit {
   constructor(
     private userRepository: UserRepository,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dialogService: ModalDialogService
   ) {}
 
   ngOnInit(): void {
@@ -55,17 +57,29 @@ export class AdminPanelComponent implements OnInit {
 
   changeRole(user: User, newRole: UserRole): void {
     if (!this.isSuperAdmin) {
-      alert('Solo el Superadministrador puede modificar roles de usuario.');
+      this.dialogService.alert({
+        title: 'Acción Restringida',
+        message: 'Solo el Superadministrador puede modificar roles de usuario.',
+        type: 'warning'
+      });
       return;
     }
 
     if (user.role === 'superadmin' && user.id !== this.currentUser?.id && !this.isSuperAdmin) {
-      alert('No puedes modificar el rol de un Superadministrador.');
+      this.dialogService.alert({
+        title: 'Acción Restringida',
+        message: 'No puedes modificar el rol de un Superadministrador.',
+        type: 'warning'
+      });
       return;
     }
 
     if (user.id === this.currentUser?.id && newRole !== 'superadmin') {
-      alert('No puedes degradar tu propio rol de Superadministrador.');
+      this.dialogService.alert({
+        title: 'Acción no permitida',
+        message: 'No puedes degradar tu propio rol de Superadministrador.',
+        type: 'error'
+      });
       return;
     }
 
@@ -75,17 +89,29 @@ export class AdminPanelComponent implements OnInit {
 
   toggleActive(user: User): void {
     if (!this.isSuperAdmin) {
-      alert('Solo el Superadministrador puede activar o desactivar cuentas.');
+      this.dialogService.alert({
+        title: 'Acción Restringida',
+        message: 'Solo el Superadministrador puede activar o desactivar cuentas.',
+        type: 'warning'
+      });
       return;
     }
 
     if (user.id === this.currentUser?.id) {
-      alert('No puedes desactivar tu propia cuenta activa.');
+      this.dialogService.alert({
+        title: 'Acción no permitida',
+        message: 'No puedes desactivar tu propia cuenta activa.',
+        type: 'error'
+      });
       return;
     }
 
     if (user.role === 'superadmin' && user.id !== this.currentUser?.id && !this.isSuperAdmin) {
-      alert('No puedes modificar el estado de un Superadministrador.');
+      this.dialogService.alert({
+        title: 'Acción Restringida',
+        message: 'No puedes modificar el estado de un Superadministrador.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -95,7 +121,11 @@ export class AdminPanelComponent implements OnInit {
 
   toggleVerification(user: User): void {
     if (user.role === 'superadmin' && !this.isSuperAdmin) {
-      alert('Los administradores no pueden modificar el estado de un Superadministrador.');
+      this.dialogService.alert({
+        title: 'Acción Restringida',
+        message: 'Los administradores no pueden modificar el estado de un Superadministrador.',
+        type: 'warning'
+      });
       return;
     }
 

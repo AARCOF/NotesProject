@@ -4,6 +4,7 @@ import { Category } from '../../models/category.model';
 import { Note } from '../../models/note.model';
 import { CategoriesService } from '../../services/categories.service';
 import { NotesService } from '../../services/notes.service';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-category-manager',
@@ -47,7 +48,8 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
 
   constructor(
     private categoriesService: CategoriesService,
-    private notesService: NotesService
+    private notesService: NotesService,
+    private dialogService: ModalDialogService
   ) {}
 
   ngOnInit(): void {
@@ -172,7 +174,11 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
 
   deleteCategory(category: Category): void {
     if (category.isSystem) {
-      alert('Las categorías principales no se pueden eliminar.');
+      this.dialogService.alert({
+        title: 'Categoría protegida',
+        message: 'Las categorías principales no se pueden eliminar.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -181,9 +187,15 @@ export class CategoryManagerComponent implements OnInit, OnDestroy {
       ? `La categoría "${category.name}" tiene ${count} nota asignada. ¿Estás seguro de eliminarla?`
       : `¿Estás seguro de eliminar la categoría "${category.name}"?`;
 
-    if (confirm(msg)) {
-      this.categoriesService.deleteCategory(category.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar categoría?',
+      message: msg,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.categoriesService.deleteCategory(category.id);
+      }
+    });
   }
 
   getCategoryBorderColor(cat: any): string {

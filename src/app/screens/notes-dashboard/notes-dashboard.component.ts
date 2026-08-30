@@ -9,6 +9,7 @@ import { NotesService } from '../../services/notes.service';
 import { CategoriesService } from '../../services/categories.service';
 import { VerificationKeyService } from '../../core/services/verification-key.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-notes-dashboard',
@@ -102,7 +103,8 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     private notesService: NotesService,
     private categoriesService: CategoriesService,
     private verificationKeyService: VerificationKeyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialogService: ModalDialogService
   ) {}
 
   mobileKanbanTab: 'pendiente' | 'en_progreso' | 'completada' = 'pendiente';
@@ -638,9 +640,15 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   }
 
   deleteNote(note: Note): void {
-    if (confirm(`¿Estás seguro de eliminar la nota "${note.title}"?`)) {
-      this.notesService.deleteNote(note.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar nota?',
+      message: `¿Estás seguro de eliminar la nota "${note.title}"?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.notesService.deleteNote(note.id);
+      }
+    });
   }
 
   toggleStatus(note: Note): void {
@@ -654,7 +662,11 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   sendEmailReminder(note: Note): void {
     const user = this.authService.getCurrentUser();
     if (!user) {
-      alert('Debes estar autenticado para enviar recordatorios.');
+      this.dialogService.alert({
+        title: 'Sesión Requerida',
+        message: 'Debes estar autenticado para enviar recordatorios.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -952,9 +964,15 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   deleteCategory(cat: Category): void {
     if (cat.isSystem) return;
-    if (confirm(`¿Estás seguro de eliminar la categoría "${cat.name}"?`)) {
-      this.categoriesService.deleteCategory(cat.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar categoría?',
+      message: `¿Estás seguro de eliminar la categoría "${cat.name}"?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.categoriesService.deleteCategory(cat.id);
+      }
+    });
   }
 
   getNoteCountForCategory(catId: string): number {

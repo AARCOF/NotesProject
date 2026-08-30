@@ -11,6 +11,7 @@ import { Note } from './models/note.model';
 import { QuickNotesService } from './services/quick-notes.service';
 import { SavedLinksService } from './services/saved-links.service';
 import { SharedTasksService } from './services/shared-tasks.service';
+import { ModalDialogService } from './services/modal-dialog.service';
 import { Capacitor } from '@capacitor/core';
 
 @Component({
@@ -41,7 +42,8 @@ export class AppComponent implements OnInit {
     private expenseService: ExpenseService,
     private quickNotesService: QuickNotesService,
     private savedLinksService: SavedLinksService,
-    private sharedTasksService: SharedTasksService
+    private sharedTasksService: SharedTasksService,
+    public dialogService: ModalDialogService
   ) {
     this.checkScreenSize();
   }

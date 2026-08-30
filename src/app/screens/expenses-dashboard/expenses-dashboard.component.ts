@@ -4,6 +4,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 import { ExpenseService } from '../../services/expense.service';
 import { ExpenseCategory, ExpenseSubcategory, ExpenseItem, ExtraIncomeItem } from '../../models/expense.model';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-expenses-dashboard',
@@ -199,7 +200,10 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private expenseService: ExpenseService) {}
+  constructor(
+    private expenseService: ExpenseService,
+    private dialogService: ModalDialogService
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -646,9 +650,15 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   deleteExpense(expense: ExpenseItem, event?: Event): void {
     if (event) event.stopPropagation();
     const recurringText = expense.isRecurring ? ' (gasto recurrente mensual)' : '';
-    if (confirm(`¿Eliminar el gasto "${expense.title}" de ${this.currencySymbol} ${expense.amount}${recurringText}?`)) {
-      this.expenseService.deleteExpense(expense.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar gasto?',
+      message: `¿Eliminar el gasto "${expense.title}" de ${this.currencySymbol} ${expense.amount}${recurringText}?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.expenseService.deleteExpense(expense.id);
+      }
+    });
   }
 
   // Categoría Modal
@@ -702,12 +712,18 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   deleteCategory(cat: ExpenseCategory | null, event?: Event): void {
     if (!cat) return;
     if (event) event.stopPropagation();
-    if (confirm(`¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos?`)) {
-      this.expenseService.deleteCategory(cat.id);
-      if (this.categoryToEdit && this.categoryToEdit.id === cat.id) {
-        this.closeCategoryModal();
+    this.dialogService.confirm({
+      title: '¿Eliminar categoría?',
+      message: `¿Eliminar la categoría "${cat.name}" y todas sus subcategorías y gastos?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.expenseService.deleteCategory(cat.id);
+        if (this.categoryToEdit && this.categoryToEdit.id === cat.id) {
+          this.closeCategoryModal();
+        }
       }
-    }
+    });
   }
 
   deleteCategoryFromModal(): void {
@@ -717,9 +733,15 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
   }
 
   restoreSuggestedCategories(): void {
-    if (confirm('¿Restaurar las categorías sugeridas por defecto para organizar tus finanzas?')) {
-      this.expenseService.restoreDefaultCategories(true);
-    }
+    this.dialogService.confirm({
+      title: '¿Restaurar categorías sugeridas?',
+      message: '¿Restaurar las categorías sugeridas por defecto para organizar tus finanzas?',
+      confirmText: 'Sí, restaurar',
+      variant: 'warning',
+      onConfirm: () => {
+        this.expenseService.restoreDefaultCategories(true);
+      }
+    });
   }
 
   // Subcategoría Modal
@@ -762,9 +784,15 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   deleteSubcategory(sub: ExpenseSubcategory, event?: Event): void {
     if (event) event.stopPropagation();
-    if (confirm(`¿Eliminar la subcategoría "${sub.name}" y todos sus gastos?`)) {
-      this.expenseService.deleteSubcategory(sub.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar subcategoría?',
+      message: `¿Eliminar la subcategoría "${sub.name}" y todos sus gastos?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.expenseService.deleteSubcategory(sub.id);
+      }
+    });
   }
 
   // Ingreso Mensual Base Modal
@@ -862,9 +890,15 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   deleteExtraIncome(item: ExtraIncomeItem, event?: Event): void {
     if (event) event.stopPropagation();
-    if (confirm(`¿Eliminar el ingreso extra / bono "${item.title}" de ${this.currencySymbol} ${item.amount}?`)) {
-      this.expenseService.deleteExtraIncome(item.id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar ingreso extra?',
+      message: `¿Eliminar el ingreso extra / bono "${item.title}" de ${this.currencySymbol} ${item.amount}?`,
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.expenseService.deleteExtraIncome(item.id);
+      }
+    });
   }
 
   // --- Paginación y Helpers de Gastos Históricos ---

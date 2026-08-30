@@ -4,6 +4,7 @@ import { QuickNotesService } from '../../services/quick-notes.service';
 import { SavedLinksService } from '../../services/saved-links.service';
 import { QuickNote } from '../../models/quick-note.model';
 import { SavedLink } from '../../models/saved-link.model';
+import { ModalDialogService } from '../../services/modal-dialog.service';
 
 @Component({
   selector: 'app-notebook-saved',
@@ -49,7 +50,8 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
 
   constructor(
     private quickNotesService: QuickNotesService,
-    private savedLinksService: SavedLinksService
+    private savedLinksService: SavedLinksService,
+    private dialogService: ModalDialogService
   ) {}
 
   private modalReqSub!: Subscription;
@@ -155,9 +157,15 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
 
   deleteSavedLink(id: string, event: Event): void {
     event.stopPropagation(); // Evitar abrir el enlace
-    if (confirm('¿Estás seguro de que deseas eliminar este enlace guardado?')) {
-      this.savedLinksService.deleteSavedLink(id);
-    }
+    this.dialogService.confirm({
+      title: '¿Eliminar enlace guardado?',
+      message: '¿Estás seguro de que deseas eliminar este enlace guardado?',
+      confirmText: 'Sí, eliminar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.savedLinksService.deleteSavedLink(id);
+      }
+    });
   }
 
   openLink(url: string): void {
