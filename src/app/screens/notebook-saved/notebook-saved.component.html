@@ -90,14 +90,21 @@
                 </svg>
               </div>
 
-              <!-- Acciones Flotantes de la Tarjeta (Delete button) -->
-              <div class="card-floating-actions">
+              <!-- Acciones Flotantes de la Tarjeta (Editar y Eliminar) -->
+              <div class="card-floating-actions d-flex align-items-center gap-1">
+                <button 
+                  type="button" 
+                  class="btn btn-action-icon-sm btn-action-indigo rounded-lg shadow-xs" 
+                  (click)="openEditLinkModal(link, $event)" 
+                  title="Editar enlace">
+                  <i class="typcn typcn-edit font-size-15 text-indigo"></i>
+                </button>
                 <button 
                   type="button" 
                   class="btn btn-action-icon-sm btn-action-rose rounded-lg shadow-xs" 
                   (click)="deleteSavedLink(link.id, $event)" 
                   title="Eliminar enlace">
-                  <i class="typcn typcn-trash font-size-16 text-rose"></i>
+                  <i class="typcn typcn-trash font-size-15 text-rose"></i>
                 </button>
               </div>
 
@@ -143,8 +150,8 @@
       <!-- Cabecera del Modal -->
       <div class="modal-header-custom p-3-5 px-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);">
         <h5 class="modal-title font-weight-bold text-white mb-0 d-flex align-items-center">
-          <i class="typcn typcn-plus text-cyan-200 mr-2 font-size-22"></i>
-          Guardar Enlace
+          <i class="typcn mr-2 font-size-22" [ngClass]="editingLinkId ? 'typcn-edit text-amber-300' : 'typcn-plus text-cyan-200'"></i>
+          {{ editingLinkId ? 'Editar Enlace Guardado' : 'Guardar Enlace' }}
         </h5>
         <button type="button" class="btn-close-custom text-white border-0 p-0" (click)="closeAddLinkModal()">
           <i class="typcn typcn-times font-size-22"></i>
@@ -212,7 +219,7 @@
           </button>
           <button type="submit" class="btn btn-gradient-blue text-white px-4 py-2 rounded-xl font-weight-bold font-size-13 shadow-sm"
                   [disabled]="!linkUrl.trim() || !linkTitle.trim()">
-            Guardar Enlace
+            {{ editingLinkId ? 'Guardar Cambios' : 'Guardar Enlace' }}
           </button>
         </div>
       </form>

@@ -23,6 +23,7 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
 
   // Modal Enlace
   isAddModalOpen: boolean = false;
+  editingLinkId: string | null = null;
   linkTitle: string = '';
   linkUrl: string = '';
   linkDescription: string = '';
@@ -101,11 +102,27 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
 
   // --- ACCIONES DE ENLACES ---
   openAddLinkModal(): void {
+    this.editingLinkId = null;
+    this.linkTitle = '';
+    this.linkUrl = '';
+    this.linkDescription = '';
+    this.selectedIcon = 'typcn-bookmark';
+    this.isAddModalOpen = true;
+  }
+
+  openEditLinkModal(link: SavedLink, event: Event): void {
+    event.stopPropagation(); // Evitar abrir el enlace
+    this.editingLinkId = link.id;
+    this.linkTitle = link.title;
+    this.linkUrl = link.url;
+    this.linkDescription = link.description || '';
+    this.selectedIcon = link.icon || 'typcn-bookmark';
     this.isAddModalOpen = true;
   }
 
   closeAddLinkModal(): void {
     this.isAddModalOpen = false;
+    this.editingLinkId = null;
     this.linkTitle = '';
     this.linkUrl = '';
     this.linkDescription = '';
@@ -116,12 +133,22 @@ export class NotebookSavedComponent implements OnInit, OnDestroy {
     event.preventDefault();
     if (!this.linkUrl.trim() || !this.linkTitle.trim()) return;
 
-    this.savedLinksService.addSavedLink(
-      this.linkTitle,
-      this.linkUrl,
-      this.selectedIcon,
-      this.linkDescription
-    );
+    if (this.editingLinkId) {
+      this.savedLinksService.updateSavedLink(
+        this.editingLinkId,
+        this.linkTitle,
+        this.linkUrl,
+        this.selectedIcon,
+        this.linkDescription
+      );
+    } else {
+      this.savedLinksService.addSavedLink(
+        this.linkTitle,
+        this.linkUrl,
+        this.selectedIcon,
+        this.linkDescription
+      );
+    }
 
     this.closeAddLinkModal();
   }

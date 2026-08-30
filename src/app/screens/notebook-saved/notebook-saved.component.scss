@@ -34,14 +34,17 @@
     }
   }
 
-  /* Acciones flotantes (Botón eliminar) */
+  /* Acciones flotantes (Botones editar y eliminar) */
   .card-floating-actions {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 7px;
+    right: 7px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     opacity: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
-    transform: translateY(-5px);
+    transform: translateY(-4px);
     z-index: 10;
   }
 
@@ -262,5 +265,10 @@
 
   .icon-picker-grid {
     grid-template-columns: repeat(5, 1fr) !important;
+  }
+
+  .link-square-card .card-floating-actions {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
   }
 }

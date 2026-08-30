@@ -136,6 +136,37 @@ export class SavedLinksService {
     return newLink;
   }
 
+  public updateSavedLink(id: string, title: string, url: string, icon: string, description?: string): void {
+    let formattedUrl = url.trim();
+    if (formattedUrl && !/^https?:\/\//i.test(formattedUrl)) {
+      formattedUrl = 'https://' + formattedUrl;
+    }
+
+    const all = this.getAllStorageLinks();
+    const updated = all.map(link => {
+      if (link.id === id) {
+        return {
+          ...link,
+          title: title.trim(),
+          url: formattedUrl,
+          icon: icon || 'typcn-bookmark',
+          description: description ? description.trim() : undefined,
+          updatedAt: new Date().toISOString()
+        };
+      }
+      return link;
+    });
+
+    this.saveAllStorageLinks(updated);
+    this.savedLinksSubject.next(updated.filter(l => l.userId === this.currentUserId));
+
+    // Sync update in MongoDB
+    const updatedItem = updated.find(l => l.id === id);
+    if (updatedItem) {
+      this.http.put('/api/saved-links', updatedItem).subscribe({ error: () => {} });
+    }
+  }
+
   public deleteSavedLink(id: string): void {
     const all = this.getAllStorageLinks();
     const filtered = all.filter(l => l.id !== id);
