@@ -1890,10 +1890,10 @@ body.modal-open-locked,
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  z-index: 1050 !important;
+  background-color: rgba(15, 23, 42, 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 99990 !important;
   overscroll-behavior: contain !important;
   touch-action: none !important;
 }
@@ -1907,7 +1907,7 @@ body.modal-open-locked,
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  z-index: 1060 !important;
+  z-index: 99999 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1917,8 +1917,9 @@ body.modal-open-locked,
   -webkit-overflow-scrolling: touch !important;
 
   @media (max-width: 991px) {
-    align-items: flex-end !important;
-    padding: 0 !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    padding-bottom: max(24px, env(safe-area-inset-bottom)) !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
   }
@@ -2402,10 +2403,10 @@ body.modal-open-locked,
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(11, 17, 32, 0.65);
+  background-color: rgba(11, 17, 32, 0.7);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  z-index: 1050;
+  z-index: 99990 !important;
   transition: opacity 0.25s ease;
 }
 
@@ -2418,7 +2419,7 @@ body.modal-open-locked,
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1060;
+  z-index: 99999 !important;
   padding: 1rem;
   overflow-y: auto;
 }

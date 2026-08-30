@@ -1333,93 +1333,91 @@
 <!-- =========================================================================
      MODAL DE CONFIRMACIÓN ELEGANTE (REEMPLAZA EL CONFIRM NATIVO)
      ========================================================================= -->
-<div class="modal-backdrop-custom" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()">
-  <div class="modal-custom d-flex align-items-center justify-content-center p-3">
-    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
-      
-      <div class="modal-body p-4 p-md-4-5 text-center">
-        <!-- Ícono Destacado Circular con Borde y Sombra Suave -->
-        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
-             [ngClass]="{
-               'icon-box-danger': confirmDialog.variant === 'danger',
-               'icon-box-warning': confirmDialog.variant === 'warning',
-               'icon-box-info': confirmDialog.variant === 'info'
-             }">
-          <i class="typcn" [ngClass]="confirmDialog.icon"></i>
-        </div>
+<div class="modal-backdrop-custom" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()"></div>
+<div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()">
+  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
+    
+    <div class="modal-body p-4 p-md-4-5 text-center">
+      <!-- Ícono Destacado Circular con Borde y Sombra Suave -->
+      <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
+           [ngClass]="{
+             'icon-box-danger': confirmDialog.variant === 'danger',
+             'icon-box-warning': confirmDialog.variant === 'warning',
+             'icon-box-info': confirmDialog.variant === 'info'
+           }">
+        <i class="typcn" [ngClass]="confirmDialog.icon"></i>
+      </div>
 
-        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
-          {{ confirmDialog.title }}
-        </h4>
-        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
-          {{ confirmDialog.message }}
-        </p>
+      <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
+        {{ confirmDialog.title }}
+      </h4>
+      <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
+        {{ confirmDialog.message }}
+      </p>
 
-        <!-- Botones de Acción Estilizados y de Alto Contraste -->
-        <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1">
-          <button 
-            type="button" 
-            class="btn-modal-cancel flex-1" 
-            (click)="closeConfirm()">
-            {{ confirmDialog.cancelText }}
-          </button>
-          
-          <button 
-            type="button" 
-            class="flex-1"
-            [ngClass]="{
-              'btn-modal-danger': confirmDialog.variant === 'danger',
-              'btn-modal-warning': confirmDialog.variant === 'warning',
-              'btn-modal-primary': confirmDialog.variant === 'info'
-            }"
-            (click)="executeConfirm()">
-            {{ confirmDialog.confirmText }}
-          </button>
-        </div>
-
+      <!-- Botones de Acción Estilizados y de Alto Contraste -->
+      <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1">
+        <button 
+          type="button" 
+          class="btn-modal-cancel flex-1" 
+          (click)="closeConfirm()">
+          {{ confirmDialog.cancelText }}
+        </button>
+        
+        <button 
+          type="button" 
+          class="flex-1"
+          [ngClass]="{
+            'btn-modal-danger': confirmDialog.variant === 'danger',
+            'btn-modal-warning': confirmDialog.variant === 'warning',
+            'btn-modal-primary': confirmDialog.variant === 'info'
+          }"
+          (click)="executeConfirm()">
+          {{ confirmDialog.confirmText }}
+        </button>
       </div>
 
     </div>
+
   </div>
 </div>
 
 <!-- =========================================================================
      MODAL DE ALERTA / VALIDACIÓN (REEMPLAZA EL ALERT NATIVO)
      ========================================================================= -->
-<div class="modal-backdrop-custom" *ngIf="alertDialog.isOpen" (click)="closeAlert()">
-  <div class="modal-custom d-flex align-items-center justify-content-center p-3">
-    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 420px; width: 100%;">
-      
-      <div class="modal-body p-4 p-md-4-5 text-center">
-        <!-- Ícono Destacado -->
-        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
-             [ngClass]="{
-               'icon-box-warning': alertDialog.type === 'warning',
-               'icon-box-danger': alertDialog.type === 'error',
-               'icon-box-info': alertDialog.type === 'info'
-             }">
-          <i class="typcn" [ngClass]="{
-            'typcn-warning': alertDialog.type === 'warning',
-            'typcn-times-outline': alertDialog.type === 'error',
-            'typcn-info': alertDialog.type === 'info'
-          }"></i>
-        </div>
-
-        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-18">
-          {{ alertDialog.title }}
-        </h4>
-        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
-          {{ alertDialog.message }}
-        </p>
-
-        <button 
-          type="button" 
-          class="btn-modal-primary w-100" 
-          (click)="closeAlert()">
-          Entendido
-        </button>
+<div class="modal-backdrop-custom" *ngIf="alertDialog.isOpen" (click)="closeAlert()"></div>
+<div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="alertDialog.isOpen" (click)="closeAlert()">
+  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 420px; width: 100%;">
+    
+    <div class="modal-body p-4 p-md-4-5 text-center">
+      <!-- Ícono Destacado -->
+      <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
+           [ngClass]="{
+             'icon-box-warning': alertDialog.type === 'warning',
+             'icon-box-danger': alertDialog.type === 'error',
+             'icon-box-info': alertDialog.type === 'info'
+           }">
+        <i class="typcn" [ngClass]="{
+          'typcn-warning': alertDialog.type === 'warning',
+          'typcn-times-outline': alertDialog.type === 'error',
+          'typcn-info': alertDialog.type === 'info'
+        }"></i>
       </div>
 
+      <h4 class="font-weight-bold text-slate-900 mb-2 font-size-18">
+        {{ alertDialog.title }}
+      </h4>
+      <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
+        {{ alertDialog.message }}
+      </p>
+
+      <button 
+        type="button" 
+        class="btn-modal-primary w-100" 
+        (click)="closeAlert()">
+        Entendido
+      </button>
     </div>
+
   </div>
 </div>
