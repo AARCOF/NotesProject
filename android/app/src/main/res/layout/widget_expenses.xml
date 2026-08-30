@@ -4,76 +4,110 @@
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="14dp">
 
-    <!-- Header -->
-    <TextView
+    <!-- Header Row -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="💳 NoteYou: Finanzas"
-        android:textColor="#ffffff"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp">
 
-    <!-- Divider -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#1e293b"
-        android:layout_marginBottom="10dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="@drawable/widget_icon_badge"
+                android:text="💳"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_marginRight="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NoteYou · Finanzas"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/widget_badge_bg"
+            android:text="MENSUAL"
+            android:textColor="#A5B4FC"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp" />
+    </RelativeLayout>
 
     <!-- Sueldo Disponible KPI con Glassmorphism -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="@drawable/widget_kpi_card_bg"
-        android:paddingVertical="8dp"
-        android:paddingHorizontal="12dp"
         android:layout_weight="1"
+        android:background="@drawable/widget_kpi_card_bg"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="12dp"
         android:layout_marginBottom="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BALANCE DISPONIBLE"
-            android:textColor="#94a3b8"
+            android:textColor="#93C5FD"
             android:textSize="9sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
 
         <TextView
             android:id="@+id/widget_expenses_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="S/. 0.00"
-            android:textColor="#38bdf8"
-            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />
     </LinearLayout>
 
-    <!-- Sub KPIs: Ingresos y Egresos -->
+    <!-- Sub KPIs: Ingresos y Egresos con Glassmorphism -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <!-- Ingresos -->
+        <!-- Ingresos Glass Card -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/widget_income_badge_bg"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center"
+            android:paddingVertical="6dp"
+            android:paddingHorizontal="8dp"
+            android:layout_marginRight="3dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="▲ INGRESOS"
-                android:textColor="#10b981"
+                android:textColor="#34D399"
                 android:textSize="8sp"
                 android:textStyle="bold" />
 
@@ -82,24 +116,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="S/. 0.00"
-                android:textColor="#e2e8f0"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textColor="#F1F5F9"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="1dp" />
         </LinearLayout>
 
-        <!-- Egresos -->
+        <!-- Egresos Glass Card -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/widget_expense_badge_bg"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center"
+            android:paddingVertical="6dp"
+            android:paddingHorizontal="8dp"
+            android:layout_marginLeft="3dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="▼ EGRESOS"
-                android:textColor="#f43f5e"
+                android:text="▼ GASTOS"
+                android:textColor="#FB7185"
                 android:textSize="8sp"
                 android:textStyle="bold" />
 
@@ -108,9 +147,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="S/. 0.00"
-                android:textColor="#e2e8f0"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textColor="#F1F5F9"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="1dp" />
         </LinearLayout>
 
     </LinearLayout>

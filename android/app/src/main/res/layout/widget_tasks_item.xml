@@ -2,16 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/widget_item_bg"
     android:orientation="horizontal"
-    android:paddingVertical="8dp"
-    android:paddingHorizontal="4dp"
+    android:paddingVertical="9dp"
+    android:paddingHorizontal="10dp"
     android:gravity="center_vertical">
 
-    <!-- Priority indicator indicator/circle -->
+    <!-- Priority dot -->
     <ImageView
         android:id="@+id/widget_item_priority_indicator"
-        android:layout_width="8dp"
-        android:layout_height="8dp"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
         android:background="@drawable/widget_priority_circle_low"
         android:layout_marginRight="10dp" />
 
@@ -22,8 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Título de la tarea"
-        android:textColor="#e2e8f0"
+        android:textColor="#F8FAFC"
         android:textSize="12sp"
+        android:textStyle="bold"
         android:singleLine="true"
         android:ellipsize="end" />
 
