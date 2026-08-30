@@ -26,14 +26,21 @@ export class AppUpdateService {
     this.checkForUpdates();
   }
 
-  public checkForUpdates(): void {
-    this.http.get<AppVersionInfo & { success: boolean }>('/api/version').subscribe({
+  public checkForUpdates(isManualCheck = false, onComplete?: (found: boolean, info: AppVersionInfo | null) => void): void {
+    const targetUrl = `https://notes-project-one-iota.vercel.app/api/version?t=${Date.now()}`;
+    this.http.get<AppVersionInfo & { success: boolean }>(targetUrl).subscribe({
       next: (info) => {
         if (info && info.success && info.versionCode > this.CURRENT_VERSION_CODE) {
           this.updateAvailableSubject.next(info);
+          if (onComplete) onComplete(true, info);
+        } else {
+          if (onComplete) onComplete(false, null);
         }
       },
-      error: () => {}
+      error: (err) => {
+        console.error('Error al verificar versión de NoteYou:', err);
+        if (onComplete) onComplete(false, null);
+      }
     });
   }
 

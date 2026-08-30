@@ -94,16 +94,17 @@ export class ProfileSettingsComponent implements OnInit {
   checkUpdatesManual(): void {
     this.isCheckingUpdate = true;
     this.updateCheckMessage = '';
-    this.appUpdateService.checkForUpdates();
-    setTimeout(() => {
+    this.appUpdateService.checkForUpdates(true, (found, info) => {
       this.isCheckingUpdate = false;
-      if (!this.updateInfo) {
+      if (found && info) {
+        this.updateInfo = info;
+      } else {
         this.updateCheckMessage = `¡Tienes la versión más reciente de NoteYou (${this.currentAppVersion})!`;
         setTimeout(() => {
           this.updateCheckMessage = '';
         }, 4000);
       }
-    }, 1200);
+    });
   }
 
   downloadUpdate(url: string): void {
