@@ -1335,48 +1335,79 @@
      ========================================================================= -->
 <div class="modal-backdrop-custom" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()"></div>
 <div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="confirmDialog.isOpen" (click)="closeConfirm()">
-  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
+  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl overflow-hidden p-0 shadow-2xl fade-in-up" 
+       (click)="$event.stopPropagation()" 
+       style="max-width: 480px; width: 100%;">
     
-    <div class="modal-body p-4 p-md-4-5 text-center">
-      <!-- Ícono Destacado Circular con Borde y Sombra Suave -->
-      <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
-           [ngClass]="{
-             'icon-box-danger': confirmDialog.variant === 'danger',
-             'icon-box-warning': confirmDialog.variant === 'warning',
-             'icon-box-info': confirmDialog.variant === 'info'
-           }">
+    <!-- Cabecera con Degradado Premium e Icono en Insignia Blanca -->
+    <div class="modal-header-custom p-3-5 p-md-4 d-flex align-items-center justify-content-between"
+         [style.background]="confirmDialog.variant === 'danger' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : (confirmDialog.variant === 'warning' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)')">
+      <div class="d-flex align-items-center">
+        <div class="modal-icon-badge mr-3 bg-white rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center"
+             [ngClass]="{
+               'text-rose': confirmDialog.variant === 'danger',
+               'text-amber': confirmDialog.variant === 'warning',
+               'text-blue': confirmDialog.variant === 'info'
+             }"
+             style="width: 42px; height: 42px;">
+          <i class="typcn" [ngClass]="confirmDialog.icon" style="font-size: 22px;"></i>
+        </div>
+        <div>
+          <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+            {{ confirmDialog.title }}
+          </h5>
+          <small class="text-white-80 font-weight-medium">Confirmación de acción</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="closeConfirm()" aria-label="Cerrar">
+        <i class="typcn typcn-times font-size-22"></i>
+      </button>
+    </div>
+
+    <!-- Cuerpo del Modal -->
+    <div class="modal-body p-4 bg-white">
+      <div class="p-3-5 rounded-xl bg-slate-50 border border-slate-200 mb-0 d-flex align-items-start gap-3">
+        <div class="task-avatar-badge rounded-lg p-2 shadow-2xs d-flex align-items-center justify-content-center flex-shrink-0"
+             [ngClass]="{
+               'bg-rose-100 text-rose': confirmDialog.variant === 'danger',
+               'bg-amber-100 text-amber': confirmDialog.variant === 'warning',
+               'bg-blue-100 text-blue': confirmDialog.variant === 'info'
+             }"
+             style="width: 38px; height: 38px;">
+          <i class="typcn" [ngClass]="confirmDialog.icon" style="font-size: 20px;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="text-slate-400 font-size-10 font-weight-bold text-uppercase letter-spacing-05 d-block mb-0.5">
+            Atención requerida
+          </span>
+          <p class="text-slate-800 font-size-14 line-height-relaxed mb-0 font-weight-medium">
+            {{ confirmDialog.message }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer con Botones del Sistema NoteYou -->
+    <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+      <button 
+        type="button" 
+        class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl font-size-13" 
+        (click)="closeConfirm()">
+        {{ confirmDialog.cancelText }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn text-white px-4 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm d-flex align-items-center gap-1.5 hover-lift"
+        [ngClass]="{
+          'btn-gradient-rose': confirmDialog.variant === 'danger',
+          'btn-gradient-amber': confirmDialog.variant === 'warning',
+          'btn-gradient-blue': confirmDialog.variant === 'info'
+        }"
+        (click)="executeConfirm()">
         <i class="typcn" [ngClass]="confirmDialog.icon"></i>
-      </div>
-
-      <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
-        {{ confirmDialog.title }}
-      </h4>
-      <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
-        {{ confirmDialog.message }}
-      </p>
-
-      <!-- Botones de Acción Estilizados y de Alto Contraste -->
-      <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1">
-        <button 
-          type="button" 
-          class="btn-modal-cancel flex-1" 
-          (click)="closeConfirm()">
-          {{ confirmDialog.cancelText }}
-        </button>
-        
-        <button 
-          type="button" 
-          class="flex-1"
-          [ngClass]="{
-            'btn-modal-danger': confirmDialog.variant === 'danger',
-            'btn-modal-warning': confirmDialog.variant === 'warning',
-            'btn-modal-primary': confirmDialog.variant === 'info'
-          }"
-          (click)="executeConfirm()">
-          {{ confirmDialog.confirmText }}
-        </button>
-      </div>
-
+        {{ confirmDialog.confirmText }}
+      </button>
     </div>
 
   </div>
@@ -1387,33 +1418,73 @@
      ========================================================================= -->
 <div class="modal-backdrop-custom" *ngIf="alertDialog.isOpen" (click)="closeAlert()"></div>
 <div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="alertDialog.isOpen" (click)="closeAlert()">
-  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 420px; width: 100%;">
+  <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl overflow-hidden p-0 shadow-2xl fade-in-up" 
+       (click)="$event.stopPropagation()" 
+       style="max-width: 440px; width: 100%;">
     
-    <div class="modal-body p-4 p-md-4-5 text-center">
-      <!-- Ícono Destacado -->
-      <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
-           [ngClass]="{
-             'icon-box-warning': alertDialog.type === 'warning',
-             'icon-box-danger': alertDialog.type === 'error',
-             'icon-box-info': alertDialog.type === 'info'
-           }">
-        <i class="typcn" [ngClass]="{
-          'typcn-warning': alertDialog.type === 'warning',
-          'typcn-times-outline': alertDialog.type === 'error',
-          'typcn-info': alertDialog.type === 'info'
-        }"></i>
+    <!-- Cabecera -->
+    <div class="modal-header-custom p-3-5 p-md-4 d-flex align-items-center justify-content-between"
+         [style.background]="alertDialog.type === 'error' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : (alertDialog.type === 'warning' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)')">
+      <div class="d-flex align-items-center">
+        <div class="modal-icon-badge mr-3 bg-white rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center"
+             [ngClass]="{
+               'text-rose': alertDialog.type === 'error',
+               'text-amber': alertDialog.type === 'warning',
+               'text-blue': alertDialog.type === 'info'
+             }"
+             style="width: 42px; height: 42px;">
+          <i class="typcn" [ngClass]="{
+            'typcn-warning': alertDialog.type === 'warning',
+            'typcn-times-outline': alertDialog.type === 'error',
+            'typcn-info': alertDialog.type === 'info'
+          }" style="font-size: 22px;"></i>
+        </div>
+        <div>
+          <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+            {{ alertDialog.title }}
+          </h5>
+          <small class="text-white-80 font-weight-medium">Notificación del sistema</small>
+        </div>
       </div>
+      <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="closeAlert()" aria-label="Cerrar">
+        <i class="typcn typcn-times font-size-22"></i>
+      </button>
+    </div>
 
-      <h4 class="font-weight-bold text-slate-900 mb-2 font-size-18">
-        {{ alertDialog.title }}
-      </h4>
-      <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
-        {{ alertDialog.message }}
-      </p>
+    <!-- Cuerpo -->
+    <div class="modal-body p-4 bg-white">
+      <div class="p-3-5 rounded-xl bg-slate-50 border border-slate-200 mb-0 d-flex align-items-start gap-3">
+        <div class="task-avatar-badge rounded-lg p-2 shadow-2xs d-flex align-items-center justify-content-center flex-shrink-0"
+             [ngClass]="{
+               'bg-rose-100 text-rose': alertDialog.type === 'error',
+               'bg-amber-100 text-amber': alertDialog.type === 'warning',
+               'bg-blue-100 text-blue': alertDialog.type === 'info'
+             }"
+             style="width: 38px; height: 38px;">
+          <i class="typcn" [ngClass]="{
+            'typcn-warning': alertDialog.type === 'warning',
+            'typcn-times-outline': alertDialog.type === 'error',
+            'typcn-info': alertDialog.type === 'info'
+          }" style="font-size: 20px;"></i>
+        </div>
+        <div class="flex-1">
+          <p class="text-slate-800 font-size-14 line-height-relaxed mb-0 font-weight-medium">
+            {{ alertDialog.message }}
+          </p>
+        </div>
+      </div>
+    </div>
 
+    <!-- Footer -->
+    <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end">
       <button 
         type="button" 
-        class="btn-modal-primary w-100" 
+        class="btn text-white px-4 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm hover-lift" 
+        [ngClass]="{
+          'btn-gradient-rose': alertDialog.type === 'error',
+          'btn-gradient-amber': alertDialog.type === 'warning',
+          'btn-gradient-blue': alertDialog.type === 'info'
+        }"
         (click)="closeAlert()">
         Entendido
       </button>

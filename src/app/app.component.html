@@ -101,67 +101,87 @@
 </app-collaboration-modal>
 
 <!-- =========================================================================
-     MODAL GLOBAL DE CONFIRMACIÓN Y ALERTA (REEMPLAZA CONFIRM / ALERT NATIVOS)
+     MODAL GLOBAL DE CONFIRMACIÓN Y ALERTA (ESTILO UNIFICADO NOTEYOU)
      ========================================================================= -->
 <ng-container *ngIf="dialogService.dialogState$ | async as dialog">
   <div class="modal-backdrop-custom" *ngIf="dialog.isOpen" (click)="dialogService.close()"></div>
   <div class="modal-custom d-flex align-items-center justify-content-center p-3" *ngIf="dialog.isOpen" (click)="dialogService.close()">
-    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl bg-white shadow-2xl overflow-hidden p-0 fade-in-up" (click)="$event.stopPropagation()" style="max-width: 440px; width: 100%;">
+    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl overflow-hidden p-0 shadow-2xl fade-in-up" 
+         (click)="$event.stopPropagation()" 
+         style="max-width: 480px; width: 100%;">
       
-      <div class="modal-body p-4 p-md-4-5 text-center">
-        <!-- Ícono Destacado Circular -->
-        <div class="modal-confirm-icon-box mx-auto mb-3-5 d-flex align-items-center justify-content-center rounded-circle"
-             [ngClass]="{
-               'icon-box-danger': dialog.variant === 'danger',
-               'icon-box-warning': dialog.variant === 'warning',
-               'icon-box-info': dialog.variant === 'info',
-               'icon-box-success': dialog.variant === 'success'
-             }">
-          <i class="typcn" [ngClass]="dialog.icon"></i>
+      <!-- Cabecera con Degradado Premium e Icono en Insignia Blanca -->
+      <div class="modal-header-custom p-3-5 p-md-4 d-flex align-items-center justify-content-between"
+           [style.background]="dialog.variant === 'danger' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : (dialog.variant === 'warning' ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)')">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center"
+               [ngClass]="{
+                 'text-rose': dialog.variant === 'danger',
+                 'text-amber': dialog.variant === 'warning',
+                 'text-blue': dialog.variant === 'info' || dialog.variant === 'success'
+               }"
+               style="width: 42px; height: 42px;">
+            <i class="typcn {{ dialog.icon }} font-size-22"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+              {{ dialog.title }}
+            </h5>
+            <small class="text-white-80 font-weight-medium">
+              {{ dialog.isConfirm ? 'Confirmación de acción' : 'Aviso del sistema' }}
+            </small>
+          </div>
         </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="dialogService.close()" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
 
-        <h4 class="font-weight-bold text-slate-900 mb-2 font-size-19">
-          {{ dialog.title }}
-        </h4>
-        <p class="text-slate-600 font-size-14 mb-4 line-height-relaxed px-2">
-          {{ dialog.message }}
-        </p>
-
-        <!-- Botones de Acción (Confirmación con 2 botones o Alerta con 1 botón) -->
-        <div class="d-flex align-items-center justify-content-center gap-2-5 pt-1" *ngIf="dialog.isConfirm">
-          <button 
-            type="button" 
-            class="btn-modal-cancel flex-1" 
-            (click)="dialog.onCancel ? dialog.onCancel() : dialogService.close()">
-            {{ dialog.cancelText }}
-          </button>
-          
-          <button 
-            type="button" 
-            class="flex-1"
-            [ngClass]="{
-              'btn-modal-danger': dialog.variant === 'danger',
-              'btn-modal-warning': dialog.variant === 'warning',
-              'btn-modal-primary': dialog.variant === 'info' || dialog.variant === 'success'
-            }"
-            (click)="dialog.onConfirm ? dialog.onConfirm() : dialogService.close()">
-            {{ dialog.confirmText }}
-          </button>
+      <!-- Cuerpo del Modal -->
+      <div class="modal-body p-4 bg-white">
+        <div class="p-3-5 rounded-xl bg-slate-50 border border-slate-200 mb-0 d-flex align-items-start gap-3">
+          <div class="task-avatar-badge rounded-lg p-2 shadow-2xs d-flex align-items-center justify-content-center flex-shrink-0"
+               [ngClass]="{
+                 'bg-rose-100 text-rose': dialog.variant === 'danger',
+                 'bg-amber-100 text-amber': dialog.variant === 'warning',
+                 'bg-blue-100 text-blue': dialog.variant === 'info' || dialog.variant === 'success'
+               }"
+               style="width: 38px; height: 38px;">
+            <i class="typcn {{ dialog.icon }} font-size-20"></i>
+          </div>
+          <div class="flex-1">
+            <span class="text-slate-400 font-size-10 font-weight-bold text-uppercase letter-spacing-05 d-block mb-0.5">
+              {{ dialog.isConfirm ? 'Atención requerida' : 'Notificación' }}
+            </span>
+            <p class="text-slate-800 font-size-14 line-height-relaxed mb-0 font-weight-medium">
+              {{ dialog.message }}
+            </p>
+          </div>
         </div>
+      </div>
 
-        <div class="pt-1" *ngIf="!dialog.isConfirm">
-          <button 
-            type="button" 
-            class="btn-modal-primary w-100"
-            [ngClass]="{
-              'btn-modal-danger': dialog.variant === 'danger',
-              'btn-modal-warning': dialog.variant === 'warning'
-            }"
-            (click)="dialog.onConfirm ? dialog.onConfirm() : dialogService.close()">
-            {{ dialog.confirmText }}
-          </button>
-        </div>
-
+      <!-- Footer con Botones del Sistema NoteYou -->
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button 
+          type="button" 
+          class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl font-size-13" 
+          *ngIf="dialog.isConfirm"
+          (click)="dialog.onCancel ? dialog.onCancel() : dialogService.close()">
+          {{ dialog.cancelText }}
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn text-white px-4 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm d-flex align-items-center gap-1.5 hover-lift"
+          [ngClass]="{
+            'btn-gradient-rose': dialog.variant === 'danger',
+            'btn-gradient-amber': dialog.variant === 'warning',
+            'btn-gradient-blue': dialog.variant === 'info' || dialog.variant === 'success'
+          }"
+          (click)="dialog.onConfirm ? dialog.onConfirm() : dialogService.close()">
+          <i class="typcn {{ dialog.icon }}"></i>
+          {{ dialog.confirmText }}
+        </button>
       </div>
 
     </div>
