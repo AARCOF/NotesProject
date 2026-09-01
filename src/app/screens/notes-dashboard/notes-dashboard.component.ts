@@ -365,17 +365,7 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
   kanbanPageSize: number = 3;
 
   getKanbanNotes(status: NoteStatus): Note[] {
-    const allColNotes = this.getNotesByStatus(status);
-    if (this.isMobile) {
-      return allColNotes;
-    }
-    const totalPages = this.getKanbanTotalPages(status);
-    if (this.kanbanPage[status] > totalPages) {
-      this.kanbanPage[status] = totalPages;
-    }
-    const page = Math.max(1, this.kanbanPage[status] || 1);
-    const start = (page - 1) * this.kanbanPageSize;
-    return allColNotes.slice(start, start + this.kanbanPageSize);
+    return this.getNotesByStatus(status);
   }
 
   getKanbanTotalPages(status: NoteStatus): number {

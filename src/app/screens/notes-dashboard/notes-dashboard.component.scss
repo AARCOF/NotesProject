@@ -518,18 +518,21 @@
 .kanban-column {
   background-color: #f8fafc !important;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  min-height: 520px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .kanban-cards-list {
-  max-height: calc(100vh - 275px);
-  min-height: 440px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 3px;
+  padding-right: 4px;
+  padding-bottom: 4px;
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e1 transparent !important;
 
   /* Custom Slim Modern Scrollbar */
   &::-webkit-scrollbar {
@@ -1448,9 +1451,11 @@
    ========================================================================== */
 @media (min-width: 992px) {
   :host {
-    height: calc(100vh - 80px) !important;
-    max-height: calc(100vh - 80px) !important;
+    height: calc(100vh - 75px) !important;
+    max-height: calc(100vh - 75px) !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .notes-dashboard-wrapper {
@@ -1459,6 +1464,7 @@
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    padding-bottom: 0 !important;
   }
 
   .stats-row-container {
@@ -1466,7 +1472,7 @@
     flex-shrink: 0 !important;
 
     .card-stat-gradient {
-      min-height: 86px !important;
+      min-height: 84px !important;
 
       .card-body {
         padding: 0.65rem 0.9rem !important;
@@ -1490,7 +1496,7 @@
   }
 
   .sticky-dashboard-toolbar {
-    margin-bottom: 0.4rem !important;
+    margin-bottom: 0.5rem !important;
     flex-shrink: 0 !important;
     position: static !important;
     top: auto !important;
@@ -1500,19 +1506,31 @@
     }
   }
 
+  .dashboard-cards-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 0 !important;
+  }
+
   .kanban-board-wrapper {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
-    max-height: calc(100vh - 250px) !important;
+    max-height: 100% !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     overflow: hidden !important;
+    display: flex !important;
   }
 
   .kanban-col-responsive {
     height: 100% !important;
     max-height: 100% !important;
+    min-height: 0 !important;
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
     display: flex !important;
@@ -1523,32 +1541,50 @@
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
+    flex: 1 1 auto !important;
     display: flex !important;
     flex-direction: column !important;
-    padding: 8px 10px 6px 10px !important;
+    padding: 10px 12px 10px 12px !important;
     margin-bottom: 0 !important;
     overflow: hidden !important;
+    border-radius: 18px !important;
   }
 
   .kanban-column-header {
     flex-shrink: 0 !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
   }
 
   .kanban-cards-list {
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    max-height: none !important;
     height: 100% !important;
+    max-height: 100% !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    padding-right: 4px !important;
+    padding-right: 6px !important;
+    padding-bottom: 8px !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #cbd5e1 transparent !important;
+
+    &::-webkit-scrollbar {
+      width: 5px !important;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1 !important;
+      border-radius: 6px !important;
+      &:hover {
+        background: #94a3b8 !important;
+      }
+    }
   }
 
   .kanban-column-footer {
-    flex-shrink: 0 !important;
-    padding-top: 4px !important;
-    margin-top: 4px !important;
+    display: none !important;
   }
 }
 
