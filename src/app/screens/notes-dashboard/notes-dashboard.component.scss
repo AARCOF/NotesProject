@@ -1509,7 +1509,8 @@
   .dashboard-cards-container {
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    height: 100% !important;
+    height: auto !important;
+    max-height: calc(100vh - 275px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
@@ -1525,6 +1526,7 @@
     margin-bottom: 0 !important;
     overflow: hidden !important;
     display: flex !important;
+    flex-wrap: nowrap !important;
   }
 
   .kanban-col-responsive {
@@ -1539,7 +1541,8 @@
 
   .kanban-column {
     height: 100% !important;
-    max-height: 100% !important;
+    max-height: calc(100vh - 280px) !important;
+    max-height: calc(100dvh - 280px) !important;
     min-height: 0 !important;
     flex: 1 1 auto !important;
     display: flex !important;
@@ -1558,8 +1561,9 @@
   .kanban-cards-list {
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    height: 100% !important;
-    max-height: 100% !important;
+    height: auto !important;
+    max-height: calc(100vh - 340px) !important;
+    max-height: calc(100dvh - 340px) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-right: 6px !important;
