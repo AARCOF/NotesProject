@@ -913,6 +913,9 @@ export class ExpensesDashboardComponent implements OnInit, OnDestroy {
 
   getPaginatedMonthExpenses(): ExpenseItem[] {
     const all = this.getAllMonthExpenses();
+    if (this.isMobile) {
+      return all;
+    }
     const start = (this.historyPage - 1) * this.historyPageSize;
     return all.slice(start, start + this.historyPageSize);
   }

@@ -161,7 +161,14 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  get isMobile(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth <= 991;
+  }
+
   get paginatedNotes(): Note[] {
+    if (this.isMobile) {
+      return this.filteredNotes;
+    }
     const startIndex = (this.page - 1) * this.pageSize;
     return this.filteredNotes.slice(startIndex, startIndex + this.pageSize);
   }
@@ -359,6 +366,9 @@ export class NotesDashboardComponent implements OnInit, OnDestroy {
 
   getKanbanNotes(status: NoteStatus): Note[] {
     const allColNotes = this.getNotesByStatus(status);
+    if (this.isMobile) {
+      return allColNotes;
+    }
     const totalPages = this.getKanbanTotalPages(status);
     if (this.kanbanPage[status] > totalPages) {
       this.kanbanPage[status] = totalPages;

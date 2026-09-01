@@ -128,8 +128,8 @@
 
   </div>
 
-  <!-- Paginación -->
-  <div class="bg-white px-3 py-2 d-flex justify-content-center border-top border-slate-100" *ngIf="quickNotes.length > pageSize">
+  <!-- Paginación (Oculta en móviles, se usa scroll natural) -->
+  <div class="bg-white px-3 py-2 d-none d-lg-flex justify-content-center border-top border-slate-100" *ngIf="quickNotes.length > pageSize && !isMobile">
     <ngb-pagination 
       [(page)]="page" 
       [pageSize]="pageSize" 

@@ -74,7 +74,14 @@ export class QuickNotesPanelComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  get isMobile(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth <= 991;
+  }
+
   get paginatedQuickNotes(): QuickNote[] {
+    if (this.isMobile) {
+      return this.quickNotes;
+    }
     const startIndex = (this.page - 1) * this.pageSize;
     return this.quickNotes.slice(startIndex, startIndex + this.pageSize);
   }
