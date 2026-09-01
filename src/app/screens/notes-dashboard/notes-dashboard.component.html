@@ -923,34 +923,6 @@
 
           </div>
 
-          <!-- Paginador Inferior de Columna Kanban -->
-          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
-               *ngIf="getKanbanTotalPages('pendiente') > 1">
-            <span class="text-slate-500 font-weight-medium font-size-11">
-              {{ getKanbanRangeText('pendiente') }}
-            </span>
-            <div class="d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.pendiente === 1" 
-                      (click)="prevKanbanPage('pendiente', $event)" title="Página anterior">
-                <i class="typcn typcn-chevron-left font-size-14"></i>
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
-                *ngFor="let p of getKanbanPageNumbers('pendiente')"
-                [ngClass]="kanbanPage.pendiente === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
-                (click)="setKanbanPage('pendiente', p, $event)">
-                {{ p }}
-              </button>
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.pendiente === getKanbanTotalPages('pendiente')" 
-                      (click)="nextKanbanPage('pendiente', $event)" title="Página siguiente">
-                <i class="typcn typcn-chevron-right font-size-14"></i>
-              </button>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -1127,34 +1099,6 @@
 
           </div>
 
-          <!-- Paginador Inferior de Columna Kanban -->
-          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
-               *ngIf="getKanbanTotalPages('en_progreso') > 1">
-            <span class="text-slate-500 font-weight-medium font-size-11">
-              {{ getKanbanRangeText('en_progreso') }}
-            </span>
-            <div class="d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.en_progreso === 1" 
-                      (click)="prevKanbanPage('en_progreso', $event)" title="Página anterior">
-                <i class="typcn typcn-chevron-left font-size-14"></i>
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
-                *ngFor="let p of getKanbanPageNumbers('en_progreso')"
-                [ngClass]="kanbanPage.en_progreso === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
-                (click)="setKanbanPage('en_progreso', p, $event)">
-                {{ p }}
-              </button>
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.en_progreso === getKanbanTotalPages('en_progreso')" 
-                      (click)="nextKanbanPage('en_progreso', $event)" title="Página siguiente">
-                <i class="typcn typcn-chevron-right font-size-14"></i>
-              </button>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -1324,34 +1268,6 @@
 
           </div>
 
-          <!-- Paginador Inferior de Columna Kanban -->
-          <div class="kanban-column-footer pt-2 mt-2 border-top d-flex align-items-center justify-content-between font-size-12" 
-               *ngIf="getKanbanTotalPages('completada') > 1">
-            <span class="text-slate-500 font-weight-medium font-size-11">
-              {{ getKanbanRangeText('completada') }}
-            </span>
-            <div class="d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.completada === 1" 
-                      (click)="prevKanbanPage('completada', $event)" title="Página anterior">
-                <i class="typcn typcn-chevron-left font-size-14"></i>
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-sm px-2 py-0-5 rounded font-weight-bold font-size-11"
-                *ngFor="let p of getKanbanPageNumbers('completada')"
-                [ngClass]="kanbanPage.completada === p ? 'btn-gradient-blue text-white shadow-xs' : 'btn-white border text-slate-600'"
-                (click)="setKanbanPage('completada', p, $event)">
-                {{ p }}
-              </button>
-              <button type="button" class="btn btn-sm btn-white border px-2 py-0-5 rounded text-slate-600 shadow-xs" 
-                      [disabled]="kanbanPage.completada === getKanbanTotalPages('completada')" 
-                      (click)="nextKanbanPage('completada', $event)" title="Página siguiente">
-                <i class="typcn typcn-chevron-right font-size-14"></i>
-              </button>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -1381,8 +1297,8 @@
       </div>
     </div>
 
-    <!-- Paginación Moderna y Completa (Solo cuando hay más de 1 página en vista Cuadrícula) -->
-    <div class="card shadow-sm border-0 rounded-xl bg-white p-3 mt-3 mb-5 fade-in-up" *ngIf="viewMode === 'grid' && gridTotalPages > 1">
+    <!-- Paginación Moderna y Completa (Solo en Escritorio cuando hay más de 1 página en vista Cuadrícula) -->
+    <div class="card shadow-sm border-0 rounded-xl bg-white p-3 mt-3 mb-5 fade-in-up" *ngIf="viewMode === 'grid' && gridTotalPages > 1 && !isMobile">
       <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
         
         <!-- Contador de Elementos -->
