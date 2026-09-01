@@ -23,7 +23,7 @@
       </div>
 
       <form (ngSubmit)="onSubmit()" autocomplete="off">
-        <div class="modal-body p-4 bg-white">
+        <div class="modal-body p-4 bg-white modal-body-scrollable" style="max-height: 72vh; overflow-y: auto; overscroll-behavior: contain;">
           
           <div class="form-group mb-3">
             <label class="font-weight-bold text-slate-700 font-size-14">Título de la Tarea <span class="text-danger">*</span></label>
@@ -233,8 +233,8 @@
               </button>
             </div>
 
-            <!-- Lista de ítems interactivos con alineación perfecta -->
-            <div class="checklist-items-container d-flex flex-column gap-2" *ngIf="checklist.length > 0">
+            <!-- Lista de ítems interactivos con alineación perfecta y scroll -->
+            <div class="checklist-items-container d-flex flex-column gap-2" *ngIf="checklist.length > 0" style="max-height: 240px; overflow-y: auto; padding-right: 4px;">
               <div 
                 class="checklist-item-row d-flex align-items-center justify-content-between p-2-5 rounded-xl bg-white border shadow-xs" 
                 *ngFor="let item of checklist; let i = index">

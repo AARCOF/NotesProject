@@ -731,9 +731,9 @@
 <div class="modal-backdrop-custom" *ngIf="isViewModalOpen" (click)="isViewModalOpen = false"></div>
 <div class="modal-custom" *ngIf="isViewModalOpen" (click)="isViewModalOpen = false">
   <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
-    <div class="modal-content-custom overflow-hidden border-0" *ngIf="selectedTaskForView">
+    <div class="modal-content-custom overflow-hidden border-0 d-flex flex-column" *ngIf="selectedTaskForView" style="max-height: 90vh; max-height: 90dvh;">
       
-      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+      <div class="modal-header-custom p-4 d-flex align-items-center justify-content-between flex-shrink-0" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
         <div class="d-flex align-items-center">
           <div class="modal-icon-badge mr-3 bg-white text-blue-600 rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
             <i class="typcn typcn-clipboard font-size-22"></i>
@@ -752,7 +752,7 @@
         </button>
       </div>
 
-      <div class="modal-body p-4 bg-white">
+      <div class="modal-body p-4 bg-white flex-grow-1 modal-body-scrollable" style="overflow-y: auto; overscroll-behavior: contain;">
         
         <!-- Descripción -->
         <div class="mb-3" *ngIf="selectedTaskForView.description">
@@ -781,9 +781,9 @@
         <div class="mb-3" *ngIf="selectedTaskForView.checklist && selectedTaskForView.checklist.length > 0">
           <label class="font-weight-bold text-slate-700 font-size-12 text-uppercase letter-spacing-05 mb-2 d-flex align-items-center justify-content-between">
             <span>Sub-entregables ({{ getCompletedChecklistCount(selectedTaskForView) }}/{{ selectedTaskForView.checklist.length }})</span>
-            <span class="text-blue">{{ getTaskProgress(selectedTaskForView) }}%</span>
+            <span class="text-blue font-weight-bold">{{ getTaskProgress(selectedTaskForView) }}%</span>
           </label>
-          <div class="checklist-items-box p-2 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="checklist-items-box p-2 rounded-xl bg-slate-50 border border-slate-200" style="max-height: 260px; overflow-y: auto; padding-right: 4px;">
             <div *ngFor="let item of selectedTaskForView.checklist" class="d-flex align-items-center justify-content-between py-1-5 border-bottom-light">
               <label class="custom-control custom-checkbox mb-0 cursor-pointer d-flex align-items-center">
                 <input 
@@ -810,7 +810,7 @@
 
       </div>
 
-      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-between gap-2">
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-between gap-2 flex-shrink-0">
         <button type="button" class="btn btn-outline-slate px-3 py-2 font-weight-bold rounded-xl font-size-13" (click)="openEditTaskModal(selectedTaskForView); isViewModalOpen = false">
           <i class="typcn typcn-edit mr-1"></i> Editar Entrega
         </button>

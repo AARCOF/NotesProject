@@ -1812,10 +1812,10 @@
 <div class="modal-backdrop-custom fade-in" *ngIf="selectedViewNote" (click)="closeViewModal()"></div>
 <div class="modal-custom" *ngIf="selectedViewNote" (click)="closeViewModal()">
   <div class="modal-dialog-custom modal-dialog-lg" (click)="$event.stopPropagation()">
-    <div class="modal-content-custom">
+    <div class="modal-content-custom d-flex flex-column" style="max-height: 90vh; max-height: 90dvh;">
       
       <!-- Cabecera Elegante y Moderna con Acento de Categoría -->
-      <div class="modal-header-custom">
+      <div class="modal-header-custom flex-shrink-0">
         <div class="d-flex align-items-center">
           <div class="modal-icon-badge mr-3" [style.backgroundColor]="getCategoryColor(selectedViewNote.categoryId)">
             <i class="typcn {{ getCategoryIcon(selectedViewNote.categoryId) }} font-size-24 text-white"></i>
@@ -1841,8 +1841,8 @@
         </button>
       </div>
 
-      <!-- Cuerpo del Modal -->
-      <div class="p-4">
+      <!-- Cuerpo del Modal Scrollable -->
+      <div class="p-4 flex-grow-1 modal-body-scrollable" style="overflow-y: auto; overscroll-behavior: contain;">
         
         <!-- Alerta Informativa de Auto-Eliminación en 15 Días -->
         <div class="alert bg-amber-50 border border-amber-200 d-flex align-items-start py-2-5 px-3 rounded-xl mb-3" *ngIf="selectedViewNote.status === 'completada'">
@@ -1912,7 +1912,7 @@
           <p class="text-slate-700 font-size-14 line-height-relaxed mb-0" style="white-space: pre-wrap; word-break: break-word;">{{ selectedViewNote.content }}</p>
         </div>
 
-        <!-- Checklist Completa Interactiva -->
+        <!-- Checklist Completa Interactiva con Scroll y Conteo -->
         <div class="mb-4" *ngIf="selectedViewNote.checklist && selectedViewNote.checklist.length > 0">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <h6 class="font-weight-bold text-slate-800 mb-0 font-size-14 d-flex align-items-center">
@@ -1926,7 +1926,7 @@
           <div class="progress mb-3" style="height: 6px; background-color: #e2e8f0; border-radius: 3px;">
             <div class="progress-bar transition-all" role="progressbar" [style.backgroundColor]="getChecklistProgressColor(selectedViewNote)" [style.width.%]="getChecklistProgressPercent(selectedViewNote)"></div>
           </div>
-          <div class="d-flex flex-column gap-2">
+          <div class="checklist-items-scrollable-box d-flex flex-column gap-2" style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
             <div 
               class="d-flex align-items-center p-2-5 rounded-lg border border-slate-100 bg-white hover-bg-light cursor-pointer transition-all" 
               *ngFor="let item of selectedViewNote.checklist"

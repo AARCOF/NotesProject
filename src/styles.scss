@@ -2676,5 +2676,33 @@ body.modal-open-locked,
   }
 }
 
+/* Custom Sleek Scrollbar for Modal Checklists and Scrollable Bodies */
+.checklist-items-scrollable-box,
+.checklist-items-container,
+.checklist-items-box,
+.checklist-builder-list,
+.modal-body-scrollable {
+  scrollbar-width: thin !important;
+  scrollbar-color: #cbd5e1 transparent !important;
+
+  &::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+    border-radius: 8px !important;
+
+    &:hover {
+      background: #94a3b8 !important;
+    }
+  }
+}
+
 
 
