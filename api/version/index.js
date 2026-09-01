@@ -6,16 +6,16 @@ module.exports = async function handler(req, res) {
   }
 
   const latestInfo = {
-    version: '3.7.0',
-    versionCode: 370,
-    releasedAt: '2026-08-30',
+    version: '3.8.0',
+    versionCode: 380,
+    releasedAt: '2026-09-01',
     appName: 'NoteYou',
     downloadUrl: '/assets/downloads/NoteYou-v1.0.apk',
     releaseNotes: [
-      'Widgets de pantalla de inicio con diseño premium Liquid Glass y orbes ambientales translúcidos.',
-      'Íconos vectoriales nativos en widgets en lugar de emojis.',
-      'Optimización de escalado responsivo para cuadrículas 2x2 y 4x2.',
-      'Actualización directa in-place sin necesidad de desinstalar la app.'
+      'Scroll vertical fluido y sin límites de páginas en celulares (Redmi 10 / 12 y todos los dispositivos).',
+      'Desplazamiento interno independiente por columna en Tablero Kanban en computadora.',
+      'Modales de confirmación con diseño unificado NoteYou y alineación responsive perfeccionada.',
+      'Sistema de verificación y descarga dinámica de actualizaciones en tiempo real.'
     ],
     isMandatory: false
   };

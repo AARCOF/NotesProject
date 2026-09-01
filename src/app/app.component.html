@@ -187,3 +187,84 @@
     </div>
   </div>
 </ng-container>
+
+<!-- =========================================================================
+     MODAL GLOBAL DE ACTUALIZACIÓN DISPONIBLE (APP UPDATE NOTIFICATION)
+     ========================================================================= -->
+<ng-container *ngIf="appUpdateService.updateAvailable$ | async as updateInfo">
+  <div class="modal-backdrop-custom fade show" (click)="appUpdateService.dismissUpdate()"></div>
+  <div class="modal-custom d-flex align-items-center justify-content-center p-3" (click)="appUpdateService.dismissUpdate()">
+    <div class="modal-dialog-custom modal-confirm-card card border-0 rounded-2xl overflow-hidden p-0 shadow-2xl fade-in-up" 
+         (click)="$event.stopPropagation()" 
+         style="max-width: 500px; width: 100%;">
+      
+      <!-- Cabecera con Degradado Premium NoteYou -->
+      <div class="modal-header-custom p-3-5 p-md-4 d-flex align-items-center justify-content-between"
+           style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-badge mr-3 bg-white text-blue rounded-xl p-2 shadow-sm d-flex align-items-center justify-content-center"
+               style="width: 42px; height: 42px;">
+            <i class="typcn typcn-download font-size-22"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <h5 class="modal-title font-weight-bold text-white mb-0 font-size-18">
+                ¡Nueva Versión Disponible!
+              </h5>
+            </div>
+            <small class="text-white-80 font-weight-medium">
+              NoteYou v{{ updateInfo.version }} • {{ updateInfo.releasedAt }}
+            </small>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal text-white border-0 bg-transparent" (click)="appUpdateService.dismissUpdate()" aria-label="Cerrar">
+          <i class="typcn typcn-times font-size-22"></i>
+        </button>
+      </div>
+
+      <!-- Cuerpo del Modal con Novedades -->
+      <div class="modal-body p-4 bg-white">
+        <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 mb-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span class="badge badge-pill badge-primary font-weight-bold px-2-5 py-1 font-size-11">
+              v{{ updateInfo.version }} (Instalada: v{{ appUpdateService.CURRENT_VERSION }})
+            </span>
+          </div>
+          <small class="text-slate-500 font-size-11 font-weight-semibold">
+            APK Oficial NoteYou
+          </small>
+        </div>
+
+        <h6 class="font-weight-bold text-slate-800 font-size-13 mb-2 d-flex align-items-center">
+          <i class="typcn typcn-star text-amber mr-1-5 font-size-16"></i> Novedades y Mejoras:
+        </h6>
+        
+        <div class="checklist-items-scrollable-box rounded-xl p-3 bg-slate-50 border border-slate-100 mb-0" style="max-height: 200px; overflow-y: auto;">
+          <ul class="text-slate-700 font-size-13 mb-0 pl-3-5" style="line-height: 1.6;">
+            <li *ngFor="let note of updateInfo.releaseNotes" class="mb-1">{{ note }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer con Botones de Descarga -->
+      <div class="modal-footer p-3 bg-slate-50 border-top border-slate-100 d-flex justify-content-end gap-2">
+        <button 
+          type="button" 
+          class="btn btn-outline-slate px-4 py-2 font-weight-bold rounded-xl font-size-13" 
+          *ngIf="!updateInfo.isMandatory"
+          (click)="appUpdateService.dismissUpdate()">
+          Más Tarde
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn btn-gradient-blue text-white px-4 py-2 font-weight-bold rounded-xl font-size-13 shadow-sm d-flex align-items-center gap-1.5 hover-lift"
+          (click)="appUpdateService.downloadAndInstallUpdate(updateInfo.downloadUrl)">
+          <i class="typcn typcn-download font-size-16"></i>
+          Descargar e Instalar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-container>

@@ -12,6 +12,7 @@ import { QuickNotesService } from './services/quick-notes.service';
 import { SavedLinksService } from './services/saved-links.service';
 import { SharedTasksService } from './services/shared-tasks.service';
 import { ModalDialogService } from './services/modal-dialog.service';
+import { AppUpdateService } from './core/services/app-update.service';
 import { Capacitor } from '@capacitor/core';
 
 @Component({
@@ -43,7 +44,8 @@ export class AppComponent implements OnInit {
     private quickNotesService: QuickNotesService,
     private savedLinksService: SavedLinksService,
     private sharedTasksService: SharedTasksService,
-    public dialogService: ModalDialogService
+    public dialogService: ModalDialogService,
+    public appUpdateService: AppUpdateService
   ) {
     this.checkScreenSize();
   }
