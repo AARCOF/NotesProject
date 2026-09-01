@@ -1942,27 +1942,27 @@
         </div>
 
         <!-- Botones de Acción del Modal -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-3 border-top mt-2">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 pt-3 border-top mt-2">
           
           <!-- Botón de Envío de Recordatorio -->
           <button 
             type="button" 
-            class="btn btn-outline-primary font-weight-bold px-3 py-2 rounded-xl d-flex align-items-center font-size-13 shadow-xs" 
+            class="btn btn-outline-primary font-weight-bold px-3 py-2 rounded-xl d-flex align-items-center justify-content-center font-size-13 shadow-xs" 
             (click)="sendEmailReminder(selectedViewNote)"
             title="Enviar recordatorio a tu correo electrónico">
             <i class="typcn typcn-mail mr-1-5 font-size-16"></i> Enviar Recordatorio
           </button>
 
           <!-- Acciones de Estado, Edición y Cierre -->
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center justify-content-end gap-1-5 flex-wrap">
             
             <button 
               type="button" 
-              class="btn px-3 py-2 rounded-xl font-weight-bold d-flex align-items-center font-size-13"
+              class="btn px-2-5 py-2 rounded-xl font-weight-bold d-flex align-items-center justify-content-center font-size-12-5 flex-grow-1 flex-sm-grow-0"
               [ngClass]="selectedViewNote.status === 'completada' ? 'btn-modal-cancel' : 'btn-gradient-emerald text-white'"
               (click)="toggleStatusFromViewModal()">
-              <i class="typcn mr-1 font-size-16" [ngClass]="selectedViewNote.status === 'completada' ? 'typcn-arrow-left text-amber' : 'typcn-tick text-white'"></i>
-              {{ selectedViewNote.status === 'completada' ? 'Reabrir Tarea' : 'Completar Tarea' }}
+              <i class="typcn mr-1 font-size-15" [ngClass]="selectedViewNote.status === 'completada' ? 'typcn-arrow-left text-amber' : 'typcn-tick text-white'"></i>
+              {{ selectedViewNote.status === 'completada' ? 'Reabrir' : 'Completar' }}
             </button>
 
             <button 
@@ -1983,7 +1983,7 @@
 
             <button 
               type="button" 
-              class="btn btn-modal-cancel px-3 py-2 rounded-xl font-size-13 font-weight-bold" 
+              class="btn btn-modal-cancel px-3 py-2 rounded-xl font-size-12-5 font-weight-bold" 
               (click)="closeViewModal()">
               Cerrar
             </button>

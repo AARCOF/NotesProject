@@ -2601,7 +2601,7 @@ body.modal-open-locked,
   .modal-custom {
     align-items: center !important;
     justify-content: center !important;
-    padding: 16px !important;
+    padding: 14px !important;
     padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
   }
 
@@ -2615,6 +2615,108 @@ body.modal-open-locked,
     margin: auto !important;
     max-width: 480px !important;
     width: 100% !important;
+  }
+}
+
+/* ==========================================================================
+   COMPACT MOBILE RESPONSIVE OPTIMIZATIONS (REDMI 10 / 360PX - 390PX VIEWPORTS)
+   ========================================================================== */
+@media (max-width: 576px) {
+  .modal-custom {
+    padding: 10px 8px !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .modal-dialog-custom {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: auto !important;
+    padding: 0 !important;
+  }
+
+  .modal-content-custom,
+  .modal-confirm-card {
+    border-radius: 20px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 92vh !important;
+    max-height: 92dvh !important;
+  }
+
+  .modal-header-custom {
+    padding: 12px 14px !important;
+
+    .modal-icon-badge {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+      border-radius: 10px !important;
+      margin-right: 10px !important;
+
+      i {
+        font-size: 19px !important;
+      }
+    }
+
+    .modal-title {
+      font-size: 15.5px !important;
+      line-height: 1.25 !important;
+    }
+
+    small {
+      font-size: 11px !important;
+    }
+
+    .btn-close-modal,
+    .btn-close-custom {
+      width: 30px !important;
+      height: 30px !important;
+      font-size: 18px !important;
+    }
+  }
+
+  .modal-body {
+    padding: 14px 12px !important;
+    font-size: 13.5px !important;
+  }
+
+  .modal-footer {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+
+    .btn,
+    button {
+      padding: 8px 14px !important;
+      font-size: 12.5px !important;
+      min-height: 40px !important;
+    }
+  }
+
+  /* Compact form controls */
+  .input-custom,
+  .form-control {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Compact Chips and Badges */
+  .btn-category-chip {
+    padding: 5px 10px !important;
+    font-size: 11.5px !important;
+    border-radius: 8px !important;
+  }
+
+  .checklist-items-scrollable-box,
+  .checklist-items-container,
+  .checklist-items-box {
+    max-height: 220px !important;
+  }
+
+  /* Compact Callout Alert */
+  .task-preview-callout,
+  .task-avatar-badge {
+    padding: 10px !important;
   }
 }
 
